@@ -42,7 +42,7 @@ export default class MultiRegionConstruct extends cdk.Construct {
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/test',
-                credentialsSecretName: 'github-ssh-test',
+                credentialsSecretName: 'github-ssp-ssh',
                 credentialsType: 'SSH'
             }
         });
@@ -50,7 +50,7 @@ export default class MultiRegionConstruct extends cdk.Construct {
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/prod',
-                credentialsSecretName: 'github-ssh-test',
+                credentialsSecretName: 'github-ssp-ssh',
                 credentialsType: 'SSH'
             }
         });
