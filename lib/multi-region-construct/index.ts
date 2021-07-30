@@ -7,6 +7,14 @@ import { ArgoCDAddOn } from '@shapirov/cdk-eks-blueprint';
 // Team implementations
 import * as team from '../teams'
 
+
+/**
+ * This pattern demonstrates how to roll out a platform across multiple regions and multiple stages.
+ * Each region represents a stage in the development process, i.e. dev, test, prod. 
+ * To use this pattern as is you need to create the following secrets in us-east-1 and replicate them to us-east-2 and us-west-2:
+ * - github-ssh-test - containing SSH key for github authentication (plaintext in AWS Secrets manager)
+ * - argo-admin-secret - containing the initial admin secret for ArgoCD (e.g. CLI and UI access)
+ */
 export default class MultiRegionConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
@@ -42,17 +50,19 @@ export default class MultiRegionConstruct extends cdk.Construct {
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/test',
-                credentialsSecretName: 'github-ssp-ssh',
+                credentialsSecretName: 'github-ssh-test',
                 credentialsType: 'SSH'
-            }
+            },
+        
         });
         const prodBootstrapArgo = new ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/prod',
-                credentialsSecretName: 'github-ssp-ssh',
+                credentialsSecretName: 'github-ssh-test',
                 credentialsType: 'SSH'
-            }
+            },
+            adminPasswordSecretName: 'argo-admin-secret',
         });
 
         const east1 = 'us-east-1';
