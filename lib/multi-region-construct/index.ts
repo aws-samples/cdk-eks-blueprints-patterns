@@ -46,20 +46,22 @@ export default class MultiRegionConstruct extends cdk.Construct {
                 path: 'envs/dev'
             }
         });
+
         const testBootstrapArgo = new ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/test',
-                credentialsSecretName: 'github-ssh-test',
+                credentialsSecretName: 'github-ssh-key',
                 credentialsType: 'SSH'
             },
         
         });
+
         const prodBootstrapArgo = new ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/prod',
-                credentialsSecretName: 'github-ssh-test',
+                credentialsSecretName: 'github-ssh-key',
                 credentialsType: 'SSH'
             },
             adminPasswordSecretName: 'argo-admin-secret',
