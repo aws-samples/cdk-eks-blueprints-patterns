@@ -14,12 +14,12 @@
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.104.0",
+    "@aws-cdk/assert": "1.113.0",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
-    "aws-cdk": "1.104.0",
+    "aws-cdk": "1.113.0",
     "copyfiles": "^2.4.1",
     "eslint": "^7.26.0",
     "jest": "^26.4.2",
@@ -28,8 +28,8 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/core": "1.104.0",
-    "@shapirov/cdk-eks-blueprint": "^0.10.0",
+    "@aws-cdk/core": "1.113.0",
+    "@shapirov/cdk-eks-blueprint": "^0.11.1",
     "source-map-support": "^0.5.16"
   }
 }
