@@ -30,12 +30,11 @@ new FargateConstruct(app, 'fargate');
 //-------------------------------------------
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
-
-import PipelineStack from '../lib/pipeline-stack'
+import PipelineConstruct from '../lib/pipeline-stack';
 const account = process.env.CDK_DEFAULT_ACCOUNT
 const region = process.env.CDK_DEFAULT_REGION
 const env = { account, region }
-new PipelineStack(app, 'pipeline', { env });
+new PipelineConstruct(app, 'pipeline', { env });
 
 
 //-------------------------------------------
@@ -53,5 +52,7 @@ new BottleRocketConstruct(app, 'bottlerocket');
 import CustomClusterConstruct from '../lib/custom-cluster-construct'
 new CustomClusterConstruct(app, 'custom-cluster');
 
+import ScratchpadConstruct from '../lib/scratchpad'
+new ScratchpadConstruct(app, 'scratchpad');
 
 
