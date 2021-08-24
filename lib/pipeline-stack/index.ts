@@ -11,7 +11,7 @@ export default class PipelineConstruct extends cdk.Construct {
 
     constructor(scope: cdk.Construct, id: string, props?: StackProps) {
         super(scope, id);
-        const account = process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012';
+        const account = process.env.CDK_DEFAULT_ACCOUNT!;
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
@@ -33,11 +33,11 @@ export default class PipelineConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
-                stackBuilder: blueprint.clone('us-west-1', account)
+                stackBuilder: blueprint.clone('us-west-1')
             })
             .stage({
                 id: 'us-east-2-managed-ssp',
-                stackBuilder: blueprint.clone('us-east-2', account)
+                stackBuilder: blueprint.clone('us-east-2')
             })
             .build(scope, "ssp-pipeline-stack", props);
     }
