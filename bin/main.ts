@@ -33,11 +33,15 @@ new FargateConstruct(app, 'fargate');
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
 import PipelineConstruct from '../lib/pipeline-stack';
-const account = process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012';
-const region = process.env.CDK_DEFAULT_REGION ?? 'us-west-2';
+const account = process.env.CDK_DEFAULT_ACCOUNT;
+const region = process.env.CDK_DEFAULT_REGION;
 const env = { account, region };
-new PipelineConstruct(app, 'pipeline', { env });
-
+if(account) {
+    new PipelineConstruct(app, 'pipeline', { env });
+}
+else {
+    console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run \`aws configure\`'");
+}
 
 //-------------------------------------------
 // Single cluster with Bottlerocket nodes.
