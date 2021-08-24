@@ -33,9 +33,9 @@ new FargateConstruct(app, 'fargate');
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
 import PipelineConstruct from '../lib/pipeline-stack';
-const account = process.env.CDK_DEFAULT_ACCOUNT
-const region = process.env.CDK_DEFAULT_REGION
-const env = { account, region }
+const account = process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012';
+const region = process.env.CDK_DEFAULT_REGION ?? 'us-west-2';
+const env = { account, region };
 new PipelineConstruct(app, 'pipeline', { env });
 
 
