@@ -28,7 +28,8 @@ export default class PipelineConstruct extends cdk.Construct {
             .owner("aws-samples")
             .repository({
                 repoUrl: 'ssp-eks-patterns',
-                credentialsSecretName: 'github-token'
+                credentialsSecretName: 'github-token',
+                branch: 'feature/usage-tracking'
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
