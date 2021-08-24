@@ -16,7 +16,9 @@ new MultiTeamConstruct(app, 'multi-team');
 //-------------------------------------------
 
 import MultiRegionConstruct from '../lib/multi-region-construct'
-new MultiRegionConstruct(app, 'multi-region');
+new MultiRegionConstruct().buildAsync(app, 'multi-region').catch(() => {
+    console.log("Multi region pattern is not setup due to missing secrets for GitHub access and ArgoCD admin pwd.");
+});
 
 
 //-------------------------------------------
@@ -30,13 +32,16 @@ new FargateConstruct(app, 'fargate');
 //-------------------------------------------
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
-
-import PipelineStack from '../lib/pipeline-stack'
-const account = process.env.CDK_DEFAULT_ACCOUNT
-const region = process.env.CDK_DEFAULT_REGION
-const env = { account, region }
-new PipelineStack(app, 'pipeline', { env });
-
+import PipelineConstruct from '../lib/pipeline-stack';
+const account = process.env.CDK_DEFAULT_ACCOUNT;
+const region = process.env.CDK_DEFAULT_REGION;
+const env = { account, region };
+if(account) {
+    new PipelineConstruct(app, 'pipeline', { env });
+}
+else {
+    console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run 'aws configure'");
+}
 
 //-------------------------------------------
 // Single cluster with Bottlerocket nodes.
@@ -53,5 +58,7 @@ new BottleRocketConstruct(app, 'bottlerocket');
 import CustomClusterConstruct from '../lib/custom-cluster-construct'
 new CustomClusterConstruct(app, 'custom-cluster');
 
+import ScratchpadConstruct from '../lib/scratchpad'
+new ScratchpadConstruct(app, 'scratchpad');
 
 
