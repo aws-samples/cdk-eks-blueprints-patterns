@@ -40,7 +40,7 @@ if(account) {
     new PipelineConstruct(app, 'pipeline', { env });
 }
 else {
-    console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run \`aws configure\`'");
+    console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run 'aws configure'");
 }
 
 //-------------------------------------------
