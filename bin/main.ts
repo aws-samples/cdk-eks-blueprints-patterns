@@ -16,7 +16,9 @@ new MultiTeamConstruct(app, 'multi-team');
 //-------------------------------------------
 
 import MultiRegionConstruct from '../lib/multi-region-construct'
-new MultiRegionConstruct(app, 'multi-region');
+new MultiRegionConstruct().buildAsync(app, 'multi-region').catch(() => {
+    console.log("Multi region pattern is not setup due to missing secrets for GitHub access and ArgoCD admin pwd.");
+});
 
 
 //-------------------------------------------

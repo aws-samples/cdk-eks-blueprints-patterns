@@ -23,7 +23,7 @@ export default class PipelineConstruct extends cdk.Construct {
                 new ssp.ContainerInsightsAddOn)
             .teams(new team.TeamRikerSetup);
 
-        const pipeline = ssp.CodePipelineStack.builder()
+        ssp.CodePipelineStack.builder()
             .name("ssp-eks-pipeline")
             .owner("aws-samples")
             .repository({

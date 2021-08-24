@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@shapirov/cdk-eks-blueprint'
-import { ArgoCDAddOn } from '@shapirov/cdk-eks-blueprint';
+import { ArgoCDAddOn, AsyncStackBuilder, EksBlueprint } from '@shapirov/cdk-eks-blueprint';
 
 // Team implementations
 import * as team from '../teams'
@@ -15,30 +15,35 @@ import * as team from '../teams'
  * - github-ssh-test - containing SSH key for github authentication (plaintext in AWS Secrets manager)
  * - argo-admin-secret - containing the initial admin secret for ArgoCD (e.g. CLI and UI access)
  */
-export default class MultiRegionConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
+export default class MultiRegionConstruct {
 
+    static readonly SECRET_GIT_SSH_KEY = 'github-ssh-key';
+    static readonly SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
+
+    async buildAsync(scope: cdk.Construct, id: string) : Promise<EksBlueprint[]> {
         // Setup platform team
-        const accountID = process.env.CDK_DEFAULT_ACCOUNT!
-        const platformTeam = new team.TeamPlatform(accountID)
-        const teams: Array<ssp.Team> = [
-            platformTeam,
-            new team.TeamTroiSetup,
-            new team.TeamRikerSetup,
-            new team.TeamBurnhamSetup(scope)
-        ];
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
+        const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
 
-        // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.NginxAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ClusterAutoScalerAddOn,
-            new ssp.ContainerInsightsAddOn,
-        ];
+        try {
+            getSecretValue(MultiRegionConstruct.SECRET_GIT_SSH_KEY, accountID);
+            getSecretValue(MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD, accountID);
+        }
+        catch(error) {
+            throw new Error("Both github-ssh-key and argo-admin-secret secrets must be setup for the multi-region pattern to work.");
+        }
 
-        const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git'
+        const blueprint = ssp.EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .addons(new ssp.NginxAddOn,
+                new ssp.CalicoAddOn,
+                new ssp.MetricsServerAddOn,
+                new ssp.ClusterAutoScalerAddOn,
+                new ssp.ContainerInsightsAddOn)
+            .teams( new team.TeamPlatform(accountID),
+                new team.TeamTroiSetup,
+                new team.TeamRikerSetup,
+                new team.TeamBurnhamSetup(scope));
 
         const devBootstrapArgo = new ArgoCDAddOn({
             bootstrapRepo: {
@@ -51,35 +56,37 @@ export default class MultiRegionConstruct extends cdk.Construct {
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/test',
-                credentialsSecretName: 'github-ssh-key',
+                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
                 credentialsType: 'SSH'
             },
-        
         });
 
         const prodBootstrapArgo = new ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: 'git@github.com:aws-samples/ssp-eks-workloads.git',
                 path: 'envs/prod',
-                credentialsSecretName: 'github-ssh-key',
+                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
                 credentialsType: 'SSH'
             },
-            adminPasswordSecretName: 'argo-admin-secret',
+            adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
         });
+        
+        const east1 = await blueprint.clone('us-east-1')
+            .addons(devBootstrapArgo)
+            .buildAsync(scope,  `${id}-us-east-1`);
+        
+        const east2 = await blueprint.clone('us-east-2')
+            .addons(testBootstrapArgo)
+            .buildAsync(scope, `${id}-us-east-2`);
+        
+        const west2 = await blueprint.clone('us-west-2')
+            .addons(prodBootstrapArgo)
+            .buildAsync(scope, `${id}-us-west-2`);
 
-        const east1 = 'us-east-1';
-        new ssp.EksBlueprint(scope, { id: `${id}-${east1}`, addOns: addOns.concat(devBootstrapArgo), teams }, {
-            env: { region: east1 }
-        });
-
-        const east2 = 'us-east-2';
-        new ssp.EksBlueprint(scope, { id: `${id}-${east2}`, addOns: addOns.concat(testBootstrapArgo), teams }, {
-            env: { region: east2 }
-        });
-
-        const west2 = 'us-west-2'
-        new ssp.EksBlueprint(scope, { id: `${id}-${west2}`, addOns: addOns.concat(prodBootstrapArgo), teams }, {
-            env: { region: west2 }
-        });
+        return [east1, east2, west2];
     }
 }
+function getSecretValue(SECRET_GIT_SSH_KEY: string, accountID: string) {
+    throw new Error('Function not implemented.');
+}
+
