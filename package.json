@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-cdk/core": "1.119.0",
-    "@shapirov/cdk-eks-blueprint": "0.11.4-test",
+    "@shapirov/cdk-eks-blueprint": "0.12.0",
     "source-map-support": "^0.5.16"
   }
 }

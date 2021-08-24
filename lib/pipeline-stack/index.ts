@@ -13,7 +13,7 @@ export default class PipelineConstruct extends cdk.Construct {
         super(scope, id);
 
         const blueprint = ssp.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT)
+            .account(process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012') // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addons(new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
