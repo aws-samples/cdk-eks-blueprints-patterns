@@ -11,9 +11,9 @@ export default class PipelineConstruct extends cdk.Construct {
 
     constructor(scope: cdk.Construct, id: string, props?: StackProps) {
         super(scope, id);
-
+        const account = process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012';
         const blueprint = ssp.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT ?? '123456789012') // the supplied default will fail, but build and synth will pass
+            .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addons(new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
@@ -33,11 +33,11 @@ export default class PipelineConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
-                stackBuilder: blueprint.clone('us-west-1')
+                stackBuilder: blueprint.clone('us-west-1', account)
             })
             .stage({
                 id: 'us-east-2-managed-ssp',
-                stackBuilder: blueprint.clone('us-east-2')
+                stackBuilder: blueprint.clone('us-east-2', account)
             })
             .build(scope, "ssp-pipeline-stack", props);
     }
