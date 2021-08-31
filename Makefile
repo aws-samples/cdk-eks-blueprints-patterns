@@ -41,9 +41,9 @@ else
 endif
 
 init:
-	 npm run cdk bootstrap aws://382076407153/eu-west-1
-	 npm run cdk bootstrap aws://382076407153/eu-west-3
-	 npm run cdk bootstrap aws://382076407153/us-east-2
+	 npm run cdk bootstrap aws://382076407153/eu-west-1 --force
+	 npm run cdk bootstrap aws://382076407153/eu-west-3 --force
+	 npm run cdk bootstrap aws://382076407153/us-east-2 --force
 
 pipeline:
 	npm run cdk deploy ssp-pipeline-stack
