@@ -39,3 +39,11 @@ ifeq ($(shell brew ls --versions $(LIB)),)
 else
 	@echo $(LIB) is already installed, skipping.
 endif
+
+init:
+	 npm run cdk bootstrap aws://382076407153/eu-west-1
+	 npm run cdk bootstrap aws://382076407153/eu-west-3
+	 npm run cdk bootstrap aws://382076407153/us-east-2
+
+pipeline:
+	npm run cdk deploy ssp-pipeline-stack
