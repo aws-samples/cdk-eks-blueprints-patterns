@@ -4,6 +4,7 @@ import {KubernetesVersion}  from '@aws-cdk/aws-eks';
 // SSP Lib
 import * as ssp from '@shapirov/cdk-eks-blueprint';
 import { EC2ClusterProvider } from '@shapirov/cdk-eks-blueprint';
+import { TeamPlatform } from '../teams';
 
 
 export default class ScratchpadConstruct extends cdk.Construct {
@@ -20,12 +21,15 @@ export default class ScratchpadConstruct extends cdk.Construct {
         const stackID = `${id}-blueprint`;
 
         const clusterProvider = new EC2ClusterProvider( {
+            minSize: 3,
             desiredSize: 3,
             maxSize: 3,
             version: KubernetesVersion.V1_20
         });
 
-        new ssp.EksBlueprint(scope, { id: stackID, addOns, clusterProvider }, {
+        const team = new TeamPlatform(process.env.CDK_DEFAULT_ACCOUNT!);
+
+        new ssp.EksBlueprint(scope, { id: stackID, addOns, clusterProvider, teams: [ team ] }, {
             env: {
                 region: 'us-east-2',
             },
