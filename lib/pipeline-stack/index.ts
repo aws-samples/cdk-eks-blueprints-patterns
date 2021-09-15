@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import { StackProps } from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
@@ -15,7 +15,7 @@ export default class PipelineConstruct extends cdk.Construct {
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
-            .addons(new ssp.NginxAddOn,
+            .addOns(new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,

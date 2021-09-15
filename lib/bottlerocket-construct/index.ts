@@ -1,10 +1,12 @@
 import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
+
+import * as eks from '@aws-cdk/aws-eks';
 
 export default class BottlerocketConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
@@ -24,13 +26,16 @@ export default class BottlerocketConstruct extends cdk.Construct {
             new ssp.ContainerInsightsAddOn,
         ];
 
-        const stackID = `${id}-blueprint`
-        const clusterProvider = new ssp.BottlerocketClusterProvider()
+        const stackID = `${id}-blueprint`;
+        const clusterProvider = new ssp.AsgClusterProvider({
+            version: eks.KubernetesVersion.V1_20,
+            machineImageType:  eks.MachineImageType.BOTTLEROCKET
+         });
         new ssp.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
             env: {
                 region: 'us-east-1'
             }
-        })
+        });
     }
 }
 

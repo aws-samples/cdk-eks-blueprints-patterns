@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'

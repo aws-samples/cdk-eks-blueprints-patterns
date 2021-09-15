@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 //TODO import * as iam from '@aws-cdk/aws-iam';
 // import * as route53 from '@aws-cdk/aws-route53';
@@ -9,7 +9,8 @@ import * as ssp from '@shapirov/cdk-eks-blueprint'
 
 // Team implementations
 import * as team from '../teams'
-import { valueFromContext } from '@shapirov/cdk-eks-blueprint/dist/utils/context-utils';
+import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
+import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 
@@ -29,33 +30,35 @@ export default class NginxIngressConstruct extends cdk.Construct {
         const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
         const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
         const parentDomain = valueFromContext(this, "parent.hostedzone.name", "some.example.com");
-        // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.AwsLoadBalancerControllerAddOn,
-            new ssp.addons.ExternalDnsAddon({
-                hostedZone: new ssp.addons.DelegatingHostedZoneProvider({
-                    parentDomain,
-                    subdomain, 
-                    parentDnsAccountId,
-                    delegatingRoleName: 'DomainOperatorRole', 
-                    wildcardSubdomain: true
-                })
-            }),
-            new ssp.NginxAddOn({ internetFacing: true, backendProtocol: "tcp", externalDnsHostname: subdomain, crossZoneEnabled: false  }),
-            new ssp.ArgoCDAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ClusterAutoScalerAddOn,
-            new ssp.ContainerInsightsAddOn,
-        ];
 
-        const stackID = `${id}-blueprint`;
-        new EksBlueprint(scope, { id: stackID, addOns, teams }, {
-            env: {
-                account: process.env.CDK_DEFAULT_ACCOUNT,
-                region: 'us-west-1',
-            },
-        });
+        EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT)
+            .region('us-west-1')
+            .teams(...teams)
+            .resourceProvider(GlobalResources.HostedZone, new ssp.DelegatingHostedZoneProvider({
+                parentDomain,
+                subdomain, 
+                parentDnsAccountId,
+                delegatingRoleName: 'DomainOperatorRole', 
+                wildcardSubdomain: true
+            }))
+            .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
+            .addOns(new ssp.CalicoAddOn,
+                new ssp.AwsLoadBalancerControllerAddOn,
+                new ssp.addons.ExternalDnsAddon({
+                    hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
+                }),
+                new ssp.NginxAddOn({ 
+                    internetFacing: true, 
+                    backendProtocol: "tcp", 
+                    externalDnsHostname: subdomain, 
+                    crossZoneEnabled: false, 
+                    certificateResourceName: GlobalResources.Certificate }),
+                new ssp.ArgoCDAddOn,
+                new ssp.MetricsServerAddOn,
+                new ssp.ClusterAutoScalerAddOn,
+                new ssp.ContainerInsightsAddOn )
+            .build(scope, `${id}-blueprint`);
     }
 }
 

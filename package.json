@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-cdk/core": "1.119.0",
-    "@shapirov/cdk-eks-blueprint": "file:../quickstart-ssp-amazon-eks/shapirov-cdk-eks-blueprint-0.12.0.tgz",
+    "@aws-quickstart/ssp-amazon-eks": "file:../quickstart-ssp-amazon-eks/aws-quickstart-ssp-amazon-eks-0.12.1.tgz",
     "source-map-support": "^0.5.16"
   }
 }
