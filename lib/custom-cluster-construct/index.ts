@@ -6,6 +6,7 @@ import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
+import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 
 export default class CustomClusterConstruct extends cdk.Construct {
@@ -19,6 +20,8 @@ export default class CustomClusterConstruct extends cdk.Construct {
 
         // AddOns for the cluster.
         const addOns: Array<ssp.ClusterAddOn> = [
+            new AwsLoadBalancerControllerAddOn,
+            
             new ssp.NginxAddOn,
             new ssp.ArgoCDAddOn,
             new ssp.CalicoAddOn,

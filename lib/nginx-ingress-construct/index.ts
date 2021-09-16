@@ -33,7 +33,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
 
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region('us-west-1')
+            .region('us-west-2')
             .teams(...teams)
             .resourceProvider(GlobalResources.HostedZone, new ssp.DelegatingHostedZoneProvider({
                 parentDomain,

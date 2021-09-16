@@ -3,6 +3,7 @@ import { StackProps } from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
+import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 // Team implementations
 import * as team from '../teams'
@@ -15,7 +16,9 @@ export default class PipelineConstruct extends cdk.Construct {
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
-            .addOns(new ssp.NginxAddOn,
+            .addOns(
+                new AwsLoadBalancerControllerAddOn, 
+                new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
@@ -29,7 +32,7 @@ export default class PipelineConstruct extends cdk.Construct {
             .repository({
                 repoUrl: 'ssp-eks-patterns',
                 credentialsSecretName: 'github-token',
-                branch: 'feature/usage-tracking'
+                branch: 'feature/acm-integration'
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
