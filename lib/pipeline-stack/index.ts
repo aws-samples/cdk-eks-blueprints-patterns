@@ -32,7 +32,7 @@ export default class PipelineConstruct extends cdk.Construct {
             .repository({
                 repoUrl: 'ssp-eks-patterns',
                 credentialsSecretName: 'github-token',
-                branch: 'feature/acm-integration'
+                branch: 'main'
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
