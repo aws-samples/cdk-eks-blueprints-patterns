@@ -11,8 +11,11 @@ import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 import * as team from '../teams'
 import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
 import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
+import MultiRegionConstruct from '../multi-region-construct';
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
+const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
+
 
 
 export default class NginxIngressConstruct extends cdk.Construct {
@@ -53,8 +56,25 @@ export default class NginxIngressConstruct extends cdk.Construct {
                     backendProtocol: "tcp", 
                     externalDnsHostname: subdomain, 
                     crossZoneEnabled: false, 
-                    certificateResourceName: GlobalResources.Certificate }),
-                new ssp.ArgoCDAddOn,
+                    certificateResourceName: GlobalResources.Certificate,
+                    values: {
+                        controller: {
+                            service: {
+                                httpsPort: {
+                                    targetPort: "http"
+                                }
+                            }
+                        }
+                    }
+                }),
+                new ssp.ArgoCDAddOn( {
+                    bootstrapRepo: {
+                        repoUrl: gitUrl,
+                        targetRevision: "deployable",
+                        path: 'envs/dev'
+                    },
+                    adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+                }),
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
                 new ssp.ContainerInsightsAddOn )

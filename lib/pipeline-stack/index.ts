@@ -40,7 +40,10 @@ export default class PipelineConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'us-east-2-managed-ssp',
-                stackBuilder: blueprint.clone('us-east-2')
+                stackBuilder: blueprint.clone('us-east-2'),
+                stageProps: {
+                    manualApprovals: true
+                }
             })
             .build(scope, "ssp-pipeline-stack", props);
     }
