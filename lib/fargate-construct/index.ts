@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as eks from '@aws-cdk/aws-eks';
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
@@ -17,9 +17,7 @@ export default class FargateConstruct extends cdk.Construct {
 
             // AddOns for the cluster.
             const addOns: Array<ssp.ClusterAddOn> = [
-                new ssp.NginxAddOn,
-                new ssp.ArgoCDAddOn,
-                new ssp.CalicoAddOn,
+                new ssp.ArgoCDAddOn
             ];
 
             // TODO - what is with dynatrace?
@@ -28,7 +26,10 @@ export default class FargateConstruct extends cdk.Construct {
             ]);
 
             const stackID = `${id}-blueprint`
-            const clusterProvider = new ssp.FargateClusterProvider(fargateProfiles)
+            const clusterProvider = new ssp.FargateClusterProvider({
+                fargateProfiles,
+                version: eks.KubernetesVersion.V1_20
+            })
             new ssp.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
                 env: {
                     region: 'us-east-1'

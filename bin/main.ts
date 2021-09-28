@@ -3,11 +3,15 @@ import * as cdk from '@aws-cdk/core';
 
 const app = new cdk.App();
 
+import NginxIngressConstruct from '../lib/nginx-ingress-construct';
+new NginxIngressConstruct(app, 'nginx');
+
+
 //-------------------------------------------
 // Single Cluster with multiple teams.
 //-------------------------------------------
 
-import MultiTeamConstruct from '../lib/multi-team-construct'
+import MultiTeamConstruct from '../lib/multi-team-construct';
 new MultiTeamConstruct(app, 'multi-team');
 
 
@@ -15,7 +19,7 @@ new MultiTeamConstruct(app, 'multi-team');
 // Multiple clusters, multiple regions.
 //-------------------------------------------
 
-import MultiRegionConstruct from '../lib/multi-region-construct'
+import MultiRegionConstruct from '../lib/multi-region-construct';
 new MultiRegionConstruct().buildAsync(app, 'multi-region').catch(() => {
     console.log("Multi region pattern is not setup due to missing secrets for GitHub access and ArgoCD admin pwd.");
 });
@@ -25,7 +29,7 @@ new MultiRegionConstruct().buildAsync(app, 'multi-region').catch(() => {
 // Single Fargate cluster.
 //-------------------------------------------
 
-import FargateConstruct from '../lib/fargate-construct'
+import FargateConstruct from '../lib/fargate-construct';
 new FargateConstruct(app, 'fargate');
 
 
@@ -47,7 +51,7 @@ else {
 // Single cluster with Bottlerocket nodes.
 //-------------------------------------------
 
-import BottleRocketConstruct from '../lib/bottlerocket-construct'
+import BottleRocketConstruct from '../lib/bottlerocket-construct';
 new BottleRocketConstruct(app, 'bottlerocket');
 
 
@@ -55,10 +59,8 @@ new BottleRocketConstruct(app, 'bottlerocket');
 // Single cluster with custom configuration.
 //-------------------------------------------
 
-import CustomClusterConstruct from '../lib/custom-cluster-construct'
+import CustomClusterConstruct from '../lib/custom-cluster-construct';
 new CustomClusterConstruct(app, 'custom-cluster');
 
-import ScratchpadConstruct from '../lib/scratchpad'
+import ScratchpadConstruct from '../lib/scratchpad';
 new ScratchpadConstruct(app, 'scratchpad');
-
-

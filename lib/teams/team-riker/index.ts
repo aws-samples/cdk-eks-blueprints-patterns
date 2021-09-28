@@ -1,5 +1,5 @@
-import { ClusterInfo } from '@shapirov/cdk-eks-blueprint';
-import { Team } from '@shapirov/cdk-eks-blueprint';
+import { ClusterInfo } from '@aws-quickstart/ssp-amazon-eks';
+import { Team } from '@aws-quickstart/ssp-amazon-eks';
 
 export class TeamRikerSetup implements Team {
 

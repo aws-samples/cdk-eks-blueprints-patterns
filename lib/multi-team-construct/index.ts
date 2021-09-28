@@ -1,7 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint'
+import * as ssp from '@aws-quickstart/ssp-amazon-eks'
+import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 // Team implementations
 import * as team from '../teams'
@@ -25,6 +26,7 @@ export default class MultiTeamConstruct extends cdk.Construct {
         // AddOns for the cluster.
         const addOns: Array<ssp.ClusterAddOn> = [
             new ssp.AppMeshAddOn,
+            new AwsLoadBalancerControllerAddOn,
             new ssp.NginxAddOn,
             new ssp.ArgoCDAddOn,
             new ssp.CalicoAddOn,
