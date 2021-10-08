@@ -1,9 +1,9 @@
 import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint';
+import * as ssp from '@aws-quickstart/ssp-amazon-eks';
 
-import { getSecretValue } from '@shapirov/cdk-eks-blueprint/dist/utils/secrets-manager-utils';
+import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 // Team implementations
 import * as team from '../teams'
@@ -37,7 +37,7 @@ export default class MultiRegionConstruct {
         
         const blueprint = ssp.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addons(new ssp.NginxAddOn,
+            .addOns(new ssp.NginxAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
@@ -74,15 +74,15 @@ export default class MultiRegionConstruct {
         });
         
         const east1 = await blueprint.clone('us-east-1')
-            .addons(devBootstrapArgo)
+            .addOns(devBootstrapArgo)
             .buildAsync(scope,  `${id}-us-east-1`);
         
         const east2 = await blueprint.clone('us-east-2')
-            .addons(testBootstrapArgo)
+            .addOns(testBootstrapArgo)
             .buildAsync(scope, `${id}-us-east-2`);
         
         const west2 = await blueprint.clone('us-west-2')
-            .addons(prodBootstrapArgo)
+            .addOns(prodBootstrapArgo)
             .buildAsync(scope, `${id}-us-west-2`);
 
         return [ east1, east2, west2 ];

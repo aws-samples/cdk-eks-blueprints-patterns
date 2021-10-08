@@ -2,8 +2,8 @@ import * as cdk from '@aws-cdk/core';
 import {KubernetesVersion}  from '@aws-cdk/aws-eks';
 
 // SSP Lib
-import * as ssp from '@shapirov/cdk-eks-blueprint';
-import { EC2ClusterProvider } from '@shapirov/cdk-eks-blueprint';
+import * as ssp from '@aws-quickstart/ssp-amazon-eks';
+import { MngClusterProvider } from '@aws-quickstart/ssp-amazon-eks';
 
 
 export default class ScratchpadConstruct extends cdk.Construct {
@@ -19,7 +19,7 @@ export default class ScratchpadConstruct extends cdk.Construct {
 
         const stackID = `${id}-blueprint`;
 
-        const clusterProvider = new EC2ClusterProvider( {
+        const clusterProvider = new MngClusterProvider( {
             desiredSize: 3,
             maxSize: 3,
             version: KubernetesVersion.V1_20
