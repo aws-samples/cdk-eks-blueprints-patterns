@@ -19,17 +19,18 @@ import * as team from '../teams'
 export default class MultiRegionConstruct {
 
     static readonly SECRET_GIT_SSH_KEY = 'github-ssh-key';
+     static readonly SECRET_GIT_TOKEN = 'github-token-kv';
     static readonly SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
     async buildAsync(scope: cdk.Construct, id: string) : Promise<ssp.EksBlueprint[]> {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-        const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
-        const gitSecureUrl = 'git@github.com:aws-samples/ssp-eks-workloads.git';
+        const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
+        //const gitSecureUrl = 'git@github.com:aws-samples/ssp-eks-workloads.git';
 
         try {
-            await getSecretValue(MultiRegionConstruct.SECRET_GIT_SSH_KEY, 'us-east-2');
-            await getSecretValue(MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD, 'us-west-2');
+            await getSecretValue(MultiRegionConstruct.SECRET_GIT_TOKEN, 'eu-west-1');
+            await getSecretValue(MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD, 'eu-west-1');
         }
         catch(error) {
             throw new Error("Both github-ssh-key and argo-admin-secret secrets must be setup for the multi-region pattern to work.");
@@ -37,7 +38,8 @@ export default class MultiRegionConstruct {
         
         const blueprint = ssp.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addOns(new ssp.NginxAddOn,
+            .addOns(new ssp.AwsLoadBalancerControllerAddOn,
+                new ssp.NginxAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
@@ -47,45 +49,51 @@ export default class MultiRegionConstruct {
                 new team.TeamRikerSetup,
                 new team.TeamBurnhamSetup(scope));
 
+
         const devBootstrapArgo = new ssp.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: gitUrl,
-                path: 'envs/dev'
+                path: 'envs/dev',
+                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_TOKEN,
+                credentialsType: 'TOKEN'
             }
         });
 
-        const testBootstrapArgo = new ssp.ArgoCDAddOn({
-            bootstrapRepo: {
-                repoUrl: gitSecureUrl,
-                path: 'envs/test',
-                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
-                credentialsType: 'SSH'
-            },
-        });
+        // const testBootstrapArgo = new ssp.ArgoCDAddOn({
+        //     bootstrapRepo: {
+        //         //repoUrl: gitSecureUrl,
+        //         repoUrl: gitUrl,
+        //         path: 'envs/test',
+        //          credentialsSecretName: MultiRegionConstruct.SECRET_GIT_TOKEN,
+        //         // credentialsType: 'SSH'
+        //         credentialsType: 'TOKEN'
+        //     },
+        // });
 
-        const prodBootstrapArgo = new ssp.ArgoCDAddOn({
-            bootstrapRepo: {
-                repoUrl: gitSecureUrl,
-                path: 'envs/prod',
-                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
-                credentialsType: 'SSH'
-            },
-            adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
-        });
+        // const prodBootstrapArgo = new ssp.ArgoCDAddOn({
+        //     bootstrapRepo: {
+        //         repoUrl: gitUrl,
+        //         path: 'envs/prod',
+        //         credentialsSecretName: MultiRegionConstruct.SECRET_GIT_TOKEN,
+        //         credentialsType: 'TOKEN'
+        //     },
+        //     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+        // });
         
-        const east1 = await blueprint.clone('us-east-1')
-            .addOns(devBootstrapArgo)
-            .buildAsync(scope,  `${id}-us-east-1`);
+        const dev = await blueprint.clone('eu-west-3')
+            //.addOns(devBootstrapArgo)
+            .buildAsync(scope,  `${id}-dev`);
         
-        const east2 = await blueprint.clone('us-east-2')
-            .addOns(testBootstrapArgo)
-            .buildAsync(scope, `${id}-us-east-2`);
+        // const test = await blueprint.clone('us-east-2')
+        //     .addOns(testBootstrapArgo)
+        //     .buildAsync(scope, `${id}-test`);
         
-        const west2 = await blueprint.clone('us-west-2')
-            .addOns(prodBootstrapArgo)
-            .buildAsync(scope, `${id}-us-west-2`);
+        // const prod = await blueprint.clone('eu-west-1')
+        //     .addOns(prodBootstrapArgo)
+        //     .buildAsync(scope, `${id}-prod`);
 
-        return [ east1, east2, west2 ];
+        return [ dev ];
+        // return [ dev, test, prod ];
     }
 }
 

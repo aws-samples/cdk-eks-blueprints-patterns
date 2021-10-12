@@ -14,7 +14,7 @@ import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
 import MultiRegionConstruct from '../multi-region-construct';
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
+const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 
 
 
@@ -30,21 +30,22 @@ export default class NginxIngressConstruct extends cdk.Construct {
             new team.TeamBurnhamSetup(scope)
         ];
 
-        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
-        const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
-        const parentDomain = valueFromContext(this, "parent.hostedzone.name", "some.example.com");
+        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
+        const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
 
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region('us-west-2')
+            .region('eu-west-1')
             .teams(...teams)
-            .resourceProvider(GlobalResources.HostedZone, new ssp.DelegatingHostedZoneProvider({
-                parentDomain,
-                subdomain, 
-                parentDnsAccountId,
-                delegatingRoleName: 'DomainOperatorRole', 
-                wildcardSubdomain: true
-            }))
+            .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
+            // .resourceProvider(GlobalResources.HostedZone, new ssp.DelegatingHostedZoneProvider({
+            //     parentDomain,
+            //     subdomain, 
+            //     parentDnsAccountId,
+            //     delegatingRoleName: 'DomainOperatorRole', 
+            //     wildcardSubdomain: true
+            // }))
             .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(new ssp.CalicoAddOn,
                 new ssp.AwsLoadBalancerControllerAddOn,
@@ -70,10 +71,41 @@ export default class NginxIngressConstruct extends cdk.Construct {
                 new ssp.ArgoCDAddOn( {
                     bootstrapRepo: {
                         repoUrl: gitUrl,
-                        targetRevision: "deployable",
+                        targetRevision: "main",
                         path: 'envs/dev'
                     },
                     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+                    namespace: "argocd",
+                    // values: {
+                    //     server: {
+                    //         serviceAccount: {
+                    //             create: false
+                    //         },
+                    //         config: {
+                    //             repositories: "",
+                    //             // [{
+                    //             //         gitUrl,
+                    //             //         usernameSecret: {
+                    //             //             name: secretName,
+                    //             //             key: "username"
+                    //             //         },
+                    //             //         passwordSecret: {
+                    //             //             name: secretName,
+                    //             //             key: "password"
+                    //             //         }
+                    //             //     }]
+                    //             secret: {
+                    //                 argocdServerAdminPassword: await ssp.ArgoCDAddOn.createAdminSecret(clusterInfo.cluster.stack.region);
+                    //             }
+                    //         },
+                    //         ingress: {
+                    //             enabled: true,
+                    //             hosts: [
+                    //              "argo."+subdomain,
+                    //             ]
+                    //         }
+                    //     }
+                    // }
                 }),
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,

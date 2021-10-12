@@ -33,7 +33,7 @@ export class TeamTroiSetup implements Team {
         cluster.addManifest(quotaName, {
             apiVersion: 'v1',
             kind: 'ResourceQuota',
-            metadata: { name: quotaName },
+            metadata: { name: quotaName, namespace: this.name },
             spec: {
                 hard: {
                     'requests.cpu': '10',

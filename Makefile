@@ -47,3 +47,6 @@ init:
 
 pipeline:
 	npm run cdk deploy ssp-pipeline-stack
+
+multi-region:
+	npm run cdk deploy multi-region
