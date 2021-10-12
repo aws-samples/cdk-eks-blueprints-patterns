@@ -3,16 +3,16 @@ import { StackProps } from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-import { GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
-import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
-import MultiRegionConstruct from '../multi-region-construct';
+// import { GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
+// import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
+// import MultiRegionConstruct from '../multi-region-construct';
 
 // Team implementations
 import * as team from '../teams';
 
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
+// const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 
 
 export default class PipelineConstruct extends cdk.Construct {
