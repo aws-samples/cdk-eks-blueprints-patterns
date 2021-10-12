@@ -99,7 +99,7 @@ export default class PipelineConstruct extends cdk.Construct {
                     manualApprovals: true
                 }
             })
-            .build(scope, "ssp-pipeline-stack", props);
+            .build(scope, "ssp-pipeline-stack2", props);
     }
 }
 
