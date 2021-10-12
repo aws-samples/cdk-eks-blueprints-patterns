@@ -85,13 +85,13 @@ export default class PipelineConstruct extends cdk.Construct {
                 id: 'ssp-dev',
                 stackBuilder: blueprint.clone('eu-west-3')
             })
-            // .stage({
-            //     id: 'ssp-test',
-            //     stackBuilder: blueprint.clone('us-east-2'),
-            //     stageProps: {
-            //         manualApprovals: true
-            //     }
-            // })
+            .stage({
+                id: 'ssp-test',
+                stackBuilder: blueprint.clone('us-east-2'),
+                stageProps: {
+                    manualApprovals: true
+                }
+            })
             .stage({
                 id: 'ssp-prod',
                 stackBuilder: blueprint.clone('eu-west-1'),
