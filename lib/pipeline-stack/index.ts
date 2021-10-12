@@ -3,7 +3,7 @@ import { StackProps } from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-import { AwsLoadBalancerControllerAddOn, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
+import { GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
 import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
 import MultiRegionConstruct from '../multi-region-construct';
 
@@ -35,12 +35,12 @@ export default class PipelineConstruct extends cdk.Construct {
 
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
-            .region('us-west-1')
+            .region('eu-west-1')
             .teams(...teams)
             // .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
             // .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(
-                new AwsLoadBalancerControllerAddOn, 
+                new ssp.AwsLoadBalancerControllerAddOn, 
                 // new ssp.NginxAddOn({ 
                 //     internetFacing: true, 
                 //     backendProtocol: "tcp", 
