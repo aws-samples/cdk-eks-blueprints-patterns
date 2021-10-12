@@ -46,7 +46,7 @@ export default class PipelineConstruct extends cdk.Construct {
                     backendProtocol: "tcp", 
                     externalDnsHostname: subdomain, 
                     crossZoneEnabled: false, 
-                    certificateResourceName: GlobalResources.Certificate,
+                    //certificateResourceName: GlobalResources.Certificate,
                     values: {
                         controller: {
                             service: {
