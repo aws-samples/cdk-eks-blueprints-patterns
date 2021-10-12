@@ -28,7 +28,9 @@ export default class PipelineConstruct extends cdk.Construct {
             new team.TeamBurnhamSetup(scope)
         ];
 
-        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        const devSubdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        const testSubdomain : string = valueFromContext(scope, "dev.subzone.name", "test.eks.demo3.allamand.com");
+        const prodSubdomain : string = valueFromContext(scope, "dev.subzone.name", "prod.eks.demo3.allamand.com");
         // //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
         const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
 
@@ -38,25 +40,8 @@ export default class PipelineConstruct extends cdk.Construct {
             .region('eu-west-1')
             .teams(...teams)
             .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
-            .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
-                new ssp.NginxAddOn({ 
-                    internetFacing: true, 
-                    backendProtocol: "tcp", 
-                    externalDnsHostname: subdomain, 
-                    crossZoneEnabled: false, 
-                    //certificateResourceName: GlobalResources.Certificate,
-                    values: {
-                        controller: {
-                            service: {
-                                httpsPort: {
-                                    targetPort: "http"
-                                }
-                            }
-                        }
-                    }
-                }),
                 new ssp.addons.ExternalDnsAddon({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
@@ -75,7 +60,9 @@ export default class PipelineConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'ssp-dev',
-                stackBuilder: blueprint.clone('eu-west-3').addOns(
+                stackBuilder: blueprint.clone('eu-west-3')
+                .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${devSubdomain}`, GlobalResources.HostedZone))
+                .addOns(
                     new ssp.ArgoCDAddOn({
                         bootstrapRepo: {
                             repoUrl: gitUrl,
@@ -84,19 +71,96 @@ export default class PipelineConstruct extends cdk.Construct {
                         },
                         adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                         namespace: "argocd",
-                        }),
+                    }),
+                    new ssp.NginxAddOn({ 
+                        internetFacing: true, 
+                        backendProtocol: "tcp", 
+                        externalDnsHostname: devSubdomain, 
+                        crossZoneEnabled: false, 
+                        certificateResourceName: GlobalResources.Certificate,
+                        values: {
+                            controller: {
+                                service: {
+                                    httpsPort: {
+                                        targetPort: "http"
+                                    }
+                                }
+                            }
+                        }
+                    }),
                 )
             })
+
+
+
             .stage({
                 id: 'ssp-test',
-                stackBuilder: blueprint.clone('us-east-2'),
+                stackBuilder: blueprint.clone('us-east-2')
+                .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${testSubdomain}`, GlobalResources.HostedZone))
+                .addOns(
+                    new ssp.ArgoCDAddOn({
+                        bootstrapRepo: {
+                            repoUrl: gitUrl,
+                            targetRevision: "main",
+                            path: 'envs/dev'
+                        },
+                        adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
+                        namespace: "argocd",
+                    }),
+                    new ssp.NginxAddOn({ 
+                        internetFacing: true, 
+                        backendProtocol: "tcp", 
+                        externalDnsHostname: testSubdomain, 
+                        crossZoneEnabled: false, 
+                        certificateResourceName: GlobalResources.Certificate,
+                        values: {
+                            controller: {
+                                service: {
+                                    httpsPort: {
+                                        targetPort: "http"
+                                    }
+                                }
+                            }
+                        }
+                    }),
+                ),              
                 stageProps: {
                     manualApprovals: true
                 }
             })
+
+
             .stage({
                 id: 'ssp-prod',
-                stackBuilder: blueprint.clone('eu-west-1'),
+                stackBuilder: blueprint.clone('eu-west-1')
+                .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${prodSubdomain}`, GlobalResources.HostedZone))
+                .addOns(
+                    new ssp.ArgoCDAddOn({
+                        bootstrapRepo: {
+                            repoUrl: gitUrl,
+                            targetRevision: "main",
+                            path: 'envs/dev'
+                        },
+                        adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
+                        namespace: "argocd",
+                    }),
+                    new ssp.NginxAddOn({ 
+                        internetFacing: true, 
+                        backendProtocol: "tcp", 
+                        externalDnsHostname: prodSubdomain, 
+                        crossZoneEnabled: false, 
+                        certificateResourceName: GlobalResources.Certificate,
+                        values: {
+                            controller: {
+                                service: {
+                                    httpsPort: {
+                                        targetPort: "http"
+                                    }
+                                }
+                            }
+                        }
+                    }),
+                ),                
                 stageProps: {
                     manualApprovals: true
                 }
