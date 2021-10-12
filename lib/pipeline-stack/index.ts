@@ -3,8 +3,8 @@ import { StackProps } from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-// import { GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
-// import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
+import { GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
+import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
 // import MultiRegionConstruct from '../multi-region-construct';
 
 // Team implementations
@@ -12,8 +12,8 @@ import * as team from '../teams';
 
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-// const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
-
+const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
+const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
 export default class PipelineConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string, props?: StackProps) {
@@ -28,46 +28,38 @@ export default class PipelineConstruct extends cdk.Construct {
             new team.TeamBurnhamSetup(scope)
         ];
 
-        //         const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
         // //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
-        // const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
+        const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
 
 
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('eu-west-1')
             .teams(...teams)
-            // .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
-            // .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
+            .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
+            .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
-                // new ssp.NginxAddOn({ 
-                //     internetFacing: true, 
-                //     backendProtocol: "tcp", 
-                //     externalDnsHostname: subdomain, 
-                //     crossZoneEnabled: false, 
-                //     certificateResourceName: GlobalResources.Certificate,
-                //     values: {
-                //         controller: {
-                //             service: {
-                //                 httpsPort: {
-                //                     targetPort: "http"
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }),
-                // new ssp.addons.ExternalDnsAddon({
-                //     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
-                // }),
-                // new ssp.ArgoCDAddOn({bootstrapRepo: {
-                //         repoUrl: gitUrl,
-                //         targetRevision: "main",
-                //         path: 'envs/dev'
-                //     },
-                //     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
-                //     namespace: "argocd",
-                // }),
+                new ssp.NginxAddOn({ 
+                    internetFacing: true, 
+                    backendProtocol: "tcp", 
+                    externalDnsHostname: subdomain, 
+                    crossZoneEnabled: false, 
+                    certificateResourceName: GlobalResources.Certificate,
+                    values: {
+                        controller: {
+                            service: {
+                                httpsPort: {
+                                    targetPort: "http"
+                                }
+                            }
+                        }
+                    }
+                }),
+                new ssp.addons.ExternalDnsAddon({
+                    hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
+                }),
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
@@ -83,7 +75,17 @@ export default class PipelineConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'ssp-dev',
-                stackBuilder: blueprint.clone('eu-west-3')
+                stackBuilder: blueprint.clone('eu-west-3').addOns(
+                    new ssp.ArgoCDAddOn({
+                        bootstrapRepo: {
+                            repoUrl: gitUrl,
+                            targetRevision: "main",
+                            path: 'envs/dev'
+                        },
+                        adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
+                        namespace: "argocd",
+                        }),
+                )
             })
             .stage({
                 id: 'ssp-test',
