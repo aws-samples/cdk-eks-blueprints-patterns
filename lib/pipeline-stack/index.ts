@@ -28,9 +28,9 @@ export default class PipelineConstruct extends cdk.Construct {
             new team.TeamBurnhamSetup(scope)
         ];
 
-                const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
-        //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
-        const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
+        //         const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        // //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
+        // const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
 
 
         const blueprint = ssp.EksBlueprint.builder()
@@ -60,14 +60,14 @@ export default class PipelineConstruct extends cdk.Construct {
                 // new ssp.addons.ExternalDnsAddon({
                 //     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
                 // }),
-                new ssp.ArgoCDAddOn({bootstrapRepo: {
-                        repoUrl: gitUrl,
-                        targetRevision: "main",
-                        path: 'envs/dev'
-                    },
-                    adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
-                    namespace: "argocd",
-                }),
+                // new ssp.ArgoCDAddOn({bootstrapRepo: {
+                //         repoUrl: gitUrl,
+                //         targetRevision: "main",
+                //         path: 'envs/dev'
+                //     },
+                //     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+                //     namespace: "argocd",
+                // }),
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
