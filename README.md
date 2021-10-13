@@ -41,12 +41,12 @@ cdk deploy multi-team-blueprint
 Deploy nginx Example
 
 ```bash
-cdk deploy nginx-blueprint 
+cdk deploy nginx-blueprint --require-approval never
 ```
 
 Deploy multi-region pipeline
 ```bash
-cdk deploy nginx-blueprint 
+cdk deploy --require-approval never ssp-pipeline-stack  
 ```
 
 cdk bootstrap \
