@@ -102,7 +102,7 @@ export default class PipelineConstruct extends cdk.Construct {
                         bootstrapRepo: {
                             repoUrl: gitUrl,
                             targetRevision: "main",
-                            path: 'envs/dev'
+                            path: 'envs/test'
                         },
                         adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                         namespace: "argocd",
@@ -139,7 +139,7 @@ export default class PipelineConstruct extends cdk.Construct {
                         bootstrapRepo: {
                             repoUrl: gitUrl,
                             targetRevision: "main",
-                            path: 'envs/dev'
+                            path: 'envs/prod'
                         },
                         adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                         namespace: "argocd",
