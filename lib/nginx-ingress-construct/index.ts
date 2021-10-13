@@ -30,7 +30,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
             new team.TeamBurnhamSetup(scope)
         ];
 
-        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.eks.demo3.allamand.com");
+        const subdomain : string = valueFromContext(scope, "qua1.subzone.name", "qua1.eks.demo3.allamand.com");
         //const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
         const parentDomain = valueFromContext(this, "parent.hostedzone.name", "eks.demo3.allamand.com");
 
@@ -72,7 +72,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
                     bootstrapRepo: {
                         repoUrl: gitUrl,
                         targetRevision: "main",
-                        path: 'envs/dev'
+                        path: 'envs/qua1'
                     },
                     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
                     namespace: "argocd",

@@ -3,8 +3,8 @@ import * as cdk from '@aws-cdk/core';
 
 const app = new cdk.App();
 
-// import NginxIngressConstruct from '../lib/nginx-ingress-construct';
-// new NginxIngressConstruct(app, 'nginx');
+import NginxIngressConstruct from '../lib/nginx-ingress-construct';
+new NginxIngressConstruct(app, 'nginx');
 
 
 //-------------------------------------------
