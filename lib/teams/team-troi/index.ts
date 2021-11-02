@@ -18,7 +18,6 @@ export class TeamTroiSetup implements Team {
                 annotations: { "argocd.argoproj.io/sync-wave": "-1" }
             }
         });
-
         this.setupNamespacePolicies(cluster);
 
         const sa = cluster.addServiceAccount('inf-backend', { name: 'inf-backend', namespace: this.name });
@@ -27,7 +26,6 @@ export class TeamTroiSetup implements Team {
         bucket.grantReadWrite(sa);
         new cdk.CfnOutput(stack, this.name + '-sa-iam-role', { value: sa.role.roleArn })
     }
-
     setupNamespacePolicies(cluster: eks.Cluster) {
         const quotaName = this.name + "-quota";
         cluster.addManifest(quotaName, {
