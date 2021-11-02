@@ -57,6 +57,18 @@ export default class PipelineConstruct extends cdk.Construct {
       .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
       .clusterProvider(
         new MngClusterProvider({
+          desiredSize: 1,
+          maxSize: 3,
+          minSize: 1,
+          version: KubernetesVersion.V1_20,
+          nodeGroupCapacityType: CapacityType.ON_DEMAND,
+          instanceTypes: [
+            new InstanceType('m5.xlarge'),
+          ],
+        }),
+      )
+      .clusterProvider(
+        new MngClusterProvider({
           desiredSize: 3,
           maxSize: 20,
           minSize: 1,
