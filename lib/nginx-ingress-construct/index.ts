@@ -2,20 +2,21 @@ import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-
+import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
+import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
 //TODO import * as iam from '@aws-cdk/aws-iam';
 // import * as route53 from '@aws-cdk/aws-route53';
 
 
 // Team implementations
 import * as team from '../teams'
-import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
-import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
-import MultiRegionConstruct from '../multi-region-construct';
+const burnhamManifestDir = './lib/teams/team-burnham/'
+const rikerManifestDir = './lib/teams/team-riker/'
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 
+import MultiRegionConstruct from '../multi-region-construct';
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
-
 
 
 export default class NginxIngressConstruct extends cdk.Construct {
@@ -26,8 +27,8 @@ export default class NginxIngressConstruct extends cdk.Construct {
         const teams: Array<ssp.Team> = [
             new team.TeamPlatform(accountID),
             new team.TeamTroiSetup,
-            new team.TeamRikerSetup,
-            new team.TeamBurnhamSetup(scope)
+            new team.TeamRikerSetup(scope, teamManifestDirList[1]),
+            new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
         ];
 
         const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
@@ -48,7 +49,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
             .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(new ssp.CalicoAddOn,
                 new ssp.AwsLoadBalancerControllerAddOn,
-                new ssp.addons.ExternalDnsAddon({
+                new ssp.ExternalDnsAddon({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
                 new ssp.NginxAddOn({ 
@@ -77,7 +78,8 @@ export default class NginxIngressConstruct extends cdk.Construct {
                 }),
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn )
+                new ssp.ContainerInsightsAddOn,
+                new ssp.SecretsStoreAddOn )
             .build(scope, `${id}-blueprint`);
     }
 }

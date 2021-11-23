@@ -7,6 +7,9 @@ import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 // Team implementations
 import * as team from '../teams'
+const burnhamManifestDir = './lib/teams/team-burnham/'
+const rikerManifestDir = './lib/teams/team-riker/'
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 
 export default class PipelineConstruct extends cdk.Construct {
 
@@ -23,8 +26,9 @@ export default class PipelineConstruct extends cdk.Construct {
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn)
-            .teams(new team.TeamRikerSetup);
+                new ssp.ContainerInsightsAddOn,
+                new ssp.SecretsStoreAddOn)
+            .teams(new team.TeamRikerSetup(scope, teamManifestDirList[1]));
 
         ssp.CodePipelineStack.builder()
             .name("ssp-eks-pipeline")

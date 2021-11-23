@@ -27,7 +27,7 @@
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-quickstart/ssp-amazon-eks": "^0.12.1",
+    "@aws-quickstart/ssp-amazon-eks": "^0.12.2",
     "source-map-support": "^0.5.16"
   }
 }
