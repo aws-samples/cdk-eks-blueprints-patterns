@@ -20,15 +20,20 @@ export default class PipelineConstruct extends cdk.Construct {
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addOns(
-                new AwsLoadBalancerControllerAddOn, 
+                new ssp.AppMeshAddOn,
+                new ssp.AwsLoadBalancerControllerAddOn,
                 new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
                 new ssp.ContainerInsightsAddOn,
+                new ssp.XrayAddOn,
                 new ssp.SecretsStoreAddOn)
-            .teams(new team.TeamRikerSetup(scope, teamManifestDirList[1]));
+            .teams(
+                new team.TeamRikerSetup(scope, teamManifestDirList[1]),
+                new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
+            );
 
         ssp.CodePipelineStack.builder()
             .name("ssp-eks-pipeline")

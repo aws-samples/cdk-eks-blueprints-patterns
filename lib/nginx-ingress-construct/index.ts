@@ -76,9 +76,11 @@ export default class NginxIngressConstruct extends cdk.Construct {
                     },
                     adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
                 }),
+                new ssp.AppMeshAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
                 new ssp.ContainerInsightsAddOn,
+                new ssp.XrayAddOn,
                 new ssp.SecretsStoreAddOn )
             .build(scope, `${id}-blueprint`);
     }

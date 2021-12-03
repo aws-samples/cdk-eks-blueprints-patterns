@@ -2,7 +2,6 @@ import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 // Team implementations
 import * as team from '../teams'

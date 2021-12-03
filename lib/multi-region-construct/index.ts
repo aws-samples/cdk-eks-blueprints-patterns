@@ -39,12 +39,14 @@ export default class MultiRegionConstruct {
         
         const blueprint = ssp.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addOns(new ssp.NginxAddOn,
+            .addOns( new ssp.AppMeshAddOn,
                 new ssp.AwsLoadBalancerControllerAddOn,
+                new ssp.NginxAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
                 new ssp.ContainerInsightsAddOn,
+                new ssp.XrayAddOn,
                 new ssp.SecretsStoreAddOn)
             .teams( new team.TeamPlatform(accountID),
                 new team.TeamTroiSetup,

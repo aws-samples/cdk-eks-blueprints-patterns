@@ -20,13 +20,16 @@ export default class CustomClusterConstruct extends cdk.Construct {
 
         // AddOns for the cluster.
         const addOns: Array<ssp.ClusterAddOn> = [
-            new AwsLoadBalancerControllerAddOn,
-            
+            new ssp.AppMeshAddOn,
+            new ssp.AwsLoadBalancerControllerAddOn,
             new ssp.NginxAddOn,
             new ssp.ArgoCDAddOn,
             new ssp.CalicoAddOn,
             new ssp.MetricsServerAddOn,
+            new ssp.ClusterAutoScalerAddOn,
             new ssp.ContainerInsightsAddOn,
+            new ssp.XrayAddOn,
+            new ssp.SecretsStoreAddOn
         ];
 
         const clusterProps: ssp.MngClusterProviderProps = {

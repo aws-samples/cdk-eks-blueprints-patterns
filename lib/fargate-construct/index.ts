@@ -17,7 +17,13 @@ export default class FargateConstruct extends cdk.Construct {
 
             // AddOns for the cluster.
             const addOns: Array<ssp.ClusterAddOn> = [
-                new ssp.ArgoCDAddOn
+                new ssp.AppMeshAddOn,
+                new ssp.AwsLoadBalancerControllerAddOn,
+                new ssp.NginxAddOn,
+                new ssp.ArgoCDAddOn,
+                new ssp.CalicoAddOn,
+                new ssp.MetricsServerAddOn,
+                new ssp.SecretsStoreAddOn
             ];
 
             // TODO - what is with dynatrace?
