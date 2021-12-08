@@ -8,12 +8,12 @@ export default class StarterConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
 
-        // To do - Onboard teams
+        // Onboard teams as necessary - import lib/teams
         const teams: Array<ssp.Team> = [
 
         ];
 
-        // AddOns for the cluster.
+        // Include more addons as necessary
         const addOns: Array<ssp.ClusterAddOn> = [
             new ssp.ArgoCDAddOn
         ];
