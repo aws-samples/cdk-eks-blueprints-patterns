@@ -6,6 +6,13 @@ const app = new cdk.App();
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
 new NginxIngressConstruct(app, 'nginx');
 
+//-------------------------------------------
+// Starter Cluster with barebone infrastructure.
+//-------------------------------------------
+
+import StarterConstruct from '../lib/starter-construct';
+new StarterConstruct(app, 'starter');
+
 
 //-------------------------------------------
 // Single Cluster with multiple teams.
