@@ -2,7 +2,6 @@ import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
-
 import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 // Team implementations
@@ -39,8 +38,7 @@ export default class MultiRegionConstruct {
         
         const blueprint = ssp.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addOns( new ssp.AppMeshAddOn,
-                new ssp.AwsLoadBalancerControllerAddOn,
+            .addOns( new ssp.AwsLoadBalancerControllerAddOn,
                 new ssp.NginxAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,

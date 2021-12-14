@@ -1,7 +1,6 @@
 import { ArnPrincipal } from '@aws-cdk/aws-iam';
 import { Construct } from '@aws-cdk/core';
-import { ApplicationTeam, ClusterInfo, SecretProvider } from '@aws-quickstart/ssp-amazon-eks';
-import { ISecret, Secret } from '@aws-cdk/aws-secretsmanager';
+import { ApplicationTeam, GenerateSecretManagerProvider } from '@aws-quickstart/ssp-amazon-eks';
 
 function getUserArns(scope: Construct, key: string): ArnPrincipal[] {
     const context: string = scope.node.tryGetContext(key);
@@ -34,20 +33,5 @@ export class TeamBurnhamSetup extends ApplicationTeam {
             ],
             teamManifestDir: teamManifestDir
         });
-    }
-}
-
-class GenerateSecretManagerProvider implements SecretProvider {
-
-    constructor(private secretName: string) {}
-
-    provide(clusterInfo: ClusterInfo): ISecret {
-        const secret = new Secret(clusterInfo.cluster.stack, 'AuthPassword', {
-            secretName: this.secretName
-        });
-
-        // create this secret first
-        clusterInfo.cluster.node.addDependency(secret);
-        return secret
     }
 }

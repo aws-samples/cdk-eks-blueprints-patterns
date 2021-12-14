@@ -1,13 +1,11 @@
 import * as cdk from '@aws-cdk/core';
+import * as eks from '@aws-cdk/aws-eks';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
-
-import * as eks from '@aws-cdk/aws-eks';
-import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
 
 export default class BottlerocketConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {

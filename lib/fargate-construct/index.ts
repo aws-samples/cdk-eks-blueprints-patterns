@@ -1,5 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as eks from '@aws-cdk/aws-eks';
+
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
@@ -21,9 +22,7 @@ export default class FargateConstruct extends cdk.Construct {
                 new ssp.AwsLoadBalancerControllerAddOn,
                 new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
-                new ssp.CalicoAddOn,
-                new ssp.MetricsServerAddOn,
-                new ssp.SecretsStoreAddOn
+                new ssp.MetricsServerAddOn
             ];
 
             // TODO - what is with dynatrace?
