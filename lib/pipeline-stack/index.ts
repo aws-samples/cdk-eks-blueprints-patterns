@@ -1,6 +1,5 @@
 import * as cdk from '@aws-cdk/core';
 import { StackProps } from '@aws-cdk/core';
-
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
@@ -14,6 +13,7 @@ export default class PipelineConstruct extends cdk.Construct {
 
     constructor(scope: cdk.Construct, id: string, props?: StackProps) {
         super(scope, id);
+        process.env.JSII_DEPRECATED = 'quiet';
         const account = process.env.CDK_DEFAULT_ACCOUNT!;
         const blueprint = ssp.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
@@ -23,6 +23,9 @@ export default class PipelineConstruct extends cdk.Construct {
                 new ssp.AwsLoadBalancerControllerAddOn,
                 new ssp.NginxAddOn,
                 new ssp.ArgoCDAddOn,
+                new ssp.AppMeshAddOn( {
+                    enableTracing: true
+                }),
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
@@ -40,7 +43,7 @@ export default class PipelineConstruct extends cdk.Construct {
             .repository({
                 repoUrl: 'ssp-eks-patterns',
                 credentialsSecretName: 'github-token',
-                branch: 'main'
+                targetRevision: 'main'
             })
             .stage({
                 id: 'us-west-1-managed-ssp',

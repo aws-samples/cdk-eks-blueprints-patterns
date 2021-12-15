@@ -20,7 +20,7 @@ export class TeamBurnhamSetup extends ApplicationTeam {
             },
             teamSecrets: [
                 {
-                    secretProvider: new GenerateSecretManagerProvider('AuthPassword'),
+                    secretProvider: new GenerateSecretManagerProvider('auth-password-id','AuthPassword'),
                     kubernetesSecret: {
                         secretName: 'auth-password',
                         data: [
