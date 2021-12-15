@@ -71,3 +71,6 @@ new CustomClusterConstruct(app, 'custom-cluster');
 
 import ScratchpadConstruct from '../lib/scratchpad';
 new ScratchpadConstruct(app, 'scratchpad');
+
+import KubecostConstruct from '../lib/kubecost-construct';
+new KubecostConstruct(app, 'kubecost')
