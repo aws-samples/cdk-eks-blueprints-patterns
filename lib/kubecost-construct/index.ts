@@ -12,7 +12,7 @@ export default class KubecostConstruct extends cdk.Construct {
             new KubecostAddOn()
         ];
 
-        const stackID = `${id}-blueprint`
+        const stackID = `${id}-blueprint`;
 
         new ssp.EksBlueprint(scope, { id: stackID, addOns}, {
             env: {
