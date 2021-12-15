@@ -18,7 +18,7 @@
     "@types/node": "16.11.13",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
-    "aws-cdk": "1.132.0",
+    "aws-cdk": "1.135.0",
     "copyfiles": "^2.4.1",
     "eslint": "^8.4.1",
     "jest": "^27.4.5",
@@ -27,7 +27,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-quickstart/ssp-amazon-eks": "file:../quickstart-ssp-amazon-eks/aws-quickstart-ssp-amazon-eks-0.12.3.tgz",
+    "@aws-quickstart/ssp-amazon-eks": "^0.12.3",
     "source-map-support": "^0.5.21"
   }
 }
