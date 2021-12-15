@@ -7,6 +7,7 @@ import * as team from '../teams'
 export default class StarterConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
+        process.env.JSII_DEPRECATED = 'quiet';
         
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!
@@ -62,7 +63,7 @@ export default class StarterConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'dev',
-                stackBuilder: blueprint.clone('us-east-1')
+                stackBuilder: blueprint.clone('us-west-1')
             })
             .stage({
                 id: 'prod',
