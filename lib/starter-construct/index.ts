@@ -39,7 +39,7 @@ export default class StarterConstruct extends cdk.Construct {
         const env = { account, region };
         const blueprint = ssp.EksBlueprint.builder()
             .account(accountID) 
-            .region('us-west-1')
+            .region('us-west-2')
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
                 new ssp.NginxAddOn,
@@ -63,7 +63,7 @@ export default class StarterConstruct extends cdk.Construct {
             })
             .stage({
                 id: 'dev',
-                stackBuilder: blueprint.clone('us-west-1')
+                stackBuilder: blueprint.clone('us-west-2')
             })
             // .stage({
             //     id: 'prod',
