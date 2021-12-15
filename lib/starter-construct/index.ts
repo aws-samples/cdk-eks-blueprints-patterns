@@ -39,7 +39,7 @@ export default class StarterConstruct extends cdk.Construct {
         const env = { account, region };
         const blueprint = ssp.EksBlueprint.builder()
             .account(accountID) 
-            .region('us-east-1')
+            .region('us-west-1')
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
                 new ssp.NginxAddOn,
@@ -65,13 +65,13 @@ export default class StarterConstruct extends cdk.Construct {
                 id: 'dev',
                 stackBuilder: blueprint.clone('us-west-1')
             })
-            .stage({
-                id: 'prod',
-                stackBuilder: blueprint.clone('us-west-2'),
-                stageProps: {
-                    manualApprovals: true
-                }
-            })
+            // .stage({
+            //     id: 'prod',
+            //     stackBuilder: blueprint.clone('us-west-2'),
+            //     stageProps: {
+            //         manualApprovals: true
+            //     }
+            // })
             .build(scope, `${id}-pipeline-stack`, {env});
     }
 }
