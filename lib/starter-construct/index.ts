@@ -37,13 +37,33 @@ export default class StarterConstruct extends cdk.Construct {
         const account = process.env.CDK_DEFAULT_ACCOUNT;
         const region = process.env.CDK_DEFAULT_REGION;
         const env = { account, region };
+        
+        // ArgoCD Bootstrapping
+        const repoUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
+        const devBootstrapArgo = new ssp.ArgoCDAddOn({
+            bootstrapRepo: {
+                repoUrl,
+                credentialsSecretName: 'github-ssh-key',
+                credentialsType: 'SSH',
+                path: 'envs/dev'
+            }
+        });
+        const prodBootstrapArgo = new ssp.ArgoCDAddOn({
+            bootstrapRepo: {
+                repoUrl,
+                credentialsSecretName: 'github-ssh-key',
+                credentialsType: 'SSH',
+                path: 'envs/prod'
+            },
+            adminPasswordSecretName: 'argo-admin-secret',
+        });
+        
         const blueprint = ssp.EksBlueprint.builder()
             .account(accountID) 
             .region('us-west-2')
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
                 new ssp.NginxAddOn,
-                new ssp.ArgoCDAddOn
             )
             .teams(
                 new team.TeamPlatform(accountID),
@@ -64,16 +84,20 @@ export default class StarterConstruct extends cdk.Construct {
             .stage({
                 id: 'dev',
                 stackBuilder: blueprint.clone('us-west-2')
+                .addOns(
+                    devBootstrapArgo
+                )
             })
-            // .stage({
-            //     id: 'prod',
-            //     stackBuilder: blueprint.clone('us-west-2'),
-            //     stageProps: {
-            //         manualApprovals: true
-            //     }
-            // })
+            .stage({
+                id: 'prod',
+                stackBuilder: blueprint.clone('us-east-1')
+                .addOns(
+                    prodBootstrapArgo
+                ),
+                stageProps: {
+                    manualApprovals: true
+                }
+            })
             .build(scope, `${id}-pipeline-stack`, {env});
     }
 }
-
-
