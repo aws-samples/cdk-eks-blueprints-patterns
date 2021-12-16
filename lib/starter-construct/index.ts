@@ -39,7 +39,7 @@ export default class StarterConstruct extends cdk.Construct {
         const env = { account, region };
         
         // ArgoCD Bootstrapping
-        const repoUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
+        const repoUrl = 'https://github.com/youngjeong46/ssp-eks-workloads.git';
         const devBootstrapArgo = new ssp.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl,
