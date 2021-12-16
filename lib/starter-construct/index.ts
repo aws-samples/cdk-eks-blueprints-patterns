@@ -43,16 +43,16 @@ export default class StarterConstruct extends cdk.Construct {
         const devBootstrapArgo = new ssp.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl,
-                credentialsSecretName: 'github-ssh-key',
-                credentialsType: 'SSH',
+                credentialsSecretName: 'github-token',
+                credentialsType: 'TOKEN',
                 path: 'envs/dev'
             }
         });
         const prodBootstrapArgo = new ssp.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl,
-                credentialsSecretName: 'github-ssh-key',
-                credentialsType: 'SSH',
+                credentialsSecretName: 'github-token',
+                credentialsType: 'TOKEN',
                 path: 'envs/prod'
             },
             adminPasswordSecretName: 'argo-admin-secret',
