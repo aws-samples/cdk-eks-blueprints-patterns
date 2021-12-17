@@ -48,7 +48,9 @@ const account = process.env.CDK_DEFAULT_ACCOUNT;
 const region = process.env.CDK_DEFAULT_REGION;
 const env = { account, region };
 if(account) {
-    new PipelineConstruct(app, 'pipeline', { env });
+    new PipelineConstruct().buildAsync(app, 'pipeline', { env }).catch(() => {
+        console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
+    });
 }
 else {
     console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run 'aws configure'");
