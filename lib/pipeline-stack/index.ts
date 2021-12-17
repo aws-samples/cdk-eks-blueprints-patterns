@@ -46,7 +46,7 @@ export default class PipelineConstruct extends cdk.Construct {
                 id: 'us-east-2-managed-ssp',
                 stackBuilder: blueprint.clone('us-east-2'),
                 stageProps: {
-                    manualApprovals: true
+                    pre: [new ssp.cdkpipelines.ManualApprovalStep('manual-approval')]
                 }
             })
             .build(scope, "ssp-pipeline-stack", props);
