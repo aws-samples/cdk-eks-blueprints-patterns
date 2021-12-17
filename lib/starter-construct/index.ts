@@ -60,6 +60,7 @@ export default class StarterConstruct extends cdk.Construct {
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
                 new ssp.NginxAddOn,
+                new ssp.SSMAgentAddOn,
             )
             .teams(
                 new team.TeamPlatform(accountID),
@@ -91,7 +92,7 @@ export default class StarterConstruct extends cdk.Construct {
                     prodBootstrapArgo
                 ),
                 stageProps: {
-                    manualApprovals: true
+                    pre: [new ssp.cdkpipelines.ManualApprovalStep('manual-approval')]
                 }
             })
             .build(scope, `${id}-pipeline-stack`, {env});
