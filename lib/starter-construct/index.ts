@@ -92,7 +92,7 @@ export default class StarterConstruct extends cdk.Construct {
                     prodBootstrapArgo
                 ),
                 stageProps: {
-                    pre: [new ssp.cdkpipelines.ManualApprovalStep('manual-approval')]
+                    pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
                 }
             })
             .build(scope, `${id}-pipeline-stack`, {env});
