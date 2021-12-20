@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-quickstart/ssp-amazon-eks": "^0.12.3",
-    "@kubecost/kubecost-ssp-addon": "^1.0.5",
+    "@kubecost/kubecost-ssp-addon": "^1.0.8",
     "source-map-support": "^0.5.21"
   }
 }

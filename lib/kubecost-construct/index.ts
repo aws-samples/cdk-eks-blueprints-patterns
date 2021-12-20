@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
-import { KubecostAddOn } from '@kubecost/kubecost-ssp-addon';
+import { KubecostAddOn, KubecostAddOnProps } from '@kubecost/kubecost-ssp-addon';
 
 export default class KubecostConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
