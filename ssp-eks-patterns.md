@@ -36,7 +36,7 @@ rm package-lock.json
 rm -rf node_modules  
 ```
 
-you mzy also select fix values for dependencies by removing the preffix ^
+you may also select fix values for dependencies by removing the preffix ^
 
 ex in package.json:
 
@@ -52,3 +52,15 @@ ex in package.json:
 ```
 
 ### github-ssh-key ResourceNotFoundException: Secrets Manager can't find the specified secret.
+
+### github-token ResourceNotFoundException: Secrets Manager can't find the specified secret.
+
+aws secretsmanager get-secret-value \
+  --secret-id github-token \
+  --query SecretString \
+  --output text --region us-east-2 
+
+aws secretsmanager get-secret-value \
+  --secret-id github-token \
+  --query SecretString \
+  --output text --region us-west-1 

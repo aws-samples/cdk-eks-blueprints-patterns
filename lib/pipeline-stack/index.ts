@@ -1,36 +1,34 @@
 import { InstanceType } from '@aws-cdk/aws-ec2';
-import { CapacityType, FargateProfileOptions, KubernetesVersion } from '@aws-cdk/aws-eks';
+import { CapacityType, KubernetesVersion } from '@aws-cdk/aws-eks';
 import * as cdk from '@aws-cdk/core';
 import { StackProps } from '@aws-cdk/core';
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
-
 import { GlobalResources, MngClusterProvider } from '@aws-quickstart/ssp-amazon-eks';
 import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
 import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
-
 // Team implementations
 import * as team from '../teams';
+
+
 
 const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
 export default class PipelineConstruct {
-
-      async buildAsync(scope: cdk.Construct, id: string, props?: StackProps) {
-        try {
-            await getSecretValue('github-token', 'us-east-2');
-            await getSecretValue('github-token', 'us-west-1');
-        }
-        catch(error) {
-            throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
+  async buildAsync(scope: cdk.Construct, id: string, props?: StackProps) {
+    try {
+      await getSecretValue('github-token', 'us-east-2');
+      await getSecretValue('github-token', 'eu-west-1');
+      await getSecretValue('github-token', 'eu-west-3');
+    } catch (error) {
+      throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
             The GitHub Personal Access Token should have these scopes:
             * **repo** - to read the repository
             * * **admin:repo_hook** - if you plan to use webhooks (true by default)
             * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
-        }
-        const account = process.env.CDK_DEFAULT_ACCOUNT!;
-    
+    }
+    const account = process.env.CDK_DEFAULT_ACCOUNT!;
 
     // Teams for the cluster.
     const teams: Array<ssp.Team> = [
@@ -55,9 +53,9 @@ export default class PipelineConstruct {
 
     // const GitOps = new wego.WeaveGitOpsAddOn(bootstrapRepository, 'wego-system');
 
-                // const fargateProfiles: Map<string, FargateProfileOptions> = new Map([
-                //   ['fargate', { selectors: [{ namespace: 'fargate' }] }],
-                // ]);
+    // const fargateProfiles: Map<string, FargateProfileOptions> = new Map([
+    //   ['fargate', { selectors: [{ namespace: 'fargate' }] }],
+    // ]);
 
     const blueprint = ssp.EksBlueprint.builder()
       .account(account) // the supplied default will fail, but build and synth will pass
@@ -71,9 +69,7 @@ export default class PipelineConstruct {
           minSize: 1,
           version: KubernetesVersion.V1_20,
           nodeGroupCapacityType: CapacityType.ON_DEMAND,
-          instanceTypes: [
-            new InstanceType('m5.xlarge'),
-          ],
+          instanceTypes: [new InstanceType('m5.xlarge')],
         }),
       )
       .clusterProvider(
@@ -104,13 +100,13 @@ export default class PipelineConstruct {
       .addOns(
         //new wego.WeaveGitOpsAddOn(bootstrapRepository, 'wego-system'),
         new ssp.AwsLoadBalancerControllerAddOn(),
-             //new ssp.NginxAddOn,
-               // new ssp.ArgoCDAddOn,
-                new ssp.AppMeshAddOn( {
-                    enableTracing: true
-                }),
-                new ssp.SSMAgentAddOn, // this is added to deal with PVRE as it is adding correct role to the node group, otherwise stack destroy won't work
-               
+        //new ssp.NginxAddOn,
+        // new ssp.ArgoCDAddOn,
+        new ssp.AppMeshAddOn({
+          enableTracing: true,
+        }),
+        new ssp.SSMAgentAddOn(), // this is added to deal with PVRE as it is adding correct role to the node group, otherwise stack destroy won't work
+
         new ssp.addons.ExternalDnsAddon({
           hostedZoneResources: [GlobalResources.HostedZone], // you can add more if you register resource providers
         }),
