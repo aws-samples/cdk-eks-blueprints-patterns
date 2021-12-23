@@ -14,26 +14,21 @@
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.10",
-    "@types/node": "10.17.27",
-    "@typescript-eslint/eslint-plugin": "^4.23.0",
-    "@typescript-eslint/parser": "^4.23.0",
-    "aws-cdk": "1.124.0",
+    "@types/jest": "^27.0.3",
+    "@types/node": "16.11.13",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "aws-cdk": "1.135.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^7.26.0",
-    "jest": "^26.4.2",
-    "ts-jest": "^26.2.2",
-    "ts-node": "^9.0.0",
-    "typescript": "~3.9.7"
+    "eslint": "^8.4.1",
+    "jest": "^27.4.5",
+    "ts-jest": "^27.1.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-cdk/assert": "1.124.0",
-    "@aws-cdk/aws-ec2": "1.124.0",
-    "@aws-cdk/aws-eks": "1.124.0",
-    "@aws-cdk/aws-iam": "1.124.0",
-    "@aws-cdk/aws-s3": "1.124.0",
-    "@aws-quickstart/ssp-amazon-eks": "^0.12.2",
+    "@aws-quickstart/ssp-amazon-eks": "^0.12.4",
     "@weaveworksoss/weavegitops-ssp-addon": "^0.0.2",
-    "source-map-support": "^0.5.16"
+    "source-map-support": "^0.5.21"
   }
 }

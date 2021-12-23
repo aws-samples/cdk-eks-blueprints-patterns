@@ -2,30 +2,39 @@ import { InstanceType } from '@aws-cdk/aws-ec2';
 import { CapacityType, FargateProfileOptions, KubernetesVersion } from '@aws-cdk/aws-eks';
 import * as cdk from '@aws-cdk/core';
 import { StackProps } from '@aws-cdk/core';
-
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
+
 import { GlobalResources, MngClusterProvider } from '@aws-quickstart/ssp-amazon-eks';
 import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
-//import * as wego from '@weaveworksoss/weavegitops-ssp-addon';
-
-// import MultiRegionConstruct from '../multi-region-construct';
+import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 // Team implementations
 import * as team from '../teams';
 
-const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
-export default class PipelineConstruct extends cdk.Construct {
-  constructor(scope: cdk.Construct, id: string, props?: StackProps) {
-    super(scope, id);
-    const account = process.env.CDK_DEFAULT_ACCOUNT!;
+export default class PipelineConstruct {
+
+      async buildAsync(scope: cdk.Construct, id: string, props?: StackProps) {
+        try {
+            await getSecretValue('github-token', 'us-east-2');
+            await getSecretValue('github-token', 'us-west-1');
+        }
+        catch(error) {
+            throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
+            The GitHub Personal Access Token should have these scopes:
+            * **repo** - to read the repository
+            * * **admin:repo_hook** - if you plan to use webhooks (true by default)
+            * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
+        }
+        const account = process.env.CDK_DEFAULT_ACCOUNT!;
+    
 
     // Teams for the cluster.
     const teams: Array<ssp.Team> = [
-      new team.TeamPlatform(accountID),
+      new team.TeamPlatform(account),
       new team.TeamTroiSetup(),
       new team.TeamRikerSetup(),
       new team.TeamBurnhamSetup(scope),
@@ -35,7 +44,7 @@ export default class PipelineConstruct extends cdk.Construct {
     const testSubdomain: string = valueFromContext(scope, 'test.subzone.name', 'test.eks.demo3.allamand.com');
     const prodSubdomain: string = valueFromContext(scope, 'prod.subzone.name', 'prod.eks.demo3.allamand.com');
 
-    const parentDomain = valueFromContext(this, 'parent.hostedzone.name', 'eks.demo3.allamand.com');
+    const parentDomain = valueFromContext(scope, 'parent.hostedzone.name', 'eks.demo3.allamand.com');
 
     // let bootstrapRepository = {
     //   URL: 'ssh://git@github.com/weaveworks/weave-gitops-ssp-addon',
@@ -95,6 +104,13 @@ export default class PipelineConstruct extends cdk.Construct {
       .addOns(
         //new wego.WeaveGitOpsAddOn(bootstrapRepository, 'wego-system'),
         new ssp.AwsLoadBalancerControllerAddOn(),
+             //new ssp.NginxAddOn,
+               // new ssp.ArgoCDAddOn,
+                new ssp.AppMeshAddOn( {
+                    enableTracing: true
+                }),
+                new ssp.SSMAgentAddOn, // this is added to deal with PVRE as it is adding correct role to the node group, otherwise stack destroy won't work
+               
         new ssp.addons.ExternalDnsAddon({
           hostedZoneResources: [GlobalResources.HostedZone], // you can add more if you register resource providers
         }),
@@ -110,7 +126,7 @@ export default class PipelineConstruct extends cdk.Construct {
       .repository({
         repoUrl: 'ssp-eks-patterns',
         credentialsSecretName: 'github-token',
-        branch: 'pipeline',
+        targetRevision: 'pipeline',
       })
       .stage({
         id: 'ssp-dev',

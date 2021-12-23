@@ -6,6 +6,13 @@ const app = new cdk.App();
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
 new NginxIngressConstruct(app, 'nginx');
 
+//-------------------------------------------
+// Starter Cluster with barebone infrastructure.
+//-------------------------------------------
+
+import StarterConstruct from '../lib/starter-construct';
+new StarterConstruct(app, 'starter');
+
 
 //-------------------------------------------
 // Single Cluster with multiple teams.
@@ -41,7 +48,9 @@ const account = process.env.CDK_DEFAULT_ACCOUNT;
 const region = process.env.CDK_DEFAULT_REGION;
 const env = { account, region };
 if(account) {
-    new PipelineConstruct(app, 'pipeline', { env });
+    new PipelineConstruct().buildAsync(app, 'pipeline', { env }).catch(() => {
+        console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
+    });
 }
 else {
     console.log("Valid AWS credentials are required to synthesize pipeline stack. Please run 'aws configure'");
