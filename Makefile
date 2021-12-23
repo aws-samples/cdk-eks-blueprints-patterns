@@ -52,3 +52,10 @@ pipeline:
 
 multi-region:
 	npm run cdk deploy multi-region
+
+
+bottlerocket:
+	npm run cdk deploy bottlerocket-blueprint
+
+scratchpad:
+	npm run cdk deploy scratchpad-blueprint

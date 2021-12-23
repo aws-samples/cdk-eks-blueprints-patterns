@@ -51,8 +51,8 @@ else {
 // Single cluster with Bottlerocket nodes.
 //-------------------------------------------
 
-// import BottleRocketConstruct from '../lib/bottlerocket-construct';
-// new BottleRocketConstruct(app, 'bottlerocket');
+import BottleRocketConstruct from '../lib/bottlerocket-construct';
+new BottleRocketConstruct(app, 'bottlerocket');
 
 
 //-------------------------------------------
@@ -62,5 +62,5 @@ else {
 // import CustomClusterConstruct from '../lib/custom-cluster-construct';
 // new CustomClusterConstruct(app, 'custom-cluster');
 
-// import ScratchpadConstruct from '../lib/scratchpad';
-// new ScratchpadConstruct(app, 'scratchpad');
+import ScratchpadConstruct from '../lib/scratchpad';
+new ScratchpadConstruct(app, 'scratchpad');
