@@ -19,6 +19,10 @@ export default class PipelineConstruct {
       await getSecretValue('github-token', 'us-east-2');
       await getSecretValue('github-token', 'eu-west-1');
       await getSecretValue('github-token', 'eu-west-3');
+
+      await getSecretValue('argo-admin-secret', 'us-east-2');
+      await getSecretValue('argo-admin-secret', 'eu-west-1');
+      await getSecretValue('argo-admin-secret', 'eu-west-3');
     } catch (error) {
       throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
             The GitHub Personal Access Token should have these scopes:
