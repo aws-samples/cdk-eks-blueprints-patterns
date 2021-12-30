@@ -10,8 +10,6 @@ import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secret
 // Team implementations
 import * as team from '../teams';
 
-
-
 const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
@@ -122,7 +120,7 @@ export default class PipelineConstruct {
       .repository({
         repoUrl: 'ssp-eks-patterns',
         credentialsSecretName: 'github-token',
-        targetRevision: 'pipeline',
+        targetRevision: 'main',
       })
       .stage({
         id: 'ssp-dev',
