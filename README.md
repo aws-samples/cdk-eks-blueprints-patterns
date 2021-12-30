@@ -38,6 +38,28 @@ We can then deploy a specific pattern with the following:
 cdk deploy multi-team-blueprint
 ```
 
+Deploy nginx Example
+
+```bash
+cdk deploy nginx-blueprint --require-approval never
+```
+
+Deploy multi-region pipeline
+```bash
+cdk deploy --require-approval never ssp-pipeline-stack  
+```
+
+cdk bootstrap \
+  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
+  aws://382076407153/us-east-2
+cdk bootstrap \
+  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
+  aws://382076407153/eu-west-3
+cdk bootstrap \
+  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
+  aws://382076407153/eu-west-1
+
+
 # Deploying Blueprints with External Dependency on AWS Resources
 
 There are cases when the blueprints defined in the SSP Patterns have dependencies on existing AWS Resources such as Secrets defined in the account/region.

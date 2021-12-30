@@ -11,6 +11,8 @@ HOMEBREW_LIBS :=  nvm typescript argocd
 deps: bootstrap
 	npm install
 
+clean:
+	rm -rf node_modules
 
 lint: 
 	$(ESLINT) . --ext .js,.jsx,.ts,.tsx
@@ -47,3 +49,13 @@ init:
 
 pipeline:
 	npm run cdk deploy ssp-pipeline-stack
+
+multi-region:
+	npm run cdk deploy multi-region
+
+
+bottlerocket:
+	npm run cdk deploy bottlerocket-blueprint
+
+scratchpad:
+	npm run cdk deploy scratchpad-blueprint
