@@ -119,7 +119,7 @@ export default class PipelineConstruct {
       );
 
     ssp.CodePipelineStack.builder()
-      .name('ssp-eks-pipeline')
+      .name('ssp-eks-pipeline2')
       .owner('allamand')
       .repository({
         repoUrl: 'ssp-eks-patterns',
@@ -242,6 +242,7 @@ export default class PipelineConstruct {
           pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')],
         },
       })
-      .build(scope, 'ssp-pipeline-stack', props);
+      .build(scope, 'ssp-pipeline-stack2', props);
+      
   }
 }
