@@ -7,7 +7,6 @@ import * as team from '../teams'
 export default class StarterConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
         super(scope, id);
-        process.env.JSII_DEPRECATED = 'quiet';
         
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!
@@ -37,6 +36,21 @@ export default class StarterConstruct extends cdk.Construct {
         const account = process.env.CDK_DEFAULT_ACCOUNT;
         const region = process.env.CDK_DEFAULT_REGION;
         const env = { account, region };
+        const blueprint = ssp.EksBlueprint.builder()
+            .account(accountID) 
+            .region('us-west-2')
+            .addOns(
+                new ssp.AwsLoadBalancerControllerAddOn, 
+                new ssp.NginxAddOn,
+                new ssp.SSMAgentAddOn,
+            )
+            .teams(
+                new team.TeamPlatform(accountID),
+                new team.TeamRikerSetup,
+                new team.TeamBurnhamSetup(scope),
+                new team.TeamTroiSetup
+            );
+            
         
         // ArgoCD Bootstrapping
         const repoUrl = 'https://github.com/youngjeong46/ssp-eks-workloads.git';
@@ -54,21 +68,6 @@ export default class StarterConstruct extends cdk.Construct {
             adminPasswordSecretName: 'argo-admin-secret',
         });
         
-        const blueprint = ssp.EksBlueprint.builder()
-            .account(accountID) 
-            .region('us-west-2')
-            .addOns(
-                new ssp.AwsLoadBalancerControllerAddOn, 
-                new ssp.NginxAddOn,
-                new ssp.SSMAgentAddOn,
-            )
-            .teams(
-                new team.TeamPlatform(accountID),
-                new team.TeamRikerSetup,
-                new team.TeamBurnhamSetup(scope),
-                new team.TeamTroiSetup
-            );
-            
         // Build code pipeline and add stages
         ssp.CodePipelineStack.builder()
             .name("ssp-eks-workshop-pipeline")
@@ -89,7 +88,7 @@ export default class StarterConstruct extends cdk.Construct {
                 id: 'prod',
                 stackBuilder: blueprint.clone('us-east-1')
                 .addOns(
-                    prodBootstrapArgo
+                    prodBootstrapArgo, new ssp.CalicoAddOn()
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
