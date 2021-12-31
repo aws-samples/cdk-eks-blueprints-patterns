@@ -242,7 +242,6 @@ export default class PipelineConstruct {
           pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')],
         },
       })
-      .build(scope, 'ssp-pipeline-stack2', props);
-      
+      .build(scope, 'ssp-pipeline-stack', props);
   }
 }

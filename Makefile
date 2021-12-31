@@ -48,7 +48,7 @@ init:
 	 npm run cdk bootstrap aws://382076407153/us-east-2 --force
 
 pipeline:
-	npm run cdk -a . deploy ssp-pipeline-stack2 --require-approval=never
+	npm run cdk -a . deploy ssp-pipeline-stack --require-approval=never
 
 multi-region:
 	npm run cdk deploy multi-region
