@@ -38,11 +38,10 @@ export default class StarterConstruct extends cdk.Construct {
         const env = { account, region };
         const blueprint = ssp.EksBlueprint.builder()
             .account(accountID) 
-            .region('us-west-2')
+            .region('us-east-1')
             .addOns(
                 new ssp.AwsLoadBalancerControllerAddOn, 
                 new ssp.NginxAddOn,
-                new ssp.SSMAgentAddOn,
             )
             .teams(
                 new team.TeamPlatform(accountID),
@@ -51,15 +50,8 @@ export default class StarterConstruct extends cdk.Construct {
                 new team.TeamTroiSetup
             );
             
-        
         // ArgoCD Bootstrapping
         const repoUrl = 'https://github.com/youngjeong46/ssp-eks-workloads.git';
-        const devBootstrapArgo = new ssp.ArgoCDAddOn({
-            bootstrapRepo: {
-                repoUrl,
-                path: 'envs/dev'
-            }
-        });
         const prodBootstrapArgo = new ssp.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl,
@@ -78,15 +70,8 @@ export default class StarterConstruct extends cdk.Construct {
                 targetRevision: 'young-workshop-test'
             })
             .stage({
-                id: 'dev',
-                stackBuilder: blueprint.clone('us-west-2')
-                .addOns(
-                    devBootstrapArgo
-                )
-            })
-            .stage({
                 id: 'prod',
-                stackBuilder: blueprint.clone('us-east-1')
+                stackBuilder: blueprint.clone('us-west-2')
                 .addOns(
                     prodBootstrapArgo
                 ),
