@@ -73,7 +73,7 @@ export default class StarterConstruct extends cdk.Construct {
                 id: 'prod',
                 stackBuilder: blueprint.clone('us-west-2')
                 .addOns(
-                    prodBootstrapArgo, new ssp.ClusterAutoScalerAddOn()
+                    prodBootstrapArgo
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
