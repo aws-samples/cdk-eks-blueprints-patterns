@@ -39,10 +39,7 @@ export default class StarterConstruct extends cdk.Construct {
         const blueprint = ssp.EksBlueprint.builder()
             .account(accountID) 
             .region('us-east-1')
-            .addOns(
-                new ssp.AwsLoadBalancerControllerAddOn, 
-                new ssp.NginxAddOn,
-            )
+            .addOns()
             .teams(
                 new team.TeamPlatform(accountID),
                 new team.TeamRikerSetup,
@@ -76,7 +73,7 @@ export default class StarterConstruct extends cdk.Construct {
                     prodBootstrapArgo,
                     new ssp.AppMeshAddOn(),
                     new ssp.AwsLoadBalancerControllerAddOn(),
-                    // new ssp.ContainerInsightsAddOn()
+                    new ssp.ContainerInsightsAddOn()
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
