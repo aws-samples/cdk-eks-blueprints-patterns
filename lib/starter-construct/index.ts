@@ -75,7 +75,8 @@ export default class StarterConstruct extends cdk.Construct {
                 .addOns(
                     prodBootstrapArgo,
                     new ssp.AppMeshAddOn(),
-                    new ssp.ContainerInsightsAddOn()
+                    new ssp.ContainerInsightsAddOn(),
+                    new ssp.ClusterAutoScalerAddOn(),
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
