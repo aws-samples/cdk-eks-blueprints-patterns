@@ -73,7 +73,10 @@ export default class StarterConstruct extends cdk.Construct {
                 id: 'prod',
                 stackBuilder: blueprint.clone('us-west-2')
                 .addOns(
-                    prodBootstrapArgo
+                    prodBootstrapArgo,
+                    new ssp.AppMeshAddOn(),
+                    new ssp.AwsLoadBalancerControllerAddOn(),
+                    new ssp.ContainerInsightsAddOn()
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
