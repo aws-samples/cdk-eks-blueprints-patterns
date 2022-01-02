@@ -76,7 +76,7 @@ export default class StarterConstruct extends cdk.Construct {
                     prodBootstrapArgo,
                     new ssp.AppMeshAddOn(),
                     new ssp.AwsLoadBalancerControllerAddOn(),
-                    new ssp.ContainerInsightsAddOn()
+                    // new ssp.ContainerInsightsAddOn()
                 ),
                 stageProps: {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
