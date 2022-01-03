@@ -74,7 +74,6 @@ export default class StarterConstruct extends cdk.Construct {
                 stackBuilder: blueprint.clone('us-west-2')
                 .addOns(
                     prodBootstrapArgo,
-                    new ssp.ContainerInsightsAddOn(),
                     new ssp.ClusterAutoScalerAddOn(),
                 ),
                 stageProps: {
