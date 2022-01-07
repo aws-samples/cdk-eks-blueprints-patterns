@@ -65,6 +65,7 @@ export default class PipelineConstruct {
       .teams(...teams)
       .resourceProvider(GlobalResources.HostedZone, new ssp.LookupHostedZoneProvider(parentDomain))
       .clusterProvider(
+        //ATTENTION only the last clusterProvider is applied actually
         new MngClusterProvider({
           desiredSize: 1,
           maxSize: 3,
@@ -75,6 +76,7 @@ export default class PipelineConstruct {
         }),
       )
       .clusterProvider(
+        //ATTENTION only the last clusterProvider is applied actually
         new MngClusterProvider({
           desiredSize: 3,
           maxSize: 20,

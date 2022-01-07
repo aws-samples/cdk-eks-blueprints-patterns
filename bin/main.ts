@@ -6,6 +6,12 @@ const app = new cdk.App();
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
 new NginxIngressConstruct(app, 'nginx');
 
+
+import KubeflowConstruct from '../lib/kubeflow-construct';
+new KubeflowConstruct(app, 'kubeflow');
+
+
+
 //-------------------------------------------
 // Starter Cluster with barebone infrastructure.
 //-------------------------------------------

@@ -59,3 +59,9 @@ bottlerocket:
 
 scratchpad:
 	npm run cdk deploy scratchpad-blueprint
+
+nginx-blueprint:
+	npm run cdk deploy nginx-blueprint --require-approval=never
+
+kubeflow-blueprint:
+	npm run cdk deploy kubeflow-blueprint --require-approval=never
