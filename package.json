@@ -29,7 +29,7 @@
   "dependencies": {
     "@aws-quickstart/ssp-amazon-eks": "0.12.4",
     "@kubecost/kubecost-ssp-addon": "^1.0.8",
-    "@keptn/keptn-cp-ssp-addon": "^0.2.0",
+    "@keptn/keptn-cp-ssp-addon": "^0.3.0",
     "source-map-support": "^0.5.21"
   }
 }
