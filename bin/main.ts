@@ -76,3 +76,6 @@ new ScratchpadConstruct(app, 'scratchpad');
 
 import KubecostConstruct from '../lib/kubecost-construct';
 new KubecostConstruct(app, 'kubecost')
+
+import KeptnControlPlaneConstruct from '../lib/keptn-construct';
+new KeptnControlPlaneConstruct(app, 'keptn')
