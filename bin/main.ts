@@ -79,3 +79,6 @@ new KubecostConstruct(app, 'kubecost')
 
 import KeptnControlPlaneConstruct from '../lib/keptn-construct';
 new KeptnControlPlaneConstruct(app, 'keptn')
+
+import RezilionConstruct from '../lib/rezilion-construct';
+new RezilionConstruct(app, 'rezilion')
