@@ -10,7 +10,8 @@ export default class KeptnControlPlaneConstruct extends cdk.Construct {
         const stackId = `${id}-blueprint`;
 
         const KeptnControlPlane = new KeptnControlPlaneAddOn({
-            ssmSecretName: 'keptn-secrets'
+            // uncomment after you setup the ssm secret keptn-secrets.
+            // ssmSecretName: 'keptn-secrets'
         })
 
         EksBlueprint.builder()
