@@ -68,6 +68,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
                         }
                     }
                 }),
+                new ssp.SecretsStoreAddOn({ rotationPollInterval: "120s"}), 
                 new ssp.ArgoCDAddOn( {
                     bootstrapRepo: {
                         repoUrl: gitUrl,
@@ -80,8 +81,7 @@ export default class NginxIngressConstruct extends cdk.Construct {
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
                 new ssp.ContainerInsightsAddOn,
-                new ssp.XrayAddOn,
-                new ssp.SecretsStoreAddOn )
+                new ssp.XrayAddOn)
             .build(scope, `${id}-blueprint`);
     }
 }
