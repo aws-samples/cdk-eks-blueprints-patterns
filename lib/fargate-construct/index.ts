@@ -1,5 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as eks from '@aws-cdk/aws-eks';
+
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
@@ -17,7 +18,11 @@ export default class FargateConstruct extends cdk.Construct {
 
             // AddOns for the cluster.
             const addOns: Array<ssp.ClusterAddOn> = [
-                new ssp.ArgoCDAddOn
+                new ssp.AppMeshAddOn,
+                new ssp.AwsLoadBalancerControllerAddOn,
+                new ssp.NginxAddOn,
+                new ssp.ArgoCDAddOn,
+                new ssp.MetricsServerAddOn
             ];
 
             // TODO - what is with dynatrace?

@@ -4,6 +4,9 @@ import { StackProps } from '@aws-cdk/core';
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
 // Team implementations
 import * as team from '../teams';
+const burnhamManifestDir = './lib/teams/team-burnham/'
+const rikerManifestDir = './lib/teams/team-riker/'
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 
@@ -36,8 +39,13 @@ export default class PipelineConstruct {
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn)
-            .teams(new team.TeamRikerSetup);
+                new ssp.ContainerInsightsAddOn,
+                new ssp.XrayAddOn,
+                new ssp.SecretsStoreAddOn)
+            .teams(
+                new team.TeamRikerSetup(scope, teamManifestDirList[1]),
+                new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
+            );
 
         ssp.CodePipelineStack.builder()
             .name("ssp-eks-pipeline")

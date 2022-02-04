@@ -2,7 +2,7 @@
 
 Welcome to the `SSP EKS Patterns` repository.
 
-This repository contains a number of samples for how you can leverage the [Amazon EKS SSP Quick Start](https://github.com/aws-quickstart/quickstart-ssp-amazon-eks).
+This repository contains a number of samples for how you can leverage the [Amazon EKS SSP Quick Start](https://github.com/aws-quickstart/ssp-amazon-eks).
 
 ## Patterns 
 
@@ -10,7 +10,7 @@ The individual patterns can be found in the `lib` directory.
 
 ## Documentation
 
-Please refer to the Amazon EKS SSP Quick Start [documentation site](https://aws-quickstart.github.io/quickstart-ssp-amazon-eks) for complete project documentation.
+Please refer to the Amazon EKS SSP Quick Start [documentation site](https://aws-quickstart.github.io/ssp-amazon-eks/) for complete project documentation.
 
 ## Usage
 
@@ -49,7 +49,7 @@ For `MultiRegionConstruct` the pattern relies on the following secrets defined:
 2. `argo-admin-secret` - must contain ArgoCD admin password in Plain Text. The secret is expected to be defined in `us-east-1` and replicated to `us-east-1` and `us-west-2` regions.
 3. `keptn-secrets` - must contain API_TOKEN and BRIDGE_PASSWORD password in Plain Text. The secret is expected to be defined in `us-east-1` region.
 
-For more information on defining secrets for ArgoCD, please refer to [SSP Documentation](https://github.com/aws-quickstart/quickstart-ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#secrets-support) as well as [known issues](https://github.com/aws-quickstart/quickstart-ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#known-issues).
+For more information on defining secrets for ArgoCD, please refer to [SSP Documentation](https://github.com/aws-quickstart/ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#secrets-support) as well as [known issues](https://github.com/aws-quickstart/ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#known-issues).
 
 ## Security
 
@@ -58,4 +58,3 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
