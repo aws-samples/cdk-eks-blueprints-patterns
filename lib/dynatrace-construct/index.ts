@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import { EksBlueprint } from '@aws-quickstart/ssp-amazon-eks';
-import { DynatraceOperatorAddOn } from '@dynatrace/dynatrace-ssp-addon'
+import { DynatraceAddOn } from '@dynatrace/dynatrace-ssp-addon'
 
 export default class DynatraceOperatorConstruct extends cdk.Construct {
 
@@ -9,7 +9,7 @@ export default class DynatraceOperatorConstruct extends cdk.Construct {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
 
-        const DynatraceOperator = new DynatraceOperatorAddOn({
+        const DynatraceOperator = new DynatraceAddOn({
             // Setup ssmSecret dynatrace-tokens described here (https://github.com/dynatrace-oss/dynatrace-ssp-addon#aws-secret-manager-secrets)
             ssmSecretName: 'dynatrace-tokens'
         })
