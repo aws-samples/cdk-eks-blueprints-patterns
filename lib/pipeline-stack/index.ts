@@ -53,7 +53,7 @@ export default class PipelineConstruct {
             .repository({
                 repoUrl: 'ssp-eks-patterns',
                 credentialsSecretName: 'github-token',
-                targetRevision: 'main'
+                targetRevision: 'feature/pipeline-waves'
             })
             .stage({
                 id: 'us-west-1-managed-ssp',
