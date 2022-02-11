@@ -2,12 +2,12 @@ import * as cdk from '@aws-cdk/core';
 import { StackProps } from '@aws-cdk/core';
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
+import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 // Team implementations
 import * as team from '../teams';
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
 const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
-import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 
 export default class PipelineConstruct {
@@ -59,6 +59,13 @@ export default class PipelineConstruct {
                 id: 'us-west-1-managed-ssp',
                 stackBuilder: blueprint.clone('us-west-1')
             })
+            .wave( {
+                id: "dev",
+                stages: [
+                    { id: "dev-west-1", stackBuilder: blueprint.clone('us-west-1')},
+                    { id: "dev-east-2", stackBuilder: blueprint.clone('us-east-2')},
+                ]
+            })
             .stage({
                 id: 'us-east-2-managed-ssp',
                 stackBuilder: blueprint.clone('us-east-2'),
@@ -66,6 +73,14 @@ export default class PipelineConstruct {
                     pre: [new ssp.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
                 }
             })
+            .wave( {
+                id: "prod",
+                stages: [
+                    { id: "prod-west-1", stackBuilder: blueprint.clone('us-west-1')},
+                    { id: "prod-east-2", stackBuilder: blueprint.clone('us-east-2')},
+                ]
+            })
+
             .build(scope, "ssp-pipeline-stack", props);
     }
 }
