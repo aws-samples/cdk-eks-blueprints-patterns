@@ -9,7 +9,7 @@ export default class NewRelicConstruct extends cdk.Construct {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
 
-        const NewRelic = new NewRelicAddOn({
+        const newRelic = new NewRelicAddOn({
             // Uncomment after you create the "newrelic-license-key" secret in
             // AWS Secrets Manager.  Use Plaintext mode.
             // nrLicenseKeySecretName: "newrelic-license-key",
@@ -19,6 +19,6 @@ export default class NewRelicConstruct extends cdk.Construct {
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
-            .addOns(NewRelic))
+            .addOns(newRelic))
             .build(scope, stackId);
 }
