@@ -79,3 +79,6 @@ new KubecostConstruct(app, 'kubecost')
 
 import KeptnControlPlaneConstruct from '../lib/keptn-construct';
 new KeptnControlPlaneConstruct(app, 'keptn')
+
+import NewRelicConstruct from '../lib/newrelic-construct';
+new NewRelicConstruct(app, 'newrelic')
