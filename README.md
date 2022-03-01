@@ -17,7 +17,7 @@ Please refer to the Amazon EKS SSP Quick Start [documentation site](https://aws-
 Install project dependencies. 
 
 ```
-make bootstrap
+make deps
 ```
 
 To view patterns that are available to be deployed, execute the following: 
@@ -25,6 +25,8 @@ To view patterns that are available to be deployed, execute the following:
 ```
 cdk list
 ```
+
+Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. 
 
 Bootstrap your CDK environment.
 
