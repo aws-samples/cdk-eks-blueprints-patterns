@@ -27,13 +27,9 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@aws-quickstart/ssp-amazon-eks": "^0.12.5",
     "@weaveworksoss/weavegitops-ssp-addon": "^0.0.2",
-=======
     "@aws-quickstart/ssp-amazon-eks": "0.12.11",
     "@keptn/keptn-cp-ssp-addon": "^0.3.0",
->>>>>>> 55df84fbc42b00071e96057d9f89ed652f46ede7
     "@kubecost/kubecost-ssp-addon": "^1.0.8",
     "source-map-support": "^0.5.21"
   }

@@ -14,6 +14,9 @@ import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/cont
 import { EksBlueprint, GlobalResources, MngClusterProvider } from '@aws-quickstart/ssp-amazon-eks';
 import MultiRegionConstruct from '../multi-region-construct';
 
+const burnhamManifestDir = './lib/teams/team-burnham/';
+const rikerManifestDir = './lib/teams/team-riker/';
+
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 const gitUrl = 'https://github.com/allamand/ssp-eks-workloads.git';
 
@@ -24,8 +27,8 @@ export default class KubeflowConstruct extends cdk.Construct {
     const teams: Array<ssp.Team> = [
       new team.TeamPlatform(accountID),
       new team.TeamTroiSetup(),
-      new team.TeamRikerSetup(),
-      new team.TeamBurnhamSetup(scope),
+      new team.TeamRikerSetup(scope, rikerManifestDir),
+      new team.TeamBurnhamSetup(scope, burnhamManifestDir),
     ];
 
     const subdomain: string = valueFromContext(scope, 'qua1.subzone.name', 'kubeflow2.eks.demo3.allamand.com');
