@@ -1,13 +1,12 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as eks from '@aws-cdk/aws-eks';
+
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks'
 
 // Team implementations
 import * as team from '../teams'
-import { AwsLoadBalancerControllerAddOn } from '@aws-quickstart/ssp-amazon-eks';
-
 
 export default class CustomClusterConstruct extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string) {
@@ -20,13 +19,16 @@ export default class CustomClusterConstruct extends cdk.Construct {
 
         // AddOns for the cluster.
         const addOns: Array<ssp.ClusterAddOn> = [
-            new AwsLoadBalancerControllerAddOn,
-            
+            new ssp.AppMeshAddOn,
+            new ssp.AwsLoadBalancerControllerAddOn,
             new ssp.NginxAddOn,
             new ssp.ArgoCDAddOn,
             new ssp.CalicoAddOn,
             new ssp.MetricsServerAddOn,
+            new ssp.ClusterAutoScalerAddOn,
             new ssp.ContainerInsightsAddOn,
+            new ssp.XrayAddOn,
+            new ssp.SecretsStoreAddOn
         ];
 
         const clusterProps: ssp.MngClusterProviderProps = {

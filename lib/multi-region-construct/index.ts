@@ -2,12 +2,13 @@ import * as cdk from '@aws-cdk/core';
 
 // SSP Lib
 import * as ssp from '@aws-quickstart/ssp-amazon-eks';
-
 import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
 
 // Team implementations
 import * as team from '../teams'
-
+const burnhamManifestDir = './lib/teams/team-burnham/'
+const rikerManifestDir = './lib/teams/team-riker/'
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 
 /**
  * This pattern demonstrates how to roll out a platform across multiple regions and multiple stages.
@@ -38,16 +39,18 @@ export default class MultiRegionConstruct {
         
         const blueprint = ssp.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addOns(new ssp.AwsLoadBalancerControllerAddOn,
+            .addOns( new ssp.AwsLoadBalancerControllerAddOn,
                 new ssp.NginxAddOn,
                 new ssp.CalicoAddOn,
                 new ssp.MetricsServerAddOn,
                 new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn)
+                new ssp.ContainerInsightsAddOn,
+                new ssp.XrayAddOn,
+                new ssp.SecretsStoreAddOn)
             .teams( new team.TeamPlatform(accountID),
                 new team.TeamTroiSetup,
-                new team.TeamRikerSetup,
-                new team.TeamBurnhamSetup(scope));
+                new team.TeamRikerSetup(scope, teamManifestDirList[1]),
+                new team.TeamBurnhamSetup(scope,teamManifestDirList[0]));
 
 
         const devBootstrapArgo = new ssp.ArgoCDAddOn({

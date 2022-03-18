@@ -10,43 +10,34 @@ import * as team from '../teams';
 import { KarpenterAddOn } from '../teams/karpenter';
 
 export default class ScratchpadConstruct extends cdk.Construct {
-  constructor(scope: cdk.Construct, id: string) {
-    super(scope, id);
+    constructor(scope: cdk.Construct, id: string) {
+        super(scope, id);
+        // AddOns for the cluster.
+        const addOns: Array<ssp.ClusterAddOn> = [
+            new ssp.AppMeshAddOn,
+            new ssp.AwsLoadBalancerControllerAddOn,
+            new ssp.NginxAddOn,
+            new ssp.ArgoCDAddOn,
+            new ssp.CalicoAddOn,
+            new ssp.MetricsServerAddOn,
+            new ssp.ClusterAutoScalerAddOn,
+            new ssp.ContainerInsightsAddOn,
+            new ssp.XrayAddOn,
+            new ssp.SecretsStoreAddOn
+        ];
 
+        const stackID = `${id}-blueprint`;
 
-    const stackID = `${id}-blueprint`;
+        const clusterProvider = new MngClusterProvider( {
+            desiredSize: 3,
+            maxSize: 3,
+            version: KubernetesVersion.V1_20
+        });
 
-    const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-    const platformTeam = new team.TeamPlatform(accountID);
-    //const karpenterNodeRole = new team.NodeKarpenter(accountID);
-    const karpenterNodeRole = new team.NodeKarpenter(accountID, stackID);
-    const teams: Array<ssp.Team> = [platformTeam, karpenterNodeRole];
-
-    // AddOns for the cluster.
-    const addOns: Array<ssp.ClusterAddOn> = [
-      new ssp.AwsLoadBalancerControllerAddOn(),
-      //new ssp.NginxAddOn,
-      new ssp.MetricsServerAddOn(),
-      new ssp.ClusterAutoScalerAddOn(),
-      new KarpenterAddOn(),
-      new ssp.ContainerInsightsAddOn(),
-    ];
-
-
-    const clusterProvider = new MngClusterProvider({
-      desiredSize: 3,
-      maxSize: 10,
-      version: KubernetesVersion.V1_20,
-    });
-
-    new ssp.EksBlueprint(
-      scope,
-      { id: stackID, addOns, clusterProvider },
-      {
-        env: {
-          region: 'us-east-2',
-        },
-      },
-    );
-  }
+        new ssp.EksBlueprint(scope, { id: stackID, addOns, clusterProvider }, {
+            env: {
+                region: 'us-east-2',
+            },
+        });
+    }
 }
