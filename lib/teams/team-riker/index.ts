@@ -1,6 +1,6 @@
-import { ApplicationTeam }  from '@aws-quickstart/ssp-amazon-eks';
-import { Construct } from '@aws-cdk/core'
-import { ArnPrincipal } from '@aws-cdk/aws-iam'
+import { ApplicationTeam }  from '@aws-quickstart/eks-blueprints';
+import { Construct } from 'constructs'
+import { ArnPrincipal } from 'aws-cdk-lib/aws-iam'
 
 function getUserArns(scope: Construct, key: string): ArnPrincipal[] {
     const context: string = scope.node.tryGetContext(key);

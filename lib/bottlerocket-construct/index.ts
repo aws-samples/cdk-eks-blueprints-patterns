@@ -1,39 +1,40 @@
-import * as cdk from '@aws-cdk/core';
-import * as eks from '@aws-cdk/aws-eks';
+import * as cdk from 'aws-cdk-lib';
+import * as eks from 'aws-cdk-lib/aws-eks';
+import { Construct } from 'constructs';
 
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
+// Blueprints Lib
+import * as blueprints from '@aws-quickstart/eks-blueprints'
 
 // Team implementations
 import * as team from '../teams'
 
-export default class BottlerocketConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
+export default class BottlerocketConstruct extends Construct {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!
         const platformTeam = new team.TeamPlatform(accountID)
-        const teams: Array<ssp.Team> = [platformTeam];
+        const teams: Array<blueprints.Team> = [platformTeam];
 
         // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.AppMeshAddOn,
-            new ssp.AwsLoadBalancerControllerAddOn,
-            new ssp.NginxAddOn,
-            new ssp.ArgoCDAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ContainerInsightsAddOn,
-            new ssp.SecretsStoreAddOn
+        const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.AppMeshAddOn,
+            new blueprints.AwsLoadBalancerControllerAddOn,
+            new blueprints.NginxAddOn,
+            new blueprints.ArgoCDAddOn,
+            new blueprints.CalicoAddOn,
+            new blueprints.MetricsServerAddOn,
+            new blueprints.ContainerInsightsAddOn,
+            new blueprints.SecretsStoreAddOn
         ];
 
         const stackID = `${id}-blueprint`;
-        const clusterProvider = new ssp.AsgClusterProvider({
-            version: eks.KubernetesVersion.V1_20,
-            machineImageType:  eks.MachineImageType.BOTTLEROCKET
+        const clusterProvider = new blueprints.MngClusterProvider({
+            version: eks.KubernetesVersion.V1_21,
+            amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64
          });
-        new ssp.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
+        new blueprints.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
             env: {
                 region: 'us-east-1'
             }

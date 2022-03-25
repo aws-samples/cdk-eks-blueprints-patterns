@@ -1,37 +1,35 @@
-import * as cdk from '@aws-cdk/core';
-import {KubernetesVersion}  from '@aws-cdk/aws-eks';
+import { Construct } from 'constructs';
+import {KubernetesVersion}  from 'aws-cdk-lib/aws-eks';
 
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks';
-import { MngClusterProvider } from '@aws-quickstart/ssp-amazon-eks';
+// Blueprints Lib
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 
-export default class ScratchpadConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
+export default class ScratchpadConstruct {
+    constructor(scope: Construct, id: string) {
         // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.AppMeshAddOn,
-            new ssp.AwsLoadBalancerControllerAddOn,
-            new ssp.NginxAddOn,
-            new ssp.ArgoCDAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ClusterAutoScalerAddOn,
-            new ssp.ContainerInsightsAddOn,
-            new ssp.XrayAddOn,
-            new ssp.SecretsStoreAddOn
+        const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.AppMeshAddOn,
+            new blueprints.AwsLoadBalancerControllerAddOn,
+            new blueprints.NginxAddOn,
+            new blueprints.ArgoCDAddOn,
+            new blueprints.CalicoAddOn,
+            new blueprints.MetricsServerAddOn,
+            new blueprints.ClusterAutoScalerAddOn,
+            new blueprints.ContainerInsightsAddOn,
+            new blueprints.XrayAddOn,
+            new blueprints.SecretsStoreAddOn
         ];
 
         const stackID = `${id}-blueprint`;
 
-        const clusterProvider = new MngClusterProvider( {
+        const clusterProvider = new blueprints.MngClusterProvider( {
             desiredSize: 3,
             maxSize: 3,
             version: KubernetesVersion.V1_20
         });
 
-        new ssp.EksBlueprint(scope, { id: stackID, addOns, clusterProvider }, {
+        new blueprints.EksBlueprint(scope, { id: stackID, addOns, clusterProvider }, {
             env: {
                 region: 'us-east-2',
             },
