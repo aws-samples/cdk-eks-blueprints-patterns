@@ -14,6 +14,9 @@ const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
 
+/**
+ * See docs/patterns/nginx.md for mode details on the setup.
+ */
 export default class NginxIngressConstruct {
 
     constructor(scope: Construct, id: string) {

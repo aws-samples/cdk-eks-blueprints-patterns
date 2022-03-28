@@ -2,11 +2,11 @@
 
 Welcome to the `EKS Blueprints Patterns` repository.
 
-This repository contains a number of samples for how you can leverage the [Amazon EKS Blueprints](https://github.com/aws-quickstart/cdk-eks-blueprints).
+This repository contains a number of samples for how you can leverage the [Amazon EKS Blueprints](https://github.com/aws-quickstart/cdk-eks-blueprints). You can think of the patterns as "codified" reference architectures, which can be explained and executed as code in the customer environment.
 
 ## Patterns 
 
-The individual patterns can be found in the `lib` directory. 
+The individual patterns can be found in the `lib` directory.  Most of the patterns are self-explanatory, for some more complex examples please use this guide and docs/patterns directory for more information.
 
 ## Documentation
 
@@ -52,6 +52,10 @@ For `MultiRegionConstruct` the pattern relies on the following secrets defined:
 3. `keptn-secrets` - must contain API_TOKEN and BRIDGE_PASSWORD password in Plain Text. The secret is expected to be defined in `us-east-1` region.
 
 For more information on defining secrets for ArgoCD, please refer to [Blueprints Documentation](https://github.com/aws-quickstart/cdk-eks-blueprints/blob/main/docs/addons/argo-cd.md#secrets-support) as well as [known issues](https://github.com/aws-quickstart/cdk-eks-blueprints/blob/main/docs/addons/argo-cd.md#known-issues).
+
+# Patterns
+
+[NGINX Blueprint](docs/patterns/nginx.md) 
 
 ## Security
 
