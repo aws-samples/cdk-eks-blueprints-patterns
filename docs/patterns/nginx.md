@@ -25,9 +25,9 @@ Our blueprint will then include the following:
 5. Other popular add-ons.
 
 ## Prerequisites
-
-1. The parent domain must be defined in a separate account (GLOBAL_DNS_ACCOUNT).
-2. The GLOBAL_DNS_ACCOUNT must contain a role with a trust policy to the workload(s) account. We naed it `DomainOperatorRole` but you can choose any arbitrary name for it.
+1. `argo-admin-password` secret must be defined as plain text (not key/value) in `us-west-2`  region.
+2. The parent domain must be defined in a separate account (GLOBAL_DNS_ACCOUNT).
+3. The GLOBAL_DNS_ACCOUNT must contain a role with a trust policy to the workload(s) account. We naed it `DomainOperatorRole` but you can choose any arbitrary name for it.
    1. Policies:  `arn:aws:iam::aws:policy/AmazonRoute53DomainsFullAccess` or alternatively you can provide `arn:aws:iam::aws:policy/AmazonRoute53ReadOnlyAccess` and `arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess`.
    2. Trust relationship to allow workload accounts to create subdomains (replace `<WORKLOAD_ACCOUNT>` with the actual value): 
    ```
@@ -45,7 +45,7 @@ Our blueprint will then include the following:
     ]
    }
    ```
-3. The actual settings for the GLOBAL_DNS_ACCOUNT, hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. Example settings:
+4. The actual settings for the GLOBAL_DNS_ACCOUNT, hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. Example settings:
 ```
 {
   "context": {
@@ -55,6 +55,7 @@ Our blueprint will then include the following:
   }
 }
 ```
+
 
 ## Deploying
 

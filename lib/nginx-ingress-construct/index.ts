@@ -3,8 +3,8 @@ import * as blueprints from '@aws-quickstart/eks-blueprints'
 import { DelegatingHostedZoneProvider, GlobalResources } from '@aws-quickstart/eks-blueprints';
 import { valueFromContext } from '@aws-quickstart/eks-blueprints/dist/utils/context-utils';
 import * as team from '../teams'
-import MultiRegionConstruct from '../multi-region-construct';
-
+import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
+import { utils } from '@aws-quickstart/eks-blueprints'
 
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
@@ -19,7 +19,10 @@ const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
  */
 export default class NginxIngressConstruct {
 
-    constructor(scope: Construct, id: string) {
+    async buildSync(scope: Construct, id: string) {
+
+        await prevalidateSecrets();
+
         const teams: Array<blueprints.Team> = [
             new team.TeamPlatform(accountID),
             new team.TeamTroiSetup,
@@ -43,7 +46,10 @@ export default class NginxIngressConstruct {
                 wildcardSubdomain: true
             }))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
-            .addOns(new blueprints.CalicoAddOn,
+            .addOns(
+                new blueprints.VpcCniAddOn(),
+                new blueprints.CoreDnsAddOn(),
+                new blueprints.CalicoAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.ExternalDnsAddon({
                     hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
@@ -62,14 +68,23 @@ export default class NginxIngressConstruct {
                         targetRevision: "deployable",
                         path: 'envs/dev'
                     },
-                    adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+                    adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                 }),
                 new blueprints.AppMeshAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.ContainerInsightsAddOn,
                 new blueprints.XrayAddOn)
-            .build(scope, `${id}-blueprint`);
+            .buildAsync(scope, `${id}-blueprint`);
+    }
+}
+
+async function prevalidateSecrets() {
+    try {
+        await utils.validateSecret(SECRET_ARGO_ADMIN_PWD, 'us-west-2');
+    }
+    catch(error) {
+        throw new Error("Please define argo-admin-secret secret in us-west-2 for the nginx pattern to work.");
     }
 }
 

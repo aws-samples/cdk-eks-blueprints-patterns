@@ -1,4 +1,3 @@
-import * as cdk from 'aws-cdk-lib';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 

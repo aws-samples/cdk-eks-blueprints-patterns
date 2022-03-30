@@ -4,8 +4,9 @@ import * as cdk from 'aws-cdk-lib';
 const app = new cdk.App();
 
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
-new NginxIngressConstruct(app, 'nginx');
-
+new NginxIngressConstruct().buildSync(app, 'nginx').catch(() => {
+    console.log("NGINX Ingress pattern is not setup due to missing secrets for ArgoCD admin pwd.");
+});
 //-------------------------------------------
 // Starter Cluster with barebone infrastructure.
 //-------------------------------------------
@@ -27,8 +28,8 @@ new MultiTeamConstruct(app, 'multi-team');
 //-------------------------------------------
 
 import MultiRegionConstruct from '../lib/multi-region-construct';
-new MultiRegionConstruct().buildAsync(app, 'multi-region').catch(() => {
-    console.log("Multi region pattern is not setup due to missing secrets for GitHub access and ArgoCD admin pwd.");
+new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
+    console.log("Multi region pattern is not setup due to missing secrets: " + error);
 });
 
 
