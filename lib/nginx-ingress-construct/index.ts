@@ -1,10 +1,8 @@
+import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { DelegatingHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
-import { DelegatingHostedZoneProvider, GlobalResources } from '@aws-quickstart/eks-blueprints';
-import { valueFromContext } from '@aws-quickstart/eks-blueprints/dist/utils/context-utils';
-import * as team from '../teams'
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
-import { utils } from '@aws-quickstart/eks-blueprints'
+import * as team from '../teams';
 
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
@@ -30,13 +28,13 @@ export default class NginxIngressConstruct {
             new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
         ];
 
-        const subdomain: string = valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
+        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
         const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
-        const parentDomain = valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
+        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
 
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region('us-west-2')
+            .region(process.env.CDK_DEFAULT_REGION)
             .teams(...teams)
             .resourceProvider(GlobalResources.HostedZone, new DelegatingHostedZoneProvider({
                 parentDomain,
