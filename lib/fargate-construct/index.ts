@@ -1,43 +1,42 @@
 import { Construct } from 'constructs';
 import * as eks from 'aws-cdk-lib/aws-eks';
-
-// Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints'
-
-// Team implementations
 import * as team from '../teams'
 
+/**
+ * Demonstrates how to use Fargate cluster provider.
+ * Along with the specified profiles, Fargate cluster automatically creates
+ * a default profile with selectors for the default namespace.
+ */
 export default class FargateConstruct {
     constructor(scope: Construct, id: string) {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!
         const platformTeam = new team.TeamPlatform(accountID)
-        const teams: Array<blueprints.Team> = [platformTeam];
-
-        // AddOns for the cluster.
-        const addOns: Array<blueprints.ClusterAddOn> = [
-            new blueprints.AppMeshAddOn,
-            new blueprints.AwsLoadBalancerControllerAddOn,
-            new blueprints.NginxAddOn,
-            new blueprints.ArgoCDAddOn,
-            new blueprints.MetricsServerAddOn
-        ];
-
-        // TODO - what is with dynatrace?
+       
         const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
-            ["dynatrace", { selectors: [{ namespace: "dynatrace" }] }]
+            ["team1", { selectors: [{ namespace: "team1" }] }]
         ]);
 
         const stackID = `${id}-blueprint`
         const clusterProvider = new blueprints.FargateClusterProvider({
             fargateProfiles,
             version: eks.KubernetesVersion.V1_20
-        })
-        new blueprints.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
-            env: {
-                region: 'us-east-1'
-            }
-        })
+        });
+
+        blueprints.EksBlueprint.builder()
+            .account(accountID)
+            .region(process.env.CDK_DEFAULT_REGION!)
+            .clusterProvider(clusterProvider)
+            .teams(platformTeam)
+            .addOns(
+                new blueprints.AppMeshAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.ArgoCDAddOn,
+                new blueprints.MetricsServerAddOn
+            )
+            .build(scope, stackID);
     }
 }
 

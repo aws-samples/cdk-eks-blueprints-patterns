@@ -4,7 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 const app = new cdk.App();
 
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
-new NginxIngressConstruct().buildSync(app, 'nginx').catch(() => {
+new NginxIngressConstruct().buildAsync(app, 'nginx').catch(() => {
     console.log("NGINX Ingress pattern is not setup due to missing secrets for ArgoCD admin pwd.");
 });
 //-------------------------------------------
@@ -12,7 +12,7 @@ new NginxIngressConstruct().buildSync(app, 'nginx').catch(() => {
 //-------------------------------------------
 
 import StarterConstruct from '../lib/starter-construct';
-new StarterConstruct(app, 'starter');
+new StarterConstruct().build(app, 'starter');
 
 
 //-------------------------------------------
@@ -48,8 +48,9 @@ import PipelineConstruct from '../lib/pipeline-stack';
 const account = process.env.CDK_DEFAULT_ACCOUNT;
 const region = process.env.CDK_DEFAULT_REGION;
 const env = { account, region };
+
 if(account) {
-    new PipelineConstruct().buildAsync(app, 'pipeline', { env }).catch(() => {
+    new PipelineConstruct().buildAsync(app, { env }).catch(() => {
         console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
     });
 }
@@ -62,18 +63,15 @@ else {
 //-------------------------------------------
 
 import BottleRocketConstruct from '../lib/bottlerocket-construct';
-new BottleRocketConstruct(app, 'bottlerocket');
+new BottleRocketConstruct().build(app, 'bottlerocket');
 
 
 //-------------------------------------------
 // Single cluster with custom configuration.
 //-------------------------------------------
 
-import CustomClusterConstruct from '../lib/custom-cluster-construct';
-new CustomClusterConstruct(app, 'custom-cluster');
-
-import ScratchpadConstruct from '../lib/scratchpad';
-new ScratchpadConstruct(app, 'scratchpad');
+import GenericClusterConstruct from '../lib/generic-cluster-construct';
+new GenericClusterConstruct().build(app, 'generic-cluster');
 
 import KubecostConstruct from '../lib/kubecost-construct';
 new KubecostConstruct(app, 'kubecost')

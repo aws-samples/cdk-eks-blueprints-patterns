@@ -17,7 +17,7 @@ const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
  */
 export default class NginxIngressConstruct {
 
-    async buildSync(scope: Construct, id: string) {
+    async buildAsync(scope: Construct, id: string) {
 
         await prevalidateSecrets();
 
@@ -49,7 +49,7 @@ export default class NginxIngressConstruct {
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.CalicoAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
-                new blueprints.ExternalDnsAddon({
+                new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
                 new blueprints.NginxAddOn({

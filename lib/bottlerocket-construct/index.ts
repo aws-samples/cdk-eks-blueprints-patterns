@@ -1,43 +1,42 @@
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
-
-// Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints'
-
-// Team implementations
 import * as team from '../teams'
 
-export default class BottlerocketConstruct extends Construct {
-    constructor(scope: Construct, id: string) {
-        super(scope, id);
-
-        // Setup platform team
-        const accountID = process.env.CDK_DEFAULT_ACCOUNT!
-        const platformTeam = new team.TeamPlatform(accountID)
-        const teams: Array<blueprints.Team> = [platformTeam];
-
-        // AddOns for the cluster.
-        const addOns: Array<blueprints.ClusterAddOn> = [
-            new blueprints.AppMeshAddOn,
-            new blueprints.AwsLoadBalancerControllerAddOn,
-            new blueprints.NginxAddOn,
-            new blueprints.ArgoCDAddOn,
-            new blueprints.CalicoAddOn,
-            new blueprints.MetricsServerAddOn,
-            new blueprints.ContainerInsightsAddOn,
-            new blueprints.SecretsStoreAddOn
-        ];
-
+/**
+ * Bottlerocket pattern shows how to specify the OS for the node group
+ * and leverage container-optimized Bottlerocket OS: https://aws.amazon.com/bottlerocket/
+ */
+export default class BottlerocketConstruct {
+    
+    build(scope: Construct, id: string) {
+ 
         const stackID = `${id}-blueprint`;
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
+        const platformTeam = new team.TeamPlatform(accountID);
+ 
         const clusterProvider = new blueprints.MngClusterProvider({
             version: eks.KubernetesVersion.V1_21,
             amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64
-         });
-        new blueprints.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
-            env: {
-                region: 'us-east-1'
-            }
         });
+        
+        blueprints.EksBlueprint.builder()
+            .account(accountID)
+            .region('us-east-1')
+            .clusterProvider(clusterProvider)
+            .addOns(
+                new blueprints.AppMeshAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.ArgoCDAddOn,
+                new blueprints.CalicoAddOn,
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ContainerInsightsAddOn,
+                new blueprints.SecretsStoreAddOn
+            )
+            .teams(platformTeam)
+            .build(scope, stackID);
     }
 }
 
