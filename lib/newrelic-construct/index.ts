@@ -1,24 +1,45 @@
-import * as cdk from '@aws-cdk/core';
-import { EksBlueprint } from '@aws-quickstart/ssp-amazon-eks';
-import { NewRelicAddOn } from '@newrelic/newrelic-ssp-addon';
+import * as cdk from 'aws-cdk-lib';
+import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { NewRelicAddOn } from '@newrelic/newrelic-eks-blueprints-addon';
+import { Construct } from "constructs";
 
 
-export default class NewRelicConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
+export default class NewRelicConstruct extends Construct {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
-        // AddOns for the cluster
+
         const stackId = `${id}-blueprint`;
 
-        const newRelic = new NewRelicAddOn({
-            // Uncomment after you create the "newrelic-license-key" secret in
-            // AWS Secrets Manager.  Use Plaintext mode.
-            // nrLicenseKeySecretName: "newrelic-license-key",
-            newRelicClusterName: "demo-cluster"
-        })
+        const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.addons.SecretsStoreAddOn(),
+            new NewRelicAddOn({
+                version: "4.2.0-beta",
+                newRelicClusterName: id,
+                // Uncomment "awsSecretName" after you create your secret in AWS Secrets Manager.
+                // Required: nrLicenseKey
+                // Optional: pixieDeployKey, pixieApiKey
+                //
+                // Format:
+                // {
+                //     "pixieDeployKey": "px-dep-XXXX",
+                //     "pixieApiKey": "px-api-XXXX",
+                //     "nrLicenseKey": "XXXXNRAL"
+                // }
+                awsSecretName: "newrelic-pixie-combined",
 
-        EksBlueprint.builder()
+                // Uncomment "installPixie" and "installPixieIntegration" if installing Pixie.
+                // installPixie: true,
+                // installPixieIntegration: true,
+
+                // For additional install options, visit the New Relic addon docs:
+                // https://github.com/newrelic-experimental/newrelic-eks-blueprints-addon
+            })
+        ];
+
+        blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
-            .addOns(newRelic))
+            .addOns(...addOns)
             .build(scope, stackId);
+    }
 }
