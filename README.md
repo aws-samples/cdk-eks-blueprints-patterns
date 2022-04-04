@@ -48,7 +48,7 @@ For `MultiRegionConstruct` the pattern relies on the following secrets defined:
 1. `github-ssh-key` - must contain GitHub SSH private key in Plain Text. The secret is expected to be defined in `us-east-1` and replicated to `us-east-1` and `us-west-2` regions.
 2. `argo-admin-secret` - must contain ArgoCD admin password in Plain Text. The secret is expected to be defined in `us-east-1` and replicated to `us-east-1` and `us-west-2` regions.
 3. `keptn-secrets` - must contain API_TOKEN and BRIDGE_PASSWORD password in Plain Text. The secret is expected to be defined in `us-east-1` region.
-4. `newrelic-license-key` - must contain a New Relic license key in Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
+4. `newrelic-pixie-keys` - must contain New Relic (required) and Pixie keys (optional). The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 
 For more information on defining secrets for ArgoCD, please refer to [SSP Documentation](https://github.com/aws-quickstart/ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#secrets-support) as well as [known issues](https://github.com/aws-quickstart/ssp-amazon-eks/blob/main/docs/addons/argo-cd.md#known-issues).
 
