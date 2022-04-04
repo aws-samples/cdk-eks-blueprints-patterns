@@ -63,7 +63,6 @@ else {
 import BottleRocketConstruct from '../lib/bottlerocket-construct';
 new BottleRocketConstruct(app, 'bottlerocket');
 
-
 //-------------------------------------------
 // Single cluster with custom configuration.
 //-------------------------------------------
@@ -79,3 +78,6 @@ new KubecostConstruct(app, 'kubecost')
 
 import KeptnControlPlaneConstruct from '../lib/keptn-construct';
 new KeptnControlPlaneConstruct(app, 'keptn')
+
+import NewRelicConstruct from '../lib/newrelic-construct';
+new NewRelicConstruct(app, 'newrelic-cluster')
