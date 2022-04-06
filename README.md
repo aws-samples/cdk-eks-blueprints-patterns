@@ -4,7 +4,7 @@ Welcome to the `EKS Blueprints Patterns` repository.
 
 This repository contains a number of samples for how you can leverage the [Amazon EKS Blueprints](https://github.com/aws-quickstart/cdk-eks-blueprints). You can think of the patterns as "codified" reference architectures, which can be explained and executed as code in the customer environment.
 
-## Patterns 
+## Patterns
 
 The individual patterns can be found in the `lib` directory.  Most of the patterns are self-explanatory, for some more complex examples please use this guide and docs/patterns directory for more information.
 
@@ -14,19 +14,19 @@ Please refer to the Amazon EKS Blueprints Quick Start [documentation site](https
 
 ## Usage
 
-Install project dependencies. 
+Install project dependencies.
 
 ```
 make deps
 ```
 
-To view patterns that are available to be deployed, execute the following: 
+To view patterns that are available to be deployed, execute the following:
 
 ```
 cdk list
 ```
 
-Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. 
+Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal.
 
 Bootstrap your CDK environment.
 
@@ -43,7 +43,7 @@ cdk deploy multi-team-blueprint
 # Deploying Blueprints with External Dependency on AWS Resources
 
 There are cases when the blueprints defined in the patterns have dependencies on existing AWS Resources such as Secrets defined in the account/region.
-For such cases, you may see errors if such resources are not defined. 
+For such cases, you may see errors if such resources are not defined.
 
 For `MultiRegionConstruct` the pattern relies on the following secrets defined:
 
@@ -60,6 +60,7 @@ Note: You can notice explicit \n characters in the sshPrivateKey.
 
 2. `argo-admin-secret` - must contain ArgoCD admin password in Plain Text. The secret is expected to be defined in `us-east-1` and replicated to `us-east-1` and `us-west-2` regions.
 3. `keptn-secrets` - must contain API_TOKEN and BRIDGE_PASSWORD password in Plain Text. The secret is expected to be defined in `us-east-1` region.
+4. `newrelic-pixie-keys` - must contain New Relic (required) and Pixie keys (optional). The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 
 For more information on defining secrets for ArgoCD, please refer to [Blueprints Documentation](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support) as well as [known issues](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#known-issues).
 
