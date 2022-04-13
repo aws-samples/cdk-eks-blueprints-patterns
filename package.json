@@ -18,7 +18,7 @@
     "@types/node": "16.11.13",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
-    "aws-cdk": "2.17.0",
+    "aws-cdk": "2.20.0",
     "copyfiles": "^2.4.1",
     "eslint": "^8.4.1",
     "jest": "^27.4.5",
@@ -27,7 +27,9 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "0.1.3",
+    "@aws-quickstart/eks-blueprints": "0.1.4",
+    "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.4.0",
+    "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.2",
     "source-map-support": "^0.5.21"
   }
