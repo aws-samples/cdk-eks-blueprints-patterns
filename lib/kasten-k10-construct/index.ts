@@ -1,18 +1,10 @@
-import * as cdk from '@aws-cdk/core';
-import { EksBlueprint } from '@aws-quickstart/ssp-amazon-eks';
+import { App } from 'aws-cdk-lib';
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { KastenK10AddOn } from '@kastenhq/kasten-eks-blueprints-addon';
 
+const app = new App();
 
-export default class KastenK10Construct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
-        // AddOns for the cluster
-        const stackId = `${id}-blueprint`;
-
-        EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION)
-            .addOns(new KastenK10AddOn())
-            .build(scope, stackId);
-    }
-}
+blueprints.EksBlueprint.builder()
+    .addOns(new blueprints.ClusterAutoScalerAddOn)
+    .addOns(new KastenK10AddOn)
+    .build(app, 'eks-with-kastenk10');
