@@ -1,47 +1,44 @@
-import * as cdk from '@aws-cdk/core';
-import * as eks from '@aws-cdk/aws-eks';
-
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-
-// Team implementations
+import { Construct } from 'constructs';
+import * as eks from 'aws-cdk-lib/aws-eks';
+import * as blueprints from '@aws-quickstart/eks-blueprints'
 import * as team from '../teams'
 
-export default class FargateConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id); {
+/**
+ * Demonstrates how to use Fargate cluster provider.
+ * Along with the specified profiles, Fargate cluster automatically creates
+ * a default profile with selectors for the default namespace.
+ */
+export default class FargateConstruct {
+    constructor(scope: Construct, id: string) {
+        // Setup platform team
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT!
+        const platformTeam = new team.TeamPlatform(accountID)
+       
+        const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
+            ["team1", { selectors: [{ namespace: "team1" }] }]
+        ]);
 
-            // Setup platform team
-            const accountID = process.env.CDK_DEFAULT_ACCOUNT!
-            const platformTeam = new team.TeamPlatform(accountID)
-            const teams: Array<ssp.Team> = [platformTeam];
+        const stackID = `${id}-blueprint`
+        const clusterProvider = new blueprints.FargateClusterProvider({
+            fargateProfiles,
+            version: eks.KubernetesVersion.V1_20
+        });
 
-            // AddOns for the cluster.
-            const addOns: Array<ssp.ClusterAddOn> = [
-                new ssp.AppMeshAddOn,
-                new ssp.AwsLoadBalancerControllerAddOn,
-                new ssp.NginxAddOn,
-                new ssp.ArgoCDAddOn,
-                new ssp.MetricsServerAddOn
-            ];
-
-            // TODO - what is with dynatrace?
-            const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
-                ["dynatrace", { selectors: [{ namespace: "dynatrace" }] }]
-            ]);
-
-            const stackID = `${id}-blueprint`
-            const clusterProvider = new ssp.FargateClusterProvider({
-                fargateProfiles,
-                version: eks.KubernetesVersion.V1_20
-            })
-            new ssp.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
-                env: {
-                    region: 'us-east-1'
-                }
-            })
-        }
+        blueprints.EksBlueprint.builder()
+            .account(accountID)
+            .region(process.env.CDK_DEFAULT_REGION!)
+            .clusterProvider(clusterProvider)
+            .teams(platformTeam)
+            .addOns(
+                new blueprints.AppMeshAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.ArgoCDAddOn,
+                new blueprints.MetricsServerAddOn
+            )
+            .build(scope, stackID);
     }
 }
+
 
 

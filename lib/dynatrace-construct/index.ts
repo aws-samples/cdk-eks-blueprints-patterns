@@ -1,16 +1,17 @@
-import * as cdk from '@aws-cdk/core';
-import { EksBlueprint } from '@aws-quickstart/ssp-amazon-eks';
-import { DynatraceAddOn } from '@dynatrace/dynatrace-ssp-addon'
+import * as cdk from 'aws-cdk-lib';
+import { EksBlueprint, utils } from '@aws-quickstart/eks-blueprints';
+import { DynatraceAddOn } from '@dynatrace/dynatrace-eks-blueprints-addon';
 
-export default class DynatraceOperatorConstruct extends cdk.Construct {
+export default class DynatraceOperatorConstruct {
 
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
+    async buildAsync(scope: cdk.App, id: string) {
+    
+        await prevalidateSecrets();
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
 
         const DynatraceOperator = new DynatraceAddOn({
-            // Setup ssmSecret dynatrace-tokens described here (https://github.com/dynatrace-oss/dynatrace-ssp-addon#aws-secret-manager-secrets)
+            // Setup ssmSecret dynatrace-tokens described here (https://github.com/dynatrace-oss/dynatrace-eks-blueprints-addon#aws-secret-manager-secrets)
             ssmSecretName: 'dynatrace-tokens'
         })
 
@@ -19,5 +20,15 @@ export default class DynatraceOperatorConstruct extends cdk.Construct {
             .region(process.env.CDK_DEFAULT_REGION)
             .addOns(DynatraceOperator)
             .build(scope, stackId);
+    }
+
+}
+
+async function prevalidateSecrets() {
+    try {
+        await utils.validateSecret('dynatrace-tokens', 'us-east-2');
+    }
+    catch(error) {
+        throw new Error("dynatrace-tokens secret must be setup for the DynatraceOperator pattern to work.");
     }
 }

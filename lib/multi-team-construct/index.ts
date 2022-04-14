@@ -1,7 +1,6 @@
-import * as cdk from '@aws-cdk/core';
-
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
+import { Construct } from 'constructs';
+// Blueprints Lib
+import * as blueprints from '@aws-quickstart/eks-blueprints'
 
 // Team implementations
 import * as team from '../teams'
@@ -9,16 +8,14 @@ const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
 const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 
-export default class MultiTeamConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
-
+export default class MultiTeamConstruct {
+    constructor(scope: Construct, id: string) {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!
         const platformTeam = new team.TeamPlatform(accountID)
 
         // Teams for the cluster.
-        const teams: Array<ssp.Team> = [
+        const teams: Array<blueprints.Team> = [
             platformTeam,
             new team.TeamTroiSetup,
             new team.TeamRikerSetup(scope, teamManifestDirList[1]),
@@ -26,21 +23,21 @@ export default class MultiTeamConstruct extends cdk.Construct {
         ];
 
         // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.AppMeshAddOn,
-            new ssp.AwsLoadBalancerControllerAddOn,
-            new ssp.NginxAddOn,
-            new ssp.ArgoCDAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ClusterAutoScalerAddOn,
-            new ssp.ContainerInsightsAddOn,
-            new ssp.XrayAddOn,
-            new ssp.SecretsStoreAddOn
+        const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.AppMeshAddOn,
+            new blueprints.AwsLoadBalancerControllerAddOn,
+            new blueprints.NginxAddOn,
+            new blueprints.ArgoCDAddOn,
+            new blueprints.CalicoAddOn,
+            new blueprints.MetricsServerAddOn,
+            new blueprints.ClusterAutoScalerAddOn,
+            new blueprints.ContainerInsightsAddOn,
+            new blueprints.XrayAddOn,
+            new blueprints.SecretsStoreAddOn
         ];
 
         const stackID = `${id}-blueprint`
-        new ssp.EksBlueprint(scope, { id: stackID, addOns, teams }, {
+        new blueprints.EksBlueprint(scope, { id: stackID, addOns, teams }, {
             env: {
                 region: 'us-east-2',
             },

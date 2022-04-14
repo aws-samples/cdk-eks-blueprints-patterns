@@ -1,14 +1,17 @@
-import * as cdk from '@aws-cdk/core';
-
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks';
-import { getSecretValue } from '@aws-quickstart/ssp-amazon-eks/dist/utils/secrets-manager-utils';
+// Blueprints Lib
+import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { Construct } from 'constructs';
+import { utils } from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
 import * as team from '../teams'
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
 const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
+
+export const SECRET_GIT_SSH_KEY = 'github-ssh-key';
+export const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
+
 
 /**
  * This pattern demonstrates how to roll out a platform across multiple regions and multiple stages.
@@ -19,62 +22,53 @@ const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
  */
 export default class MultiRegionConstruct {
 
-    static readonly SECRET_GIT_SSH_KEY = 'github-ssh-key';
-    static readonly SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
-
-    async buildAsync(scope: cdk.Construct, id: string) : Promise<ssp.EksBlueprint[]> {
+    async buildAsync(scope: Construct, id: string) : Promise<blueprints.EksBlueprint[]> {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-        const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
-        const gitSecureUrl = 'git@github.com:aws-samples/ssp-eks-workloads.git';
+        const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
+        const gitSecureUrl = 'git@github.com:aws-samples/eks-blueprints-workloads.git';
 
-        try {
-            await getSecretValue(MultiRegionConstruct.SECRET_GIT_SSH_KEY, 'us-east-2');
-            await getSecretValue(MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD, 'us-west-2');
-        }
-        catch(error) {
-            throw new Error("Both github-ssh-key and argo-admin-secret secrets must be setup for the multi-region pattern to work.");
-        }
+        await prevalidateSecrets(); // this checks if required secrets exist in the target regions
         
-        const blueprint = ssp.EksBlueprint.builder()
+        const blueprint = blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .addOns( new ssp.AwsLoadBalancerControllerAddOn,
-                new ssp.NginxAddOn,
-                new ssp.CalicoAddOn,
-                new ssp.MetricsServerAddOn,
-                new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn,
-                new ssp.XrayAddOn,
-                new ssp.SecretsStoreAddOn)
+            .addOns( new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.CalicoAddOn,
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.ContainerInsightsAddOn,
+                new blueprints.XrayAddOn,
+                new blueprints.SecretsStoreAddOn)
             .teams( new team.TeamPlatform(accountID),
                 new team.TeamTroiSetup,
                 new team.TeamRikerSetup(scope, teamManifestDirList[1]),
                 new team.TeamBurnhamSetup(scope,teamManifestDirList[0]));
 
-        const devBootstrapArgo = new ssp.ArgoCDAddOn({
+        const devBootstrapArgo = new blueprints.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: gitUrl,
                 path: 'envs/dev'
             }
         });
 
-        const testBootstrapArgo = new ssp.ArgoCDAddOn({
+        const testBootstrapArgo = new blueprints.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: gitSecureUrl,
                 path: 'envs/test',
-                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
+                credentialsSecretName: SECRET_GIT_SSH_KEY,
                 credentialsType: 'SSH'
             },
         });
 
-        const prodBootstrapArgo = new ssp.ArgoCDAddOn({
+        const prodBootstrapArgo = new blueprints.ArgoCDAddOn({
             bootstrapRepo: {
                 repoUrl: gitSecureUrl,
                 path: 'envs/prod',
-                credentialsSecretName: MultiRegionConstruct.SECRET_GIT_SSH_KEY,
+                credentialsSecretName: SECRET_GIT_SSH_KEY,
                 credentialsType: 'SSH'
             },
-            adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+            adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
         });
         
         const east1 = await blueprint.clone('us-east-1')
@@ -90,6 +84,16 @@ export default class MultiRegionConstruct {
             .buildAsync(scope, `${id}-us-west-2`);
 
         return [ east1, east2, west2 ];
+    }
+}
+
+async function prevalidateSecrets() {
+    try {
+        await utils.validateSecret(SECRET_GIT_SSH_KEY, 'us-east-2');
+        await utils.validateSecret(SECRET_ARGO_ADMIN_PWD, 'us-west-2');
+    }
+    catch(error) {
+        throw new Error("Both github-ssh-key and argo-admin-secret secrets must be setup for the multi-region pattern to work.");
     }
 }
 

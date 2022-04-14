@@ -1,43 +1,42 @@
-import * as cdk from '@aws-cdk/core';
-import * as eks from '@aws-cdk/aws-eks';
-
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-
-// Team implementations
+import * as eks from 'aws-cdk-lib/aws-eks';
+import { Construct } from 'constructs';
+import * as blueprints from '@aws-quickstart/eks-blueprints'
 import * as team from '../teams'
 
-export default class BottlerocketConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
-
-        // Setup platform team
-        const accountID = process.env.CDK_DEFAULT_ACCOUNT!
-        const platformTeam = new team.TeamPlatform(accountID)
-        const teams: Array<ssp.Team> = [platformTeam];
-
-        // AddOns for the cluster.
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.AppMeshAddOn,
-            new ssp.AwsLoadBalancerControllerAddOn,
-            new ssp.NginxAddOn,
-            new ssp.ArgoCDAddOn,
-            new ssp.CalicoAddOn,
-            new ssp.MetricsServerAddOn,
-            new ssp.ContainerInsightsAddOn,
-            new ssp.SecretsStoreAddOn
-        ];
-
+/**
+ * Bottlerocket pattern shows how to specify the OS for the node group
+ * and leverage container-optimized Bottlerocket OS: https://aws.amazon.com/bottlerocket/
+ */
+export default class BottlerocketConstruct {
+    
+    build(scope: Construct, id: string) {
+ 
         const stackID = `${id}-blueprint`;
-        const clusterProvider = new ssp.AsgClusterProvider({
-            version: eks.KubernetesVersion.V1_20,
-            machineImageType:  eks.MachineImageType.BOTTLEROCKET
-         });
-        new ssp.EksBlueprint(scope, { id: stackID, teams, addOns, clusterProvider }, {
-            env: {
-                region: 'us-east-1'
-            }
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
+        const platformTeam = new team.TeamPlatform(accountID);
+ 
+        const clusterProvider = new blueprints.MngClusterProvider({
+            version: eks.KubernetesVersion.V1_21,
+            amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64
         });
+        
+        blueprints.EksBlueprint.builder()
+            .account(accountID)
+            .region('us-east-1')
+            .clusterProvider(clusterProvider)
+            .addOns(
+                new blueprints.AppMeshAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.ArgoCDAddOn,
+                new blueprints.CalicoAddOn,
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ContainerInsightsAddOn,
+                new blueprints.SecretsStoreAddOn
+            )
+            .teams(platformTeam)
+            .build(scope, stackID);
     }
 }
 
