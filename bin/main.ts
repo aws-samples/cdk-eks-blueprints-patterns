@@ -73,11 +73,16 @@ new BottleRocketConstruct().build(app, 'bottlerocket');
 import GenericClusterConstruct from '../lib/generic-cluster-construct';
 new GenericClusterConstruct().build(app, 'generic-cluster');
 
+import DynatraceOperatorConstruct from '../lib/dynatrace-construct';
+new DynatraceOperatorConstruct().buildAsync(app, "dynatrace-operator").catch(() => {
+    console.log("Dynatrace pattern is not setup due to missing secrets for dynatrace-tokens.");
+});
+
 import KubecostConstruct from '../lib/kubecost-construct';
-new KubecostConstruct(app, 'kubecost')
+new KubecostConstruct(app, 'kubecost');
 
 import KeptnControlPlaneConstruct from '../lib/keptn-construct';
-new KeptnControlPlaneConstruct(app, 'keptn')
+new KeptnControlPlaneConstruct(app, 'keptn');
 
 import NewRelicConstruct from '../lib/newrelic-construct';
-new NewRelicConstruct(app, 'newrelic-cluster')
+new NewRelicConstruct(app, 'newrelic-cluster');

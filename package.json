@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@aws-quickstart/eks-blueprints": "0.1.4",
+    "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.4.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.2",
