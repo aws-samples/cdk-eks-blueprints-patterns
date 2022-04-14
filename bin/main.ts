@@ -86,3 +86,6 @@ new KeptnControlPlaneConstruct(app, 'keptn');
 
 import NewRelicConstruct from '../lib/newrelic-construct';
 new NewRelicConstruct(app, 'newrelic-cluster');
+
+import KastenK10Construct from '../lib/kasten-k10-construct';
+new KastenK10Construct(app, 'kasten');
