@@ -86,3 +86,6 @@ new KeptnControlPlaneConstruct(app, 'keptn');
 
 import NewRelicConstruct from '../lib/newrelic-construct';
 new NewRelicConstruct(app, 'newrelic-cluster');
+
+import DatadogConstruct from '../lib/datadog-construct';
+new DatadogConstruct(app, 'datadog')

@@ -76,6 +76,10 @@ For more information on defining secrets for ArgoCD, please refer to [Blueprints
 
 For `NginxIngressConstruct`  please see [NGINX Blueprint documentation](docs/patterns/nginx.md).
 
+For `DatadogConstruct` the pattern relies on the following secret defined:
+
+- `apiKeyAWSSecret` - must contain the Datadog API key in Plain Text named `datadog-api-key`. The secret is expected to be defined in the target region.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
