@@ -1,4 +1,3 @@
-import * as cdk from 'aws-cdk-lib';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { NewRelicAddOn } from '@newrelic/newrelic-eks-blueprints-addon';
 import { Construct } from "constructs";

@@ -1,11 +1,10 @@
-import * as cdk from 'aws-cdk-lib';
 import { EksBlueprint, utils } from '@aws-quickstart/eks-blueprints';
 import { DynatraceAddOn } from '@dynatrace/dynatrace-eks-blueprints-addon';
+import * as cdk from 'aws-cdk-lib';
 
 export default class DynatraceOperatorConstruct {
 
     async buildAsync(scope: cdk.App, id: string) {
-    
         await prevalidateSecrets();
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
@@ -26,7 +25,7 @@ export default class DynatraceOperatorConstruct {
 
 async function prevalidateSecrets() {
     try {
-        await utils.validateSecret('dynatrace-tokens', 'us-east-2');
+        await utils.validateSecret('dynatrace-tokens', process.env.CDK_DEFAULT_ACCOUNT!);
     }
     catch(error) {
         throw new Error("dynatrace-tokens secret must be setup for the DynatraceOperator pattern to work.");
