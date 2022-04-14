@@ -1,11 +1,10 @@
-import * as cdk from '@aws-cdk/core';
-import { EksBlueprint } from '@aws-quickstart/ssp-amazon-eks';
-import { KubecostAddOn } from '@kubecost/kubecost-ssp-addon';
+import { Construct } from 'constructs';
+import { EksBlueprint } from '@aws-quickstart/eks-blueprints';
+import { KubecostAddOn } from '@kubecost/kubecost-eks-blueprints-addon';
 
 
-export default class KubecostConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
+export default class KubecostConstruct {
+    constructor(scope: Construct, id: string) {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
 

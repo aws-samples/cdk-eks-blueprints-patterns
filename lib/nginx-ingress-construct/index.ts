@@ -1,88 +1,88 @@
-import * as cdk from '@aws-cdk/core';
+import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { DelegatingHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
+import { Construct } from 'constructs';
+import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
+import * as team from '../teams';
 
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
-import { valueFromContext } from '@aws-quickstart/ssp-amazon-eks/dist/utils/context-utils';
-import { EksBlueprint, GlobalResources } from '@aws-quickstart/ssp-amazon-eks';
-//TODO import * as iam from '@aws-cdk/aws-iam';
-// import * as route53 from '@aws-cdk/aws-route53';
-
-
-// Team implementations
-import * as team from '../teams'
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
-const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
+const teamManifestDirList = [burnhamManifestDir, rikerManifestDir]
 
-import MultiRegionConstruct from '../multi-region-construct';
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
-const gitUrl = 'https://github.com/aws-samples/ssp-eks-workloads.git';
+const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
 
-export default class NginxIngressConstruct extends cdk.Construct {
+/**
+ * See docs/patterns/nginx.md for mode details on the setup.
+ */
+export default class NginxIngressConstruct {
 
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
-        // Teams for the cluster.
-        const teams: Array<ssp.Team> = [
+    async buildAsync(scope: Construct, id: string) {
+
+        await prevalidateSecrets();
+
+        const teams: Array<blueprints.Team> = [
             new team.TeamPlatform(accountID),
             new team.TeamTroiSetup,
             new team.TeamRikerSetup(scope, teamManifestDirList[1]),
             new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
         ];
 
-        const subdomain : string = valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
-        const parentDnsAccountId = this.node.tryGetContext("parent.dns.account")!;
-        const parentDomain = valueFromContext(this, "parent.hostedzone.name", "some.example.com");
+        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
+        const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
+        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
 
-        EksBlueprint.builder()
+        blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region('us-west-2')
+            .region(process.env.CDK_DEFAULT_REGION)
             .teams(...teams)
-            .resourceProvider(GlobalResources.HostedZone, new ssp.DelegatingHostedZoneProvider({
+            .resourceProvider(GlobalResources.HostedZone, new DelegatingHostedZoneProvider({
                 parentDomain,
-                subdomain, 
+                subdomain,
                 parentDnsAccountId,
-                delegatingRoleName: 'DomainOperatorRole', 
+                delegatingRoleName: 'DomainOperatorRole',
                 wildcardSubdomain: true
             }))
-            .resourceProvider(GlobalResources.Certificate, new ssp.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
-            .addOns(new ssp.CalicoAddOn,
-                new ssp.AwsLoadBalancerControllerAddOn,
-                new ssp.ExternalDnsAddon({
-                    hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
+            .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
+            .addOns(
+                new blueprints.VpcCniAddOn(),
+                new blueprints.CoreDnsAddOn(),
+                new blueprints.CalicoAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.ExternalDnsAddOn({
+                    hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
-                new ssp.NginxAddOn({ 
-                    internetFacing: true, 
-                    backendProtocol: "tcp", 
-                    externalDnsHostname: subdomain, 
-                    crossZoneEnabled: false, 
-                    certificateResourceName: GlobalResources.Certificate,
-                    values: {
-                        controller: {
-                            service: {
-                                httpsPort: {
-                                    targetPort: "http"
-                                }
-                            }
-                        }
-                    }
+                new blueprints.NginxAddOn({
+                    internetFacing: true,
+                    backendProtocol: "tcp",
+                    externalDnsHostname: subdomain,
+                    crossZoneEnabled: false,
+                    certificateResourceName: GlobalResources.Certificate
                 }),
-                new ssp.SecretsStoreAddOn({ rotationPollInterval: "120s"}), 
-                new ssp.ArgoCDAddOn( {
+                new blueprints.SecretsStoreAddOn({ rotationPollInterval: "120s" }),
+                new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
                         repoUrl: gitUrl,
                         targetRevision: "deployable",
                         path: 'envs/dev'
                     },
-                    adminPasswordSecretName: MultiRegionConstruct.SECRET_ARGO_ADMIN_PWD,
+                    adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                 }),
-                new ssp.AppMeshAddOn,
-                new ssp.MetricsServerAddOn,
-                new ssp.ClusterAutoScalerAddOn,
-                new ssp.ContainerInsightsAddOn,
-                new ssp.XrayAddOn)
-            .build(scope, `${id}-blueprint`);
+                new blueprints.AppMeshAddOn,
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.ContainerInsightsAddOn,
+                new blueprints.XrayAddOn)
+            .buildAsync(scope, `${id}-blueprint`);
+    }
+}
+
+async function prevalidateSecrets() {
+    try {
+        await utils.validateSecret(SECRET_ARGO_ADMIN_PWD, 'us-west-2');
+    }
+    catch(error) {
+        throw new Error("Please define argo-admin-secret secret in us-west-2 for the nginx pattern to work.");
     }
 }
 

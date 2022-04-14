@@ -1,10 +1,10 @@
 {
-  "name": "eks-blueprint-sample",
+  "name": "eks-blueprints-patterns",
   "version": "0.1.0",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "bin": {
-    "eks-ssp-patterns": "dist/bin/main.js"
+    "eks-blueprints-patterns": "dist/bin/main.js"
   },
   "scripts": {
     "build": "rm -rf dist && tsc",
@@ -18,7 +18,7 @@
     "@types/node": "16.11.13",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
-    "aws-cdk": "1.143.0",
+    "aws-cdk": "2.20.0",
     "copyfiles": "^2.4.1",
     "eslint": "^8.4.1",
     "jest": "^27.4.5",
@@ -27,9 +27,10 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-quickstart/ssp-amazon-eks": "0.12.11",
-    "@keptn/keptn-cp-ssp-addon": "^0.3.0",
-    "@kubecost/kubecost-ssp-addon": "^1.0.8",
+    "@aws-quickstart/eks-blueprints": "0.1.4",
+    "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.4.0",
+    "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
+    "@newrelic/newrelic-eks-blueprints-addon": "^1.0.2",
     "source-map-support": "^0.5.21"
   }
 }

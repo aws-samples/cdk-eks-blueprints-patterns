@@ -1,29 +1,26 @@
-import * as cdk from '@aws-cdk/core';
+import { Construct } from 'constructs';
 
-// SSP Lib
-import * as ssp from '@aws-quickstart/ssp-amazon-eks'
+// Blueprints Lib
+import * as blueprints from '@aws-quickstart/eks-blueprints'
+import { ArgoCDAddOn, ClusterAutoScalerAddOn, MetricsServerAddOn } from '@aws-quickstart/eks-blueprints';
 
 
-export default class StarterConstruct extends cdk.Construct {
-    constructor(scope: cdk.Construct, id: string) {
-        super(scope, id);
-
-        // Onboard teams as necessary - import lib/teams
-        const teams: Array<ssp.Team> = [
-
-        ];
-
-        // Include more addons as necessary
-        const addOns: Array<ssp.ClusterAddOn> = [
-            new ssp.ArgoCDAddOn
-        ];
-
+/**
+ * Example starter with placeholders to add addOns and teams.
+ */
+export default class StarterConstruct {
+    build(scope: Construct, id: string) {
+        
         const stackID = `${id}-blueprint`
-        new ssp.EksBlueprint(scope, { id: stackID, addOns, teams }, {
-            env: {
-                region: 'us-east-2',
-            },
-        });
+        blueprints.EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .region(process.env.CDK_DEFAULT_REGION!)
+            .addOns( new MetricsServerAddOn,
+                new ClusterAutoScalerAddOn,
+                new ArgoCDAddOn // add other addons here
+            )
+            .teams()// add teams here)
+            .build(scope, stackID);
     }
 }
 
