@@ -1,15 +1,21 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints'
 import { DatadogAddOn } from '@datadog/datadog-eks-blueprints-addon';
+import { prevalidateSecrets } from '../common/construct-utils';
+
+const SECRET_API_KEY = 'datadog-api-key';
 
 export default class DatadogConstruct {
-    constructor(scope: Construct, id: string) {
+    
+    async buildAsync(scope: Construct, id: string) {//
+
+        await prevalidateSecrets(DatadogConstruct.name, process.env.CDK_DEFAULT_REGION!, SECRET_API_KEY);
 
         const stackID = `${id}-blueprint`
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new DatadogAddOn({
-                apiKeyAWSSecret: 'datadog-api-key'
+                apiKeyAWSSecret: SECRET_API_KEY
             })
         ];
 

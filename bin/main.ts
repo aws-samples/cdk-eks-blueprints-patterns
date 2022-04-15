@@ -88,4 +88,6 @@ import NewRelicConstruct from '../lib/newrelic-construct';
 new NewRelicConstruct(app, 'newrelic-cluster');
 
 import DatadogConstruct from '../lib/datadog-construct';
-new DatadogConstruct(app, 'datadog')
+new DatadogConstruct().buildAsync(app, 'datadog').catch((error) => {
+    console.log("Datadog pattern is not setup due to missing secrets: " + error);
+});

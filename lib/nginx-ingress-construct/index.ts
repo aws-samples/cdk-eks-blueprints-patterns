@@ -1,6 +1,7 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { DelegatingHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
+import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as team from '../teams';
 
@@ -19,7 +20,7 @@ export default class NginxIngressConstruct {
 
     async buildAsync(scope: Construct, id: string) {
 
-        await prevalidateSecrets();
+        await prevalidateSecrets(NginxIngressConstruct.name, undefined, SECRET_ARGO_ADMIN_PWD);
 
         const teams: Array<blueprints.Team> = [
             new team.TeamPlatform(accountID),
@@ -77,12 +78,4 @@ export default class NginxIngressConstruct {
     }
 }
 
-async function prevalidateSecrets() {
-    try {
-        await utils.validateSecret(SECRET_ARGO_ADMIN_PWD, 'us-west-2');
-    }
-    catch(error) {
-        throw new Error("Please define argo-admin-secret secret in us-west-2 for the nginx pattern to work.");
-    }
-}
 
