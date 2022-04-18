@@ -25,7 +25,7 @@ export default class DynatraceOperatorConstruct {
 
 async function prevalidateSecrets() {
     try {
-        await utils.validateSecret('dynatrace-tokens', process.env.CDK_DEFAULT_ACCOUNT!);
+        await utils.validateSecret('dynatrace-tokens', process.env.CDK_DEFAULT_REGION!);
     }
     catch(error) {
         throw new Error("dynatrace-tokens secret must be setup for the DynatraceOperator pattern to work.");
