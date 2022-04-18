@@ -88,6 +88,10 @@ import NewRelicConstruct from '../lib/newrelic-construct';
 new NewRelicConstruct(app, 'newrelic-cluster');
 
 import DatadogConstruct from '../lib/datadog-construct';
+
 new DatadogConstruct().buildAsync(app, 'datadog').catch((error) => {
     console.log("Datadog pattern is not setup due to missing secrets: " + error);
 });
+
+import KastenK10Construct from '../lib/kasten-k10-construct';
+new KastenK10Construct(app, 'kasten');
