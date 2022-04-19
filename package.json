@@ -27,13 +27,18 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "0.1.4",
+    "@aws-quickstart/eks-blueprints": "file:/Users/shapirov/projects/quickstart-amazon-eks-blueprints/aws-quickstart-eks-blueprints-1.0.0.tgz",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.1",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.4.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.2",
+    "aws-cdk": "2.20.0",
     "source-map-support": "^0.5.21"
+  },
+  "overrides": {
+    "@aws-quickstart/eks-blueprints": "file:/Users/shapirov/projects/quickstart-amazon-eks-blueprints/aws-quickstart-eks-blueprints-1.0.0.tgz",
+    "aws-cdk": "2.20.0"
   }
 }
