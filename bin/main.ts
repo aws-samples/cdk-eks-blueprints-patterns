@@ -95,3 +95,6 @@ new DatadogConstruct().buildAsync(app, 'datadog').catch((error) => {
 
 import KastenK10Construct from '../lib/kasten-k10-construct';
 new KastenK10Construct(app, 'kasten');
+
+import SnykConstruct from '../lib/snyk-construct';
+new SnykConstruct(app, 'snyk-monitor');
