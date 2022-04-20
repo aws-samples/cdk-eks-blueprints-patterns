@@ -14,6 +14,22 @@ Please refer to the Amazon EKS Blueprints Quick Start [documentation site](https
 
 ## Usage
 
+Make sure the following pre-requisites are met:
+
+1. Node version must be 16.x or above.
+```bash
+$ node -v
+v16.13.1
+```
+Update (provided Node version manager is installed): `n stable`. May require `sudo`.
+
+2. NPM version must be 8.4 or above:
+```bash
+$ npm -v
+8.7.0
+```
+Updating npm: `npm install -g npm@latest` where latest can also be a specific version above 8.4. May require `sudo`.
+
 Install project dependencies.
 
 ```
