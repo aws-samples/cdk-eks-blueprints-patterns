@@ -115,7 +115,7 @@ export default class PipelineMultiEnvGitops {
 
             // const { gitOwner, gitRepositoryName } = await getRepositoryData();
             const gitOwner = 'tsahiduek';
-            const gitRepositoryName = 'summit-eks-platform';
+            const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
             blueprints.CodePipelineStack.builder()
                 .name("eks-blueprint-pipeline")
