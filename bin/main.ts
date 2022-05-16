@@ -98,3 +98,6 @@ new KastenK10Construct(app, 'kasten');
 
 import SnykConstruct from '../lib/snyk-construct';
 new SnykConstruct(app, 'snyk-monitor');
+
+import RafayConstruct from '../lib/rafay-construct';
+new RafayConstruct(app, 'rafay-cluster');
