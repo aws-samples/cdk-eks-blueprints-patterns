@@ -1,5 +1,5 @@
-import { Construct } from 'constructs';
 import { StackProps } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 // Team implementations
@@ -23,17 +23,11 @@ export default class PipelineConstruct {
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn, 
                 new blueprints.NginxAddOn,
+                new blueprints.SecretsStoreAddOn,
                 new blueprints.ArgoCDAddOn,
-                new blueprints.AppMeshAddOn( {
-                    enableTracing: true
-                }),
-                new blueprints.SSMAgentAddOn, // this is added to deal with PVRE as it is adding correct role to the node group, otherwise stack destroy won't work
-                new blueprints.CalicoAddOn,
                 new blueprints.MetricsServerAddOn,
-                new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.ContainerInsightsAddOn,
-                new blueprints.XrayAddOn,
-                new blueprints.SecretsStoreAddOn)
+                new blueprints.ClusterAutoScalerAddOn
+                )
             .teams(
                 new team.TeamRikerSetup(scope, teamManifestDirList[1]),
                 new team.TeamBurnhamSetup(scope, teamManifestDirList[0])
@@ -45,31 +39,25 @@ export default class PipelineConstruct {
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
-                targetRevision: 'main'
-            })
-            .stage({
-                id: 'us-west-1-sandbox',
-                stackBuilder: blueprint.clone('us-west-1')
+                targetRevision: 'private-cluster'
             })
             .wave( {
                 id: "dev",
                 stages: [
-                    { id: "dev-west-1", stackBuilder: blueprint.clone('us-west-1')},
-                    { id: "dev-east-2", stackBuilder: blueprint.clone('us-east-2')},
-                ]
-            })
-            .stage({
-                id: 'us-east-2-uat',
-                stackBuilder: blueprint.clone('us-east-2'),
-                stageProps: {
-                    pre: [new blueprints.pipelines.cdkpipelines.ManualApprovalStep('manual-approval')]
-                }
-            })
-            .wave( {
-                id: "prod",
-                stages: [
-                    { id: "prod-west-1", stackBuilder: blueprint.clone('us-west-1')},
-                    { id: "prod-east-2", stackBuilder: blueprint.clone('us-east-2')},
+                    { id: "dev-west-1", stackBuilder: blueprint.clone('us-west-1')
+                        // .addOns(new NewRelicAddOn({
+                        //     version: "4.2.0-beta",
+                        //     newRelicClusterName: "dev-west-1",
+                        //     awsSecretName: "newrelic-pixie-combined",
+                        // }))
+                    },
+                    { id: "dev-east-2", stackBuilder: blueprint.clone('us-east-2')
+                        // .addOns(new NewRelicAddOn({
+                        //     version: "4.2.0-beta",
+                        //     newRelicClusterName: "dev-east-2",
+                        //     awsSecretName: "newrelic-pixie-combined",
+                        // }))
+                    },
                 ]
             })
             .build(scope, "pipeline", props);

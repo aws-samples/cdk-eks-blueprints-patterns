@@ -95,3 +95,6 @@ new DatadogConstruct().buildAsync(app, 'datadog').catch((error) => {
 
 import KastenK10Construct from '../lib/kasten-k10-construct';
 new KastenK10Construct(app, 'kasten');
+
+import PrivateClusterConstruct from '../lib/private-cluster';
+new PrivateClusterConstruct().build(app, 'private-cluster');
