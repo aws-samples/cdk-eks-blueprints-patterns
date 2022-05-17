@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 // Team implementations
+import { NewRelicAddOn } from '@newrelic/newrelic-eks-blueprints-addon';
 import * as team from '../teams';
 
 const burnhamManifestDir = './lib/teams/team-burnham/'
@@ -39,24 +40,26 @@ export default class PipelineConstruct {
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
-                targetRevision: 'private-cluster'
+                targetRevision: 'feature/private-cluster'
             })
             .wave( {
                 id: "dev",
                 stages: [
-                    { id: "dev-west-1", stackBuilder: blueprint.clone('us-west-1')
-                        // .addOns(new NewRelicAddOn({
-                        //     version: "4.2.0-beta",
-                        //     newRelicClusterName: "dev-west-1",
-                        //     awsSecretName: "newrelic-pixie-combined",
-                        // }))
+                    { 
+                        id: "dev-west-1", 
+                        stackBuilder: blueprint.clone('us-west-1')
+                            .addOns(new NewRelicAddOn({
+                                newRelicClusterName: "dev-west-1",
+                                awsSecretName: "newrelic-pixie-combined",
+                            }))
                     },
-                    { id: "dev-east-2", stackBuilder: blueprint.clone('us-east-2')
-                        // .addOns(new NewRelicAddOn({
-                        //     version: "4.2.0-beta",
-                        //     newRelicClusterName: "dev-east-2",
-                        //     awsSecretName: "newrelic-pixie-combined",
-                        // }))
+                    { 
+                        id: "dev-east-2", 
+                        stackBuilder: blueprint.clone('us-east-2')
+                            .addOns(new NewRelicAddOn({
+                                newRelicClusterName: "dev-east-2",
+                                awsSecretName: "newrelic-pixie-combined",
+                            }))
                     },
                 ]
             })
