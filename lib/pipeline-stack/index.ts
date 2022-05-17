@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 // Team implementations
+import { NewRelicAddOn } from '@newrelic/newrelic-eks-blueprints-addon';
 import * as team from '../teams';
 
 const burnhamManifestDir = './lib/teams/team-burnham/'
@@ -47,18 +48,18 @@ export default class PipelineConstruct {
                     { 
                         id: "dev-west-1", 
                         stackBuilder: blueprint.clone('us-west-1')
-                            // .addOns(new NewRelicAddOn({
-                            //     newRelicClusterName: "dev-west-1",
-                            //     awsSecretName: "newrelic-pixie-combined",
-                            // }))
+                            .addOns(new NewRelicAddOn({
+                                newRelicClusterName: "dev-west-1",
+                                awsSecretName: "newrelic-pixie-combined",
+                            }))
                     },
                     { 
                         id: "dev-east-2", 
                         stackBuilder: blueprint.clone('us-east-2')
-                            // .addOns(new NewRelicAddOn({
-                            //     newRelicClusterName: "dev-east-2",
-                            //     awsSecretName: "newrelic-pixie-combined",
-                            // }))
+                            .addOns(new NewRelicAddOn({
+                                newRelicClusterName: "dev-east-2",
+                                awsSecretName: "newrelic-pixie-combined",
+                            }))
                     },
                 ]
             })
