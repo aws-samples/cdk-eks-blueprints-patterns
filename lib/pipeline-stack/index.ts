@@ -49,6 +49,7 @@ export default class PipelineConstruct {
                         id: "dev-west-1", 
                         stackBuilder: blueprint.clone('us-west-1')
                             .addOns(new NewRelicAddOn({
+                                version: "4.5",
                                 newRelicClusterName: "dev-west-1",
                                 awsSecretName: "newrelic-pixie-combined",
                             }))
