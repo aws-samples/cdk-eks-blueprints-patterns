@@ -6,7 +6,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
-import * as team from '../teams';
+import * as team from '../teams/pipeline-multi-env-gitops';
 
 
 
@@ -107,9 +107,9 @@ export default class PipelineMultiEnvGitops {
             );
 
         // Argo configuration per environment
-        const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:tsahiduek/eks-blueprints-workloads.git');
-        const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:tsahiduek/eks-blueprints-workloads.git');
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'git@github.com:tsahiduek/eks-blueprints-workloads.git');
+        const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+        const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
 
         try {
 
@@ -180,10 +180,10 @@ export default class PipelineMultiEnvGitops {
 
 function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
     const teamsList = [
-        new team.CorePlatformTeam(scope, account, environments),
-        new team.FrontendTeam(scope, account, environments),
-        new team.BackendNodejsTeam(scope, account, environments),
-        new team.BackendCrystalTeam(scope, account, environments),
+        new team.CorePlatformTeam(account, environments),
+        new team.FrontendTeam(account, environments),
+        new team.BackendNodejsTeam(account, environments),
+        new team.BackendCrystalTeam(account, environments),
     ];
     return teamsList;
 

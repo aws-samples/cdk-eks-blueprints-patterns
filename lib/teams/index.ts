@@ -1,6 +1,3 @@
-export { BackendCrystalTeam } from './backend-crystal'
-export { BackendNodejsTeam } from './backend-nodejs'
-export { FrontendTeam } from './frontend'
 export { CorePlatformTeam } from './platform'
 export { TeamBurnhamSetup } from './team-burnham'
 export { TeamPlatform } from './team-platform'
