@@ -6,7 +6,7 @@ export class CorePlatformTeam extends PlatformTeam {
         super({
             name: `platform-${environment}`,
             users: [
-                new ArnPrincipal(`arn:aws:iam::${accountID}:user/platform`),
+                new ArnPrincipal(`arn:aws:iam::${accountID}:user/platform-user`),
             ],
         })
     }

@@ -12,11 +12,11 @@ import * as team from '../teams/pipeline-multi-env-gitops';
 
 export interface PipelineMultiEnvGitopsProps {
     /**
-     * required environments for the EKS Blueprint Construct
+     * The CDK environment where dev&test, prod, and piplines will be deployed to 
      */
-    devEnv?: cdk.Environment;
-    prodEnv?: cdk.Environment;
-    pipelineEnv?: cdk.Environment;
+    devEnv: cdk.Environment;
+    prodEnv: cdk.Environment;
+    pipelineEnv: cdk.Environment;
 }
 
 export default class PipelineMultiEnvGitops {
@@ -26,26 +26,21 @@ export default class PipelineMultiEnvGitops {
             region: process.env.CDK_DEFAULT_REGION,
         };
 
-    async buildAsync(scope: Construct, id: string, props?: StackProps, pipelineProps?: PipelineMultiEnvGitopsProps) {
-
-        // build environments helper variables
-        const DEV_TEST_ENV = (pipelineProps?.devEnv === undefined) ? this.DEFAULT_ENV : pipelineProps?.devEnv
-        const PROD_ENV = (pipelineProps?.prodEnv === undefined) ? this.DEFAULT_ENV : pipelineProps?.prodEnv
-        const PIPELINE_ENV = (pipelineProps?.pipelineEnv === undefined) ? this.DEFAULT_ENV : pipelineProps?.pipelineEnv
+    async buildAsync(scope: Construct, id: string, pipelineProps: PipelineMultiEnvGitopsProps, props?: StackProps) {
 
         // environments IDs consts
-        const DEV_ENV_ID = `dev-${DEV_TEST_ENV.region}`
-        const TEST_ENV_ID = `test-${DEV_TEST_ENV.region}`
-        const PROD_ENV_ID = `prod-${PROD_ENV.region}`
+        const DEV_ENV_ID = `dev-${pipelineProps.devEnv.region}`
+        const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`
+        const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`
 
         // build teams per environments
-        const devTeams = createTeamList('dev', scope, DEV_TEST_ENV.account!);
-        const testTeams = createTeamList('test', scope, DEV_TEST_ENV.account!);
-        const prodTeams = createTeamList('prod', scope, PROD_ENV.account!);
+        const devTeams = createTeamList('dev', scope, pipelineProps.devEnv.account!);
+        const testTeams = createTeamList('test', scope, pipelineProps.devEnv.account!);
+        const prodTeams = createTeamList('prod', scope, pipelineProps.prodEnv.account!);
 
         try {
             // github-token is needed for CDK Pipeline functionality
-            await getSecretValue('github-token', PIPELINE_ENV.region!); // Exclamation mark is used to avoid msg: ts(2345)
+            await getSecretValue('github-token', pipelineProps.pipelineEnv.region!); // Exclamation mark is used to avoid msg: ts(2345)
         }
         catch (error) {
             throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
@@ -57,7 +52,7 @@ export default class PipelineMultiEnvGitops {
 
         const clusterVersion = eks.KubernetesVersion.V1_21;
 
-
+        /* eslint-disable */
         const blueMNG = new blueprints.MngClusterProvider({
             id: "primary-mng-blue",
             version: clusterVersion,
@@ -131,7 +126,7 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: DEV_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(DEV_TEST_ENV.region, DEV_TEST_ENV.account)
+                                .clone(pipelineProps.devEnv.region, pipelineProps.devEnv.account)
                                 .name(DEV_ENV_ID)
                                 .teams(...devTeams)
                                 .addOns(
@@ -141,7 +136,7 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: TEST_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(DEV_TEST_ENV.region, DEV_TEST_ENV.account)
+                                .clone(pipelineProps.devEnv.region, pipelineProps.devEnv.account)
                                 .name(TEST_ENV_ID)
                                 .teams(...testTeams)
                                 .addOns(
@@ -160,7 +155,7 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: PROD_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(PROD_ENV.region, PROD_ENV.account)
+                                .clone(pipelineProps.prodEnv.region, pipelineProps.prodEnv.account)
                                 .name(PROD_ENV_ID)
                                 .teams(...prodTeams)
                                 .addOns(

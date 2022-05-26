@@ -39,7 +39,16 @@ Commit and push your changes.
 4. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read the repository
    2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
-5. Follow the **Usage** instructions in the main [README](../../README.md) to install all releveant dependencies, and bootstrap the AWS Account with CDK
+5. Create the relevant users that will be used by the different teams
+
+    ```bash
+    aws iam create-user --user-name frontend-user
+    aws iam create-user --user-name nodejs-user
+    aws iam create-user --user-name crystal-user
+    aws iam create-user --user-name platform-user
+    ```
+
+6. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
 ## Deploying
 

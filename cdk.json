@@ -1,4 +1,4 @@
 {
-    "app": "npx ts-node bin/main.ts",
+    "app": "npx ts-node bin/main-pipeline-multi-env-gitops.ts",
     "context": {}
 }
