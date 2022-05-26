@@ -100,4 +100,6 @@ import SnykConstruct from '../lib/snyk-construct';
 new SnykConstruct(app, 'snyk-monitor');
 
 import RafayConstruct from '../lib/rafay-construct';
-new RafayConstruct(app, 'rafay-cluster');
+new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
+    console.log("Rafay pattern is not setup due to missing secrets: " + error);
+});
