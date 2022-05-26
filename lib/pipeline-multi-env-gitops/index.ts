@@ -189,7 +189,6 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
         githubRepository: string,
         projectNamespace: string
     }
-    // let argoAdditionalProject: Array<Object> = [];
     let argoAdditionalProject: Array<Record<string, unknown>> = [];
     const projectNameList: argoProjectParams[] =
         [
