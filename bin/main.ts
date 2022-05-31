@@ -98,3 +98,8 @@ new KastenK10Construct(app, 'kasten');
 
 import SnykConstruct from '../lib/snyk-construct';
 new SnykConstruct(app, 'snyk-monitor');
+
+import RafayConstruct from '../lib/rafay-construct';
+new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
+    console.log("Rafay pattern is not setup due to missing secrets: " + error);
+});
