@@ -94,7 +94,7 @@ export default class PipelineMultiEnvGitops {
                 new blueprints.AppMeshAddOn({
                     enableTracing: true
                 }),
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.ContainerInsightsAddOn,

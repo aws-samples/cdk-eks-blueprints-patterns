@@ -28,7 +28,7 @@ export default class MultiTeamConstruct {
             new blueprints.AwsLoadBalancerControllerAddOn,
             new blueprints.NginxAddOn,
             new blueprints.ArgoCDAddOn,
-            new blueprints.CalicoAddOn,
+            new blueprints.CalicoOperatorAddOn,
             new blueprints.MetricsServerAddOn,
             new blueprints.ClusterAutoScalerAddOn,
             new blueprints.ContainerInsightsAddOn,

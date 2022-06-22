@@ -30,7 +30,7 @@ export default class BottlerocketConstruct {
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ContainerInsightsAddOn,
                 new blueprints.SecretsStoreAddOn

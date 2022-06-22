@@ -9,16 +9,30 @@ const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
 const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 
+interface MultiAccountProps extends StackProps {
 
-export default class PipelineConstruct {
+  /**
+   * First/Main Account
+   */
+  mainAccount: string,
 
-    async buildAsync(scope: Construct, props?: StackProps) {
+  /**
+   * Second Account
+   */
+  secondAccount: string,
+}
+
+export default class MultiAccountConstruct {
+
+    async buildAsync(scope: Construct, props: MultiAccountProps) {
     
         await this.prevalidateSecrets();
 
-        const account = process.env.CDK_DEFAULT_ACCOUNT!;
+        const mainAccount = props.mainAccount;
+        const secondAccount = props.secondAccount;
+
         const blueprint = blueprints.EksBlueprint.builder()
-            .account(account) // the supplied default will fail, but build and synth will pass
+            .account(mainAccount) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn, 
@@ -47,10 +61,7 @@ export default class PipelineConstruct {
                 credentialsSecretName: 'github-token',
                 targetRevision: 'main'
             })
-            .stage({
-                id: 'us-west-1-sandbox',
-                stackBuilder: blueprint.clone('us-west-1')
-            })
+            .enableCrossAccountKeys()
             .wave( {
                 id: "dev",
                 stages: [
@@ -68,8 +79,8 @@ export default class PipelineConstruct {
             .wave( {
                 id: "prod",
                 stages: [
-                    { id: "prod-west-1", stackBuilder: blueprint.clone('us-west-1')},
-                    { id: "prod-east-2", stackBuilder: blueprint.clone('us-east-2')},
+                    { id: "prod-west-1", stackBuilder: blueprint.clone('us-west-1', secondAccount)},
+                    { id: "prod-east-2", stackBuilder: blueprint.clone('us-east-2', secondAccount)},
                 ]
             })
             .build(scope, "pipeline", props);
