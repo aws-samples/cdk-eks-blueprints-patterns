@@ -37,9 +37,9 @@ new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
     console.log("Multi region pattern is not setup due to missing secrets: " + error);
 });
 
-//-------------------------------------------
+//--------------------------------------------------------------------------
 // Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
-//-------------------------------------------
+//--------------------------------------------------------------------------
 
 import PipelineMultiEnvGitops from '../lib/pipeline-multi-env-gitops';
 
