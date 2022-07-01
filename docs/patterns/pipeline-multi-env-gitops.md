@@ -20,7 +20,7 @@ The blueprint uses Managed-nodegroups cluster provider with Cluster-Autoscaler a
 
 ### GitOps confguration
 
-For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blueprints Workload](https://github.com/tsahiduek/eks-blueprints-workloads) sample repository.
+For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
 The pattern uses the ECSDEMO applications as sample applications to demonstrate how to setup a GitOps configuration with multiple teams and multiple applications. The pattern include the following configurations in terms io:
 
 1. Application team - it defines 3 application teams that corresponds with the 3 sample applications used
@@ -31,15 +31,13 @@ You can find the App of Apps configuration for this pattern in the workload repo
 
 ## Prerequisites
 
-1. Fork this repository to your account
-2. Update the [`cdk.json`](../../cdk.json) file to point to the [main-pipeline-multi-env-gitops](../../bin/main-pipeline-multi-env-gitops.ts) according to the instructions above.  
-Commit and push your changes.
-3. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url`. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
+1. Fork this repository to your GitHub organisation/user
+2. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url`. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
 
-4. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
+3. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read the repository
    2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
-5. Create the relevant users that will be used by the different teams
+4. Create the relevant users that will be used by the different teams
 
     ```bash
     aws iam create-user --user-name frontend-user
@@ -48,12 +46,29 @@ Commit and push your changes.
     aws iam create-user --user-name platform-user
     ```
 
+5. In case you haven't done this before, bootstrap your AWS Account for AWS CDK use using:
+
+    ```bash
+    cdk bootstrap
+    ```
+
 6. Install project dependencies by running `npm install` in the main folder of this cloned repository
+
+7. Modify the code in your forked repo to point to your GitHub username/organisation. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo. Open the [construct file](../../lib/pipeline-multi-env-gitops/index.ts) and look for the declared const of `gitOwner`. Change it to your GitHub username.
+
+8. *OPTIONAL* - As mentioned above, this pattern uses another repository for GitOps. This is the ArgoCD App of Apps configuration that resides in the [aws-samples](https://github.com/aws-samples/eks-blueprints-workloads/tree/main/multi-repo) organisation. If you would like to modify the App of Apps configuration and customise it to your needs, then use the following instructions:
+   1. Fork the [App of Apps](https://github.com/aws-samples/eks-blueprints-workloads/tree/main/multi-repo) workloads repo to your GitHub username
+
+   2. Modify the [pattern code](../../lib/pipeline-multi-env-gitops/index.ts) with the following changes:
+
+      1. Change the consts of `devArgoAddonConfig`, `testArgoAddonConfig`, and `prodArgoAddonConfig` to point to your GitHub username
+
+      2. In the `createArgoAddonConfig` function, look for the `git@github.com:aws-samples/eks-blueprints-workloads.git` code under the `sourceRepos` configurations, and add another reference to your forked workload repository
 
 ## Deploying
 
 Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```bash
-npx cdk deploy
+npx cdk deploy eks-blueprint-pipeline-stack
 ```
