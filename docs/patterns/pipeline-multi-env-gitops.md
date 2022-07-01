@@ -72,3 +72,26 @@ Once all pre-requisites are set you are ready to deploy the pipeline. Run the fo
 ```bash
 npx cdk deploy eks-blueprint-pipeline-stack
 ```
+
+Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments.
+
+*Note*: In case your pipeline fails on the first run, it's because that the AWS CodeBuild step needs elevated permissions at build time. This is described in the official [docs](https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#troubleshooting). To reolve this, locate `AccessDeniedException` in the CodeBuild build logs, and attach the following inline policy to it:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "cloudformation:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
