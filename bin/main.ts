@@ -3,6 +3,11 @@ import * as cdk from 'aws-cdk-lib';
 
 const app = new cdk.App();
 
+// CDK Default Environment - default account and region
+const account = process.env.CDK_DEFAULT_ACCOUNT!;
+const region = process.env.CDK_DEFAULT_REGION!;
+const env: cdk.Environment = { account: account, region: region };
+
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
 new NginxIngressConstruct().buildAsync(app, 'nginx').catch(() => {
     console.log("NGINX Ingress pattern is not setup due to missing secrets for ArgoCD admin pwd.");
@@ -32,6 +37,29 @@ new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
     console.log("Multi region pattern is not setup due to missing secrets: " + error);
 });
 
+//--------------------------------------------------------------------------
+// Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
+//--------------------------------------------------------------------------
+
+import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
+
+// These different CDK environments are meant to be used for multi-region/account usage, 
+// where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
+const { devEnv, pipelineEnv, prodEnv }:
+    { devEnv: cdk.Environment; pipelineEnv: cdk.Environment; prodEnv: cdk.Environment; } =
+    populateWithContextDefaults(app, account, region);
+
+new PipelineMultiEnvGitops()
+    .buildAsync(app, 'pipeline-multi-env',
+        {
+            devEnv: devEnv,
+            pipelineEnv: pipelineEnv,
+            prodEnv: prodEnv,
+        },
+        { env })
+    .catch(() => {
+        console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
+    });
 
 //-------------------------------------------
 // Single Fargate cluster.
@@ -45,11 +73,8 @@ new FargateConstruct(app, 'fargate');
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
 import PipelineConstruct from '../lib/pipeline-stack';
-const account = process.env.CDK_DEFAULT_ACCOUNT;
-const region = process.env.CDK_DEFAULT_REGION;
-const env = { account, region };
 
-if(account) {
+if (account) {
     new PipelineConstruct().buildAsync(app, { env }).catch(() => {
         console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
     });
