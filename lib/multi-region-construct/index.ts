@@ -34,9 +34,10 @@ export default class MultiRegionConstruct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .addOns( new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
-                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.VpcCniAddOn,
+                new blueprints.KarpenterAddOn,
                 new blueprints.ContainerInsightsAddOn,
                 new blueprints.XrayAddOn,
                 new blueprints.SecretsStoreAddOn)

@@ -33,7 +33,9 @@ export default class NginxIngressConstruct {
         const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
 
-        blueprints.EksBlueprint.builder()
+        blueprints.HelmAddOn.validateHelmVersions = true;
+
+        await blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
             .region(process.env.CDK_DEFAULT_REGION)
             .teams(...teams)
@@ -75,6 +77,10 @@ export default class NginxIngressConstruct {
                 new blueprints.ContainerInsightsAddOn,
                 new blueprints.XrayAddOn)
             .buildAsync(scope, `${id}-blueprint`);
+
+            blueprints.HelmAddOn.validateHelmVersions = false;
+
+
     }
 }
 
