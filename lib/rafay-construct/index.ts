@@ -1,6 +1,5 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as rafayAddOn from '@rafaysystems/rafay-eks-blueprints-addon';
-import { Construct } from "constructs";
 import { prevalidateSecrets } from '../common/construct-utils';
 import * as cdk from 'aws-cdk-lib';
 

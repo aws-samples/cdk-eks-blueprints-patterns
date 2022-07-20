@@ -1,10 +1,11 @@
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { Construct } from 'constructs';
 import { utils } from '@aws-quickstart/eks-blueprints';
+import { KubernetesVersion } from 'aws-cdk-lib/aws-eks';
+import { Construct } from 'constructs';
 
 // Team implementations
-import * as team from '../teams'
+import * as team from '../teams';
 const burnhamManifestDir = './lib/teams/team-burnham/'
 const rikerManifestDir = './lib/teams/team-riker/'
 const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
@@ -32,11 +33,17 @@ export default class MultiRegionConstruct {
         
         const blueprint = blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .clusterProvider(new blueprints.MngClusterProvider({
+                version: KubernetesVersion.V1_21,
+                desiredSize: 2,
+                maxSize: 3
+            }))
             .addOns( new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
-                new blueprints.ClusterAutoScalerAddOn,
+                new blueprints.VpcCniAddOn,
+                new blueprints.KarpenterAddOn,
                 new blueprints.ContainerInsightsAddOn,
                 new blueprints.XrayAddOn,
                 new blueprints.SecretsStoreAddOn)
