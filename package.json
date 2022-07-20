@@ -26,7 +26,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "file:../quickstart-eks-blueprints/aws-quickstart-eks-blueprints-1.1.0.tgz",
+    "@aws-quickstart/eks-blueprints": "1.1.0",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
@@ -39,7 +39,7 @@
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "file:../quickstart-eks-blueprints/aws-quickstart-eks-blueprints-1.1.0.tgz",
+    "@aws-quickstart/eks-blueprints": "1.1.0",
     "aws-cdk": "2.33.0"
   }
 }
