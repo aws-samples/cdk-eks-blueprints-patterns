@@ -1,4 +1,6 @@
 {
     "app": "npx ts-node bin/main.ts",
-    "context": {}
+    "context": {
+        "secondAccount": "123456789013"
+    }
 }

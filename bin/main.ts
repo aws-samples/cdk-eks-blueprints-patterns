@@ -38,7 +38,7 @@ new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
 });
 
 //--------------------------------------------------------------------------
-// Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
+// Multiple clusters, multiple regions ,multiple teams, GitOps bootstrapped.
 //--------------------------------------------------------------------------
 
 import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
@@ -60,6 +60,21 @@ new PipelineMultiEnvGitops()
     .catch(() => {
         console.log("Pipeline pattern is not setup due to missing secrets for GitHub access.");
     });
+
+//-------------------------------------------
+// Multiple clusters, multiple accounts
+//-------------------------------------------
+const secondAccount = app.node.tryGetContext('secondAccount');
+const multiAccountProps = { 
+    id: 'multi-account-pipeline',
+    mainAccount: process.env.account!,
+    secondAccount: secondAccount 
+};
+
+import MultiAccountConstruct from '../lib/multi-account-construct';
+new MultiAccountConstruct().buildAsync(app, multiAccountProps).catch((error) => {
+    console.log("Multi account pattern is not setup due to missing secrets: " + error);
+});
 
 //-------------------------------------------
 // Single Fargate cluster.

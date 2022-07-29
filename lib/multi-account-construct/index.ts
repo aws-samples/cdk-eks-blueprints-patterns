@@ -12,6 +12,11 @@ const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
 interface MultiAccountProps extends StackProps {
 
   /**
+   * id of the stack
+   */
+  id: string,
+
+  /**
    * First/Main Account
    */
   mainAccount: string,
@@ -83,7 +88,7 @@ export default class MultiAccountConstruct {
                     { id: "prod-east-2", stackBuilder: blueprint.clone('us-east-2', secondAccount)},
                 ]
             })
-            .build(scope, "pipeline", props);
+            .build(scope, props.id, props);
     }
 
     async prevalidateSecrets() {
