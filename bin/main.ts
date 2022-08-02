@@ -107,6 +107,18 @@ else {
 }
 
 //-------------------------------------------
+// Multiple clusters with deployment pipeline with repository in CodeCommmit.
+//-------------------------------------------
+import PipelineCodeCommitConstruct from '../lib/pipeline-codecommit-stack';
+
+if (account) {
+    new PipelineCodeCommitConstruct().buildAsync(app, { env });
+}
+else {
+    logger.info("Valid AWS credentials are required to synthesize pipeline stack. Please run 'aws configure'");
+}
+
+//-------------------------------------------
 // Single cluster with Bottlerocket nodes.
 //-------------------------------------------
 
