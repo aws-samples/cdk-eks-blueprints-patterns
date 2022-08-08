@@ -29,7 +29,7 @@ Ensure that you have installed the following tools on your machine.
 Clone the repository
 
 ```sh
-git clone https://github.com/aws-quickstart/cdk-eks-blueprints
+git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 ```
 
 Create a CDK project, Bootstrap your environment and install dependency 
