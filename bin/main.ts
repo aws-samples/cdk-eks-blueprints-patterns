@@ -173,3 +173,15 @@ import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
+
+//-------------------------------------------
+// AWS CodeCommmit as a repository for ArgoCD workloads.
+//-------------------------------------------
+
+import WorkloadsCodeCommitConstruct from '../lib/workloads-codecommit-construct';
+new WorkloadsCodeCommitConstruct(app, 'workloads-codecommit');
+
+const userName = 'argocd';
+const repoName = 'eks-blueprints-workloads-cc';
+import WorkloadsCodeCommitRepoStack from '../lib/workloads-codecommit-repo-stack/';
+new WorkloadsCodeCommitRepoStack(app, 'workloads-codecommit-repo-' + repoName, repoName, userName);
