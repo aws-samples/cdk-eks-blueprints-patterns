@@ -1,132 +1,48 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { getSecretValue } from '@aws-quickstart/eks-blueprints/dist/utils/secrets-manager-utils';
 import * as cdk from 'aws-cdk-lib';
-import { StackProps } from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
-import * as team from '../teams/pipeline-multi-env-gitops';
+import AmpMonitoringConstruct from '../amp-monitoring';
 
 export function populateWithContextDefaults(app: cdk.App, defaultAccount: string, defaultRegion: string) {
-    // Populate Context Defaults for the pipeline account
-    let pipeline_account = app.node.tryGetContext('pipeline_account');
-    pipeline_account ??= defaultAccount;
-    let pipeline_region = app.node.tryGetContext('pipeline_region');
-    pipeline_region ??= defaultRegion;
-    const pipelineEnv: cdk.Environment = { account: pipeline_account, region: pipeline_region };
+    // Populate Context Defaults for all the accounts
 
-    // Populate Context Defaults for the Development account
-    let dev_account = app.node.tryGetContext('dev_account');
-    dev_account ??= defaultAccount;
-    let dev_region = app.node.tryGetContext('dev_region');
-    dev_region ??= defaultRegion;
-    const devEnv: cdk.Environment = { account: dev_account, region: dev_region };
-
-    // Populate Context Defaults for the Production  account
-    let prod_account = app.node.tryGetContext('prod_account');
-    prod_account ??= defaultAccount;
-    let prod_region = app.node.tryGetContext('prod_region');
-    prod_region ??= defaultRegion;
-    const prodEnv: cdk.Environment = { account: prod_account, region: prod_region };
-    return { devEnv, pipelineEnv, prodEnv };
+    const prodEnv1: cdk.Environment = app.node.tryGetContext('prodEnv1') ;
+    const prodEnv2: cdk.Environment = app.node.tryGetContext('prodEnv2') ;
+    const pipelineEnv: cdk.Environment = app.node.tryGetContext('pipelineEnv') ;
+    const monitoringEnv: cdk.Environment = app.node.tryGetContext('monitoringEnv') ;
+    return { prodEnv1, prodEnv2, pipelineEnv, monitoringEnv };
 }
 
-export interface PipelineMultiEnvGitopsProps {
+export interface PipelineMultiEnvMonitoringProps {
     /**
      * The CDK environment where dev&test, prod, and piplines will be deployed to 
      */
-    devEnv: cdk.Environment;
-    prodEnv: cdk.Environment;
+    prodEnv1: cdk.Environment;
+    prodEnv2: cdk.Environment;
     pipelineEnv: cdk.Environment;
+    monitoringEnv: cdk.Environment;
 }
 
-export default class PipelineMultiEnvGitops {
+export default class PipelineMultiEnvMonitoring {
     readonly DEFAULT_ENV: cdk.Environment =
         {
             account: process.env.CDK_DEFAULT_ACCOUNT,
             region: process.env.CDK_DEFAULT_REGION,
         };
 
-    async buildAsync(scope: Construct, id: string, pipelineProps: PipelineMultiEnvGitopsProps, props?: StackProps) {
+    async buildAsync(scope: Construct, id: string, pipelineProps: PipelineMultiEnvMonitoringProps) {
 
         // environments IDs consts
-        const DEV_ENV_ID = `dev-${pipelineProps.devEnv.region}`
-        const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`
-        const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`
+        const PROD1_ENV_ID = `prod1-${pipelineProps.prodEnv1.region}`
+        const PROD2_ENV_ID = `prod2-${pipelineProps.prodEnv2.region}`
 
         // build teams per environments
-        const devTeams = createTeamList('dev', scope, pipelineProps.devEnv.account!);
-        const testTeams = createTeamList('test', scope, pipelineProps.devEnv.account!);
-        const prodTeams = createTeamList('prod', scope, pipelineProps.prodEnv.account!);
-
-        try {
-            // github-token is needed for CDK Pipeline functionality
-            await getSecretValue('github-token', pipelineProps.pipelineEnv.region!); // Exclamation mark is used to avoid msg: ts(2345)
-        }
-        catch (error) {
-            throw new Error(`github-token secret must be setup in AWS Secrets Manager for the GitHub pipeline.
-                    The GitHub Personal Access Token should have these scopes:
-                    * **repo** - to read the repository
-                    * * **admin:repo_hook** - if you plan to use webhooks (true by default)
-                    * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
-        }
 
         const clusterVersion = eks.KubernetesVersion.V1_21;
 
-        /* eslint-disable */
-        const blueMNG = new blueprints.MngClusterProvider({
-            id: "primary-mng-blue",
-            version: clusterVersion,
-            minSize: 1,
-            maxSize: 100,
-            nodeGroupCapacityType: eks.CapacityType.SPOT,
-            instanceTypes: [
-                new ec2.InstanceType("m5.2xlarge"),
-                new ec2.InstanceType("m5a.2xlarge"),
-                new ec2.InstanceType("m5ad.2xlarge"),
-                new ec2.InstanceType("m5d.2xlarge"),
-            ],
-        });
-        const greenMNG = new blueprints.MngClusterProvider({
-            id: "primary-mng-green",
-            version: clusterVersion,
-            minSize: 1,
-            maxSize: 100,
-            nodeGroupCapacityType: eks.CapacityType.SPOT,
-            instanceTypes: [
-                new ec2.InstanceType("m5.xlarge"),
-                new ec2.InstanceType("m5a.xlarge"),
-                new ec2.InstanceType("m5ad.xlarge"),
-                new ec2.InstanceType("m5d.xlarge"),
-            ],
-        });
-
-        const blueprint = blueprints.EksBlueprint.builder()
-            .version(clusterVersion)
-            .clusterProvider(
-                // blueMNG,
-                greenMNG,
-            )
-            .addOns(
-                // default addons for all environments
-                new blueprints.SecretsStoreAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
-                new blueprints.NginxAddOn,
-                new blueprints.AppMeshAddOn({
-                    enableTracing: true
-                }),
-                new blueprints.CalicoAddOn,
-                new blueprints.MetricsServerAddOn,
-                new blueprints.ClusterAutoScalerAddOn(),
-                new blueprints.ContainerInsightsAddOn,
-                new blueprints.XrayAddOn,
-            );
-
-        // Argo configuration per environment
-        const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
-        const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+        const blueprint = new AmpMonitoringConstruct().create(scope, pipelineProps.prodEnv1.account, pipelineProps.prodEnv1.region);
 
         try {
 
@@ -140,53 +56,37 @@ export default class PipelineMultiEnvGitops {
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
-                    targetRevision: 'main',
+                    targetRevision: 'feature/PatternEKSMultiMon',
                 })
                 .wave({
-                    id: "dev-test",
+                    id: "prod-test",
                     stages: [
                         {
-                            id: DEV_ENV_ID,
+                            id: PROD1_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(pipelineProps.devEnv.region, pipelineProps.devEnv.account)
-                                .name(DEV_ENV_ID)
-                                .teams(...devTeams)
-                                .addOns(
-                                    devArgoAddonConfig,
-                                )
+                                .clone(pipelineProps.prodEnv1.account, pipelineProps.prodEnv2.region)
+                                .name(PROD1_ENV_ID)
+                                // .teams(...devTeams)
+                                // .addOns(
+                                //     devArgoAddonConfig,
+                                // )
                         },
                         {
-                            id: TEST_ENV_ID,
+                            id: PROD2_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(pipelineProps.devEnv.region, pipelineProps.devEnv.account)
-                                .name(TEST_ENV_ID)
-                                .teams(...testTeams)
-                                .addOns(
-                                    testArgoAddonConfig,
-                                )
+                                .clone(pipelineProps.prodEnv2.region, pipelineProps.prodEnv2.account)
+                                .name(PROD1_ENV_ID)
+                                // .teams(...testTeams)
+                                // .addOns(
+                                //     testArgoAddonConfig,
+                                // )
                         },
 
                     ],
-                    props: {
-                        post: [new blueprints.pipelines.cdkpipelines.ManualApprovalStep('manual-approval-before-production')]
-                    }
                 })
-                .wave({
-                    id: "prod",
-                    stages: [
-                        {
-                            id: PROD_ENV_ID,
-                            stackBuilder: blueprint
-                                .clone(pipelineProps.prodEnv.region, pipelineProps.prodEnv.account)
-                                .name(PROD_ENV_ID)
-                                .teams(...prodTeams)
-                                .addOns(
-                                    prodArgoAddonConfig,
-                                )
-                        },
-                    ]
-                })
-                .build(scope, "eks-blueprint-pipeline-stack", props);
+                .build(scope, "eks-blueprint-pipeline-stack",{
+                    env: pipelineProps.pipelineEnv
+                });
         } catch (error) {
             console.log(error)
         }
@@ -195,16 +95,16 @@ export default class PipelineMultiEnvGitops {
 
 
 
-function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
-    const teamsList = [
-        new team.CorePlatformTeam(account, environments),
-        new team.FrontendTeam(account, environments),
-        new team.BackendNodejsTeam(account, environments),
-        new team.BackendCrystalTeam(account, environments),
-    ];
-    return teamsList;
+// function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
+//     const teamsList = [
+//         new team.CorePlatformTeam(account, environments),
+//         new team.FrontendTeam(account, environments),
+//         new team.BackendNodejsTeam(account, environments),
+//         new team.BackendCrystalTeam(account, environments),
+//     ];
+//     return teamsList;
 
-}
+// }
 function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
     interface argoProjectParams {
         githubOrg: string,
