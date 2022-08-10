@@ -39,6 +39,3 @@ export default class FargateConstruct {
             .build(scope, stackID);
     }
 }
-
-
-

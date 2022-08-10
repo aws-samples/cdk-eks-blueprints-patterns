@@ -26,20 +26,20 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "1.0.0",
+    "@aws-quickstart/eks-blueprints": "file:/Users/pevetoej/environment/cdk-eks-blueprints/aws-quickstart-eks-blueprints-1.1.1.tgz",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.1",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.4.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.2",
-    "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
-    "aws-cdk": "2.20.0",
-    "source-map-support": "^0.5.21",
-    "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2"
+    "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
+    "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.1",
+    "aws-cdk": "2.33.0",
+    "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "aws-cdk": "2.20.0",
-    "@aws-quickstart/eks-blueprints": "1.0.0"
+    "aws-cdk": "2.33.0",
+    "@aws-quickstart/eks-blueprints": "file:/Users/pevetoej/environment/cdk-eks-blueprints/aws-quickstart-eks-blueprints-1.1.1.tgz"
   }
 }

@@ -90,6 +90,13 @@ else {
 import BottleRocketConstruct from '../lib/bottlerocket-construct';
 new BottleRocketConstruct().build(app, 'bottlerocket');
 
+//-------------------------------------------
+// Single cluster with Progressive Delivery nodes.
+//-------------------------------------------
+
+import ProgressiveDemoConstruct from '../lib/progressive-delivery';
+new ProgressiveDemoConstruct().build(app, 'progressive-delivery');
+
 
 //-------------------------------------------
 // Single cluster with custom configuration.

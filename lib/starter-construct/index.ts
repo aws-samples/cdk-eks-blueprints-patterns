@@ -1,9 +1,8 @@
 import { Construct } from 'constructs';
 
 // Blueprints Lib
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { ArgoCDAddOn, ClusterAutoScalerAddOn, MetricsServerAddOn } from '@aws-quickstart/eks-blueprints';
-
 
 /**
  * Example starter with placeholders to add addOns and teams.
@@ -23,5 +22,3 @@ export default class StarterConstruct {
             .build(scope, stackID);
     }
 }
-
-
