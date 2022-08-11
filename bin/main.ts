@@ -43,25 +43,25 @@ new MultiTeamConstruct(app, 'multi-team');
 // Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
 //--------------------------------------------------------------------------
 
-import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
+// import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
 
-// These different CDK environments are meant to be used for multi-region/account usage, 
-// where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
-const { devEnv, pipelineEnv, prodEnv }:
-    { devEnv: cdk.Environment; pipelineEnv: cdk.Environment; prodEnv: cdk.Environment; } =
-    populateWithContextDefaults(app, account, region);
+// // These different CDK environments are meant to be used for multi-region/account usage, 
+// // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
+// const { devEnv, pipelineEnv, prodEnv }:
+//     { devEnv: cdk.Environment; pipelineEnv: cdk.Environment; prodEnv: cdk.Environment; } =
+//     populateWithContextDefaults(app, account, region);
 
-new PipelineMultiEnvGitops()
-    .buildAsync(app, 'pipeline-multi-env',
-        {
-            devEnv: devEnv,
-            pipelineEnv: pipelineEnv,
-            prodEnv: prodEnv,
-        },
-        { env })
-    .catch(() => {
-        logger.info("Pipeline pattern is not setup due to missing secrets for GitHub access.");
-    });
+// new PipelineMultiEnvGitops()
+//     .buildAsync(app, 'pipeline-multi-env',
+//         {
+//             devEnv: devEnv,
+//             pipelineEnv: pipelineEnv,
+//             prodEnv: prodEnv,
+//         },
+//         { env })
+//     .catch(() => {
+//         logger.info("Pipeline pattern is not setup due to missing secrets for GitHub access.");
+//     });
 
 //--------------------------------------------------------------------------
 // Multiple clusters, multiple accounts, pipeline and Monitoring
