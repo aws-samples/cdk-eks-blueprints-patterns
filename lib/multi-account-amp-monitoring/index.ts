@@ -4,7 +4,6 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
 import AmpMonitoringConstruct from '../amp-monitoring';
-import { utils } from "@aws-quickstart/eks-blueprints";
 
 export async function populateAccountWithContextDefaults(app: Construct, defaultAccount: string, defaultRegion: string) {
     // Populate Context Defaults for all the accounts

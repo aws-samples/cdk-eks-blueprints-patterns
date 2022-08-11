@@ -38,7 +38,7 @@ export default class AmpMonitoringConstruct {
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.SecretsStoreAddOn
             )
-            .teams(platformTeam);
+            // .teams(platformTeam);
     }
 }
 

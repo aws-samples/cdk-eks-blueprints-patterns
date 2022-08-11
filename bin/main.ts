@@ -67,7 +67,7 @@ new MultiTeamConstruct(app, 'multi-team');
 // Multiple clusters, multiple accounts, pipeline and Monitoring
 //--------------------------------------------------------------------------
 
-import PipelineMultiEnvMonitoring, { populateAccountWithContextDefaults } from '../lib/multi-account-amp-monitoring';
+import PipelineMultiEnvMonitoring from '../lib/multi-account-amp-monitoring';
 
 // These different CDK environments are meant to be used for multi-region/account usage, 
 // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments

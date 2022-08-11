@@ -1,5 +1,5 @@
-AMP Workloads Account
-cat > amp_trust_policy.json << EOF
+// AMP Workloads Account
+// Trust Relationship
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -13,9 +13,7 @@ cat > amp_trust_policy.json << EOF
         }
     ]
 }
-EOF
-
-cat > amp_permission_policy.json << EOF
+// Policy
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -33,11 +31,10 @@ cat > amp_permission_policy.json << EOF
         }
     ]
 }
-EOF
 
 
-cloud-watch Workload account
-cat > cw_trust_policy.json << EOF
+// cloud-watch Workload account
+// Trust Relationship
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -51,9 +48,9 @@ cat > cw_trust_policy.json << EOF
         }
     ]
 }
-EOF
 
-cat > cw_permission_policy.json << EOF
+
+//Policy
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -97,11 +94,11 @@ cat > cw_permission_policy.json << EOF
     }
   ]
 }
-EOF
+
 
 
 amg-account
-cat > amg_role_trust_policy.json << EOF
+//Trust Relationship
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -114,9 +111,7 @@ cat > amg_role_trust_policy.json << EOF
     }
  ]
 }
-EOF
-
-cat > amg_workspace_permission_policy.json << EOF
+//Policy
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -132,4 +127,3 @@ cat > amg_workspace_permission_policy.json << EOF
     }
    ]
 }
-EOF
