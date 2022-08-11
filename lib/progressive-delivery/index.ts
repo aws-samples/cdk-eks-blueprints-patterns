@@ -1,18 +1,23 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { MeshProviderOptions } from '@aws-quickstart/eks-blueprints';
+import * as team from '../teams';
+
+export const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';
 
 /**
- * Demonstrates how to use Flagger for progressive delivery.
+ * Demonstrates how to use Flagger for progressive delivery utilizing nginx mesh provider.
  */
 export default class ProgressiveDemoConstruct {
 
     build(scope: Construct, id: string) {
 
+        const dataManifestDir = './lib/teams/team-data/'
+
         const stackID = `${id}-blueprint`;
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 
-        const repoUrl = 'https://github.com/Eli1123/progressive-delivery-addon-demo.git'
+        const workload = 'https://github.com/Eli1123/eks-blueprints-workloads.git' 
 
         blueprints.EksBlueprint.builder()
             .account(accountID)
@@ -20,14 +25,15 @@ export default class ProgressiveDemoConstruct {
             .addOns(
                 new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
-                        repoUrl,
-                        path: './'
+                        repoUrl: workload,
+                        path: './teams/team-data/dev'
                     },
-                    adminPasswordSecretName: "argocd-password",
+                    adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                     
                 }),
-                new blueprints.addons.AwsLoadBalancerControllerAddOn(),
+                new blueprints.addons.SecretsStoreAddOn(),
                 new blueprints.addons.FlaggerAddOn({meshProvider: MeshProviderOptions.NGINX}),
+                new blueprints.addons.AwsLoadBalancerControllerAddOn(),
                 new blueprints.addons.NginxAddOn({values:
                     {
                         controller: {
@@ -37,10 +43,10 @@ export default class ProgressiveDemoConstruct {
                             create: "true"
                         },
                 }}),
-                new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.MetricsServerAddOn,
                 )
-            .teams()
+            .teams(new team.TeamDataSetup(scope, dataManifestDir))
             .build(scope, stackID);
     }
 }
+
+//option in flagger to also do flagger load tester look into
