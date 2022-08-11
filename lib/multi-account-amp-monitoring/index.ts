@@ -55,7 +55,7 @@ export default class PipelineMultiEnvMonitoring {
                 .owner(gitOwner)
                 .repository({
                     repoUrl: gitRepositoryName,
-                    credentialsSecretName: 'github-token',
+                    credentialsSecretName: 'github-token-secret',
                     targetRevision: 'feature/PatternEKSMultiMon',
                 })
                 .enableCrossAccountKeys()
@@ -65,7 +65,7 @@ export default class PipelineMultiEnvMonitoring {
                         {
                             id: PROD1_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(pipelineProps.prodEnv1.account, pipelineProps.prodEnv2.region)
+                                .clone(pipelineProps.prodEnv1.region, pipelineProps.prodEnv2.account)
                                 .name(PROD1_ENV_ID)
                                 // .teams(...devTeams)
                                 // .addOns(
