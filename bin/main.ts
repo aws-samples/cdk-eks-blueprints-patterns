@@ -34,10 +34,10 @@ new MultiTeamConstruct(app, 'multi-team');
 // Multiple clusters, multiple regions.
 //-------------------------------------------
 
-import MultiRegionConstruct from '../lib/multi-region-construct';
-new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
-    logger.info("Multi region pattern is not setup due to missing secrets: ", error);
-});
+// import MultiRegionConstruct from '../lib/multi-region-construct';
+// new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
+//     logger.info("Multi region pattern is not setup due to missing secrets: ", error);
+// });
 
 //--------------------------------------------------------------------------
 // Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
