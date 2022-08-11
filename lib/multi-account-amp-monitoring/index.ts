@@ -4,15 +4,17 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
 import AmpMonitoringConstruct from '../amp-monitoring';
+import { utils } from "@aws-quickstart/eks-blueprints";
 
-export function populateAccountWithContextDefaults(app: cdk.App, defaultAccount: string, defaultRegion: string) {
+export async function populateAccountWithContextDefaults(app: Construct, defaultAccount: string, defaultRegion: string) {
     // Populate Context Defaults for all the accounts
 
-    const prodEnv1: cdk.Environment = app.node.tryGetContext('prodEnv1') ;
-    const prodEnv2: cdk.Environment = app.node.tryGetContext('prodEnv2') ;
-    const pipelineMonEnv: cdk.Environment = app.node.tryGetContext('pipelineEnv') ;
-    const monitoringEnv: cdk.Environment = app.node.tryGetContext('monitoringEnv') ;
-    return { prodEnv1, prodEnv2, pipelineMonEnv, monitoringEnv };
+    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'));
+    const prodEnv1: cdk.Environment = cdkContext['context']['prodEnv1'];
+    const prodEnv2: cdk.Environment = cdkContext['context']['prodEnv2'];
+    const pipelineEnv: cdk.Environment = cdkContext['context']['pipelineEnv'];
+    const monitoringEnv: cdk.Environment = cdkContext['context']['monitoringEnv'];
+    return { prodEnv1, prodEnv2, pipelineEnv, monitoringEnv };
 }
 
 export interface PipelineMultiEnvMonitoringProps {
@@ -32,17 +34,17 @@ export default class PipelineMultiEnvMonitoring {
             region: process.env.CDK_DEFAULT_REGION,
         };
 
-    async buildAsync(scope: Construct, id: string, pipelineProps: PipelineMultiEnvMonitoringProps) {
-
+    async buildAsync(scope: Construct, id: string) {
+        const context = await populateAccountWithContextDefaults(scope, '940019131157', 'us-east-1');
         // environments IDs consts
-        const PROD1_ENV_ID = `prod1-${pipelineProps.prodEnv1.region}`
-        const PROD2_ENV_ID = `prod2-${pipelineProps.prodEnv2.region}`
+        const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
+        const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
 
         // build teams per environments
 
         const clusterVersion = eks.KubernetesVersion.V1_21;
 
-        const blueprint = new AmpMonitoringConstruct().create(scope, pipelineProps.prodEnv1.account, pipelineProps.prodEnv1.region);
+        const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
         try {
 
@@ -65,7 +67,7 @@ export default class PipelineMultiEnvMonitoring {
                         {
                             id: PROD1_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(pipelineProps.prodEnv1.region, pipelineProps.prodEnv2.account)
+                                .clone(context.prodEnv1.region, context.prodEnv2.account)
                                 .name(PROD1_ENV_ID)
                                 // .teams(...devTeams)
                                 // .addOns(
@@ -75,7 +77,7 @@ export default class PipelineMultiEnvMonitoring {
                         {
                             id: PROD2_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(pipelineProps.prodEnv2.region, pipelineProps.prodEnv2.account)
+                                .clone(context.prodEnv2.region, context.prodEnv2.account)
                                 .name(PROD1_ENV_ID)
                                 // .teams(...testTeams)
                                 // .addOns(
@@ -86,7 +88,7 @@ export default class PipelineMultiEnvMonitoring {
                     ],
                 })
                 .build(scope, "multi-account-central-pipeline",{
-                    env: pipelineProps.pipelineMonEnv
+                    env: context.pipelineEnv
                 });
         } catch (error) {
             console.log(error)
