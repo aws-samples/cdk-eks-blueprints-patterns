@@ -67,7 +67,7 @@ export default class PipelineMultiEnvMonitoring {
                         {
                             id: PROD1_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(context.prodEnv1.region, context.prodEnv2.account)
+                                .clone(context.prodEnv1.region, context.prodEnv1.account)
                                 .name(PROD1_ENV_ID)
                                 // .teams(...devTeams)
                                 // .addOns(
@@ -78,7 +78,7 @@ export default class PipelineMultiEnvMonitoring {
                             id: PROD2_ENV_ID,
                             stackBuilder: blueprint
                                 .clone(context.prodEnv2.region, context.prodEnv2.account)
-                                .name(PROD1_ENV_ID)
+                                .name(PROD2_ENV_ID)
                                 // .teams(...testTeams)
                                 // .addOns(
                                 //     testArgoAddonConfig,
