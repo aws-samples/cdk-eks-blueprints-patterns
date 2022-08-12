@@ -78,13 +78,13 @@ export class AmgIamSetupStack extends cdk.Stack {
             assumedBy: new iam.ServicePrincipal('grafana.amazonaws.com'),
             description: 'Service Role for Amazon Managed Grafana',
         });
-        const length = props.accounts.length
+        
         for (var i = 0; i < props.accounts.length; i++) {
             role.addToPolicy(new iam.PolicyStatement({
                 actions: [
                     "sts:AssumeRole"
                 ],
-                resources: [`arn:aws:iam::${props.accounts[i]}:role/Prod1AmpRole`]
+                resources: [`arn:aws:iam::${props.accounts[i]}:role/ampPrometheusDataSourceRole`]
             }));
         }
 
@@ -108,7 +108,7 @@ export default class PipelineMultiEnvMonitoring {
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         const amgIamSetupStackProps : AmgIamSetupStackProps  = {
-            roleName: "ampWorkspaceIamRole",  
+            roleName: "amgWorkspaceIamRole",  
             accounts: [context.prodEnv1.account!, context.prodEnv2.account!],
             env: {
                 account: context.monitoringEnv.account!,
@@ -133,7 +133,7 @@ export default class PipelineMultiEnvMonitoring {
                         stackBuilder: blueprint
                             .clone(context.prodEnv1.region, context.prodEnv1.account)
                             .addOns(new blueprints.NestedStackAddOn({
-                                builder: AmpIamSetupStack.builder("Prod1AmpRole", context.monitoringEnv.account!),
+                                builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
                             .name(PROD1_ENV_ID)
@@ -143,7 +143,7 @@ export default class PipelineMultiEnvMonitoring {
                         stackBuilder: blueprint
                             .clone(context.prodEnv2.region, context.prodEnv2.account)
                             .addOns(new blueprints.NestedStackAddOn({
-                                builder: AmpIamSetupStack.builder("Prod2AmpRole", context.monitoringEnv.account!),
+                                builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
                             .name(PROD2_ENV_ID)
