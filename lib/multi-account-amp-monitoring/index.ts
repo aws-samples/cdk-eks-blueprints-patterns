@@ -6,6 +6,8 @@ import { Construct } from 'constructs';
 // Team implementations
 import AmpMonitoringConstruct from '../amp-monitoring';
 
+const logger = blueprints.utils.logger;
+
 /**
  * Function relies on a secret called "cdk-context" defined in the target region (pipeline account must have it)
  * @returns 
@@ -13,6 +15,7 @@ import AmpMonitoringConstruct from '../amp-monitoring';
 export async function populateAccountWithContextDefaults(): Promise<PipelineMultiEnvMonitoringProps> {
     // Populate Context Defaults for all the accounts
     const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'))['context'] as PipelineMultiEnvMonitoringProps;
+    logger.debug(`Retrieved CDK context ${JSON.stringify(cdkContext)}`);
     return cdkContext;
 }
 
@@ -56,6 +59,8 @@ export class AmpIamSetupStack extends NestedStack {
             ],
             resources: ["*"],
         }));
+
+        new cdk.CfnOutput(this, 'AMPTrustRole', { value: role ? role.roleArn : "none" });
     }
 }
 
