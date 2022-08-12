@@ -2,6 +2,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as iam from 'aws-cdk-lib/aws-am';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
 
@@ -63,6 +64,35 @@ export class AmpIamSetupStack extends NestedStack {
     }
 }
 
+export interface AmgIamSetupStackProps extends cdk.StackProps {
+    roleName: string,
+    accounts: string[]
+} 
+
+export class AmgIamSetupStack extends cdk.Stack {
+  
+    constructor(scope: Construct, id: string, props: AmgIamSetupStackProps) {
+        super(scope, id, props);
+
+        const role = new iam.Role(this, 'amg-iam-role', {
+            roleName: props.roleName,
+            assumedBy: new iam.ServicePrincipal('grafana.amazonaws.com'),
+            description: 'Service Role for Amazon Managed Grafana',
+        });
+        const length = props.accounts.length
+        for (var i = 0; i < props.accounts.length; i++) {
+            role.addToPolicy(new iam.PolicyStatement({
+                actions: [
+                    "sts:AssumeRole"
+                ],
+                resources: [`arn:aws:iam::${props.accounts[i]}:role/Prod1AmpRole`]
+            }));
+        }
+
+        new cdk.CfnOutput(this, 'AMGRole', { value: role ? role.roleArn : "none" });
+    }
+}
+
 export default class PipelineMultiEnvMonitoring {
 
     async buildAsync(scope: Construct) {
@@ -70,12 +100,18 @@ export default class PipelineMultiEnvMonitoring {
         // environments IDs consts
         const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
         const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
+        const MON_ENV_ID = `prod2-${context.monitoringEnv.region}`
 
         const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
         const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
+
+        let amgIamSetupStackProps : AmgIamSetupStackProps  = {
+            roleName: "ampWorkspaceIamRole",  
+            accounts: [context.prodEnv1.account!, context.prodEnv2.account!]
+        };
 
         blueprints.CodePipelineStack.builder()
             .name("multi-account-central-pipeline")
@@ -109,6 +145,10 @@ export default class PipelineMultiEnvMonitoring {
                             }))
                             .name(PROD2_ENV_ID)
                     },
+                    {
+                        id: MON_ENV_ID,
+                        stackBuilder: new AmgIamSetupStack(new cdk.App, "ampWorkspaceIamRole", amgIamSetupStackProps)
+                    },
                 ],
             })
             .build(scope, "multi-account-central-pipeline", {
@@ -116,8 +156,6 @@ export default class PipelineMultiEnvMonitoring {
             });
     }
 }
-
-
 
 // function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
 //     const teamsList = [
