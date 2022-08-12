@@ -3,7 +3,6 @@ import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-// Team implementations
 import AmpMonitoringConstruct from '../amp-monitoring';
 
 const logger = blueprints.utils.logger;
