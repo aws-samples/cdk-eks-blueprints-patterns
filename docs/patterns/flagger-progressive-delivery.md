@@ -12,9 +12,10 @@ Our blueprint will then include the following:
 2. FlaggerAddON with meshProvider set to MeshProviderOptions.NGINX to change from the kuberneties default
 3. NginxAddOn which allows the canaries to see the examples generated traffic after altering the values
 4. AwsLoadBalancerControllerAddOn is simply needed in order to utilize the NginxAddOn
+5. SecretsStoreAddOn is needed in order for the secret admin password to be used for pattern purposes
 
 ## Prerequisites
-1. `argocd-password` secret must be defined as plain text (not key/value) in `us-east-2` region.
+1. `argocd-admin-secret` secret must be defined as plain text (not key/value) in `us-east-2` region.
 
 ## Deploying
 

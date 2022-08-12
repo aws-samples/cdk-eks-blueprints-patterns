@@ -26,7 +26,7 @@ export default class ProgressiveDemoConstruct {
                 new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
                         repoUrl: workload,
-                        path: './teams/team-data/dev'
+                        path: 'teams/team-data/dev'
                     },
                     adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                     
