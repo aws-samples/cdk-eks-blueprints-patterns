@@ -146,8 +146,7 @@ export default class PipelineMultiEnvMonitoring {
                             .name(PROD2_ENV_ID)
                     },
                     {
-                        id: MON_ENV_ID,
-                        stackBuilder: new AmgIamSetupStack(new cdk.App, "ampWorkspaceIamRole", amgIamSetupStackProps)
+                        new AmgIamSetupStack(new cdk.App, "ampWorkspaceIamRole", amgIamSetupStackProps)
                     },
                 ],
             })
