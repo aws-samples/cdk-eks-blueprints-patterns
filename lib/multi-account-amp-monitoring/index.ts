@@ -1,8 +1,7 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
+import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as iam from 'aws-cdk-lib/aws-am';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
 
@@ -108,9 +107,13 @@ export default class PipelineMultiEnvMonitoring {
         const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
-        let amgIamSetupStackProps : AmgIamSetupStackProps  = {
+        const amgIamSetupStackProps : AmgIamSetupStackProps  = {
             roleName: "ampWorkspaceIamRole",  
-            accounts: [context.prodEnv1.account!, context.prodEnv2.account!]
+            accounts: [context.prodEnv1.account!, context.prodEnv2.account!],
+            env: {
+                account: context.monitoringEnv.account!,
+                region: context.monitoringEnv.region!
+            }
         };
 
         blueprints.CodePipelineStack.builder()
@@ -146,7 +149,12 @@ export default class PipelineMultiEnvMonitoring {
                             .name(PROD2_ENV_ID)
                     },
                     {
-                        new AmgIamSetupStack(new cdk.App, "ampWorkspaceIamRole", amgIamSetupStackProps)
+                        id: 'central-monitoring-stage',
+                        stackBuilder: <blueprints.StackBuilder> {
+                            build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
+                                return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
+                            }
+                        }
                     },
                 ],
             })

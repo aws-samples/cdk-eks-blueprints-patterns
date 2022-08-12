@@ -79,8 +79,6 @@ export default class NginxIngressConstruct {
             .buildAsync(scope, `${id}-blueprint`);
 
             blueprints.HelmAddOn.validateHelmVersions = false;
-
-
     }
 }
 
