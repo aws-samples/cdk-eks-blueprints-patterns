@@ -73,7 +73,7 @@ import PipelineMultiEnvMonitoring from '../lib/multi-account-amp-monitoring';
 // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
 
 new PipelineMultiEnvMonitoring()
-    .buildAsync(app, 'pipeline-multi-env-monitoring')
+    .buildAsync(app)
     .catch(() => {
         logger.info("Multi Account Monitoring pattern is not setup due to missing secrets for GitHub access.");
     });

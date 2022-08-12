@@ -1,19 +1,19 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
-import * as eks from 'aws-cdk-lib/aws-eks';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 // Team implementations
 import AmpMonitoringConstruct from '../amp-monitoring';
 
-export async function populateAccountWithContextDefaults(app: Construct, defaultAccount: string, defaultRegion: string) {
+/**
+ * Function relies on a secret called "cdk-context" defined in the target region (pipeline account must have it)
+ * @returns 
+ */
+export async function populateAccountWithContextDefaults(): Promise<PipelineMultiEnvMonitoringProps> {
     // Populate Context Defaults for all the accounts
-
-    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'));
-    const prodEnv1: cdk.Environment = cdkContext['context']['prodEnv1'];
-    const prodEnv2: cdk.Environment = cdkContext['context']['prodEnv2'];
-    const pipelineEnv: cdk.Environment = cdkContext['context']['pipelineEnv'];
-    const monitoringEnv: cdk.Environment = cdkContext['context']['monitoringEnv'];
-    return { prodEnv1, prodEnv2, pipelineEnv, monitoringEnv };
+    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'))['context'] as PipelineMultiEnvMonitoringProps;
+    return cdkContext;
 }
 
 export interface PipelineMultiEnvMonitoringProps {
@@ -22,76 +22,94 @@ export interface PipelineMultiEnvMonitoringProps {
      */
     prodEnv1: cdk.Environment;
     prodEnv2: cdk.Environment;
-    pipelineMonEnv: cdk.Environment;
+    pipelineEnv: cdk.Environment;
     monitoringEnv: cdk.Environment;
 }
 
-export default class PipelineMultiEnvMonitoring {
-    readonly DEFAULT_ENV: cdk.Environment =
-        {
-            account: process.env.CDK_DEFAULT_ACCOUNT,
-            region: process.env.CDK_DEFAULT_REGION,
-        };
+export class AmpIamSetupStack extends NestedStack {
 
-    async buildAsync(scope: Construct, id: string) {
-        const context = await populateAccountWithContextDefaults(scope, '940019131157', 'us-east-1');
+    public static builder(roleName: string, trustAccount: string): blueprints.NestedStackBuilder {
+        return {
+            build(scope: Construct, id: string, props: NestedStackProps) {
+                return new AmpIamSetupStack(scope, id, props, roleName, trustAccount);
+            }
+        };
+    }
+
+    constructor(scope: Construct, id: string, props: NestedStackProps, roleName: string, trustAccount: string) {
+        super(scope, id, props);
+
+        const role = new iam.Role(this, 'amp-iam-trust-role', {
+            roleName: roleName,
+            assumedBy: new iam.AccountPrincipal(trustAccount),
+            description: 'AMP role to assume from central account',
+        });
+
+        role.addToPolicy(new iam.PolicyStatement({
+            actions: [
+                "aps:ListWorkspaces",
+                "aps:DescribeWorkspace",
+                "aps:QueryMetrics",
+                "aps:GetLabels",
+                "aps:GetSeries",
+                "aps:GetMetricMetadata"
+            ],
+            resources: ["*"],
+        }));
+    }
+}
+
+export default class PipelineMultiEnvMonitoring {
+
+    async buildAsync(scope: Construct) {
+        const context = await populateAccountWithContextDefaults();
         // environments IDs consts
         const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
         const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
 
-        // build teams per environments
-
-        const clusterVersion = eks.KubernetesVersion.V1_21;
-
         const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
-        try {
+        // const { gitOwner, gitRepositoryName } = await getRepositoryData();
+        const gitOwner = 'aws-samples';
+        const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
-            // const { gitOwner, gitRepositoryName } = await getRepositoryData();
-            const gitOwner = 'aws-samples';
-            const gitRepositoryName = 'cdk-eks-blueprints-patterns';
-
-            blueprints.CodePipelineStack.builder()
-                .name("multi-account-central-pipeline")
-                .owner(gitOwner)
-                .repository({
-                    repoUrl: gitRepositoryName,
-                    credentialsSecretName: 'github-token-secret',
-                    targetRevision: 'feature/PatternEKSMultiMon',
-                })
-                .enableCrossAccountKeys()
-                .wave({
-                    id: "prod-test",
-                    stages: [
-                        {
-                            id: PROD1_ENV_ID,
-                            stackBuilder: blueprint
-                                .clone(context.prodEnv1.region, context.prodEnv1.account)
-                                .name(PROD1_ENV_ID)
-                                // .teams(...devTeams)
-                                // .addOns(
-                                //     devArgoAddonConfig,
-                                // )
-                        },
-                        {
-                            id: PROD2_ENV_ID,
-                            stackBuilder: blueprint
-                                .clone(context.prodEnv2.region, context.prodEnv2.account)
-                                .name(PROD2_ENV_ID)
-                                // .teams(...testTeams)
-                                // .addOns(
-                                //     testArgoAddonConfig,
-                                // )
-                        },
-
-                    ],
-                })
-                .build(scope, "multi-account-central-pipeline",{
-                    env: context.pipelineEnv
-                });
-        } catch (error) {
-            console.log(error)
-        }
+        blueprints.CodePipelineStack.builder()
+            .name("multi-account-central-pipeline")
+            .owner(gitOwner)
+            .repository({
+                repoUrl: gitRepositoryName,
+                credentialsSecretName: 'github-token-secret',
+                targetRevision: 'feature/PatternEKSMultiMon',
+            })
+            .enableCrossAccountKeys()
+            .wave({
+                id: "prod-test",
+                stages: [
+                    {
+                        id: PROD1_ENV_ID,
+                        stackBuilder: blueprint
+                            .clone(context.prodEnv1.region, context.prodEnv1.account)
+                            .addOns(new blueprints.NestedStackAddOn({
+                                builder: AmpIamSetupStack.builder("Prod1AmpRole", context.monitoringEnv.account!),
+                                id: "iam-nested-stack"
+                            }))
+                            .name(PROD1_ENV_ID)
+                    },
+                    {
+                        id: PROD2_ENV_ID,
+                        stackBuilder: blueprint
+                            .clone(context.prodEnv2.region, context.prodEnv2.account)
+                            .addOns(new blueprints.NestedStackAddOn({
+                                builder: AmpIamSetupStack.builder("Prod2AmpRole", context.monitoringEnv.account!),
+                                id: "iam-nested-stack"
+                            }))
+                            .name(PROD2_ENV_ID)
+                    },
+                ],
+            })
+            .build(scope, "multi-account-central-pipeline", {
+                env: context.pipelineEnv
+            });
     }
 }
 
