@@ -106,7 +106,7 @@ export default class PipelineMultiEnvMonitoring {
         // build teams per environments
         const prod1Teams = createTeamList('prod1', scope, context.prodEnv1.account!);
         const prod2Teams = createTeamList('prod2', scope, context.prodEnv2.account!);
-        
+
         const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
@@ -156,14 +156,14 @@ export default class PipelineMultiEnvMonitoring {
                             }))
                             .name(PROD2_ENV_ID)
                     },
-                    {
-                        id: MON_ENV_ID,
-                        stackBuilder: <blueprints.StackBuilder> {
-                            build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
-                                return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
-                            }
-                        }
-                    },
+                    // {
+                    //     id: MON_ENV_ID,
+                    //     stackBuilder: <blueprints.StackBuilder> {
+                    //         build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
+                    //             return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
+                    //         }
+                    //     }
+                    // },
                 ],
             })
             .build(scope, "multi-account-central-pipeline", {
