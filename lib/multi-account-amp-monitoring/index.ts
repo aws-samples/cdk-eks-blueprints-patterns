@@ -101,12 +101,12 @@ export default class PipelineMultiEnvMonitoring {
         // environments IDs consts
         const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
         const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
-        const MON_ENV_ID = `prod2-${context.monitoringEnv.region}`
+        const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
         // build teams per environments
         const prod1Teams = createTeamList('prod1', scope, context.prodEnv1.account!);
         const prod2Teams = createTeamList('prod2', scope, context.prodEnv2.account!);
-
+        
         const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
@@ -157,7 +157,7 @@ export default class PipelineMultiEnvMonitoring {
                             .name(PROD2_ENV_ID)
                     },
                     {
-                        id: 'central-monitoring-stage',
+                        id: MON_ENV_ID,
                         stackBuilder: <blueprints.StackBuilder> {
                             build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
                                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
@@ -166,16 +166,6 @@ export default class PipelineMultiEnvMonitoring {
                     },
                 ],
             })
-            // .stage(
-            //     {
-            //         id: 'central-monitoring-stage',
-            //         stackBuilder: <blueprints.StackBuilder> {
-            //             build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
-            //                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
-            //             }
-            //         }
-            //     }
-            // )
             .build(scope, "multi-account-central-pipeline", {
                 env: context.pipelineEnv
             });
