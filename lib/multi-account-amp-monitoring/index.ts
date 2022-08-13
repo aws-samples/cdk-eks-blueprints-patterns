@@ -157,7 +157,7 @@ export default class PipelineMultiEnvMonitoring {
                             .name(PROD2_ENV_ID)
                     },
                     {
-                        id: MON_ENV_ID,
+                        id: 'central-monitoring-stage',
                         stackBuilder: <blueprints.StackBuilder> {
                             build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
                                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
@@ -166,6 +166,16 @@ export default class PipelineMultiEnvMonitoring {
                     },
                 ],
             })
+            // .stage(
+            //     {
+            //         id: 'central-monitoring-stage',
+            //         stackBuilder: <blueprints.StackBuilder> {
+            //             build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
+            //                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
+            //             }
+            //         }
+            //     }
+            // )
             .build(scope, "multi-account-central-pipeline", {
                 env: context.pipelineEnv
             });
