@@ -200,7 +200,7 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
     let argoAdditionalProject: Array<Record<string, unknown>> = [];
     const projectNameList: argoProjectParams[] =
         [
-            { githubOrg: 'elamaran11', githubRepository: 'eks-blueprints-workloads', projectNamespace: 'argocd' },
+            { githubOrg: 'elamaran11', githubRepository: 'eks-blueprints-workloads', projectNamespace: 'geordie' },
         ];
 
     projectNameList.forEach(element => {
@@ -230,7 +230,7 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
             bootstrapValues: {
                 ingress: {
                     enabled: true,    
-                    host: 'yelb.blueprints.com',
+                    host: 'blueprints.com',
                 }
             },
             values: {
