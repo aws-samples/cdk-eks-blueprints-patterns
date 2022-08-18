@@ -109,6 +109,11 @@ export default class PipelineMultiEnvMonitoring {
 
         const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
 
+        // Argo configuration per environment
+        const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+        const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
+
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
         const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
@@ -143,6 +148,9 @@ export default class PipelineMultiEnvMonitoring {
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
+                            .addOns(
+                                prodArgoAddonConfig,
+                            )
                             .name(PROD1_ENV_ID)
                     },
                     {
@@ -154,6 +162,9 @@ export default class PipelineMultiEnvMonitoring {
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
+                            .addOns(
+                                prodArgoAddonConfig,
+                            )
                             .name(PROD2_ENV_ID)
                     },
                     {
@@ -180,63 +191,55 @@ function createTeamList(environments: string, scope: Construct, account: string)
     return teamsList;
 
 }
-// function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
-//     interface argoProjectParams {
-//         githubOrg: string,
-//         githubRepository: string,
-//         projectNamespace: string
-//     }
-//     let argoAdditionalProject: Array<Record<string, unknown>> = [];
-//     const projectNameList: argoProjectParams[] =
-//         [
-//             { githubOrg: 'aws-containers', githubRepository: 'ecsdemo-frontend', projectNamespace: 'ecsdemo-frontend' },
-//             { githubOrg: 'aws-containers', githubRepository: 'ecsdemo-nodejs', projectNamespace: 'ecsdemo-nodejs' },
-//             { githubOrg: 'aws-containers', githubRepository: 'ecsdemo-crystal', projectNamespace: 'ecsdemo-crystal' },
-//         ];
+function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
+    interface argoProjectParams {
+        githubOrg: string,
+        githubRepository: string,
+        projectNamespace: string
+    }
+    let argoAdditionalProject: Array<Record<string, unknown>> = [];
+    const projectNameList: argoProjectParams[] =
+        [
+            { githubOrg: 'elamaran11', githubRepository: 'eks-blueprints-workloads', projectNamespace: 'argocd' },
+        ];
 
-//     projectNameList.forEach(element => {
-//         argoAdditionalProject.push(
-//             {
-//                 name: element.githubRepository,
-//                 namespace: "argocd",
-//                 destinations: [{
-//                     namespace: element.projectNamespace,
-//                     server: "https://kubernetes.default.svc"
-//                 }],
-//                 sourceRepos: [
-//                     `git@github.com:${element.githubOrg}/${element.githubRepository}.git`,
-//                     `git@github.com:aws-samples/eks-blueprints-workloads.git`,
-//                 ],
-//             }
-//         );
-//     });
+    projectNameList.forEach(element => {
+        argoAdditionalProject.push(
+            {
+                name: element.githubRepository,
+                namespace: "argocd",
+                destinations: [{
+                    namespace: element.projectNamespace,
+                    server: "https://kubernetes.default.svc"
+                }],
+                sourceRepos: [
+                    `git@github.com:${element.githubOrg}/${element.githubRepository}.git`,
+                    `git@github.com:elamaran11/eks-blueprints-workloads.git`,
+                ],
+            }
+        );
+    });
 
-//     const argoConfig = new blueprints.ArgoCDAddOn(
-//         {
-//             bootstrapRepo: {
-//                 repoUrl: repoUrl,
-//                 path: `multi-repo/argo-app-of-apps/${environment}`,
-//                 targetRevision: 'main',
-//                 credentialsSecretName: 'github-ssh-key',
-//                 credentialsType: 'SSH'
-//             },
-//             bootstrapValues: {
-//                 service: {
-//                     type: 'LoadBalancer'
-//                 },
-//                 spec: {
-//                     ingress: {
-//                         host: 'dev.blueprint.com',
-//                     },
-//                 },
-//             },
-//             values: {
-//                 server: {
-//                     additionalProjects: argoAdditionalProject,
-//                 }
-//             }
-//         }
-//     )
+    const argoConfig = new blueprints.ArgoCDAddOn(
+        {
+            bootstrapRepo: {
+                repoUrl: repoUrl,
+                path: `envs/${environment}`,
+                targetRevision: 'feature/Yelb-app',
+            },
+            bootstrapValues: {
+                ingress: {
+                    enabled: true,    
+                    host: 'yelb.blueprints.com',
+                }
+            },
+            values: {
+                server: {
+                    additionalProjects: argoAdditionalProject,
+                }
+            }
+        }
+    )
 
-//     return argoConfig
-// }
+    return argoConfig
+}
