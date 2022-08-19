@@ -213,7 +213,7 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
                     server: "https://kubernetes.default.svc"
                 }],
                 sourceRepos: [
-                    `git@github.com:${element.githubOrg}/${element.githubRepository}.git`,
+                    `https://github.com/${element.githubOrg}/${element.githubRepository}.git`,
                 ],
             }
         );
