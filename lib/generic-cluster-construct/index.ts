@@ -50,14 +50,16 @@ export default class GenericClusterConstruct {
             .region(process.env.CDK_DEFAULT_REGION!)
             .clusterProvider(clusterProvider)
             .addOns(
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
                 new blueprints.AppMeshAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.ContainerInsightsAddOn,
+                new blueprints.CloudWatchAdotAddOn,
                 new blueprints.XrayAddOn,
                 new blueprints.SecretsStoreAddOn
             )
