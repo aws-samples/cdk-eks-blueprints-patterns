@@ -148,9 +148,9 @@ export default class PipelineMultiEnvMonitoring {
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
-                            // .addOns(
-                            //     prodArgoAddonConfig,
-                            // )
+                            .addOns(
+                                prodArgoAddonConfig,
+                            )
                             .name(PROD1_ENV_ID)
                     },
                     {
@@ -162,9 +162,9 @@ export default class PipelineMultiEnvMonitoring {
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "iam-nested-stack"
                             }))
-                            // .addOns(
-                            //     prodArgoAddonConfig,
-                            // )
+                            .addOns(
+                                prodArgoAddonConfig,
+                            )
                             .name(PROD2_ENV_ID)
                     },
                     {
