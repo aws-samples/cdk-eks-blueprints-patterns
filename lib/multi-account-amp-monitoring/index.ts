@@ -112,7 +112,7 @@ export default class PipelineMultiEnvMonitoring {
         // Argo configuration per environment
         const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
         const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'git@github.com:elamaran11/eks-blueprints-workloads.git');
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/elamaran11/eks-blueprints-workloads.git');
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
         const gitOwner = 'aws-samples';
