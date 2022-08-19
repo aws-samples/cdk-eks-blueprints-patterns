@@ -38,15 +38,18 @@ export default class MultiRegionConstruct {
                 desiredSize: 2,
                 maxSize: 3
             }))
-            .addOns( new blueprints.AwsLoadBalancerControllerAddOn,
+            .addOns(
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.VpcCniAddOn,
                 new blueprints.KarpenterAddOn,
-                new blueprints.ContainerInsightsAddOn,
+                new blueprints.CloudWatchAdotAddOn,
                 new blueprints.XrayAddOn,
-                new blueprints.SecretsStoreAddOn)
+                new blueprints.SecretsStoreAddOn )
             .teams( new team.TeamPlatform(accountID),
                 new team.TeamTroiSetup,
                 new team.TeamRikerSetup(scope, teamManifestDirList[1]),

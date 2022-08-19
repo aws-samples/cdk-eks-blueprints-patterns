@@ -110,16 +110,18 @@ export default class PipelineMultiEnvGitops {
             )
             .addOns(
                 // default addons for all environments
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
                 new blueprints.SecretsStoreAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.AppMeshAddOn({
                     enableTracing: true
                 }),
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn(),
-                new blueprints.ContainerInsightsAddOn,
+                new blueprints.CloudWatchAdotAddOn,
                 new blueprints.XrayAddOn,
             );
 

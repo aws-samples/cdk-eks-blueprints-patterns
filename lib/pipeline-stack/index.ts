@@ -21,6 +21,8 @@ export default class PipelineConstruct {
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addOns(
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn, 
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
@@ -28,10 +30,10 @@ export default class PipelineConstruct {
                     enableTracing: true
                 }),
                 new blueprints.SSMAgentAddOn, // this is added to deal with PVRE as it is adding correct role to the node group, otherwise stack destroy won't work
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.ContainerInsightsAddOn,
+                new blueprints.CloudWatchAdotAddOn,
                 new blueprints.XrayAddOn,
                 new blueprints.SecretsStoreAddOn)
             .teams(

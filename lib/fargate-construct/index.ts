@@ -21,7 +21,7 @@ export default class FargateConstruct {
         const stackID = `${id}-blueprint`
         const clusterProvider = new blueprints.FargateClusterProvider({
             fargateProfiles,
-            version: eks.KubernetesVersion.V1_20
+            version: eks.KubernetesVersion.V1_21
         });
 
         blueprints.EksBlueprint.builder()
