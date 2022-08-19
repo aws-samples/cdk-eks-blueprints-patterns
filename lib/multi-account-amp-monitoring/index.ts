@@ -197,27 +197,6 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
         githubRepository: string,
         projectNamespace: string
     }
-    let argoAdditionalProject: Array<Record<string, unknown>> = [];
-    const projectNameList: argoProjectParams[] =
-        [
-            { githubOrg: 'elamaran11', githubRepository: 'eks-blueprints-workloads', projectNamespace: 'geordie' },
-        ];
-
-    projectNameList.forEach(element => {
-        argoAdditionalProject.push(
-            {
-                name: element.githubRepository,
-                namespace: "argocd",
-                destinations: [{
-                    namespace: element.projectNamespace,
-                    server: "https://kubernetes.default.svc"
-                }],
-                sourceRepos: [
-                    `https://github.com/${element.githubOrg}/${element.githubRepository}.git`,
-                ],
-            }
-        );
-    });
 
     const argoConfig = new blueprints.ArgoCDAddOn(
         {
@@ -231,11 +210,6 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
                     host: 'teamblueprints.com',
                 }
             },
-            values: {
-                server: {
-                    additionalProjects: argoAdditionalProject,
-                }
-            }
         }
     )
 
