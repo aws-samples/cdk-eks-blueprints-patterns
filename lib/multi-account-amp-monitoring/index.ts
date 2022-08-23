@@ -214,10 +214,10 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
                     destination: {
                         server: "https://kubernetes.default.svc",
                     },
+                    ingress: {  
+                        host: 'teamblueprints.com',
+                    }
                 },
-                ingress: {  
-                    host: 'teamblueprints.com',
-                }
             },
         }
     )
