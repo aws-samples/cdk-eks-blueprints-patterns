@@ -4,8 +4,10 @@ import { NestedStack, NestedStackProps } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
+import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
+
 // Team implementations
-import * as team from '../teams/multi-account-amp-monitoring';
+import * as team from '../teams/multi-account-amg-monitoring';
 
 const logger = blueprints.utils.logger;
 
@@ -65,6 +67,51 @@ export class AmpIamSetupStack extends NestedStack {
     }
 }
 
+export class CloudWatchIamSetupStack extends NestedStack {
+
+    public static builder(roleName: string, trustAccount: string): blueprints.NestedStackBuilder {
+        return {
+            build(scope: Construct, id: string, props: NestedStackProps) {
+                return new CloudWatchIamSetupStack(scope, id, props, roleName, trustAccount);
+            }
+        };
+    }
+
+    constructor(scope: Construct, id: string, props: NestedStackProps, roleName: string, trustAccount: string) {
+        super(scope, id, props);
+
+        const role = new iam.Role(this, 'cloudwatch-iam-trust-role', {
+            roleName: roleName,
+            assumedBy: new iam.AccountPrincipal(trustAccount),
+            description: 'CloudWatch role to assume from central account',
+        });
+
+        role.addToPolicy(new iam.PolicyStatement({
+            actions: [
+                "cloudwatch:DescribeAlarmsForMetric",
+                "cloudwatch:DescribeAlarmHistory",
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:ListMetrics",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:GetMetricData",
+                "logs:DescribeLogGroups",
+                "logs:GetLogGroupFields",
+                "logs:StartQuery",
+                "logs:StopQuery",
+                "logs:GetQueryResults",
+                "logs:GetLogEvents",
+                "ec2:DescribeTags",
+                "ec2:DescribeInstances",
+                "ec2:DescribeRegions",
+                "tag:GetResources"
+            ],
+            resources: ["*"],
+        }));
+
+        new cdk.CfnOutput(this, 'CloudWatchTrustRole', { value: role ? role.roleArn : "none" });
+    }
+}
+
 export interface AmgIamSetupStackProps extends cdk.StackProps {
     roleName: string,
     accounts: string[]
@@ -86,7 +133,9 @@ export class AmgIamSetupStack extends cdk.Stack {
                 actions: [
                     "sts:AssumeRole"
                 ],
-                resources: [`arn:aws:iam::${props.accounts[i]}:role/ampPrometheusDataSourceRole`]
+                resources: [`arn:aws:iam::${props.accounts[i]}:role/ampPrometheusDataSourceRole`,
+                            `arn:aws:iam::${props.accounts[i]}:role/cloudwatchPrometheusDataSourceRole`
+                ],
             }));
         }
 
@@ -107,12 +156,13 @@ export default class PipelineMultiEnvMonitoring {
         const prod1Teams = createTeamList('prod1', scope, context.prodEnv1.account!);
         const prod2Teams = createTeamList('prod2', scope, context.prodEnv2.account!);
 
-        const blueprint = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
+        const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
+        const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
 
         // Argo configuration per environment
-        const devArgoAddonConfig = createArgoAddonConfig('dev', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
-        const testArgoAddonConfig = createArgoAddonConfig('test', 'git@github.com:aws-samples/eks-blueprints-workloads.git');
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/elamaran11/eks-blueprints-workloads.git');
+        const devArgoAddonConfig = createArgoAddonConfig('dev', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
+        const testArgoAddonConfig = createArgoAddonConfig('test', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
         const gitOwner = 'aws-samples';
@@ -141,12 +191,12 @@ export default class PipelineMultiEnvMonitoring {
                 stages: [
                     {
                         id: PROD1_ENV_ID,
-                        stackBuilder: blueprint
+                        stackBuilder: blueprintAmp
                             .clone(context.prodEnv1.region, context.prodEnv1.account)
                             .teams(...prod1Teams)
                             .addOns(new blueprints.NestedStackAddOn({
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
-                                id: "iam-nested-stack"
+                                id: "amp-iam-nested-stack"
                             }))
                             .addOns(
                                 prodArgoAddonConfig,
@@ -155,12 +205,12 @@ export default class PipelineMultiEnvMonitoring {
                     },
                     {
                         id: PROD2_ENV_ID,
-                        stackBuilder: blueprint
+                        stackBuilder: blueprintCloudWatch
                             .clone(context.prodEnv2.region, context.prodEnv2.account)
                             .teams(...prod2Teams)
                             .addOns(new blueprints.NestedStackAddOn({
-                                builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
-                                id: "iam-nested-stack"
+                                builder: CloudWatchIamSetupStack.builder("cloudwatchPrometheusDataSourceRole", context.monitoringEnv.account!),
+                                id: "cloudwatch-iam-nested-stack"
                             }))
                             .addOns(
                                 prodArgoAddonConfig,
