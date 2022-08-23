@@ -207,12 +207,16 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
             },
             bootstrapValues: {
                 spec: {
-                    repoURL: repoUrl,
-                    targetRevision: 'feature/Yelb-app',
-                    server: "https://kubernetes.default.svc",
-                    ingress: {  
-                        host: 'teamblueprints.com',
-                    }
+                    source: {
+                        repoURL: repoUrl,
+                        targetRevision: 'feature/Yelb-app',
+                    },
+                    destination: {
+                        server: "https://kubernetes.default.svc",
+                    },
+                },
+                ingress: {  
+                    host: 'teamblueprints.com',
                 }
             },
         }
