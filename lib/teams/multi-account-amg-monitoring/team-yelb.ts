@@ -8,7 +8,7 @@ export class YelbTeam extends ApplicationTeam {
             users: [
                 new ArnPrincipal(`arn:aws:iam::${accountID}:user/yelb-user`),
             ],
-            namespace: 'yelb',
+            namespace: 'geordie',
         });
     }
 }

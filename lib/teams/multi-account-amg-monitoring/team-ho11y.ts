@@ -8,7 +8,7 @@ export class Ho11yTeam extends ApplicationTeam {
             users: [
                 new ArnPrincipal(`arn:aws:iam::${accountID}:user/ho11y-user`),
             ],
-            namespace: 'ho11y',
+            namespace: 'geordie',
         });
     }
 }
