@@ -8,7 +8,7 @@ import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup'
 import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
 
 // Team implementations
-import * as team from '../teams/multi-account-opensource-monitoring';
+import * as team from '../teams/multi-account-monitoring';
 
 const logger = blueprints.utils.logger;
 
@@ -25,15 +25,27 @@ export async function populateAccountWithContextDefaults(): Promise<PipelineMult
 
 export interface PipelineMultiEnvMonitoringProps {
     /**
-     * The CDK environment where dev&test, prod, and piplines will be deployed to 
+     * Production workload environment (account/region) #1 
      */
     prodEnv1: cdk.Environment;
+
+    /**
+     * Production workload environment (account/region) #2
+     */
     prodEnv2: cdk.Environment;
+
+    /**
+     * Environment (account/region) where pipeline will be running (generally referred to as CICD account)
+     */
     pipelineEnv: cdk.Environment;
+
+    /**
+     * Environment (account/region) where monitoring dashboards will be configured.
+     */
     monitoringEnv: cdk.Environment;
 }
 
-export default class PipelineMultiEnvMonitoring {
+export class PipelineMultiEnvMonitoring {
 
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
@@ -50,8 +62,6 @@ export default class PipelineMultiEnvMonitoring {
         const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
 
         // Argo configuration per environment
-        const devArgoAddonConfig = createArgoAddonConfig('dev', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
-        const testArgoAddonConfig = createArgoAddonConfig('test', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
         const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
@@ -110,7 +120,7 @@ export default class PipelineMultiEnvMonitoring {
                     {
                         id: MON_ENV_ID,
                         stackBuilder: <blueprints.StackBuilder> {
-                            build(scope: Construct, id: string, stackProps? : cdk.StackProps) : cdk.Stack { 
+                            build(scope: Construct) : cdk.Stack { 
                                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
                             }
                         }
@@ -125,8 +135,8 @@ export default class PipelineMultiEnvMonitoring {
 
 function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
     const teamsList = [
-        new team.YelbTeam(account, environments),
-        new team.Ho11yTeam(account, environments),
+        new team.TeamGeordi(),
+        new team.CorePlatformTeam()
     ];
     return teamsList;
 
