@@ -4,6 +4,10 @@ import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as cdk from 'aws-cdk-lib';
 
+/**
+ * Stack the creates the role with trust relationship to the monitoring account to 
+ * get AMP metrics.
+ */
 export class AmpIamSetupStack extends NestedStack {
 
     public static builder(roleName: string, trustAccount: string): blueprints.NestedStackBuilder {

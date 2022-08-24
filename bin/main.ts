@@ -67,7 +67,7 @@ new PipelineMultiEnvGitops()
 // Multiple clusters, multiple accounts, pipeline and Monitoring
 //--------------------------------------------------------------------------
 
-import PipelineMultiEnvMonitoring from '../lib/multi-account-opensource-monitoring';
+import { PipelineMultiEnvMonitoring } from '../lib/multi-account-monitoring';
 
 // These different CDK environments are meant to be used for multi-region/account usage, 
 // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
