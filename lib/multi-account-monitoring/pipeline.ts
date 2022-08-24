@@ -7,9 +7,6 @@ import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup';
 import { AmpIamSetupStack } from './amp-iam-setup';
 import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup';
 
-// Team implementations
-import * as team from '../teams/multi-account-monitoring';
-
 const logger = blueprints.utils.logger;
 
 /**
@@ -53,8 +50,8 @@ export class PipelineMultiEnvMonitoring {
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
         // environments IDs consts
-        const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
-        const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
+        const PROD1_ENV_ID = `mon-prod1-${context.prodEnv1.region}`
+        const PROD2_ENV_ID = `mon-prod2-${context.prodEnv2.region}`
         const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
 
@@ -100,7 +97,6 @@ export class PipelineMultiEnvMonitoring {
                             .addOns(
                                 prodArgoAddonConfig,
                             )
-                            .name(PROD1_ENV_ID)
                     },
                     {
                         id: PROD2_ENV_ID,
@@ -113,7 +109,6 @@ export class PipelineMultiEnvMonitoring {
                             .addOns(
                                 prodArgoAddonConfig,
                             )
-                            .name(PROD2_ENV_ID)
                     },
                     {
                         id: MON_ENV_ID,

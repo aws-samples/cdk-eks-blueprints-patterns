@@ -86,12 +86,12 @@ npx cdk multi-account-central-pipeline
     }
     ```
 
-11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retriving and visualizing metrics in Grafana.
+11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retrieving and visualizing metrics in Grafana.
 
-12. Next, manually follow the followingsteps from [AWS Open Source blog](https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/#:~:text=AWS%20SSO%20in%20the%20management%20account) :
+12. Next, manually follow the following steps from [AWS Open Source blog](https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/#:~:text=AWS%20SSO%20in%20the%20management%20account) :
     1. AWS SSO in the management account
     2. Query metrics in Monitoring account from Amazon Managed Prometheus workspace in Prod 1 Account
-        3. Query metrics in the Monitoring account from Amazon CloudWatch in Prod 1 Account
+    3. Query metrics in the Monitoring account from Amazon CloudWatch in Prod 1 Account
 
 ![Metrics from AMP](./images/AMG%20-%20Metrics%20from%20AMP.png)
 
