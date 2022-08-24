@@ -50,8 +50,8 @@ You can find the team-geordie configuration for this pattern in the workload rep
     2. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
     3. IAM user `prod2-admin` with `administrator` in Prod 2 AWS Account
     4. IAM user `mon-admin` with `administrator` in Monitoring AWS Account
-    5. IAM user `ho11y-user` in Prod 1 and Prod 2 AWS Account
-    6. IAM user `yelb-user` in Prod 1 and Prod 2 AWS Account
+    5. IAM user `team-geordi` in Prod 1 and Prod 2 AWS Account
+    6. IAM user `team-platform` in Prod 1 and Prod 2 AWS Account
 
 7. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
@@ -86,7 +86,7 @@ npx cdk multi-account-central-pipeline
     }
     ```
 
-11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchPrometheusDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retriving and visualizing metrics in Grafana.
+11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retriving and visualizing metrics in Grafana.
 
 12. Next, manually follow the followingsteps from [AWS Open Source blog](https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/#:~:text=AWS%20SSO%20in%20the%20management%20account) :
     1. AWS SSO in the management account
@@ -100,3 +100,4 @@ npx cdk multi-account-central-pipeline
 ### Notes
 
 This pattern consumes multiple Elastic IP addresses, because 3 VPCs with 3 subnets are created by this pattern in Prod 1 and Prod 2 Accounts. Make sure your account limit for EIP are increased to support additional 9 EIPs (1 per Subnets).
+

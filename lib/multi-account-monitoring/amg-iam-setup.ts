@@ -38,7 +38,7 @@ export class AmgIamSetupStack extends cdk.Stack {
                     "sts:AssumeRole"
                 ],
                 resources: [`arn:aws:iam::${props.accounts[i]}:role/ampPrometheusDataSourceRole`,
-                            `arn:aws:iam::${props.accounts[i]}:role/cloudwatchPrometheusDataSourceRole`
+                            `arn:aws:iam::${props.accounts[i]}:role/cloudwatchDataSourceRole`
                 ],
             }));
         }

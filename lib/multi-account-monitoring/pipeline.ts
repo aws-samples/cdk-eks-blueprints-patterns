@@ -114,7 +114,7 @@ export class PipelineMultiEnvMonitoring {
                             .clone(context.prodEnv2.region, context.prodEnv2.account)
                             .teams(...teams)
                             .addOns(new blueprints.NestedStackAddOn({
-                                builder: CloudWatchIamSetupStack.builder("cloudwatchPrometheusDataSourceRole", context.monitoringEnv.account!),
+                                builder: CloudWatchIamSetupStack.builder("cloudwatchDataSourceRole", context.monitoringEnv.account!),
                                 id: "cloudwatch-iam-nested-stack"
                             }))
                             .addOns(
@@ -144,7 +144,7 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
             bootstrapRepo: {
                 repoUrl: repoUrl,
                 path: `envs/${environment}`,
-                targetRevision: 'feature/Yelb-app',
+                targetRevision: 'main',
             },
             bootstrapValues: {
                 spec: {
