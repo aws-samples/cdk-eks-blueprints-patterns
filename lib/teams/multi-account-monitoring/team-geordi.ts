@@ -4,7 +4,7 @@ export class TeamGeordi extends ApplicationTeam {
     constructor() {
         super({
             name: `team-geordi`,
-            namespace: 'team-geordie',
+            namespace: 'geordie',
         });
     }
 }
