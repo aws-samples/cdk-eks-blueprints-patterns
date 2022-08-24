@@ -45,6 +45,9 @@ export interface PipelineMultiEnvMonitoringProps {
     monitoringEnv: cdk.Environment;
 }
 
+/**
+ * Main multi-account monitoring pipeline.
+ */
 export class PipelineMultiEnvMonitoring {
 
     async buildAsync(scope: Construct) {
@@ -55,8 +58,10 @@ export class PipelineMultiEnvMonitoring {
         const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
         // build teams per environments
-        const prod1Teams = createTeamList('prod1', scope, context.prodEnv1.account!);
-        const prod2Teams = createTeamList('prod2', scope, context.prodEnv2.account!);
+        const teams = [
+            new team.TeamGeordi(),
+            new team.CorePlatformTeam()
+        ];
 
         const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
         const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
@@ -68,8 +73,8 @@ export class PipelineMultiEnvMonitoring {
         const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
-        const amgIamSetupStackProps : AmgIamSetupStackProps  = {
-            roleName: "amgWorkspaceIamRole",  
+        const amgIamSetupStackProps: AmgIamSetupStackProps = {
+            roleName: "amgWorkspaceIamRole",
             accounts: [context.prodEnv1.account!, context.prodEnv2.account!],
             env: {
                 account: context.monitoringEnv.account!,
@@ -93,7 +98,7 @@ export class PipelineMultiEnvMonitoring {
                         id: PROD1_ENV_ID,
                         stackBuilder: blueprintAmp
                             .clone(context.prodEnv1.region, context.prodEnv1.account)
-                            .teams(...prod1Teams)
+                            .teams(...teams)
                             .addOns(new blueprints.NestedStackAddOn({
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "amp-iam-nested-stack"
@@ -107,7 +112,7 @@ export class PipelineMultiEnvMonitoring {
                         id: PROD2_ENV_ID,
                         stackBuilder: blueprintCloudWatch
                             .clone(context.prodEnv2.region, context.prodEnv2.account)
-                            .teams(...prod2Teams)
+                            .teams(...teams)
                             .addOns(new blueprints.NestedStackAddOn({
                                 builder: CloudWatchIamSetupStack.builder("cloudwatchPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "cloudwatch-iam-nested-stack"
@@ -119,8 +124,8 @@ export class PipelineMultiEnvMonitoring {
                     },
                     {
                         id: MON_ENV_ID,
-                        stackBuilder: <blueprints.StackBuilder> {
-                            build(scope: Construct) : cdk.Stack { 
+                        stackBuilder: <blueprints.StackBuilder>{
+                            build(scope: Construct): cdk.Stack {
                                 return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
                             }
                         }
@@ -133,22 +138,8 @@ export class PipelineMultiEnvMonitoring {
     }
 }
 
-function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
-    const teamsList = [
-        new team.TeamGeordi(),
-        new team.CorePlatformTeam()
-    ];
-    return teamsList;
-
-}
 function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
-    interface argoProjectParams {
-        githubOrg: string,
-        githubRepository: string,
-        projectNamespace: string
-    }
-
-    const argoConfig = new blueprints.ArgoCDAddOn(
+    return new blueprints.ArgoCDAddOn(
         {
             bootstrapRepo: {
                 repoUrl: repoUrl,
@@ -157,13 +148,11 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
             },
             bootstrapValues: {
                 spec: {
-                    ingress: {  
+                    ingress: {
                         host: 'teamblueprints.com',
                     }
                 },
             },
         }
     )
-
-    return argoConfig
 }
