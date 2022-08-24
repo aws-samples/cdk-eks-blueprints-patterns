@@ -8,7 +8,7 @@ import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup'
 import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
 
 // Team implementations
-import * as team from '../teams/multi-account-amg-monitoring';
+import * as team from '../teams/multi-account-opensource-monitoring';
 
 const logger = blueprints.utils.logger;
 
