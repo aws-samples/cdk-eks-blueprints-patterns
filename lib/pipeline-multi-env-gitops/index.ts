@@ -11,7 +11,7 @@ import * as team from '../teams/pipeline-multi-env-gitops';
 export function populateWithContextDefaults(app: cdk.App, defaultAccount: string, defaultRegion: string) {
     // Populate Context Defaults for the pipeline account
     let pipeline_account = app.node.tryGetContext('pipeline_account');
-    pipeline_account ??= defaultAccount;
+    pipeline_account = pipeline_account ?? defaultAccount;
     let pipeline_region = app.node.tryGetContext('pipeline_region');
     pipeline_region ??= defaultRegion;
     const pipelineEnv: cdk.Environment = { account: pipeline_account, region: pipeline_region };
