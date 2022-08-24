@@ -2,10 +2,10 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
-import { AmpIamSetupStack } from './amp-iam-setup'
-import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup'
-import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup'
 import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
+import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup';
+import { AmpIamSetupStack } from './amp-iam-setup';
+import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup';
 
 // Team implementations
 import * as team from '../teams/multi-account-monitoring';
@@ -87,7 +87,7 @@ export class PipelineMultiEnvMonitoring {
             .owner(gitOwner)
             .repository({
                 repoUrl: gitRepositoryName,
-                credentialsSecretName: 'github-token-secret',
+                credentialsSecretName: 'github-token',
                 targetRevision: 'feature/PatternEKSMultiMon',
             })
             .enableCrossAccountKeys()
