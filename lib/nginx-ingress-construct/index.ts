@@ -50,7 +50,9 @@ export default class NginxIngressConstruct {
             .addOns(
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
-                new blueprints.CalicoAddOn,
+                new blueprints.CalicoOperatorAddOn,
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
@@ -74,8 +76,8 @@ export default class NginxIngressConstruct {
                 new blueprints.AppMeshAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.ContainerInsightsAddOn,
-                new blueprints.XrayAddOn)
+                new blueprints.CloudWatchAdotAddOn,
+                new blueprints.XrayAdotAddOn)
             .buildAsync(scope, `${id}-blueprint`);
 
             blueprints.HelmAddOn.validateHelmVersions = false;
