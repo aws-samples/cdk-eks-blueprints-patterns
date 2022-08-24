@@ -26,7 +26,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
 2. An AWS account under AWS Control Tower called Prod 1 Account(Workloads Account A) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
 3. An AWS account under AWS Control Tower called Prod 2 Account(Workloads Account B) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
 4. An AWS account under AWS Control Tower called Pipeline Account provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
-4. An AWS account under AWS Control Tower called Monitoring Account (Grafana Account) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
+5. An AWS account under AWS Control Tower called Monitoring Account (Grafana Account) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
 
 ## Deploying
 
@@ -41,17 +41,17 @@ You can find the team-geordie configuration for this pattern in the workload rep
 4. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url`. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
 
 5. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
-   a. *repo* - to read the repository
-   b. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
+   1. *repo* - to read the repository
+   2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
 6. Create the follwing IAM users and attach `administrator` policy to required accounts.
 
-    a. IAM user `pipeline-admin` with `administrator` in Pipeline AWS Account
-    b. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
-    c. IAM user `prod2-admin` with `administrator` in Prod 2 AWS Account
-    d. IAM user `mon-admin` with `administrator` in Monitoring AWS Account
-    e. IAM user `ho11y-user` in Prod 1 and Prod 2 AWS Account
-    f. IAM user `yelb-user` in Prod 1 and Prod 2 AWS Account
+    1. IAM user `pipeline-admin` with `administrator` in Pipeline AWS Account
+    2. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
+    3. IAM user `prod2-admin` with `administrator` in Prod 2 AWS Account
+    4. IAM user `mon-admin` with `administrator` in Monitoring AWS Account
+    5. IAM user `ho11y-user` in Prod 1 and Prod 2 AWS Account
+    6. IAM user `yelb-user` in Prod 1 and Prod 2 AWS Account
 
 7. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
@@ -89,11 +89,12 @@ npx cdk multi-account-central-pipeline
 11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchPrometheusDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retriving and visualizing metrics in Grafana.
 
 12. Next, manually follow the followingsteps from [AWS Open Source blog](https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/#:~:text=AWS%20SSO%20in%20the%20management%20account) :
-    a. AWS SSO in the management account
-    b. Query metrics in Monitoring account from Amazon Managed Prometheus workspace in Prod 1 Account
-    c. Query metrics in the Monitoring account from Amazon CloudWatch in Prod 1 Account
+    1. AWS SSO in the management account
+    2. Query metrics in Monitoring account from Amazon Managed Prometheus workspace in Prod 1 Account
 
 ![Metrics from AMP](./images/AMG%20-%20Metrics%20from%20AMP.png)
+
+    3. Query metrics in the Monitoring account from Amazon CloudWatch in Prod 1 Account
 
 ![Metrics from CloudWatch](./images/AMG%20-%20Metrics%20from%20CloudWatch.png)
 
