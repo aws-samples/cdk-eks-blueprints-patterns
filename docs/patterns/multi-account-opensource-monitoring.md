@@ -8,9 +8,9 @@ The following figure illustrates the architecture of the pattern we will be depl
 
 ## Objective
 
-1. Deploying two production grade Amazon EKS cluster across 2 AWS Accounts ( Prod1, Prod2 account ) triggered through a Continuous Deployment infrastructure pipeline triggered upon a commit to the repository that holds the pipeline configuration in an another AWS account (pipeline account).
-2. Deploying ADOT add-on, AMP add-on to remote write metrics to AMP in Prod1 Cluster. Deploying ADOT add-on, CloudWatch add-on to  write metrics to CloudWatch in Prod2 Cluster.
-3. Configuring GitOps tooling (ArgoCD addon) to support deploy [ho11y](https://github.com/aws-observability/aws-o11y-recipes/tree/main/sandbox/ho11y) and [yelb](https://github.com/mreferre/yelb) sample applications, in a way that restricts each application to be deployed only into the team namespace, by using ArgoCD projects.
+1. Deploying two production grade Amazon EKS cluster across 2 AWS Accounts ( Prod1, Prod2 account ) through a Continuous Deployment infrastructure pipeline triggered upon a commit to the repository that holds the pipeline configuration in an another AWS account (pipeline account).
+2. Deploying ADOT add-on, AMP add-on to Prod 1 Amazon EKS Cluster to remote write metrics to AMP workspace in Prod 1 AWS Account. Deploying ADOT add-on, CloudWatch add-on to Prod 1 Amazon EKS Cluster to write metrics to CloudWatch in Prod 2 AWS Account.
+3. Configuring GitOps tooling (ArgoCD addon) to support deployment of [ho11y](https://github.com/aws-observability/aws-o11y-recipes/tree/main/sandbox/ho11y) and [yelb](https://github.com/mreferre/yelb) sample applications, in a way that restricts each application to be deployed only into the team namespace, by using ArgoCD projects.
 4. Setting up IAM roles in Prod 1 and Prod 2 Accounts to allow an AMG service role in the Monitoring account (4th AWS account) to access metrics from AMP workspace in Prod 1 account and CloudWatch namespace in Prod 2 account.
 5. Setting Amazon Managed Grafana to visualize AMP metrics from Amazon EKS cluster in Prod account 1 and CloudWatch metrics on workloads in Amazon EKS cluster in Prod account 2.
 
