@@ -50,8 +50,8 @@ export class PipelineMultiEnvMonitoring {
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
         // environments IDs consts
-        const PROD1_ENV_ID = `mon-prod1-${context.prodEnv1.region}`
-        const PROD2_ENV_ID = `mon-prod2-${context.prodEnv2.region}`
+        const PROD1_ENV_ID = `eks-prod1-${context.prodEnv1.region}`
+        const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`
         const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
 
