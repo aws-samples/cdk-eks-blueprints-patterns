@@ -2,13 +2,10 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
-import { AmpIamSetupStack } from './amp-iam-setup'
-import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup'
-import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup'
 import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
-
-// Team implementations
-import * as team from '../teams/multi-account-monitoring';
+import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup';
+import { AmpIamSetupStack } from './amp-iam-setup';
+import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup';
 
 const logger = blueprints.utils.logger;
 
@@ -53,15 +50,10 @@ export class PipelineMultiEnvMonitoring {
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
         // environments IDs consts
-        const PROD1_ENV_ID = `prod1-${context.prodEnv1.region}`
-        const PROD2_ENV_ID = `prod2-${context.prodEnv2.region}`
+        const PROD1_ENV_ID = `eks-prod1-${context.prodEnv1.region}`
+        const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`
         const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
-        // build teams per environments
-        const teams = [
-            new team.TeamGeordi(),
-            new team.CorePlatformTeam()
-        ];
 
         const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
         const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
@@ -87,7 +79,7 @@ export class PipelineMultiEnvMonitoring {
             .owner(gitOwner)
             .repository({
                 repoUrl: gitRepositoryName,
-                credentialsSecretName: 'github-token-secret',
+                credentialsSecretName: 'github-token',
                 targetRevision: 'feature/PatternEKSMultiMon',
             })
             .enableCrossAccountKeys()
@@ -98,7 +90,6 @@ export class PipelineMultiEnvMonitoring {
                         id: PROD1_ENV_ID,
                         stackBuilder: blueprintAmp
                             .clone(context.prodEnv1.region, context.prodEnv1.account)
-                            .teams(...teams)
                             .addOns(new blueprints.NestedStackAddOn({
                                 builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
                                 id: "amp-iam-nested-stack"
@@ -106,13 +97,11 @@ export class PipelineMultiEnvMonitoring {
                             .addOns(
                                 prodArgoAddonConfig,
                             )
-                            .name(PROD1_ENV_ID)
                     },
                     {
                         id: PROD2_ENV_ID,
                         stackBuilder: blueprintCloudWatch
                             .clone(context.prodEnv2.region, context.prodEnv2.account)
-                            .teams(...teams)
                             .addOns(new blueprints.NestedStackAddOn({
                                 builder: CloudWatchIamSetupStack.builder("cloudwatchDataSourceRole", context.monitoringEnv.account!),
                                 id: "cloudwatch-iam-nested-stack"
@@ -120,7 +109,6 @@ export class PipelineMultiEnvMonitoring {
                             .addOns(
                                 prodArgoAddonConfig,
                             )
-                            .name(PROD2_ENV_ID)
                     },
                     {
                         id: MON_ENV_ID,

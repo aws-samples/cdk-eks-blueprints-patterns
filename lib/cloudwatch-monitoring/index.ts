@@ -1,10 +1,10 @@
 import { Construct } from 'constructs';
 
 // Blueprints Lib
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
-import * as team from '../teams'
+import * as team from '../teams/multi-account-monitoring';
 
 /**
  * Demonstrates how to use CloudWatch Adot add-on.
@@ -24,7 +24,6 @@ export default class CloudWatchMonitoringConstruct {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
-        const platformTeam = new team.TeamPlatform(accountID);
 
         return blueprints.EksBlueprint.builder()
             .account(accountID)
@@ -38,7 +37,7 @@ export default class CloudWatchMonitoringConstruct {
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.SecretsStoreAddOn
             )
-            .teams(platformTeam);
+            .teams(new team.TeamGeordi, new team.CorePlatformTeam);
     }
 }
 
