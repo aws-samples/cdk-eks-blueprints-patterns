@@ -7,7 +7,6 @@ import { cloudWatchDeploymentMode } from '@aws-quickstart/eks-blueprints';
 // Team implementations
 import * as team from '../teams/multi-account-monitoring';
 
-
 /**
  * Demonstrates how to use CloudWatch Adot add-on.
  */
