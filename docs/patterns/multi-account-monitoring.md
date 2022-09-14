@@ -99,5 +99,5 @@ npx cdk multi-account-central-pipeline
 
 ### Notes
 
-This pattern consumes multiple Elastic IP addresses, because 3 VPCs with 3 subnets are created by this pattern in Prod 1 and Prod 2 Accounts. Make sure your account limit for EIP are increased to support additional 9 EIPs (1 per Subnets).
+This pattern consumes multiple Elastic IP addresses, because 3 VPCs with 3 subnets are created by this pattern in Prod 1 and Prod 2 AWS Accounts. Make sure your account limits for EIP are increased to support additional 9 EIPs (1 per Subnets).
 
