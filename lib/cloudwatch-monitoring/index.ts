@@ -5,6 +5,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
 import * as team from '../teams/multi-account-monitoring';
+import { cloudWatchDeploymentMode } from '@aws-quickstart/eks-blueprints';
 
 /**
  * Demonstrates how to use CloudWatch Adot add-on.
@@ -25,13 +26,21 @@ export default class CloudWatchMonitoringConstruct {
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
 
+        const cloudWatchAdotAddOn = new blueprints.addons.CloudWatchAdotAddOn({
+            deploymentMode: cloudWatchDeploymentMode.DEPLOYMENT,
+            namespace: 'default',
+            name: 'adot-collector-cloudwatch',
+            metricsNameSelectors: ['apiserver_request_.*', 'container_memory_.*', 'container_threads', 'otelcol_process_.*'],
+            podLabels: 'frontend|downstream(.*)' 
+        });
+
         return blueprints.EksBlueprint.builder()
             .account(accountID)
             .region(awsRegion)
             .addOns(
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
-                new blueprints.CloudWatchAdotAddOn,
+                cloudWatchAdotAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
