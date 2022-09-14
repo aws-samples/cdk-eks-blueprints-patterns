@@ -2,10 +2,11 @@ import { Construct } from 'constructs';
 
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
+import { cloudWatchDeploymentMode } from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
 import * as team from '../teams/multi-account-monitoring';
-import { cloudWatchDeploymentMode } from '@aws-quickstart/eks-blueprints';
+
 
 /**
  * Demonstrates how to use CloudWatch Adot add-on.
