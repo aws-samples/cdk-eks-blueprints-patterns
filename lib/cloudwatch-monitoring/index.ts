@@ -31,7 +31,7 @@ export default class CloudWatchMonitoringConstruct {
             namespace: 'default',
             name: 'adot-collector-cloudwatch',
             metricsNameSelectors: ['apiserver_request_.*', 'container_memory_.*', 'container_threads', 'otelcol_process_.*'],
-            podLabels: 'frontend|downstream(.*)' 
+            podLabelRegex: 'frontend|downstream(.*)' 
         });
 
         return blueprints.EksBlueprint.builder()
