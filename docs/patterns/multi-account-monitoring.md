@@ -111,15 +111,17 @@ do
         loop_counter=$[$loop_counter+1];
 done
 ```
-### Screenshots - X-Ray Console
+### Traces and Service Map screenshots from X-Ray Console
 
 ![Traces of ho11y App on X-Ray Console](./images/XRAY%20-%20Traces.png)
 
 ![Service Map of ho11y App on X-Ray Console](./images/XRAY%20-%20Service%20Map.png)
 
-### Screenshots - Amazon Managed Grafana Console
+### Custom Metrics from ho11y App on Amazon Managed Grafana Console using AMP as data source
 
 ![Exploring Metrics from ho11y with AMP as Data source in AMG Console](./images/Explore%20AMG.png)
+
+### Custom Metrics from ho11y App on Amazon Managed Grafana Console using CloudWatch as data source
 
 ![Exploring Metrics from ho11y with CloudWatch as Data source in AMG Console](./images/Explore%20AMG.png)
 
