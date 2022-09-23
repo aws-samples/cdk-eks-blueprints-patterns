@@ -44,7 +44,13 @@ export class CloudWatchIamSetupStack extends NestedStack {
                 "ec2:DescribeTags",
                 "ec2:DescribeInstances",
                 "ec2:DescribeRegions",
-                "tag:GetResources"
+                "tag:GetResources",
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+                "xray:GetSamplingStatisticSummaries",
+                "ssm:GetParameter"
             ],
             resources: ["*"],
         }));

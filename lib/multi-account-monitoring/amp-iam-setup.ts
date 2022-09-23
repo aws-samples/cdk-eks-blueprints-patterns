@@ -34,7 +34,12 @@ export class AmpIamSetupStack extends NestedStack {
                 "aps:QueryMetrics",
                 "aps:GetLabels",
                 "aps:GetSeries",
-                "aps:GetMetricMetadata"
+                "aps:GetMetricMetadata",
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+                "xray:GetSamplingStatisticSummaries"
             ],
             resources: ["*"],
         }));
