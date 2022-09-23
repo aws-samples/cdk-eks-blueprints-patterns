@@ -81,8 +81,10 @@ export class PipelineMultiEnvMonitoring {
                 new iam.PolicyStatement({
                     resources: ["*"],
                     actions: [    
+                        "sts:AssumeRole",
                         "secretsmanager:GetSecretValue",
                         "secretsmanager:DescribeSecret",
+                        "cloudformation:*"
                     ]
                 })
             ])
