@@ -32,6 +32,7 @@ export default class AmpMonitoringConstruct {
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.AmpAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ClusterAutoScalerAddOn,

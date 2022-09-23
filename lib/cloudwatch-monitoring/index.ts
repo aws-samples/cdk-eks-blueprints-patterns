@@ -30,7 +30,7 @@ export default class CloudWatchMonitoringConstruct {
             deploymentMode: cloudWatchDeploymentMode.DEPLOYMENT,
             namespace: 'default',
             name: 'adot-collector-cloudwatch',
-            metricsNameSelectors: ['apiserver_request_.*', 'container_memory_.*', 'container_threads', 'otelcol_process_.*'],
+            metricsNameSelectors: ['apiserver_request_.*', 'container_memory_.*', 'container_threads', 'otelcol_process_.*', 'ho11y*'],
             podLabelRegex: 'frontend|downstream(.*)' 
         });
 
@@ -41,6 +41,7 @@ export default class CloudWatchMonitoringConstruct {
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
                 cloudWatchAdotAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
