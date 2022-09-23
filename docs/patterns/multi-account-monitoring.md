@@ -99,7 +99,7 @@ npx cdk multi-account-central-pipeline
 
 ### Validating Custom Metrics and Traces from ho11y App
 
-1. Run the below command in both clusters to generate traces to XRAY and Amazon Managed Grafana Console out the sample `ho11y` app :
+1. Run the below command in both clusters to generate traces to X-Ray and Amazon Managed Grafana Console out the sample `ho11y` app :
 
 ```
 frontend_pod=`kubectl get pod -n geordie --no-headers -l app=frontend -o jsonpath='{.items[*].metadata.name}'`
@@ -111,10 +111,13 @@ do
         loop_counter=$[$loop_counter+1];
 done
 ```
+### Screenshots - X-Ray Console
 
 ![Traces of ho11y App on X-Ray Console](./images/XRAY%20-%20Traces.png)
 
 ![Service Map of ho11y App on X-Ray Console](./images/XRAY%20-%20Service%20Map.png)
+
+### Screenshots - Amazon Managed Grafana Console
 
 ![Exploring Metrics from ho11y with AMP as Data source in AMG Console](./images/Explore%20AMG.png)
 
