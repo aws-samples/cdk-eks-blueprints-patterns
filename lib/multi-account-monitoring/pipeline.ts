@@ -1,5 +1,6 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import AmpMonitoringConstruct from '../amp-monitoring';
 import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
@@ -76,6 +77,15 @@ export class PipelineMultiEnvMonitoring {
         blueprints.CodePipelineStack.builder()
             .name("multi-account-central-pipeline")
             .owner(gitOwner)
+            .codeBuildPolicies([ 
+                new iam.PolicyStatement({
+                    resources: ["*"],
+                    actions: [    
+                        "secretsmanager:GetSecretValue",
+                        "secretsmanager:DescribeSecret",
+                    ]
+                })
+            ])
             .repository({
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
