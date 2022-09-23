@@ -54,7 +54,6 @@ export class PipelineMultiEnvMonitoring {
         const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`
         const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
 
-
         const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
         const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
 
