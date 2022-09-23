@@ -65,26 +65,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
 npx cdk multi-account-central-pipeline
 ```
 
-10. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. Your pipeline will fail on the first run, it's because that the AWS CodeBuild step needs elevated permissions at build time. This is described in the official [docs](https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#troubleshooting). To reolve this, locate `AccessDeniedException` in the CodeBuild build logs, and attach the following inline policy to it:
-
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Sid": "VisualEditor0",
-                "Effect": "Allow",
-                "Action": [
-                    "sts:AssumeRole",
-                    "secretsmanager:GetSecretValue",
-                    "secretsmanager:DescribeSecret",
-                    "cloudformation:*"
-                ],
-                "Resource": "*"
-            }
-        ]
-    }
-    ```
+10. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. 
 
 11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retrieving and visualizing metrics in Grafana.
 
