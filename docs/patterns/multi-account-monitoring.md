@@ -97,6 +97,29 @@ npx cdk multi-account-central-pipeline
 
 ![Metrics from CloudWatch](./images/AMG%20-%20Metrics%20from%20CloudWatch.png)
 
+### Validating Custom Metrics and Traces from ho11y App
+
+1. Run the below command in both clusters to generate traces to XRAY and Amazon Managed Grafana Console out the sample `ho11y` app :
+
+```
+frontend_pod=`kubectl get pod -n geordie --no-headers -l app=frontend -o jsonpath='{.items[*].metadata.name}'`
+loop_counter=0
+while [ $loop_counter -le 5000 ] ;
+do
+        kubectl exec -n geordie -it $frontend_pod -- curl downstream0.geordie.svc.cluster.local;
+        echo ;
+        loop_counter=$[$loop_counter+1];
+done
+```
+
+![Traces of ho11y App on X-Ray Console](./images/XRAY%20-%20Traces.png)
+
+![Service Map of ho11y App on X-Ray Console](./images/XRAY%20-%20Service%20Map.png)
+
+![Exploring Metrics from ho11y with AMP as Data source in AMG Console](./images/Explore%20AMG.png)
+
+![Exploring Metrics from ho11y with CloudWatch as Data source in AMG Console](./images/Explore%20AMG.png)
+
 ### Notes
 
 This pattern consumes multiple Elastic IP addresses, because 3 VPCs with 3 subnets are created by this pattern in Prod 1 and Prod 2 AWS Accounts. Make sure your account limits for EIP are increased to support additional 9 EIPs (1 per Subnets).
