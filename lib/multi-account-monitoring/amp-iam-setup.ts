@@ -39,7 +39,20 @@ export class AmpIamSetupStack extends NestedStack {
                 "xray:PutTelemetryRecords",
                 "xray:GetSamplingRules",
                 "xray:GetSamplingTargets",
-                "xray:GetSamplingStatisticSummaries"
+                "xray:GetSamplingStatisticSummaries",
+                "xray:BatchGetTraces",
+                "xray:GetServiceGraph",
+                "xray:GetTraceGraph",
+                "xray:GetTraceSummaries",
+                "xray:GetGroups",
+                "xray:GetGroup",
+                "xray:ListTagsForResource",
+                "xray:GetTimeSeriesServiceStatistics",
+                "xray:GetInsightSummaries",
+                "xray:GetInsight",
+                "xray:GetInsightEvents",
+                "xray:GetInsightImpactGraph",
+                "ssm:GetParameter"
             ],
             resources: ["*"],
         }));
