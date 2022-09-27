@@ -10,7 +10,7 @@ jobs:
   build:
     matrix:
       os: [ubuntu-22.04]
-    runs-on: ${{ matrix.os }}
+    runs-on: [ubuntu-22.04]
 
     strategy:
       matrix:
