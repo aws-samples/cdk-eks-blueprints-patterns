@@ -63,6 +63,22 @@ new PipelineMultiEnvGitops()
         logger.info("Pipeline pattern is not setup due to missing secrets for GitHub access.");
     });
 
+//--------------------------------------------------------------------------
+// Multiple clusters, multiple accounts, pipeline and Monitoring
+//--------------------------------------------------------------------------
+
+import { PipelineMultiEnvMonitoring } from '../lib/multi-account-monitoring';
+
+// These different CDK environments are meant to be used for multi-region/account usage, 
+// where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
+
+new PipelineMultiEnvMonitoring()
+    .buildAsync(app)
+    .catch(() => {
+        logger.info("Multi Account Monitoring pattern is not setup due to missing secrets for GitHub \
+        access and/or CDK Context. See Multi Account Monitoring in the readme for instructions");
+    });
+
 //-------------------------------------------
 // Single Fargate cluster.
 //-------------------------------------------
