@@ -91,7 +91,7 @@ export class PipelineMultiEnvMonitoring {
             .repository({
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
-                targetRevision: 'feature/PatternEKSMultiMon',
+                targetRevision: 'main',
             })
             .enableCrossAccountKeys()
             .wave({
