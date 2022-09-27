@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    matrix:
+      os: [ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
