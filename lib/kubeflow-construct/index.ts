@@ -7,10 +7,11 @@ export default class KubeflowConstruct {
     constructor(scope: Construct, id: string) {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
-
+        const account = '349361870252'
+        const region = 'us-west-1'
         blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION)
+            .account(account)
+            .region(region)
             .addOns( new blueprints.MetricsServerAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.AwsLoadBalancerControllerAddOn(),

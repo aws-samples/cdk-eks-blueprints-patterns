@@ -104,6 +104,9 @@ For `DatadogConstruct` the pattern relies on the following secret defined:
 
 - `apiKeyAWSSecret` - must contain the Datadog API key in Plain Text named `datadog-api-key`. The secret is expected to be defined in the target region.
 
+For `KubeflowConstruct` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
+
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.

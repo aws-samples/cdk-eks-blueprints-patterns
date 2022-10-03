@@ -3,7 +3,7 @@ The Kubeflow project is dedicated to making deployments of machine learning (ML)
 Our goal is not to recreate other services, but to provide a straightforward way to deploy best-of-breed open-source systems for ML to diverse infrastructures.
 Anywhere you are running Kubernetes, you should be able to run Kubeflow.
 
-This pattern deploys the following resources
+This pattern deploys the following resources:
 
 - Creates EKS Cluster Control plane with public endpoint (for demo purpose only) with a managed node group
 - Deploys supporting add-ons: ClusterAutoScaler, AwsLoadBalancerController, VpcCni, CoreDns, KubeProxy, EbsCsiDriver
@@ -46,14 +46,20 @@ cdk deploy kubeflow-blueprint
 
 ## Verify the resources
 
-Let’s verify the resources created by Steps above.
 
+Run update-kubeconfig command:
+```sh
+aws eks --region <REGION> update-kubeconfig --name <CLSUTER_NAME>
+```
+
+Let’s verify the resources created by Steps above.
+```sh
 kubectl get nodes # Output shows the EKS Managed Node group nodes
 
 kubectl get ns | kubeflow # Output shows kubeflow namespace
 
 kubectl get pods --namespace=kubeflow-pipelines  # Output shows kubeflow pods
-
+```
 
 
 ## Execute Machine learning jobs on Kubeflow
@@ -73,12 +79,13 @@ To clean up your EKS Blueprints, run the following commands:
 
 
 ```sh
-cdk destroy --all
+cdk destroy kubeflow-blueprint 
+
 ```
 
 ## Disclaimer 
-This pattern replies on an open source NPM package eks-blueprints-cdk-kubeflow-ext. Please refer to the package npm site for more information.
+This pattern relies on an open source NPM package eks-blueprints-cdk-kubeflow-ext. Please refer to the package npm site for more information.
 https://www.npmjs.com/package/eks-blueprints-cdk-kubeflow-ext
 
-If you have any question about the npm package or find any defect, please post in the source repo at 
+If you have any questions about the npm package or find any defect, please post in the source repo at 
 https://github.com/season1946/eks-blueprints-cdk-kubeflow-extension
