@@ -47,9 +47,9 @@ cdk deploy kubeflow-blueprint
 ## Verify the resources
 
 
-Run update-kubeconfig command:
+Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access
 ```sh
-aws eks --region <REGION> update-kubeconfig --name <CLSUTER_NAME>
+aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn arn:aws:iam::xxxxxxxxx:role/kubeflow-blueprint-kubeflowblueprintMastersRole0C1-saJBO
 ```
 
 Let’s verify the resources created by Steps above.
