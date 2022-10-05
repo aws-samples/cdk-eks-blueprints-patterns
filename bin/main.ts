@@ -147,3 +147,6 @@ import RafayConstruct from '../lib/rafay-construct';
 new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
     logger.info("Rafay pattern is not setup due to missing secrets: " + error);
 });
+
+import KubeflowConstruct from '../lib/kubeflow-construct';
+new KubeflowConstruct(app, 'kubeflow');

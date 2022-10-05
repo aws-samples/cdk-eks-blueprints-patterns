@@ -1,3 +1,4 @@
+
 {
   "name": "eks-blueprints-patterns",
   "version": "1.1.0",
@@ -36,7 +37,8 @@
     "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
     "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
     "aws-cdk": "2.43.1",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "eks-blueprints-cdk-kubeflow-ext":"0.1.9"
   },
   "overrides": {
     "@aws-quickstart/eks-blueprints": "1.3.0",
