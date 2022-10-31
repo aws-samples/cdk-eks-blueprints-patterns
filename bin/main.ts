@@ -79,6 +79,22 @@ new PipelineMultiEnvMonitoring()
         access and/or CDK Context. See Multi Account Monitoring in the readme for instructions");
     });
 
+
+//--------------------------------------------------------------------------
+// Observability Accelarator
+//--------------------------------------------------------------------------
+
+import { ObservabilityAccelarator } from '../lib/observability-accelarator';
+
+// This pattern uses single account for Observability Accelarator
+
+new ObservabilityAccelarator()
+    .buildAsync(app)
+    .catch(() => {
+        logger.info("Observability Accelarator pattern is not setup due to missing secrets for GitHub \
+        access and/or CDK Context. See Multi Account Monitoring in the readme for instructions");
+    });
+
 //-------------------------------------------
 // Single Fargate cluster.
 //-------------------------------------------
