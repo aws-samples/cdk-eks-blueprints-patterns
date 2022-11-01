@@ -1,1 +1,1 @@
-export { PipelineMultiEnvMonitoring } from './pipeline';
+export { PipelineServiceCatalog } from './pipeline';

@@ -1,12 +1,10 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
-import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-import AmpMonitoringConstruct from '../amp-monitoring';
-import CloudWatchMonitoringConstruct from '../cloudwatch-monitoring';
-import { AmgIamSetupStack, AmgIamSetupStackProps } from './amg-iam-setup';
-import { AmpIamSetupStack } from './service-catalog-setup';
-import { CloudWatchIamSetupStack } from './cloudwatch-iam-setup';
+import { ServiceCatalogSetupStack } from './service-catalog-setup';
+import * as eks from 'aws-cdk-lib/aws-eks';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as team from '../teams/pipeline-multi-env-gitops';
 
 const logger = blueprints.utils.logger;
 
@@ -14,144 +12,109 @@ const logger = blueprints.utils.logger;
  * Function relies on a secret called "cdk-context" defined in the target region (pipeline account must have it)
  * @returns 
  */
-export async function populateAccountWithContextDefaults(): Promise<PipelineMultiEnvMonitoringProps> {
+export async function populateAccountWithContextDefaults(): Promise<PipelineServiceCatalogProps> {
     // Populate Context Defaults for all the accounts
-    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'))['context'] as PipelineMultiEnvMonitoringProps;
+    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'))['context'] as PipelineServiceCatalogProps;
     logger.debug(`Retrieved CDK context ${JSON.stringify(cdkContext)}`);
     return cdkContext;
 }
 
-export interface PipelineMultiEnvMonitoringProps {
-    /**
-     * Production workload environment (account/region) #1 
-     */
-    prodEnv1: cdk.Environment;
-
-    /**
-     * Production workload environment (account/region) #2
-     */
-    prodEnv2: cdk.Environment;
+export interface PipelineServiceCatalogProps {
 
     /**
      * Environment (account/region) where pipeline will be running (generally referred to as CICD account)
      */
     pipelineEnv: cdk.Environment;
-
-    /**
-     * Environment (account/region) where monitoring dashboards will be configured.
-     */
-    monitoringEnv: cdk.Environment;
 }
 
 /**
- * Main multi-account monitoring pipeline.
+ * Service Catalog pipeline.
  */
-export class PipelineMultiEnvMonitoring {
+export class PipelineServiceCatalog {
 
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
         // environments IDs consts
-        const PROD1_ENV_ID = `eks-prod1-${context.prodEnv1.region}`
-        const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`
-        const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
+        const ENV_ID = `eks-prod-${context.pipelineEnv.region}`
+        const clusterVersion = eks.KubernetesVersion.V1_21;
+        const prodTeams = createTeamList('prod', scope, context.pipelineEnv.account!);
 
-        const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
-        const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
+        const greenMNG = new blueprints.MngClusterProvider({
+            id: "primary-mng-green",
+            version: clusterVersion,
+            minSize: 1,
+            maxSize: 100,
+            nodeGroupCapacityType: eks.CapacityType.SPOT,
+            instanceTypes: [
+                new ec2.InstanceType("m5.xlarge"),
+                new ec2.InstanceType("m5a.xlarge"),
+                new ec2.InstanceType("m5ad.xlarge"),
+                new ec2.InstanceType("m5d.xlarge"),
+            ],
+        });
 
-        // Argo configuration per environment
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
+        const blueprint = blueprints.EksBlueprint.builder()
+            .version(clusterVersion)
+            .clusterProvider(
+                // blueMNG,
+                greenMNG,
+            )
+            .addOns(
+                // default addons for all environments
+                new blueprints.CertManagerAddOn,
+                new blueprints.AdotCollectorAddOn,
+                new blueprints.SecretsStoreAddOn,
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.NginxAddOn,
+                new blueprints.AppMeshAddOn({
+                    enableTracing: true
+                }),
+                new blueprints.CalicoOperatorAddOn,
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ClusterAutoScalerAddOn(),
+                new blueprints.CloudWatchAdotAddOn,
+                new blueprints.XrayAddOn,
+            );
 
         // const { gitOwner, gitRepositoryName } = await getRepositoryData();
         const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
-        const amgIamSetupStackProps: AmgIamSetupStackProps = {
-            roleName: "amgWorkspaceIamRole",
-            accounts: [context.prodEnv1.account!, context.prodEnv2.account!],
-            env: {
-                account: context.monitoringEnv.account!,
-                region: context.monitoringEnv.region!
-            }
-        };
-
         blueprints.CodePipelineStack.builder()
-            .name("multi-account-central-pipeline")
-            .owner(gitOwner)
-            .codeBuildPolicies([ 
-                new iam.PolicyStatement({
-                    resources: ["*"],
-                    actions: [    
-                        "sts:AssumeRole",
-                        "secretsmanager:GetSecretValue",
-                        "secretsmanager:DescribeSecret",
-                        "cloudformation:*"
-                    ]
-                })
-            ])
-            .repository({
-                repoUrl: gitRepositoryName,
-                credentialsSecretName: 'github-token',
-                targetRevision: 'main',
+        .name("eks-blueprint-pipeline")
+        .owner(gitOwner)
+        .repository({
+            repoUrl: gitRepositoryName,
+            credentialsSecretName: 'github-token',
+            targetRevision: 'main',
             })
-            .enableCrossAccountKeys()
             .wave({
                 id: "prod-test",
                 stages: [
                     {
-                        id: PROD1_ENV_ID,
-                        stackBuilder: blueprintAmp
-                            .clone(context.prodEnv1.region, context.prodEnv1.account)
+                        id: ENV_ID,
+                        stackBuilder: blueprint
+                            .clone(context.pipelineEnv.region, context.pipelineEnv.account)
+                            .name(ENV_ID)
+                            .teams(...prodTeams)
                             .addOns(new blueprints.NestedStackAddOn({
-                                builder: AmpIamSetupStack.builder("ampPrometheusDataSourceRole", context.monitoringEnv.account!),
-                                id: "amp-iam-nested-stack"
+                                builder: ServiceCatalogSetupStack.builder("ServiceCatalogSetup", context.pipelineEnv.account!),
+                                id: "service-catalog-setup-stack"
                             }))
-                            .addOns(
-                                prodArgoAddonConfig,
-                            )
-                    },
-                    {
-                        id: PROD2_ENV_ID,
-                        stackBuilder: blueprintCloudWatch
-                            .clone(context.prodEnv2.region, context.prodEnv2.account)
-                            .addOns(new blueprints.NestedStackAddOn({
-                                builder: CloudWatchIamSetupStack.builder("cloudwatchDataSourceRole", context.monitoringEnv.account!),
-                                id: "cloudwatch-iam-nested-stack"
-                            }))
-                            .addOns(
-                                prodArgoAddonConfig,
-                            )
-                    },
-                    {
-                        id: MON_ENV_ID,
-                        stackBuilder: <blueprints.StackBuilder>{
-                            build(scope: Construct): cdk.Stack {
-                                return new AmgIamSetupStack(scope, "amg-iam-setup", amgIamSetupStackProps);
-                            }
-                        }
                     },
                 ],
             })
-            .build(scope, "multi-account-central-pipeline", {
+            .build(scope, "service-catalog-pipeline", {
                 env: context.pipelineEnv
             });
     }
 }
 
-function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
-    return new blueprints.ArgoCDAddOn(
-        {
-            bootstrapRepo: {
-                repoUrl: repoUrl,
-                path: `envs/${environment}`,
-                targetRevision: 'main',
-            },
-            bootstrapValues: {
-                spec: {
-                    ingress: {
-                        host: 'teamblueprints.com',
-                    }
-                },
-            },
-        }
-    )
+function createTeamList(environments: string, scope: Construct, account: string): Array<blueprints.Team> {
+    const teamsList = [
+        new team.CorePlatformTeam(account, environments),
+        new team.FrontendTeam(account, environments),
+    ];
+    return teamsList;
+
 }
