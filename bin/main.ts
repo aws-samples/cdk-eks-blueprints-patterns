@@ -79,6 +79,21 @@ new PipelineMultiEnvMonitoring()
         access and/or CDK Context. See Multi Account Monitoring in the readme for instructions");
     });
 
+//--------------------------------------------------------------------------
+// Service Catalog pattern
+//--------------------------------------------------------------------------
+
+import { PipelineServiceCatalog } from '../lib/pipeline-service-catalog';
+
+// Service Catalog Pattern
+
+new PipelineServiceCatalog()
+    .buildAsync(app)
+    .catch(() => {
+        logger.info("Service Catalog Pipeline pattern is not setup due to missing secrets for GitHub \
+        access and/or CDK Context. See Service Catalog Pipeline in the readme for instructions");
+    });
+
 //-------------------------------------------
 // Single Fargate cluster.
 //-------------------------------------------
