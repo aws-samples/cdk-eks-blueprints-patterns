@@ -30,6 +30,8 @@ export default class AmpMonitoringConstruct {
             .region(awsRegion)
             .addOns(
                 new blueprints.CertManagerAddOn,
+                new blueprints.KubeStateMetricsAddOn,
+                new blueprints.PrometheusNodeExporterAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.AmpAddOn,
                 new blueprints.XrayAdotAddOn,
