@@ -39,6 +39,8 @@ export default class CloudWatchMonitoringConstruct {
             .region(awsRegion)
             .addOns(
                 new blueprints.CertManagerAddOn,
+                new blueprints.KubeStateMetricsAddOn,
+                new blueprints.PrometheusNodeExporterAddOn,
                 new blueprints.AdotCollectorAddOn,
                 cloudWatchAdotAddOn,
                 new blueprints.XrayAdotAddOn,
