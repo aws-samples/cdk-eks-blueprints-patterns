@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Libraries
-TSC := node node_modules/.bin/tsc
+TSC := node node_modules/.bin/tsc --skipLibCheck
 ESLINT := node node_modules/.bin/eslint
 CDK := node node_modules/.bin/cdk
 

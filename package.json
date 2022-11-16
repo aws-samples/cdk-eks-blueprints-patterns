@@ -7,7 +7,7 @@
     "eks-blueprints-patterns": "dist/bin/main.js"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc --skipLibCheck",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
