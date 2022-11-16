@@ -1,8 +1,8 @@
 {
   "name": "eks-blueprints-patterns",
   "version": "1.1.0",
-  "main": "dist/lib/index.js",
-  "types": "dist/lib/index.d.ts",
+  "main": "dist/bin/main.js",
+  "types": "dist/bin/main.d.ts",
   "bin": {
     "eks-blueprints-patterns": "dist/bin/main.js"
   },
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.1",
-    "@types/node": "^16.11.7",
+    "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "copyfiles": "^2.4.1",
