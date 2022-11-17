@@ -20,7 +20,7 @@ Make sure the following pre-requisites are met:
 
 ```bash
 $ node -v
-v16.13.1
+v18.12.1
 ```
 
 Update (provided Node version manager is installed): `n stable`. May require `sudo`.
@@ -29,10 +29,10 @@ Update (provided Node version manager is installed): `n stable`. May require `su
 
 ```bash
 $ npm -v
-8.7.0
+8.19.2
 ```
 
-Updating npm: `npm install -g npm@latest` where latest can also be a specific version above 8.4. May require `sudo`.
+Updating npm: `sudo n stable` where stable can also be a specific version above 8.4. May require `sudo`.
 
 Install project dependencies.
 
@@ -43,6 +43,7 @@ make deps
 To view patterns that are available to be deployed, execute the following:
 
 ```
+make build
 cdk list
 ```
 

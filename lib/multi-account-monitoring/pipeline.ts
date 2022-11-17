@@ -91,7 +91,7 @@ export class PipelineMultiEnvMonitoring {
             .repository({
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
-                targetRevision: 'task/1.4.0-upgrade',
+                targetRevision: 'main',
             })
             .enableCrossAccountKeys()
             .wave({
