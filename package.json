@@ -1,13 +1,13 @@
 {
   "name": "eks-blueprints-patterns",
   "version": "1.1.0",
-  "main": "dist/lib/index.js",
-  "types": "dist/lib/index.d.ts",
+  "main": "dist/bin/main.js",
+  "types": "dist/bin/main.d.ts",
   "bin": {
     "eks-blueprints-patterns": "dist/bin/main.js"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc --skipLibCheck",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.1",
-    "@types/node": "^16.11.7",
+    "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "copyfiles": "^2.4.1",
@@ -26,7 +26,7 @@
     "typescript": "~4.8.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "^1.4.0",
+    "@aws-quickstart/eks-blueprints": "^1.4.1",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
@@ -40,7 +40,7 @@
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "^1.4.0",
+    "@aws-quickstart/eks-blueprints": "^1.4.1",
     "aws-cdk": "^2.50.0"
   }
 }

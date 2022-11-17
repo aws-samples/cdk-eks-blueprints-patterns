@@ -33,6 +33,7 @@
         "dist"
     ],
     "include": [
+        "bin",
         "lib",
         "examples"
     ]
