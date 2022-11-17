@@ -23,10 +23,10 @@ You can find the team-geordie configuration for this pattern in the workload rep
 ## Prerequisites
 
 1. AWS Control Tower deployed in your AWS environment in the management account. If you have not already installed AWS Control Tower, follow the [Getting Started with AWS Control Tower documentation](https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html), or you can enable AWS Organizations in the AWS Management Console account and enable AWS SSO.
-2. An AWS account under AWS Control Tower called Prod 1 Account(Workloads Account A) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
-3. An AWS account under AWS Control Tower called Prod 2 Account(Workloads Account B) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
-4. An AWS account under AWS Control Tower called Pipeline Account provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
-5. An AWS account under AWS Control Tower called Monitoring Account (Grafana Account) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
+2. An AWS account under AWS Control Tower called Prod 1 Account(Workloads Account A aka prodEnv1) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
+3. An AWS account under AWS Control Tower called Prod 2 Account(Workloads Account B aka prodEnv2) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
+4. An AWS account under AWS Control Tower called Pipeline Account (aka pipelineEnv) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
+5. An AWS account under AWS Control Tower called Monitoring Account (Grafana Account aka monitoringEnv) provisioned using the AWS Service Catalog Account Factory product AWS Control Tower Account vending process or AWS Organization.
 
 ## Deploying
 
@@ -38,13 +38,13 @@ You can find the team-geordie configuration for this pattern in the workload rep
     npm install -g aws-cdk
     ```
 
-4. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url`. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
+4. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url` in `pipelineEnv` account. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
 
-5. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
+5. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline in `pipelineEnv` account. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read the repository
    2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
-6. `cdk-context` secret secret must be stored as a plain text in the following format in AWS Secrets Manager for cdk context for all the 4 AWS accounts used by the solution.
+6. `cdk-context` secret secret must be stored as a plain text in the following format in AWS Secrets Manager for cdk context for all the 4 AWS accounts used by the solution in `pipelineEnv` account..
 
     ```
     {
@@ -68,7 +68,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
     }
     }
     ```
-7. Create the follwing IAM users and attach `administrator` policy to required accounts.
+7. Create the following IAM users and attach `administrator` policy to required accounts.
 
     1. IAM user `pipeline-admin` with `administrator` in Pipeline AWS Account
     2. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
@@ -86,7 +86,8 @@ You can find the team-geordie configuration for this pattern in the workload rep
 11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```bash
-npx cdk multi-account-central-pipeline
+npm run build
+npx cdk deploy multi-account-central-pipeline
 ```
 
 12. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. 
