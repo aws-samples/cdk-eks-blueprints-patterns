@@ -44,7 +44,31 @@ You can find the team-geordie configuration for this pattern in the workload rep
    1. *repo* - to read the repository
    2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
-6. Create the follwing IAM users and attach `administrator` policy to required accounts.
+6. `cdk-context` secret secret must be stored as a plain text in the following format in AWS Secrets Manager for cdk context for all the 4 AWS accounts used by the solution.
+
+    ```
+    {
+    "context": {
+        "prodEnv1": {
+            "account": "111111111111",
+            "region": "your_region"
+        },
+        "prodEnv2": {
+            "account": "222222222222",
+            "region": "your_region"
+        },
+        "pipelineEnv": {
+            "account": "333333333333",
+            "region": "your_region"
+        },
+        "monitoringEnv": {
+            "account": "444444444444",
+            "region": "your_region"
+        }
+    }
+    }
+    ```
+7. Create the follwing IAM users and attach `administrator` policy to required accounts.
 
     1. IAM user `pipeline-admin` with `administrator` in Pipeline AWS Account
     2. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
@@ -53,19 +77,19 @@ You can find the team-geordie configuration for this pattern in the workload rep
     5. IAM user `team-geordi` in Prod 1 and Prod 2 AWS Account
     6. IAM user `team-platform` in Prod 1 and Prod 2 AWS Account
 
-7. Install project dependencies by running `npm install` in the main folder of this cloned repository
+8. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
-8. Bootstrap your 4 AWS Accounts using [deploying pipelines approach] (https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#deploying-pipelines) in this link. If you have bootstrap already done, please remove those before doing this step.
+9. Bootstrap your 4 AWS Accounts using [deploying pipelines approach] (https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#deploying-pipelines) in this link. If you have bootstrap already done, please remove those before doing this step.
 
-9. Modify the code in your forked repo to point to your GitHub username/organisation. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo. Open the [pattern file source code](../../lib/pipeline-multi-env-gitops/index.ts) and look for the declared const of `gitOwner`. Change it to your GitHub username.
+10. Modify the code in your forked repo to point to your GitHub username/organisation. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo. Open the [pattern file source code](../../lib/pipeline-multi-env-gitops/index.ts) and look for the declared const of `gitOwner`. Change it to your GitHub username.
 
-10. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```bash
 npx cdk multi-account-central-pipeline
 ```
 
-10. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. 
+12. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. 
 
 11. The deployment automation will create `ampPrometheusDataSourceRole` with permissions to retrieve metrics from AMP in Prod 1 Account, `cloudwatchDataSourceRole` with permissions to retrieve metrics from CloudWatch in Prod 2 Account and `amgWorkspaceIamRole` in monitoring account to assume roles in Prod 1 and Prod 2 account for retrieving and visualizing metrics in Grafana.
 
