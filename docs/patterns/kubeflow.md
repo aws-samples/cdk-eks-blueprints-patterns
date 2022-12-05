@@ -6,7 +6,7 @@ Anywhere you are running Kubernetes, you should be able to run Kubeflow.
 This pattern deploys the following resources:
 
 - Creates EKS Cluster Control plane with public endpoint (for demo purpose only) with a managed node group
-- Deploys supporting add-ons: ClusterAutoScaler, AwsLoadBalancerController, VpcCni, CoreDns, KubeProxy, EbsCsiDriver
+- Deploys supporting add-ons: ClusterAutoScaler, AwsLoadBalancerController, VpcCni, CoreDns, KubeProxy, EbsCsiDriver, CertManagerAddOn, KubeStateMetricsAddOn, PrometheusNodeExporterAddOn, AdotCollectorAddOn, AmpAddOn,
 - Deploy Kubeflow on the EKS cluster
 
 
