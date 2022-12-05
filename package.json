@@ -26,7 +26,7 @@
     "typescript": "~4.8.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "^1.4.1",
+    "@aws-quickstart/eks-blueprints": "^1.5.1",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
