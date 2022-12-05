@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { logger } from '@aws-quickstart/eks-blueprints/dist/utils';
-import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
+import { logger } from '@aws-quickstart/eks-blueprints/dist/utils/log-utils';
+import { HelmAddOn } from '@aws-quickstart/eks-blueprints/dist';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 const app = new cdk.App();
 
@@ -155,3 +156,28 @@ new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
 
 import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
+
+import EmrEksConstruct from '../lib/emr-eks';
+import { EmrEksTeam, EmrEksTeamProps } from '@aws-quickstart/eks-blueprints/dist';
+
+const executionRolePolicyStatement: PolicyStatement[] = [
+    new PolicyStatement({
+      actions:['logs:PutLogEvents','logs:CreateLogStream','logs:DescribeLogGroups','logs:DescribeLogStreams'], 
+      resources:['arn:aws:logs:*:*:*'],
+    }),
+  ];
+
+const dataTeamA: EmrEksTeamProps = {
+    name: 'emr-data-team-a',
+    virtualClusterName: 'emr-data-team-a',
+    virtualClusterNamespace: 'batchjob',
+    createNamespace: true,
+    executionRoles: [
+      {
+        executionRoleIamPolicyStatement: executionRolePolicyStatement,
+        executionRoleName: 'myBlueprintExecRole'
+      }
+    ]
+  };
+
+new EmrEksConstruct().build(app, 'emrOnEks', [new EmrEksTeam(dataTeamA)]);
