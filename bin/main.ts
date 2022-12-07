@@ -2,7 +2,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { logger } from '@aws-quickstart/eks-blueprints/dist/utils/log-utils';
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints/dist';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 const app = new cdk.App();
 
