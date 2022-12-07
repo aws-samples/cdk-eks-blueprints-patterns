@@ -1,4 +1,3 @@
 {
-    "app": "npx ts-node dist/bin/main.js",
-    "context": {}
+    "app": "npx ts-node bin/main.ts"
 }
