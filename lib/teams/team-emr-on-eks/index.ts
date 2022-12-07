@@ -1,4 +1,4 @@
-import { EmrEksTeamProps } from "@aws-quickstart/eks-blueprints";
+import { EmrEksTeam } from '@aws-quickstart/eks-blueprints';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 
@@ -9,7 +9,7 @@ const executionRolePolicyStatement: PolicyStatement[] = [
   }),
 ];
 
-export const dataTeamA: EmrEksTeamProps = {
+export const dataTeam = new EmrEksTeam({
   name: 'emr-data-team-a',
   virtualClusterName: 'emr-data-team-a',
   virtualClusterNamespace: 'batchjob',
@@ -20,4 +20,4 @@ export const dataTeamA: EmrEksTeamProps = {
       executionRoleName: 'myBlueprintExecRole'
     }
   ]
-};
+});

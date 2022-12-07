@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
 import { logger } from '@aws-quickstart/eks-blueprints/dist/utils/log-utils';
-import { HelmAddOn } from '@aws-quickstart/eks-blueprints/dist';
+import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 
 const app = new cdk.App();
 
@@ -157,8 +157,7 @@ import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
 
 import EmrEksConstruct from '../lib/emr-eks';
-import { EmrEksTeam } from '@aws-quickstart/eks-blueprints/dist';
-import { dataTeamA } from '../lib/teams/team-emr-on-eks';
+import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
 
-new EmrEksConstruct().build(app, 'emrOnEks', [new EmrEksTeam(dataTeamA)]);
+new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
