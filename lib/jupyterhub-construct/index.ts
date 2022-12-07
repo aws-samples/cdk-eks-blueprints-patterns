@@ -4,7 +4,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
 
 export default class JupyterHubConstruct {
-    constructor(scope: Construct, id: string) {
+    constructor(scope: Construct, id: string, props: cdk.StackProps) {
         const stackId = `${id}-blueprint`;  
 
         const hostedZoneName = blueprints.utils.valueFromContext(scope, "hosted-zone-name", "example.com");
@@ -54,7 +54,7 @@ export default class JupyterHubConstruct {
                     },
                 })
             )
-            .build(scope, stackId, {}); 
+            .build(scope, stackId); 
     }
 }
   
