@@ -157,8 +157,8 @@ import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
 
 import EmrEksConstruct from '../lib/emr-eks';
-import { EmrOnEksTeam } from '../lib/teams/team-emr-on-eks';
 import { EmrEksTeam } from '@aws-quickstart/eks-blueprints/dist';
+import { dataTeamA } from '../lib/teams/team-emr-on-eks';
 
 
-new EmrEksConstruct().build(app, 'emrOnEks', [new EmrEksTeam(EmrOnEksTeam.dataTeamA)]);
+new EmrEksConstruct().build(app, 'emrOnEks', [new EmrEksTeam(dataTeamA)]);
