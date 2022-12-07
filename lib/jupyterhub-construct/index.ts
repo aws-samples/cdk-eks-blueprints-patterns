@@ -12,8 +12,8 @@ export default class JupyterHubConstruct {
         const certificateArn = blueprints.utils.valueFromContext(scope, "certificateArn","arn:aws:acm:us-east-1:123456789012:certificate/abcdefwelfjli3991k3lkj5k3")
 
         blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION!)
+            .account(props.env!.account!)
+            .region(props.env!.account!)
             .resourceProvider(hostedZoneName, new blueprints.LookupHostedZoneProvider(hostedZoneName))
             .resourceProvider(blueprints.GlobalResources.Certificate, 
                 new blueprints.ImportCertificateProvider(certificateArn, hostedZoneName),
@@ -54,7 +54,7 @@ export default class JupyterHubConstruct {
                     },
                 })
             )
-            .build(scope, stackId); 
+            .build(scope, stackId, props); 
     }
 }
   
