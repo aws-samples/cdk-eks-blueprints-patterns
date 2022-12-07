@@ -26,7 +26,6 @@
     "typescript": "~4.8.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "^1.5.2",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
@@ -34,13 +33,13 @@
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.9",
     "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
-    "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.1",
+    "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
     "aws-cdk": "^2.51.1",
     "eks-blueprints-cdk-kubeflow-ext": "0.1.9",
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "^1.5.2",
-    "aws-cdk": "^2.51.1"
+    "aws-cdk": "^2.51.1",
+    "@aws-quickstart/eks-blueprints": "1.5.2"
   }
 }
