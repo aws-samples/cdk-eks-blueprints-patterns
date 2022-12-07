@@ -2,9 +2,6 @@ import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 import * as cdk from 'aws-cdk-lib';
-import * as acm from 'aws-cdk-lib/aws-certificatemanager';
-import * as route53 from 'aws-cdk-lib/aws-route53';
-import { cdkpipelines } from '@aws-quickstart/eks-blueprints';
 
 export default class JupyterHubConstruct {
     constructor(scope: Construct, id: string) {
@@ -27,7 +24,6 @@ export default class JupyterHubConstruct {
                     hostedZoneResources: [hostedZoneName]
                 }),
                 new blueprints.EfsCsiDriverAddOn,
-                new blueprints.EbsCsiDriverAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.JupyterHubAddOn({
                     efsConfig:{
