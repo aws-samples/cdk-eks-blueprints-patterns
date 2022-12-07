@@ -1,27 +1,28 @@
 import { Construct } from 'constructs';
+import { GlobalResources, utils, LookupHostedZoneProvider } from '@aws-quickstart/eks-blueprints';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 import * as cdk from 'aws-cdk-lib';
 
 export default class JupyterHubConstruct {
-    constructor(scope: Construct, id: string, props: cdk.StackProps) {
+    constructor(scope: Construct, id: string) {
         const stackId = `${id}-blueprint`;  
 
-        const hostedZoneName = blueprints.utils.valueFromContext(scope, "hosted-zone-name", "example.com");
-        const jupyterHubDomain = blueprints.utils.valueFromContext(scope, "jupyterhub-name", "jupyterhub.example.com");
-        const certificateArn = blueprints.utils.valueFromContext(scope, "certificateArn","arn:aws:acm:us-east-1:123456789012:certificate/abcdefwelfjli3991k3lkj5k3")
+        const hostedZoneName = utils.valueFromContext(scope, "hosted-zone-name", "example.com");
+        const jupyterHubDomain = utils.valueFromContext(scope, "jupyterhub-name", "jupyterhub.example.com");
+        const certificateArn = utils.valueFromContext(scope, "certificateArn","arn:aws:acm:us-east-1:123456789012:certificate/abcdefwelfjli3991k3lkj5k3")
 
         blueprints.EksBlueprint.builder()
-            .account(props.env!.account!)
-            .region(props.env!.account!)
-            .resourceProvider(hostedZoneName, new blueprints.LookupHostedZoneProvider(hostedZoneName))
-            .resourceProvider(blueprints.GlobalResources.Certificate, 
+            .account(process.env.CDK_DEFAULT_ACCOUNT)
+            .region(process.env.CDK_DEFAULT_ACCOUNT)
+            .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(hostedZoneName))
+            .resourceProvider(GlobalResources.Certificate, 
                 new blueprints.ImportCertificateProvider(certificateArn, hostedZoneName),
             )
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.ExternalDnsAddOn({
-                    hostedZoneResources: [hostedZoneName]
+                    hostedZoneResources: [GlobalResources.HostedZone]
                 }),
                 new blueprints.EfsCsiDriverAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
@@ -54,7 +55,7 @@ export default class JupyterHubConstruct {
                     },
                 })
             )
-            .build(scope, stackId, props); 
+            .build(scope, stackId); 
     }
 }
   
