@@ -13,7 +13,7 @@ export default class JupyterHubConstruct {
 
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION)
+            .region(process.env.CDK_DEFAULT_REGION!)
             .resourceProvider(hostedZoneName, new blueprints.LookupHostedZoneProvider(hostedZoneName))
             .resourceProvider(blueprints.GlobalResources.Certificate, 
                 new blueprints.ImportCertificateProvider(certificateArn, hostedZoneName),
@@ -54,7 +54,7 @@ export default class JupyterHubConstruct {
                     },
                 })
             )
-            .build(scope, stackId); 
+            .build(scope, stackId, {}); 
     }
 }
   
