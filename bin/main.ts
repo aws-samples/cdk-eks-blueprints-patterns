@@ -155,3 +155,9 @@ new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
 
 import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
+
+import EmrEksConstruct from '../lib/emr-eks';
+import { dataTeam } from '../lib/teams/team-emr-on-eks';
+
+
+new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
