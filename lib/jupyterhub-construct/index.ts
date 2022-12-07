@@ -5,7 +5,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
 
 export default class JupyterHubConstruct {
-    constructor(scope: Construct, id: string) {
+    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         const stackId = `${id}-blueprint`;  
 
         const hostedZoneName = utils.valueFromContext(scope, "hosted-zone-name", "example.com");
@@ -13,8 +13,8 @@ export default class JupyterHubConstruct {
         const certificateArn = utils.valueFromContext(scope, "certificateArn","arn:aws:acm:us-east-1:123456789012:certificate/abcdefwelfjli3991k3lkj5k3")
 
         blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region(process.env.CDK_DEFAULT_ACCOUNT)
+            .account(props?.env?.account)
+            .region(props?.env?.region)
             .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(hostedZoneName))
             .resourceProvider(GlobalResources.Certificate, 
                 new blueprints.ImportCertificateProvider(certificateArn, hostedZoneName),
@@ -55,7 +55,7 @@ export default class JupyterHubConstruct {
                     },
                 })
             )
-            .build(scope, stackId); 
+            .build(scope, stackId, props); 
     }
 }
   
