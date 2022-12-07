@@ -10,7 +10,7 @@ import {
     KubeProxyAddOn, 
     MetricsServerAddOn, 
     VpcCniAddOn 
-} from '@aws-quickstart/eks-blueprints/dist';
+} from '@aws-quickstart/eks-blueprints';
 
 import * as cdk from 'aws-cdk-lib';
 
