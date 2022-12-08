@@ -17,6 +17,11 @@ export default class KubeflowConstruct {
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.KubeProxyAddOn(),
                 new blueprints.EbsCsiDriverAddOn(),
+                new blueprints.CertManagerAddOn(),
+                new blueprints.KubeStateMetricsAddOn(),
+                new blueprints.PrometheusNodeExporterAddOn(),
+                new blueprints.AdotCollectorAddOn(),
+                new blueprints.AmpAddOn(),
                 new KubeflowAddOn({
                      namespace: 'kubeflow-pipelines'
                  })
