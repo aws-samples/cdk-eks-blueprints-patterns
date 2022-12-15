@@ -42,6 +42,7 @@ export default class PipelineCodeCommitConstruct {
 
         blueprints.CodePipelineStack.builder()
             .name("blueprints-eks-codecommit-pipeline")
+            .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
             .repository({
                 // CodeCommit repository name, should be in the same region with pipeline-stack
                 codeCommitRepoName: 'blueprints-eks',

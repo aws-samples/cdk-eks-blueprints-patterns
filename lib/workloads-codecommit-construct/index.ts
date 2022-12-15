@@ -1,7 +1,5 @@
 import { Construct } from 'constructs';
-import * as eks from 'aws-cdk-lib/aws-eks';
 import * as blueprints from '@aws-quickstart/eks-blueprints'
-import * as team from '../teams'
 
 /**
  * Demonstrates how to use AWS CodeCommmit as a repository for ArgoCD workloads.
@@ -33,7 +31,7 @@ export default class WorkloadsCodeCommitConstruct {
 
         const stackID = `${id}-dev-blueprint-${region}`
 
-        const devCluster = blueprints.EksBlueprint.builder()
+        blueprints.EksBlueprint.builder()
             .account(account)
             .region(region)
             // .teams(platformTeam)
