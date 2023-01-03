@@ -1,0 +1,1 @@
+export { PipelineSecureIngressCognito } from './pipeline';
