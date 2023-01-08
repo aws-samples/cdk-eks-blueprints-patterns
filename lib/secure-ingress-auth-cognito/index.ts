@@ -7,10 +7,13 @@ import { Construct } from 'constructs';
 import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
+
 
 
 const logger = blueprints.utils.logger;
-const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
+//const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
+const gitUrl = 'https://github.com/rameshv29/eks-blueprints-workloads.git';
 
 //Class Cognito Stack (Adding Cognito Class here since Nested stack output not available in blueprints)
 
@@ -129,7 +132,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
 
         await prevalidateSecrets(PipelineSecureIngressCognito.name, undefined, SECRET_ARGO_ADMIN_PWD);
 
-        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "cdk.reachrk.people.aws.dev");
+        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "secure-ingress.reachrk.people.aws.dev");
         //const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "reachrk.people.aws.dev");
 
@@ -149,7 +152,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
             .region(process.env.CDK_DEFAULT_REGION)
             //.teams(...teams)
             .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
-            .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('wildcard-cert', `*.${parentDomain}`, GlobalResources.HostedZone))
+            .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
@@ -161,13 +164,13 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                 //}),
                 new KubecostAddOn(),
                 new blueprints.ExternalDnsAddOn({
-                    hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
+                    hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
                 new blueprints.SecretsStoreAddOn({ rotationPollInterval: "120s" }),
                 new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
                         repoUrl: gitUrl,
-                        targetRevision: "deployable",
+                        targetRevision: "secure-ingress-workload-kubecost",
                         path: 'envs/dev'
                     },
                     bootstrapValues: {
@@ -177,7 +180,9 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                                 cognitoUserPoolArn: CognitoIdpStackOut.userPoolOut.userPoolArn,
                                 cognitoUserPoolAppId: CognitoIdpStackOut.userPoolClientOut.userPoolClientId,
                                 cognitoDomainName: CognitoIdpStackOut.userPoolDomainOut.domainName,
+                                region: process.env.CDK_DEFAULT_REGION,
                                 //cognitoFullDomainName: 
+                                //certificateArn: GlobalResources.Certificate  secureIngressCert,
                             }
                         },
                     },
@@ -189,6 +194,21 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
 
             blueprints.HelmAddOn.validateHelmVersions = false;
             
+            
     }
 }
 
+/*
+
+export declare interface ClusterAddOn { 
+    id? : string;
+    deploy(clusterInfo: ClusterInfo): Promise<Construct> | void;
+}
+
+export declare interface ClusterPostDeploy {
+    postDeploy(clusterInfo: ClusterInfo): Promise<Construct> {
+        const certificate = ClusterInfo.getResource<ICertificate>(GlobalResources.Certificate);
+        
+    }
+}
+*/
