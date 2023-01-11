@@ -7,15 +7,12 @@ import { Construct } from 'constructs';
 import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
-import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-
 
 
 const logger = blueprints.utils.logger;
-//const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
-const gitUrl = 'https://github.com/rameshv29/eks-blueprints-workloads.git';
+const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
-//Class Cognito Stack (Adding Cognito Class here since Nested stack output not available in blueprints)
+//Class Cognito Stack 
 
 /**
  * Stack the creates the cognito user pool, app client, configure the client and app client domain. .
@@ -33,7 +30,7 @@ class CognitoIdpStack extends cdk.Stack {
         // Cognito User Pool
         const userPool = new cognito.UserPool(this, 'CognitoIDPUserPool', {
             userPoolName: 'CognitoIDPUserPool',
-            selfSignUpEnabled: false,
+            selfSignUpEnabled: true,
             signInAliases: {
                 email: true,
                 username: true
@@ -83,15 +80,12 @@ class CognitoIdpStack extends cdk.Stack {
                     authorizationCodeGrant: true
                 },
                 scopes: [
-                    cognito.OAuthScope.PHONE,
-                    cognito.OAuthScope.EMAIL,
-                    cognito.OAuthScope.PROFILE,
                     cognito.OAuthScope.OPENID
                 ],
                 callbackUrls: [redirectUri]
                 // TODO - What about logoutUrls?
             },
-            generateSecret: false,
+            generateSecret: true,
             userPoolClientName: 'Web',
             supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.COGNITO]
         });
@@ -132,8 +126,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
 
         await prevalidateSecrets(PipelineSecureIngressCognito.name, undefined, SECRET_ARGO_ADMIN_PWD);
 
-        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "secure-ingress.reachrk.people.aws.dev");
-        //const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
+        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "secureingress.reachrk.people.aws.dev");
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "reachrk.people.aws.dev");
 
         const CognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
@@ -151,18 +144,15 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
             .account(process.env.CDK_DEFAULT_ACCOUNT)
             .region(process.env.CDK_DEFAULT_REGION)
             //.teams(...teams)
-            .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
+            .resourceProvider(GlobalResources.HostedZone, new blueprints.ImportHostedZoneProvider('Z0150933QPULWIUZCEID'))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.CertManagerAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
-                //new blueprints.NestedStackAddOn({
-                //    builder: CognitoIdpStack.builder(subdomain),
-                //    id: "cognito-nested-stack"
-                //}),
-                new KubecostAddOn(),
+                new KubecostAddOn({kubecostToken: "cmVhY2hyaytrdWJlY29zdEBhbWF6b24uY29txm343yadf98"}),
+                new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),
@@ -170,8 +160,8 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                 new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
                         repoUrl: gitUrl,
-                        targetRevision: "secure-ingress-workload-kubecost",
-                        path: 'envs/dev'
+                        targetRevision: "main",
+                        path: 'envs/secure-ingress-cognito-dev'
                     },
                     bootstrapValues: {
                         spec: {
@@ -181,8 +171,6 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                                 cognitoUserPoolAppId: CognitoIdpStackOut.userPoolClientOut.userPoolClientId,
                                 cognitoDomainName: CognitoIdpStackOut.userPoolDomainOut.domainName,
                                 region: process.env.CDK_DEFAULT_REGION,
-                                //cognitoFullDomainName: 
-                                //certificateArn: GlobalResources.Certificate  secureIngressCert,
                             }
                         },
                     },
@@ -198,17 +186,4 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
     }
 }
 
-/*
 
-export declare interface ClusterAddOn { 
-    id? : string;
-    deploy(clusterInfo: ClusterInfo): Promise<Construct> | void;
-}
-
-export declare interface ClusterPostDeploy {
-    postDeploy(clusterInfo: ClusterInfo): Promise<Construct> {
-        const certificate = ClusterInfo.getResource<ICertificate>(GlobalResources.Certificate);
-        
-    }
-}
-*/

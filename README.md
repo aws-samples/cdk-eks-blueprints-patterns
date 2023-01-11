@@ -13,10 +13,31 @@ The individual patterns can be found in the `lib` directory.  Most of the patter
 Please refer to the Amazon EKS Blueprints Quick Start [documentation site](https://aws-quickstart.github.io/cdk-eks-blueprints/) for complete project documentation.
 
 ## Usage
+Before proceeding, make sure [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) is installed on your machine.
 
-Make sure the following pre-requisites are met:
+To use the eks-blueprints and patterns module, you must have [Node.js](https://nodejs.org/en/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. You will also use `make` to simplify build and other common actions. 
 
-1. Node version must be 16.x or above.
+### Mac Setup:
+
+Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprints-patterns` in your local Mac laptop.
+
+1. Install `make` and `node` using brew
+
+```
+brew install make
+brew install node
+```
+
+2. Install `npm`
+
+```
+sudo npm install -g n
+sudo n stable
+```
+
+3. Make sure the following pre-requisites are met:
+
+- Node version must be 16.x or above.
 
 ```bash
 $ node -v
@@ -25,7 +46,7 @@ v18.12.1
 
 Update (provided Node version manager is installed): `n stable`. May require `sudo`.
 
-2. NPM version must be 8.4 or above:
+-  NPM version must be 8.4 or above:
 
 ```bash
 $ npm -v
@@ -34,28 +55,59 @@ $ npm -v
 
 Updating npm: `sudo n stable` where stable can also be a specific version above 8.4. May require `sudo`.
 
-Install project dependencies.
+4. Clone the `eks-blueprints-patterns` repository
+
+```
+git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
+``` 
+
+PS: If you are contributing to this repo, please make sure to fork the repo, add your changes and create a PR against it.
+
+5. Once you have cloned the repo, you can open it using your favourite IDE and run the below commands to install the dependencies and build the existing patterns.
+
+- Install project dependencies.
 
 ```
 make deps
 ```
 
-To view patterns that are available to be deployed, execute the following:
+- To view patterns that are available to be deployed, execute the following:
 
 ```
+npm i
 make build
-cdk list
 ```
 
-Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal.
+- To list the existing CDK EKS Blueprints patterns
 
-Bootstrap your CDK environment.
+```
+npx cdk list
+```
+
+Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. At the bottom, it will show the list of patterns which can be deployed, in case the pattern you are looking for is not available, it is due to the hard dependency which can be fixed by following the docs specific to those patterns.
+
+```
+bottlerocket-blueprint
+emrOnEks-blueprint
+fargate-blueprint
+generic-cluster-blueprint
+kasten-blueprint
+keptn-blueprint
+kubecost-blueprint
+kubeflow-blueprint
+multi-team-blueprint
+newrelic-cluster-blueprint
+snyk-monitor-blueprint
+starter-blueprint
+```
+
+- Bootstrap your CDK environment.
 
 ```
 cdk bootstrap
 ```
 
-We can then deploy a specific pattern with the following:
+- You can then deploy a specific pattern with the following:
 
 ```
 cdk deploy multi-team-blueprint
