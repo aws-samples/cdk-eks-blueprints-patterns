@@ -104,13 +104,13 @@ starter-blueprint
 - Bootstrap your CDK environment.
 
 ```
-cdk bootstrap
+npx cdk bootstrap
 ```
 
 - You can then deploy a specific pattern with the following:
 
 ```
-cdk deploy multi-team-blueprint
+npx cdk deploy multi-team-blueprint
 ```
 
 # Deploying Blueprints with External Dependency on AWS Resources
@@ -159,6 +159,7 @@ For `DatadogConstruct` the pattern relies on the following secret defined:
 
 For `KubeflowConstruct` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
 
+For `SecureIngressCognitoConstruct`  please see [Secure Ingress using Cognito Blueprint documentation](docs/patterns/secureingresscognito.md).
 
 ## Security
 

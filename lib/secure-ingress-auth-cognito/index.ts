@@ -143,8 +143,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
         await blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
             .region(process.env.CDK_DEFAULT_REGION)
-            //.teams(...teams)
-            .resourceProvider(GlobalResources.HostedZone, new blueprints.ImportHostedZoneProvider('Z0150933QPULWIUZCEID'))
+            .resourceProvider(GlobalResources.HostedZone, new blueprints.LookupHostedZoneProvider(parentDomain))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new blueprints.VpcCniAddOn(),
@@ -180,9 +179,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                 new blueprints.ClusterAutoScalerAddOn)
             .buildAsync(scope, `${id}-blueprint`);
 
-            blueprints.HelmAddOn.validateHelmVersions = false;
-            
-            
+            blueprints.HelmAddOn.validateHelmVersions = false; 
     }
 }
 
