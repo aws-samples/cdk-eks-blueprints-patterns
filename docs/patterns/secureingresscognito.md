@@ -49,17 +49,24 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 ## Deploying
 
 1. argo-admin-password secret must be defined as plain text (not key/value) in `us-west-2`  region.
+
+```
+aws secretsmanager create-secret --name argo-admin-password \
+    --description "Admin Password for ArgoCD" \
+    --secret-string {"$zRrGdeYOCQJ"}
+    --region us-west-2
+    --kms-key-id "aws/secretsmanager"
+```
 2. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
 
-Example settings:
+Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
 
 ```
  
-  "context": {
-    "parent.hostedzone.name": "mycompany.a2z.com",
-    "dev.subzone.name": "dev.mycompany.a2z.com",
-  }
-}
+    "context": {
+        "parent.hostedzone.name": "mycompany.a2z.com",
+        "dev.subzone.name": "dev.mycompany.a2z.com"
+      }
 ```
 
 3. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:

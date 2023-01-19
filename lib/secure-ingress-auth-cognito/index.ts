@@ -126,8 +126,8 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
 
         await prevalidateSecrets(PipelineSecureIngressCognito.name, undefined, SECRET_ARGO_ADMIN_PWD);
 
-        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "secureingress.reachrk.people.aws.dev");
-        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "reachrk.people.aws.dev");
+        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.mycompany.a2z.com");
+        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
 
         const CognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
             {
