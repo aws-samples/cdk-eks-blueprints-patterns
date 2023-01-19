@@ -6,6 +6,11 @@ Amazon EKS customers that use Application Load Balancer (ALB) can use Amazon Cog
 
 In this pattern, we will be demonstrating the process to setup Kubecost on Amazon EKS and authentication users to Kubecost on Amazon EKS using CDK EKS Blueprints patterns.  The Kubecost dashboard does not provide native support for authentication. It requires an external authentication mechanism. This pattern will help customers secure their application's ingress using Amazon Cognito authentication. 
 
+## Architecture
+
+![Kubecost Architecture](./images/secure-ingress-kubecost.png)
+
+
 ## Approach
 
 This blueprint will include the following:
@@ -43,13 +48,27 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 
 ## Deploying
 
-1. Refer the setup section in README file of this repository and configure your machine
-2. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+1. argo-admin-password secret must be defined as plain text (not key/value) in `us-west-2`  region.
+2. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
 
-```bash
+Example settings:
+
+```
+ 
+  "context": {
+    "parent.hostedzone.name": "mycompany.a2z.com",
+    "dev.subzone.name": "dev.mycompany.a2z.com",
+  }
+}
+```
+
+3. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+
+```
 make build
 npx cdk deploy secure-ingress-blueprint
 ```
+
 
 ## Cluster Access
 
