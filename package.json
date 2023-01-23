@@ -29,6 +29,7 @@
     "@aws-quickstart/eks-blueprints": "^1.5.2",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
+    "@granulate/gmaestro-eks-blueprints-addon": "^1.0.7",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.5.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",

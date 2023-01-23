@@ -50,7 +50,7 @@ new MultiRegionConstruct().buildAsync(app, 'multi-region').catch((error) => {
 
 import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
 
-// These different CDK environments are meant to be used for multi-region/account usage, 
+// These different CDK environments are meant to be used for multi-region/account usage,
 // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
 const { devEnv, pipelineEnv, prodEnv }:
     { devEnv: cdk.Environment; pipelineEnv: cdk.Environment; prodEnv: cdk.Environment; } =
@@ -74,7 +74,7 @@ new PipelineMultiEnvGitops()
 
 import { PipelineMultiEnvMonitoring } from '../lib/multi-account-monitoring';
 
-// These different CDK environments are meant to be used for multi-region/account usage, 
+// These different CDK environments are meant to be used for multi-region/account usage,
 // where the pipeline, dev cluster, and prod cluster are deployed in seperate environments
 
 new PipelineMultiEnvMonitoring()
@@ -161,3 +161,8 @@ import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
+
+import GmaestroConstruct from '../lib/gmaestro-construct';
+new GmaestroConstruct().buildAsync(app, 'gmaestro').catch((error) => {
+    logger.info("Gmaestro is not setup due to missing secrets: " + error);
+});
