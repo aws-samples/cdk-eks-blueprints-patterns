@@ -159,5 +159,7 @@ new KubeflowConstruct(app, 'kubeflow');
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
+import KomodorConstruct from '../lib/komodor-construct';
+new KomodorConstruct(app, 'komodor');
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
