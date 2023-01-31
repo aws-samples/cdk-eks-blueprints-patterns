@@ -158,6 +158,10 @@ new KubeflowConstruct(app, 'kubeflow');
 
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
-
-
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
+
+import GitOpsAddOnsConstruct from '../lib/gitops-addons-construct';
+new GitOpsAddOnsConstruct(app, 'gitops-addons');
+
+import GitOpsAppOfAppsAddOnsConstruct from '../lib/gitops-app-of-apps-addons-construct';
+new GitOpsAppOfAppsAddOnsConstruct(app, 'gitops-app-of-apps-addons');
