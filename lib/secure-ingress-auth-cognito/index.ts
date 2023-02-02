@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { LookupHostedZoneProvider, GlobalResources, utils, ClusterInfo } from '@aws-quickstart/eks-blueprints';
+import { LookupHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
 import { KubecostAddOn } from '@kubecost/kubecost-eks-blueprints-addon';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -8,8 +8,6 @@ import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 
-
-const logger = blueprints.utils.logger;
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
 //Class Cognito Stack 
@@ -54,12 +52,12 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool ID
 
         this.userPoolOut = userPool;
-
+        // @ts-ignore
         const userPoolOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolOut', {
             value: userPool.userPoolId,
             exportName: 'CognitoIDPUserPoolId'
         });
-
+        // @ts-ignore
         const userPoolArnOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolArnOut', {
             value: userPool.userPoolArn,
             exportName: 'CognitoIDPUserPoolArn'
@@ -93,6 +91,7 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool App Client ID
         this.userPoolClientOut = userPoolClient;
 
+        // @ts-ignore
         const userPoolClientOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolClientOut', {
             value: userPoolClient.userPoolClientId,
             exportName: 'CognitoIDPUserPoolClientId'
@@ -108,6 +107,7 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool App Client ID
 
         this.userPoolDomainOut = userPoolDomain;
+        // @ts-ignore
         const useruserPoolDomainOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolDomainOut', {
             value: userPoolDomain.domainName,
             exportName: 'CognitoIDPUserPoolDomain'
@@ -143,7 +143,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
         await blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
             .region(process.env.CDK_DEFAULT_REGION)
-            .resourceProvider(GlobalResources.HostedZone, new blueprints.LookupHostedZoneProvider(parentDomain))
+            .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(
                 new blueprints.VpcCniAddOn(),
@@ -160,7 +160,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                     bootstrapRepo: {
                         repoUrl: gitUrl,
                         targetRevision: "main",
-                        path: 'envs/secure-ingress-cognito-dev'
+                        path: 'secure-ingress-cognito/envs/dev'
                     },
                     bootstrapValues: {
                         spec: {

@@ -2,9 +2,9 @@
 
 ## Objective
 
-Amazon EKS customers that use Application Load Balancer (ALB) can use Amazon Cognito to handle user registration and authentication without writing code to handle routine tasks such as user sign-up, sign-in, sign-out, and so on. This is because Application Load Balancer has built-in support for user authentication. In addition to Amazon Cognito, ALB natively integrates with any OpenID Connect protocol compliant identity provider (IdP), providing secure authentication and a single sign-on experience across your applications.
+Amazon EKS customer who use Application Load Balancer (ALB) can use Amazon Cognito to handle user registration and authentication without writing code to handle routine tasks such as user sign-up, sign-in, sign-out, and so on. This is because Application Load Balancer has built-in support for user authentication. In addition to Amazon Cognito, ALB natively integrates with any OpenID Connect protocol compliant identity provider (IdP), providing secure authentication and a single sign-on experience across your applications.
 
-In this pattern, we will be demonstrating the process to setup Kubecost on Amazon EKS and authentication users to Kubecost on Amazon EKS using CDK EKS Blueprints patterns.  The Kubecost dashboard does not provide native support for authentication. It requires an external authentication mechanism. This pattern will help customers secure their application's ingress using Amazon Cognito authentication. 
+While the pattern is based on Kubecost, the approach can be reused with any similar products or with customer applications. The Kubecost dashboard does not provide native support for authentication. It requires an external authentication mechanism. This pattern will help customers secure their application's ingress using Amazon Cognito authentication. 
 
 ## Architecture
 
@@ -93,7 +93,7 @@ arn:aws:cloudformation:us-west-2:<ACCOUNT ID>:stack/secure-ingress-blueprint/640
 ```
 
 
-To update your Kubernetes config for you new cluster, copy and run the secure-ingress-blueprint.secureingressblueprintConfigCommandD0275968 command (the second command) in your terminal.
+To update your Kubernetes config for your new cluster, copy and run the secure-ingress-blueprint.secureingressblueprintConfigCommandD0275968 command (the second command) in your terminal.
 
 ```
 aws eks update-kubeconfig —name secure-ingress-blueprint —region us-west-2 —role-arn arn:aws:iam::<ACCOUNT ID>:role/secure-ingress-blueprint-secureingressblueprintMas-7JD5S67SG7M0
@@ -110,7 +110,7 @@ You should see output that lists all namespaces in your cluster.
 
 ## Test authentication
 
-Point your browsers to the URL of the Kubecost app in your cluster. Your browser will be redirected to a sign-in page. This page is provided by Amazon Cognito hosted UI.
+Point your browser to the URL of the Kubecost app in your cluster. Your browser will be redirected to a sign-in page. This page is provided by Amazon Cognito hosted UI.
 
 Since this is your first time accessing the application, sign up as a new user. The data you input here will be saved in the Amazon Cognito user pool you created earlier in the post. 
 
