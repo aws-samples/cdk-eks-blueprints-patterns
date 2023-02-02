@@ -52,13 +52,13 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool ID
 
         this.userPoolOut = userPool;
-        // @ts-ignore
-        const userPoolOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolOut', {
+        
+        new cdk.CfnOutput(this, 'CognitoIDPUserPoolOut', {
             value: userPool.userPoolId,
             exportName: 'CognitoIDPUserPoolId'
         });
-        // @ts-ignore
-        const userPoolArnOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolArnOut', {
+        
+        new cdk.CfnOutput(this, 'CognitoIDPUserPoolArnOut', {
             value: userPool.userPoolArn,
             exportName: 'CognitoIDPUserPoolArn'
         });
@@ -91,8 +91,7 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool App Client ID
         this.userPoolClientOut = userPoolClient;
 
-        // @ts-ignore
-        const userPoolClientOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolClientOut', {
+        new cdk.CfnOutput(this, 'CognitoIDPUserPoolClientOut', {
             value: userPoolClient.userPoolClientId,
             exportName: 'CognitoIDPUserPoolClientId'
         });
@@ -107,8 +106,8 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool App Client ID
 
         this.userPoolDomainOut = userPoolDomain;
-        // @ts-ignore
-        const useruserPoolDomainOut = new cdk.CfnOutput(this, 'CognitoIDPUserPoolDomainOut', {
+    
+        new cdk.CfnOutput(this, 'CognitoIDPUserPoolDomainOut', {
             value: userPoolDomain.domainName,
             exportName: 'CognitoIDPUserPoolDomain'
         });
