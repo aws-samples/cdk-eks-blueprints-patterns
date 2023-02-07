@@ -13,7 +13,8 @@ const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 //Class Cognito Stack 
 
 /**
- * Stack the creates the cognito user pool, app client, configure the client and app client domain. .
+ * Stack creates the cognito user pool, app client, configure the client and app client domain. 
+ * Amazon Cognito hosted UI provides you an OAuth2.0 compliant authorization server that provides default implementation of end user flows such as registration, authentication, and so on.
  */
 
 class CognitoIdpStack extends cdk.Stack {
@@ -147,7 +148,6 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
             .addOns(
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
-                new blueprints.CertManagerAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new KubecostAddOn({kubecostToken: "cmVhY2hyaytrdWJlY29zdEBhbWF6b24uY29txm343yadf98"}),
                 new blueprints.addons.EbsCsiDriverAddOn(),
@@ -174,8 +174,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                     },
                     adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                 }),
-                new blueprints.MetricsServerAddOn,
-                new blueprints.ClusterAutoScalerAddOn)
+            )
             .buildAsync(scope, `${id}-blueprint`);
 
             blueprints.HelmAddOn.validateHelmVersions = false; 

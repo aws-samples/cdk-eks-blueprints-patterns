@@ -2,9 +2,13 @@
 
 ## Objective
 
-Amazon EKS customer who use Application Load Balancer (ALB) can use Amazon Cognito to handle user registration and authentication without writing code to handle routine tasks such as user sign-up, sign-in, sign-out, and so on. This is because Application Load Balancer has built-in support for user authentication. In addition to Amazon Cognito, ALB natively integrates with any OpenID Connect protocol compliant identity provider (IdP), providing secure authentication and a single sign-on experience across your applications.
+Amazon EKS customer with a seamless user registration and authentication experience using Amazon Cognito, Application Load Balancer (ALB) and Amazon Route53. ALB's built-in support for user authentication eliminates the need for writing code to handle routine tasks such as user sign-up, sign-in, and sign-out. In addition to Amazon Cognito, ALB integrates with any OpenID Connect compliant identity provider (IdP) to provide secure authentication and a single sign-on experience across applications. The role of Amazon Certificate Manager (ACM) and Amazon Route53 in this integration is to ensure the security of the user authentication process. ACM provides SSL/TLS certificates that can be used to secure connections to the Application Load Balancer (ALB) and authenticate users. This helps protect sensitive information, such as user credentials, from being intercepted or tampered with during transmission.
 
-While the pattern is based on Kubecost, the approach can be reused with any similar products or with customer applications. The Kubecost dashboard does not provide native support for authentication. It requires an external authentication mechanism. This pattern will help customers secure their application's ingress using Amazon Cognito authentication. 
+Amazon Route53, on the other hand, provides a scalable and highly available Domain Name System (DNS) service. It can be used to route user requests to the correct location and ensure that the authentication process is available and accessible to users at all times. By integrating ACM and Route53 with ALB and Amazon Cognito, the solution ensures that user authentication is secure and reliable.
+
+Kubecost is a cost optimization tool for Kubernetes that helps customers manage and reduce the costs associated with their Kubernetes clusters. It provides real-time cost visibility and analysis, enabling customers to make informed decisions about resource allocation and utilization. With Kubecost, customers can optimize their spending, improve resource efficiency, and increase their cost savings.
+
+The pattern described in this project is based on Kubecost and can be extended for use with similar cost optimization tools or customer applications. The Kubecost dashboard does not have native support for authentication, so an external authentication mechanism is required. This pattern utilizes Amazon Cognito authentication to secure the application's ingress. By implementing this pattern, customers can ensure that their applications are protected and accessible only to authorized users while also benefiting from the cost optimization capabilities of Kubecost. This pattern can be easily adapted and extended to secure ingress for other applications, providing a unified and secure solution for user authentication while optimizing costs.
 
 ## Architecture
 
@@ -17,8 +21,6 @@ This blueprint will include the following:
 
 * A new Well-Architected VPC with both Public and Private subnets.
 * A new Well-Architected EKS cluster in the region and account you specify.
-* [Metrics Server](https://github.com/kubernetes-sigs/metrics-server) into your cluster to support metrics collection.
-* AWS and Kubernetes resources needed to support [Cluster Autoscaler](https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html).
 * [EBS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/ebs-csi-driver/) allows Amazon Elastic Kubernetes Service (Amazon EKS) clusters to manage the lifecycle of Amazon EBS volumes for persistent volumes.
 * AWS and Kubernetes resources needed to support [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html).
 * [Amazon VPC CNI add-on (VpcCni)](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html) into your cluster to support native VPC networking for Amazon EKS.
@@ -33,18 +35,8 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 
 
 ## Prerequisites
-1. `argo-admin-password` secret must be defined as plain text (not key/value) in `us-west-2`  region.
-2. The parent domain must exist.
-3. The actual settings for the parent domain, hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. Example settings:
-```
-{
-  "context": {
-    "parent.hostedzone.name": "mycompany.a2z.com",
-    "dev.subzone.name": "dev.mycompany.a2z.com",
-  }
-}
-```
 
+1. The parent domain must exist.
 
 ## Deploying
 
@@ -102,7 +94,7 @@ aws eks update-kubeconfig —name secure-ingress-blueprint —region us-west-2 �
 Validate that you now have kubectl access to your cluster via the following:
 
 ```
-kubectl get namespace
+kubectl get all -n kubecost
 ```
 
 You should see output that lists all namespaces in your cluster.
@@ -110,7 +102,13 @@ You should see output that lists all namespaces in your cluster.
 
 ## Test authentication
 
-Point your browser to the URL of the Kubecost app in your cluster. Your browser will be redirected to a sign-in page. This page is provided by Amazon Cognito hosted UI.
+Point your browser to the URL of the Kubecost app in your cluster. You can get the URL from the cdk.json file using the below command.
+
+```
+awk -F':' '/dev.subzone.name/ {print $2}' cdk.json | tr -d '",' | xargs echo
+```
+
+Your browser will be redirected to a sign-in page. This page is provided by Amazon Cognito hosted UI.
 
 Since this is your first time accessing the application, sign up as a new user. The data you input here will be saved in the Amazon Cognito user pool you created earlier in the post. 
 
