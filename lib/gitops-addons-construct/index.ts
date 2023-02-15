@@ -11,7 +11,7 @@ export default class GitOpsAddOnsConstruct {
         // enable gitops bootstrapping with argocd
         const bootstrapArgo = new blueprints.addons.ArgoCDAddOn({
             bootstrapRepo: {
-                repoUrl: 'https://github.com/starchx/eks-blueprints-add-ons',
+                repoUrl: 'https://github.com/aws-samples/eks-blueprints-add-ons',
                 path: 'add-ons',
                 targetRevision: "eks-blueprints-cdk",
             },
@@ -22,7 +22,6 @@ export default class GitOpsAddOnsConstruct {
             bootstrapArgo,
             new blueprints.AppMeshAddOn,
             new blueprints.AwsLoadBalancerControllerAddOn,
-            new blueprints.CertManagerAddOn,
             new blueprints.ClusterAutoScalerAddOn,
             new blueprints.MetricsServerAddOn,
             new blueprints.NginxAddOn({
@@ -36,9 +35,9 @@ export default class GitOpsAddOnsConstruct {
         const stackID = `${id}-blueprint`
 
         blueprints.EksBlueprint.builder()
-            .region('ap-southeast-2')
+            .region(process.env.CDK_DEFAULT_REGION!)
             .addOns(...addOns)
-            .enableGitOps()
+            .enableGitOps(blueprints.GitOpsMode.APPLICATION)
             .build(scope, stackID);
     }
 }
