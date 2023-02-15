@@ -149,7 +149,7 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.AwsLoadBalancerControllerAddOn,
-                new KubecostAddOn({kubecostToken: "cmVhY2hyaytrdWJlY29zdEBhbWF6b24uY29txm343yadf98"}),
+                new KubecostAddOn(),
                 new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
