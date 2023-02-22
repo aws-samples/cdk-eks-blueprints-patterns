@@ -1,3 +1,4 @@
+import * as blueprints from "@aws-quickstart/eks-blueprints";
 import {
   AwsLoadBalancerControllerAddOn,
   CertManagerAddOn,
@@ -5,6 +6,7 @@ import {
   CoreDnsAddOn,
   EbsCsiDriverAddOn,
   EksBlueprint,
+  GlobalResources,
   KubeProxyAddOn,
   MetricsServerAddOn,
   VpcCniAddOn,
@@ -15,13 +17,8 @@ export default class EksEncryptionConstruct {
   build(scope: Construct, id: string) {
     const stackId = `${id}-blueprint`;
 
-    // replace with your KMS keys
-    const kmsKeys = [
-      "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab",
-      "arn:aws:kms:us-west-2:111122223333:key/0987dcba-09fe-87dc-65ba-ab0987654321",
-    ];
-
     EksBlueprint.builder()
+      .resourceProvider(GlobalResources.KmsKey, new blueprints.KmsKeyProvider())
       .addOns(
         new VpcCniAddOn(),
         new CoreDnsAddOn(),
@@ -29,7 +26,11 @@ export default class EksEncryptionConstruct {
         new ClusterAutoScalerAddOn(),
         new CertManagerAddOn(),
         new AwsLoadBalancerControllerAddOn(),
-        new EbsCsiDriverAddOn({ kmsKeys: kmsKeys }),
+        new EbsCsiDriverAddOn({
+          kmsKeys: [
+            blueprints.getNamedResource(blueprints.GlobalResources.KmsKey),
+          ],
+        }),
         new KubeProxyAddOn()
       )
       .teams() // add teams here
