@@ -34,7 +34,9 @@ export default class EksEncryptionConstruct {
             path: "security/envs/dev",
           },
           bootstrapValues: {
-            kmsKey: kmsKey.keyArn,
+            spec: {
+              kmsKey: kmsKey.keyArn,
+            },
           },
           // adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
         })
