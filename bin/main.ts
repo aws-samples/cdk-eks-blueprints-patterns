@@ -179,7 +179,8 @@ import { dataTeam } from "../lib/teams/team-emr-on-eks";
 
 new EmrEksConstruct().build(app, "emrOnEks", [dataTeam]);
 
-new EmrEksConstruct().build(app, "emrOnEks", [dataTeam]);
+import EksEncryptionConstruct from "../lib/security/data-at-rest-encryption";
+new EksEncryptionConstruct().build(app, "eksEncryption");
 
 //--------------------------------------------------------------------------
 // Single Cluster, Secure Ingress Auth using cognito
