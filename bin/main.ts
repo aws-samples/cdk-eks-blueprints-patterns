@@ -179,5 +179,20 @@ import { dataTeam } from "../lib/teams/team-emr-on-eks";
 
 new EmrEksConstruct().build(app, "emrOnEks", [dataTeam]);
 
-import EksEncryptionConstruct from "../lib/security/data-at-rest-encryption";
-new EksEncryptionConstruct().build(app, "eksEncryption");
+new EmrEksConstruct().build(app, "emrOnEks", [dataTeam]);
+
+//--------------------------------------------------------------------------
+// Single Cluster, Secure Ingress Auth using cognito
+//--------------------------------------------------------------------------
+
+import { PipelineSecureIngressCognito } from "../lib/secure-ingress-auth-cognito";
+
+// These different CDK environments are meant to be used for securing ingress using cognito.
+
+new PipelineSecureIngressCognito()
+  .buildAsync(app, "secure-ingress")
+  .catch(() => {
+    logger.info(
+      "Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions"
+    );
+  });
