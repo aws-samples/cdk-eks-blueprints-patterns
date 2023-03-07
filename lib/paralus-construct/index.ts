@@ -14,6 +14,7 @@ export default class ParalusConstruct {
                 new blueprints.VpcCniAddOn(),
                 new blueprints.KubeProxyAddOn(),
                 new blueprints.EbsCsiDriverAddOn(),
+                new blueprints.CertManagerAddOn(),
                 new ParalusAddOn({
                     namespace: 'paralus-system',
                     // this signifies the paralus version to be deployed
@@ -29,6 +30,7 @@ export default class ParalusConstruct {
                     }
                  })
             )
+            .teams()// add teams here)
             .build(scope, stackId);
     }
 }
