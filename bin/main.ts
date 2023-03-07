@@ -175,3 +175,8 @@ new PipelineSecureIngressCognito()
     .catch(() => {
         logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
     });
+
+import BatchOnEKSConstruct from '../lib/aws-batch-on-eks-construct';
+import { batchTeam } from '../lib/teams/team-batch';
+
+new BatchOnEKSConstruct().build(app, 'batch', [batchTeam]);
