@@ -49,7 +49,7 @@ new MultiRegionConstruct().buildAsync(app, "multi-region").catch((error) => {
 //--------------------------------------------------------------------------
 
 import PipelineMultiEnvGitops, {
-  populateWithContextDefaults,
+  populateWithContextDefaults
 } from "../lib/pipeline-multi-env-gitops";
 
 // These different CDK environments are meant to be used for multi-region/account usage,
@@ -179,8 +179,9 @@ import { dataTeam } from "../lib/teams/team-emr-on-eks";
 
 new EmrEksConstruct().build(app, "emrOnEks", [dataTeam]);
 
-import EksEncryptionConstruct from "../lib/security/data-at-rest-encryption";
-new EksEncryptionConstruct().build(app, "eksEncryption");
+import EncryptionAtRestConstruct from "../lib/security/data-at-rest-encryption";
+// new EncryptionAtRestConstruct().build(app, "data-at-rest-encryption");
+new EncryptionAtRestConstruct().build(app, "eksEncryption");
 
 //--------------------------------------------------------------------------
 // Single Cluster, Secure Ingress Auth using cognito
