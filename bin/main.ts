@@ -176,9 +176,9 @@ new PipelineSecureIngressCognito()
         logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
     });
 
-    //--------------------------------------------------------------------------
-    // Security Patterns
-    //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+// Security Patterns
+//--------------------------------------------------------------------------
 
 import EncryptionAtRestConstruct from "../lib/security/data-at-rest-encryption";
 new EncryptionAtRestConstruct().build(app, "data-at-rest-encryption");
