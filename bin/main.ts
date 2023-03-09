@@ -165,9 +165,6 @@ new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
 import ParalusConstruct from '../lib/paralus-construct';
 new ParalusConstruct(app, 'paralus');
 
-import GuardDutyNotifier from '../lib/guardduty-construct';
-new GuardDutyNotifier(app, 'guardduty');
-
 //--------------------------------------------------------------------------
 // Single Cluster, Secure Ingress Auth using cognito
 //--------------------------------------------------------------------------
