@@ -91,6 +91,12 @@ new PipelineMultiEnvMonitoring()
 import FargateConstruct from '../lib/fargate-construct';
 new FargateConstruct(app, 'fargate');
 
+//-------------------------------------------
+// Amazon GuardDuty with SNS alerting
+//-------------------------------------------
+import GuardDutyNotifier from '../lib/guardduty-construct';
+new GuardDutyNotifier(app, 'guardduty');
+
 
 //-------------------------------------------
 // Multiple clusters with deployment pipeline.
