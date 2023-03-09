@@ -9,7 +9,22 @@ export default class BatchOnEKSConstruct {
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION!)
-            .addOns(new blueprints.AwsBatchAddOn())
+            .addOns(
+                new blueprints.AwsBatchAddOn(), 
+                new blueprints.AwsForFluentBitAddOn({
+                    version: '0.1.23',
+                    values: {
+                        cloudWatch: {
+                            enabled: true,
+                            region: process.env.CDK_DEFAULT_REGION!,
+                            logGroupName: 'aws-batch-for-eks-logs'
+                        },
+                        tolerations: [{
+                            "key": "batch.amazonaws.com/batch-node", "operator": "Exists"
+                        }]
+                    }
+                })
+            )
             .teams(...teams)
             .build(scope, stackID);
     }
