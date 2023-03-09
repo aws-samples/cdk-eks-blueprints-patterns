@@ -168,9 +168,6 @@ import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
 
-import ParalusConstruct from '../lib/paralus-construct';
-new ParalusConstruct(app, 'paralus');
-
 //--------------------------------------------------------------------------
 // Single Cluster, Secure Ingress Auth using cognito
 //--------------------------------------------------------------------------
