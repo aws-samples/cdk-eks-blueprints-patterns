@@ -165,3 +165,17 @@ new GitOpsAddOnsConstruct(app, 'gitops-addons');
 
 import GitOpsAppOfAppsAddOnsConstruct from '../lib/gitops-app-of-apps-addons-construct';
 new GitOpsAppOfAppsAddOnsConstruct(app, 'gitops-app-of-apps-addons');
+
+//--------------------------------------------------------------------------
+// Single Cluster, Secure Ingress Auth using cognito
+//--------------------------------------------------------------------------
+
+import { PipelineSecureIngressCognito } from '../lib/secure-ingress-auth-cognito';
+
+// These different CDK environments are meant to be used for securing ingress using cognito.
+
+new PipelineSecureIngressCognito()
+    .buildAsync(app, 'secure-ingress')
+    .catch(() => {
+        logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
+    });
