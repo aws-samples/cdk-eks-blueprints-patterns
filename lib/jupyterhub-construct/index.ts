@@ -31,6 +31,8 @@ export default class JupyterHubConstruct {
                 }),
                 new blueprints.EbsCsiDriverAddOn(),
                 new blueprints.EfsCsiDriverAddOn({replicaCount: 1}),
+                new blueprints.VpcCniAddOn(),
+                new blueprints.KubeProxyAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.JupyterHubAddOn({
                     efsConfig:{
