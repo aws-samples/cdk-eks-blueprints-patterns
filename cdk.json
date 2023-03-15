@@ -1,5 +1,5 @@
 {
-    "app": "npx ts-node dist/bin/main.js",
+    "app": "npx ts-node dist/bin/main.ts",
     "context": {
         "parent.hostedzone.name": "mycompany.a2z.com",
         "dev.subzone.name": "dev.mycompany.a2z.com"

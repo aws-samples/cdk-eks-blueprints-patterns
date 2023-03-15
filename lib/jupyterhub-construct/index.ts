@@ -49,7 +49,7 @@ export default class JupyterHubConstruct {
                         scope: blueprints.utils.valueFromContext(scope, "scope",["openid","name","profile","email"]),
                         usernameKey: blueprints.utils.valueFromContext(scope, "usernameKey", "name"),
                     },
-                    enableIngress: true,
+                    serviceType: blueprints.JupyterHubServiceType.ALB,
                     ingressHosts: [jupyterhubDomain],
                     ingressAnnotations: {
                         'alb.ingress.kubernetes.io/certificate-arn': `${certificateArn}`,
