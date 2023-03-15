@@ -12,7 +12,6 @@ export default class JupyterHubConstruct {
         const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
         const jupyterhubDomain = utils.valueFromContext(scope, "jupyterhub.subzone.name", "jupyterhub.dev.some.example.com");
-        const certificateArn = utils.valueFromContext(scope, "certificateArn","arn:aws:acm:us-east-1:123456789012:certificate/abcdefwelfjli3991k3lkj5k3")
 
         blueprints.EksBlueprint.builder()
             .account(props.env!.account!)
