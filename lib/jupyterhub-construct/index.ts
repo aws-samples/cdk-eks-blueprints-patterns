@@ -52,14 +52,9 @@ export default class JupyterHubConstruct {
                     serviceType: blueprints.JupyterHubServiceType.ALB,
                     ingressHosts: [jupyterhubDomain],
                     ingressAnnotations: {
-                        'alb.ingress.kubernetes.io/certificate-arn': `${certificateArn}`,
-                        'alb.ingress.kubernetes.io/listen-ports': '[{"HTTP": 80},{"HTTPS":443}]',
-                        'alb.ingress.kubernetes.io/scheme': 'internet-facing',
-                        'alb.ingress.kubernetes.io/ssl-redirect': '443',
-                        'alb.ingress.kubernetes.io/target-type': 'ip',
                         'external-dns.alpha.kubernetes.io/hostname': `${jupyterhubDomain}`,
-                        'kubernetes.io/ingress.class': 'alb',
                     },
+                    certificateResourceName: GlobalResources.Certificate,
                     values: { 
                         prePuller: { 
                             hook: { enabled: false },
