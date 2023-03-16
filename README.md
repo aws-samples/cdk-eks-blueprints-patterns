@@ -107,10 +107,7 @@ For `DatadogConstruct` the pattern relies on the following secret defined:
 
 For `KubeflowConstruct` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
 
-For `GmaestroConstruct` the pattern relies on the following secrets defined, please see [Gmaestro documentation](https://github.com/Granulate/gmaestro-eks-blueprints-addon/blob/master/README.md):
-
-- `granulate-grafana-metrics-auth-key` - must contain the grafana metrics auth token in Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
-- `granulate-grafana-logs-auth-key` - must contain the grafana logs auth token in Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
+For `GmaestroConstruct` the pattern relies on the following secret defined, please see [Gmaestro documentation](https://github.com/Granulate/gmaestro-eks-blueprints-addon/blob/master/README.md):
 - `granulate-client-id` - must contain the client_id Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 
 ## Security
