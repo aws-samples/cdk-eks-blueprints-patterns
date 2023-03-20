@@ -44,7 +44,6 @@ cdk deploy paralus-blueprint
 
 ## Verify the resources
 
-
 Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access
 ```sh
 aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn arn:aws:iam::378123694894:role/paralus-blueprint-paralusblueprintMastersRoleF3287-EI3XEBO1107B
@@ -70,12 +69,18 @@ prompt-54d45cff79-h9x95                                    2/2     Running
 relay-server-79448564cb-nf5tj                              2/2     Running              
 ```
 
-
 ## Configure DNS Settings 
 Once Paralus is installed continue with following steps https://www.paralus.io/blog/eks-quickstart#configuring-dns-settings to configure DNS settings, reset default password and start using paralus
 
 ## Paralus Features & Usage 
 https://www.paralus.io/docs/usage/
+
+## Configuring centralized kubectl access to clusters
+Kubectl is one of the most widely used tools to work with Kubernetes. The command line tool allows you to deploy applications, inspect and manage resources. It basically authenticates with the control plane for your cluster and makes API calls to the Kubernetes API. In short if you are working with Kubernetes - you will use kubectl the most.
+
+In most modern day scenarios, there are multiple users who are accessing various clusters. This makes it all more important to ensure that every user or group has access to only those resources that they are allowed to. Few ways to achieve this is using namespaces and role based access control. While these are good, most enterprise grade application deployments require something more robust.
+
+That’s where Paralus comes in. It allows you to configure centralized kubectl access to multiple clusters all from a single dashboard. It allows you to create groups, assign projects and users and provide access. In this blog post, we’ll show you how to import different clusters to Paralus and configure access to them. All of this with zero trust principles built in. [Read More](https://www.paralus.io/blog/centralized-kubectl-access#the-use-case)
 
 ## Cleanup
 
