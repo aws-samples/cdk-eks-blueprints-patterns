@@ -26,3 +26,53 @@ To deploy the pattern, run the following command:
 ```bash
 npx cdk deploy guardduty-blueprint
 ```
+
+Now you can check that the GuardDuty detector is successfully enabled.
+
+```bash
+❯ aws guardduty list-detectors --region us-east-1
+
+{
+    "DetectorIds": [
+        "84c3850c2f6f4224008aa9f0e2ee5448"
+    ]
+}
+
+❯ aws guardduty get-detector --detector-id 84c3850c2f6f4224008aa9f0e2ee5448 --region us-east-1
+
+{
+    "CreatedAt": "2023-03-22T16:13:02.228Z",
+    "FindingPublishingFrequency": "SIX_HOURS",
+    "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
+    "Status": "ENABLED",
+    "UpdatedAt": "2023-03-22T16:13:02.228Z",
+    "DataSources": {
+        "CloudTrail": {
+            "Status": "ENABLED"
+        },
+        "DNSLogs": {
+            "Status": "ENABLED"
+        },
+        "FlowLogs": {
+            "Status": "ENABLED"
+        },
+        "S3Logs": {
+            "Status": "ENABLED"
+        },
+        "Kubernetes": {
+            "AuditLogs": {
+                "Status": "ENABLED"
+            }
+        },
+        "MalwareProtection": {
+            "ScanEc2InstanceWithFindings": {
+                "EbsVolumes": {
+                    "Status": "ENABLED"
+                }
+            },
+            "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/malware-protection.guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDutyMalwareProtection"
+        }
+    },
+    "Tags": {}
+ }
+ ```
