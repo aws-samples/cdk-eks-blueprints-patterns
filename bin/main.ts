@@ -92,13 +92,6 @@ import FargateConstruct from '../lib/fargate-construct';
 new FargateConstruct(app, 'fargate');
 
 //-------------------------------------------
-// Amazon GuardDuty with SNS alerting
-//-------------------------------------------
-import GuardDutyNotifier from '../lib/guardduty-construct';
-new GuardDutyNotifier(app, 'guardduty');
-
-
-//-------------------------------------------
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
 import PipelineConstruct from '../lib/pipeline-stack';
@@ -181,3 +174,10 @@ new PipelineSecureIngressCognito()
     .catch(() => {
         logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
     });
+
+//--------------------------------------------------------------------------
+// Security Patterns
+//--------------------------------------------------------------------------
+
+import GuardDutyNotifier from '../lib/security/guardduty-construct';
+new GuardDutyNotifier().build(app, 'guardduty');
