@@ -71,6 +71,7 @@ export default class DataAtRestEncryptionConstruct {
             spec: {
               efsKmsKey: efsKmsKey.keyArn,
               efsFileSystemId: efsFileSystem.fileSystemId,
+              ebsKmsKey: ebsKmsKey.keyArn,
             },
           },
           adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
