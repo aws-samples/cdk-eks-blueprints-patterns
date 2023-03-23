@@ -89,7 +89,7 @@ Now you can check that the GuardDuty detector is successfully enabled with all t
 }
  ```
 
-The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` and `Execution:Kubernetes/SuspiciousFile` as expected:
+The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` as expected:
 
 ```bash
 ❯ aws guardduty list-findings --detector-id 94c3858788bc1444ceedab472bab5d7e --region us-east-1
