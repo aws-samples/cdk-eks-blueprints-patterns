@@ -18,11 +18,16 @@ markdown_extensions:
   - def_list
   - pymdownx.highlight
   - pymdownx.superfences
-  - pymdownx.tabbed
   - pymdownx.inlinehilite
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - toc:
-      permalink: true
+      permalink: "¤"
 plugins:
   - search
