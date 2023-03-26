@@ -14,7 +14,6 @@ export default class GmaestroConstruct {
         let gmaestroAddOnProps = {
             namespace: "test", // replace with the namespace from the deployment yaml
             clientIdSecretName: CLIENT_ID_SECRET_NAME, // replace with a secret name in secrets manager that you have created
-            clientName: "test_client", // replace with the client name from the deployment yaml
             clusterName: "test_cluster", // replace with the service name from the deployment yaml
         } as gmaestroAddOn.GmaestroAddOnProps
 
