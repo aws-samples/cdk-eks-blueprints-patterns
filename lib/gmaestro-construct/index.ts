@@ -18,6 +18,7 @@ export default class GmaestroConstruct {
         } as gmaestroAddOn.GmaestroAddOnProps
 
         const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.addons.MetricsServerAddOn(),
             new gmaestroAddOn.GmaestroAddOn(gmaestroAddOnProps)
         ];
         blueprints.EksBlueprint.builder()
