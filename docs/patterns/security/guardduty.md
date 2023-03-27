@@ -1,8 +1,8 @@
-# Amazon GuardDuty protection
+# Amazon GuardDuty Protection
 
 ## Objective
 
-The objective of this pattern is to demonstrate how to enable GuardDuty detector for an account, adjust data sources, and how to configure it to send findings to a SNS topic.
+The objective of this pattern is to demonstrate how to enable Amazon GuardDuty Detector across your AWS accounts, various data sources, and how to automate notifications via Amazon SNS based on security vulnerabilities triggered by Amazon GuardDuty.
 
 Supported optional data sources:
 
@@ -10,7 +10,7 @@ Supported optional data sources:
 - [Malware Protection](https://docs.aws.amazon.com/guardduty/latest/ug/malware-protection.html)
 - [Amazon S3 Protection](https://docs.aws.amazon.com/guardduty/latest/ug/s3-protection.html)
 
-To achieve this objective, the pattern utilizes [Nested Stack Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/nested-stack/) to enable GuardDuty detector for the account. The pattern also created an SNS topic and a subscription to the topic to receive GuardDuty findings to the user-provided email address.
+To achieve this objective, the pattern utilizes [Nested Stack Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/nested-stack/) to enable GuardDuty Detector for the account. The pattern also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule
 
 The list of optional data sources is adjustable via the `GuardDutySetupStack.builder` input in the pattern.
 
