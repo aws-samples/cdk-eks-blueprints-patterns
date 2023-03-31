@@ -3,7 +3,6 @@ import { Construct } from "constructs";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
 import { SECRET_ARGO_ADMIN_PWD } from "../../multi-region-construct";
 import { prevalidateSecrets } from "../../common/construct-utils";
-import { App } from "aws-cdk-lib";
 
 const environmentName = "main";
 const email = "your-email@example.com";
@@ -12,9 +11,6 @@ const gitUrl = "https://github.com/aws-samples/eks-blueprints-workloads.git";
 const targetRevision = "main";
 
 export default class GuardDutyNotifier {
-  build(app: App, arg1: string) {
-      throw new Error('Method not implemented.');
-  }
 
   async buildAsync(scope: Construct, id: string) {
 

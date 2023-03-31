@@ -180,4 +180,4 @@ new PipelineSecureIngressCognito()
 //--------------------------------------------------------------------------
 
 import GuardDutyNotifier from '../lib/security/guardduty-construct';
-new GuardDutyNotifier().build(app, 'guardduty');
+new GuardDutyNotifier().buildAsync(app, 'guardduty');
