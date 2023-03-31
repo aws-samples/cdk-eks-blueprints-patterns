@@ -1,17 +1,14 @@
-import {
-  aws_guardduty,
-  aws_events as events,
-  aws_events_targets as eventTargets,
-  aws_sns as sns,
-  aws_sns_subscriptions as subs,
-  NestedStack,
-  NestedStackProps,
-  CfnOutput,
-} from "aws-cdk-lib";
+import * as aws_guardduty from "aws-cdk-lib/aws-guardduty";
 import { Construct } from "constructs";
 import * as cr from "aws-cdk-lib/custom-resources";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
+import { NestedStack, NestedStackProps } from "aws-cdk-lib";
+import { CfnOutput } from "aws-cdk-lib";
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
+import * as events from "aws-cdk-lib/aws-events";
+import * as eventTargets from "aws-cdk-lib/aws-events-targets";
 
 export class GuardDutySetupStack extends NestedStack {
   public static builder(
