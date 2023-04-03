@@ -1,5 +1,5 @@
 # Paralus on EKS
-The Paralus project is a free, open source tool that enables controlled, audited access to Kubernetes infrastructure. It comes with just-in-time service account creation and user-level credential management that integrates with your RBAC and SSO. 
+The Paralus project is a free, open source tool that enables controlled, audited access to Kubernetes infrastructure. It comes with just-in-time service account creation and user-level credential management that integrates with your RBAC and SSO. [Learn more ..](https://www.paralus.io/)
 
 This pattern deploys the following resources:
 
@@ -7,6 +7,7 @@ This pattern deploys the following resources:
 - Deploys supporting add-ons:  AwsLoadBalancerController, VpcCni, KubeProxy, EbsCsiDriverAddOn
 - Deploy Paralus on the EKS cluster
 
+NOTE: By default paralus installs few dependent modules like postgres, kratos and also comes with a dashboard. At it's core paralus works atop domain based routing, inter service communication and hence above supporting Add-Ons are required. 
 
 ## Prerequisites:
 
@@ -18,13 +19,23 @@ Ensure that you have installed the following tools on your machine.
 4. [npm](https://docs.npmjs.com/cli/v8/commands/npm-install)
 
 
-
 ## Deploy EKS Cluster with Amazon EKS Blueprints for CDK
 
 Clone the repository
 
 ```sh
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
+```
+
+Update fqdn information for your installation
+
+```
+    fqdn": {
+        "domain": <yourdomain.com>,
+        "hostname": "console-eks",
+        "coreConnectorSubdomain": "*.core-connector.eks",
+        "userSubdomain": "*.user.eks"
+    }
 ```
 
 Updating npm
@@ -69,8 +80,38 @@ prompt-54d45cff79-h9x95                                    2/2     Running
 relay-server-79448564cb-nf5tj                              2/2     Running              
 ```
 
+[Learn more](https://www.paralus.io/docs/architecture/core-components) about the various components that are deployed as part of paralus.
+
 ## Configure DNS Settings 
-Once Paralus is installed continue with following steps https://www.paralus.io/blog/eks-quickstart#configuring-dns-settings to configure DNS settings, reset default password and start using paralus
+Once Paralus is installed continue with following steps to configure DNS settings, reset default password and start using paralus
+
+Obtain the external ip address by executing below command against the installation
+`kubectl get svc blueprints-addon-paralus-contour-envoy -n paralus-system`
+
+```
+NAME                            TYPE           CLUSTER-IP       EXTERNAL-IP                                                                     PORT(S)                         AGE
+blueprints-addon-paralus-contour-envoy         LoadBalancer   10.100.101.216   a814da526d40d4661bf9f04d66ca53b5-65bfb655b5662d24.elb.us-west-2.amazonaws.com   80:31810/TCP,443:30292/TCP      10m
+```
+
+Update the DNS settings to add CNAME records
+```
+    name: console-eks 
+    value: a814da526d40d4661bf9f04d66ca53b5-65bfb655b5662d24.elb.us-west-2.amazonaws.com
+    
+    name: *.core-connector.eks  
+    value: a814da526d40d4661bf9f04d66ca53b5-65bfb655b5662d24.elb.us-west-2.amazonaws.com
+    
+    name: *.user.eks 
+    value: a814da526d40d4661bf9f04d66ca53b5-65bfb655b5662d24.elb.us-west-2.amazonaws.com
+```
+
+Obtain your default password and reset it upon first login
+
+`kubectl logs -f --namespace paralus-system $(kubectl get pods --namespace paralus-system -l app.kubernetes.io/name='paralus' -o jsonpath='{ .items[0].metadata.name }') initialize | grep 'Org Admin default password:'`
+
+You can now access dashboard with http://console-eks.<yourdomain.com> ( refers to the hostname.domain specified during installation ), start importing clusters and using paralus.
+
+Note: you can also refer to this [paralus eks blogpost](https://www.paralus.io/blog/eks-quickstart#configuring-dns-settings)
 
 ## Paralus Features & Usage 
 https://www.paralus.io/docs/usage/

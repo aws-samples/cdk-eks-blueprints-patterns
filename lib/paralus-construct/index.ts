@@ -18,7 +18,7 @@ export default class ParalusConstruct {
                 new ParalusAddOn({
                     namespace: 'paralus-system',
                     // this signifies the paralus version to be deployed
-                    version: '0.2.2',
+                    version: '0.2.3',
                     // this flag deploys kratos in dev mode, install postgres, by default it is true
                     development: true,
                     /**
@@ -26,7 +26,12 @@ export default class ParalusConstruct {
                     */
                     // update this to your domain, as paralus works based on domain based routing
                     values: {
-                       "fqdn.domain": "paralus.local"
+                        "fqdn": {
+                            "domain": "paralusdemo.com",
+                            "hostname": "console-eks",
+                            "coreConnectorSubdomain": "*.core-connector.eks",
+                            "userSubdomain": "*.user.eks"
+                        }
                     }
                  })
             )
