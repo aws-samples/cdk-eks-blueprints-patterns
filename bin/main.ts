@@ -157,7 +157,7 @@ import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
 
 import CustomNetworkingIPv4Construct from '../lib/custom-networking-ipv4-construct';
-new CustomNetworkingIPv4Construct(app, 'ipv4-custom-networking');
+new CustomNetworkingIPv4Construct(app, 'custom-networking-ipv4');
 
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';

@@ -19,13 +19,14 @@ export default class CustomNetworkingIPv4Construct {
                     id: "mng1",
                     amiType: NodegroupAmiType.AL2_X86_64,
                     instanceTypes: [new ec2.InstanceType('m5.large')],
+                    minSize: 2,
                     desiredSize: 2,
                     maxSize: 3,
-                    nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+                    nodeGroupSubnets: { subnetType: ec2.SubnetType.PUBLIC },
                     launchTemplate: {
                         // You can pass Custom Tags to Launch Templates which gets Propogated to worker nodes.
                         customTags: {
-                            "Name": "mng-custom-nw",
+                            "Name": "mng-custom-nw-large-al2",
                             "Type": "Managed-Node-Group",
                             "LaunchTemplate": "Custom",
                             "Instance": "ONDEMAND"
@@ -38,9 +39,9 @@ export default class CustomNetworkingIPv4Construct {
 const vpcCniAddOn = new blueprints.addons.VpcCniAddOn({
   customNetworkingConfig: {
       subnets: [
-          blueprints.getNamedResource("secondary-cidr-subnet-0"),
-          blueprints.getNamedResource("secondary-cidr-subnet-1"),
-          blueprints.getNamedResource("secondary-cidr-subnet-2"),
+          blueprints.getNamedResource("subnet-0"),
+          blueprints.getNamedResource("subnet-1"),
+          blueprints.getNamedResource("subnet-2"),
       ]   
   },
   awsVpcK8sCniCustomNetworkCfg: true,
@@ -53,7 +54,8 @@ const vpcCniAddOn = new blueprints.addons.VpcCniAddOn({
             .addOns( vpcCniAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.CoreDnsAddOn()
-            ).resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined,"10.64.0.0/24",["10.64.0.0/25","10.64.0.128/26","10.64.0.192/26"]))
+            ).resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined,"100.64.0.0/24",["100.64.0.0/25","100.64.0.128/26","100.64.0.192/26"]))
+            .clusterProvider(clusterProvider)
             .build(scope, stackId);
     }
 }
