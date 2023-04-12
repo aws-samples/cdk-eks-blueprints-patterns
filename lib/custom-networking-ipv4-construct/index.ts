@@ -39,9 +39,9 @@ export default class CustomNetworkingIPv4Construct {
 const vpcCniAddOn = new blueprints.addons.VpcCniAddOn({
   customNetworkingConfig: {
       subnets: [
-          blueprints.getNamedResource("subnet-0"),
-          blueprints.getNamedResource("subnet-1"),
-          blueprints.getNamedResource("subnet-2"),
+          blueprints.getNamedResource("secondary-cidr-subnet-0"),
+          blueprints.getNamedResource("secondary-cidr-subnet-1"),
+          blueprints.getNamedResource("secondary-cidr-subnet-2"),
       ]   
   },
   awsVpcK8sCniCustomNetworkCfg: true,
