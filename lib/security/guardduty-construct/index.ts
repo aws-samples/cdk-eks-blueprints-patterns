@@ -25,9 +25,6 @@ export default class GuardDutyNotifier {
       .addOns(
         new blueprints.NestedStackAddOn({
           builder: GuardDutySetupStack.builder(environmentName, email, [
-            { name: "CLOUD_TRAIL", status: "ENABLED" },
-            { name: "DNS_LOGS", status: "ENABLED" },
-            { name: "FLOW_LOGS", status: "ENABLED" },
             { name: "S3_DATA_EVENTS", status: "ENABLED" },
             { name: "EKS_AUDIT_LOGS", status: "ENABLED" },
             { name: "EBS_MALWARE_PROTECTION", status: "ENABLED" },
