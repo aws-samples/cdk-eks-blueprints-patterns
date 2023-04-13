@@ -5,7 +5,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
 import { NestedStack, NestedStackProps } from "aws-cdk-lib";
 import { CfnOutput } from "aws-cdk-lib";
-import * as sns from 'aws-cdk-lib/aws-sns';
+import * as sns from "aws-cdk-lib/aws-sns";
 import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
 import * as events from "aws-cdk-lib/aws-events";
 import * as eventTargets from "aws-cdk-lib/aws-events-targets";
@@ -14,7 +14,7 @@ export class GuardDutySetupStack extends NestedStack {
   public static builder(
     environmentName: string,
     email: string,
-    dataSources?: aws_guardduty.CfnDetector.CFNDataSourceConfigurationsProperty
+    features?: aws_guardduty.CfnDetector.FeatureConfigurationsProperty[]
   ): blueprints.NestedStackBuilder {
     return {
       build(scope: Construct, id: string, props: NestedStackProps) {
@@ -24,7 +24,7 @@ export class GuardDutySetupStack extends NestedStack {
           props,
           environmentName,
           email,
-          dataSources
+          features
         );
       },
     };
@@ -36,7 +36,7 @@ export class GuardDutySetupStack extends NestedStack {
     props: NestedStackProps,
     environmentName: string,
     email: string,
-    dataSources?: aws_guardduty.CfnDetector.CFNDataSourceConfigurationsProperty
+    features?: aws_guardduty.CfnDetector.FeatureConfigurationsProperty[]
   ) {
     super(scope, id, props);
 
@@ -67,7 +67,7 @@ export class GuardDutySetupStack extends NestedStack {
     } else {
       new aws_guardduty.CfnDetector(this, id + "GuardDutyDetector", {
         enable: true,
-        dataSources: dataSources,
+        features,
       });
     }
 
