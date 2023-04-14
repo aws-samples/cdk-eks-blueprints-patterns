@@ -183,4 +183,6 @@ import { GuardDutySetupStack } from "../lib/security/guardduty-construct/guarddu
 new GuardDutySetupStack(app, "guardduty-setup");
 
 import GuardDutyWorkloadConstruct from "../lib/security/guardduty-construct";
-new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty");
+new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch(() => {
+    logger.info("GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
