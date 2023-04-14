@@ -15,7 +15,7 @@ Supported features:
 
 The pattern consists of two components:
 
-- `GuardDutySetupStack` - enables GuardDuty Detector for the account. The stack also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule.
+- `GuardDutySetupStack` - enables GuardDuty Detector for the account. The stack also creates an SNS topic, SNS Subscription, and Amazon EventBridge Rule.
 - A blueprint that deploys a sample GitOps workload that triggers a GuardDuty finding.
 
 The list of optional features is adjustable via the `features` parameter in the [GuardDutySetupStack](../../../lib/security/guardduty-construct/guardduty-setup.ts) stack.
@@ -39,7 +39,7 @@ The sample repository contains the following workloads:
 
 ### Deploying the `GuardDutySetupStack` stack
 
-The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the optional features of your choice enabled. The stack also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule.
+The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the optional features of your choice enabled. The stack also creates an SNS topic, SNS Subscription, and Amazon EventBridge Rule.
 
 **You can't deploy this stack if you already have GuardDuty enabled in your account because only one GuardDuty detector can be enabled per region.** If you already have GuardDuty enabled, you can skip this step. Make sure that you have all the optional GuardDuty features you would like to use enabled if you manage the GuardDuty configuration manually or by any other means.
 
