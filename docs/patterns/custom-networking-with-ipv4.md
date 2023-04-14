@@ -219,8 +219,7 @@ We see from above that `ENI_CONFIG_LABEL_DEF` is set to "topology.kubernetes.io/
 - Prefix Delegation
 
 Prefix Delegation is a property of Vpc Cni Plugin that allows customers to increase Pod density on an instance. 
-
-Add more text
+When using custom networking mode, since the node’s primary ENI is no longer used to assign Pod IP addresses, there is a decrease in the number of Pods that can run on a given EC2 instance type. To work around this limitation you can use prefix delegation with custom networking. With prefix delegation enabled, each secondary IP is replaced with a /28 prefix which negates the IP address loss when you use custom networking
 
 Without `prefix-delegation` enabled, an `m5.large` type instance can have 20 Pods running. With `prefix-delegation` enabled, this number increases to 110.
 
@@ -241,6 +240,14 @@ Output:
 ```
 
 
+To turn on Prefix Delegation, use the following command
+
+```sh
+kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true
+```
+
+Since Vpc Cni runs as a daemonset, you’d need to create new nodes for this to take effect.
+
 ## Cleanup
 
 To clean up your EKS Blueprints, run the following commands:
@@ -251,4 +258,7 @@ cdk destroy custom-networking-ipv4-blueprint
 ```
 
 ## References 
+
+https://github.com/aws/amazon-vpc-cni-k8s
+https://aws.amazon.com/blogs/containers/amazon-vpc-cni-increases-pods-per-node-limits/
 
