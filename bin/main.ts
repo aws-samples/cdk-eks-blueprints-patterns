@@ -184,4 +184,6 @@ import { ImageScanningSetupStack } from "../lib/security/image-vulnerability-sca
 new ImageScanningSetupStack(app, "image-scanning-setup");
 
 import ImageScanningWorkloadConstruct from "../lib/security/image-vulnerability-scanning";
-new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload");
+new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch(() => {
+    logger.info("ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
