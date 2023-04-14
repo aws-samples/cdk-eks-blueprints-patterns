@@ -179,5 +179,10 @@ new PipelineSecureIngressCognito()
 // Security Patterns
 //--------------------------------------------------------------------------
 
-import GuardDutyNotifier from '../lib/security/guardduty-construct';
-new GuardDutyNotifier().buildAsync(app, 'guardduty');
+import { GuardDutySetupStack } from "../lib/security/guardduty-construct/guardduty-setup";
+new GuardDutySetupStack(app, "guardduty-setup");
+
+import GuardDutyWorkloadConstruct from "../lib/security/guardduty-construct";
+new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch(() => {
+    logger.info("GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
