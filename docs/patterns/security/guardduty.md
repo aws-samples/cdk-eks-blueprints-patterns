@@ -2,20 +2,23 @@
 
 ## Objective
 
-The objective of this pattern is to demonstrate how to enable Amazon GuardDuty Detector across your AWS accounts, various data sources, and how to automate notifications via Amazon SNS based on security vulnerabilities triggered by Amazon GuardDuty.
+The objective of this pattern is to demonstrate how to enable Amazon GuardDuty Detector across your AWS accounts, use GuardDuty optional features, and how to automate notifications via Amazon SNS based on security vulnerabilities triggered by Amazon GuardDuty.
 
 Supported features:
 
-- [Foundational data sources](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_data-sources.html)
+- [Foundational data sources](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_data-sources.html) - these data sources are enabled by default, no need to mention them in the pattern input
 - [EKS Audit Log Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-audit-log-monitoring.html)
 - [EKS Runtime Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-eks-runtime-monitoring.html)
 - [Malware Protection in Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/malware-protection.html)
 - [GuardDuty RDS Protection](https://docs.aws.amazon.com/guardduty/latest/ug/rds-protection.html)
 - [Amazon S3 Protection in Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/s3-protection.html)
 
-To achieve this objective, the pattern utilizes [Nested Stack Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/nested-stack/) to enable GuardDuty Detector for the account. The pattern also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule
+The pattern consists of two components:
 
-The list of optional features is adjustable via the `GuardDutySetupStack.builder` input in the pattern.
+- `GuardDutySetupStack` - enables GuardDuty Detector for the account. The stack also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule.
+- A blueprint that deploys a sample GitOps workload that triggers a GuardDuty finding.
+
+The list of optional features is adjustable via the `features` parameter in the [GuardDutySetupStack](../../../lib/security/guardduty-construct/guardduty-setup.ts) stack.
 
 ## GitOps confguration
 
@@ -32,79 +35,174 @@ The sample repository contains the following workloads:
 1. Follow the usage [instructions](README.md#usage) to install the dependencies
 1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
-## Deploying
+## Deploy
 
-To deploy the pattern, run the following command:
+### Deploying the `GuardDutySetupStack` stack
+
+The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the optional features of your choice enabled. The stack also creates an SNS topic, SNS Subscription, and CloudWatch Event Rule.
+
+**You can't deploy this stack if you already have GuardDuty enabled in your account because only one GuardDuty detector can be enabled per region.** If you already have GuardDuty enabled, you can skip this step. Make sure that you have all the optional GuardDuty features you would like to use enabled if you manage the GuardDuty configuration manually or by any other means.
+
+To deploy the stack, run the following command:
+
+```bash
+npx cdk deploy guardduty-setup
+```
+
+### Deploying the blueprint
+
+The blueprint deploys a sample GitOps workload that triggers a GuardDuty finding.
+
+To deploy the bluepring, run the following command:
 
 ```bash
 npx cdk deploy guardduty-blueprint
 ```
 
-## Verifying
+## Verify
+
+### Verifying that the GuardDuty detector is enabled
 
 Now you can check that the GuardDuty detector is successfully enabled with all the required data sources.
 
-```bash
-❯ aws guardduty list-detectors --region us-east-1
+To list all detectors in the region, run the following command:
 
+```bash
+aws guardduty list-detectors --region us-east-1
+```
+
+The output should look like this:
+
+```json
 {
     "DetectorIds": [
-        "94c3858788bc1444ceedab472bab5d7e"
+        "80c3c03d44819a984b035b000aa9b3da"
     ]
 }
+```
 
-❯ aws guardduty get-detector --detector-id 94c3858788bc1444ceedab472bab5d7e --region us-east-1
+To check the detector's configuration, run the following command:
 
+```bash
+aws guardduty get-detector --detector-id 80c3c03d44819a984b035b000aa9b3da --region us-east-1
+```
+
+The output should look like this:
+
+```json
 {
-  "CreatedAt": "2023-03-22T16:13:02.228Z",
-  "FindingPublishingFrequency": "SIX_HOURS",
-  "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
-  "Status": "ENABLED",
-  "UpdatedAt": "2023-03-22T16:13:02.228Z",
-  "DataSources": {
-    "CloudTrail": {
-      "Status": "ENABLED"
-    },
-    "DNSLogs": {
-      "Status": "ENABLED"
-    },
-    "FlowLogs": {
-      "Status": "ENABLED"
-    },
-    "S3Logs": {
-      "Status": "ENABLED"
-    },
-    "Kubernetes": {
-      "AuditLogs": {
-        "Status": "ENABLED"
-      }
-    },
-    "MalwareProtection": {
-      "ScanEc2InstanceWithFindings": {
-        "EbsVolumes": {
-          "Status": "ENABLED"
+    "CreatedAt": "2023-04-14T15:55:27.088Z",
+    "FindingPublishingFrequency": "SIX_HOURS",
+    "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDuty",
+    "Status": "ENABLED",
+    "UpdatedAt": "2023-04-14T15:55:27.088Z",
+    "DataSources": {
+        "CloudTrail": {
+            "Status": "ENABLED"
+        },
+        "DNSLogs": {
+            "Status": "ENABLED"
+        },
+        "FlowLogs": {
+            "Status": "ENABLED"
+        },
+        "S3Logs": {
+            "Status": "ENABLED"
+        },
+        "Kubernetes": {
+            "AuditLogs": {
+                "Status": "ENABLED"
+            }
+        },
+        "MalwareProtection": {
+            "ScanEc2InstanceWithFindings": {
+                "EbsVolumes": {
+                    "Status": "ENABLED"
+                }
+            },
+            "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/malware-protection.guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDutyMalwareProtection"
         }
-      },
-      "ServiceRole": "arn:aws:iam::123456789012:role/aws-service-role/malware-protection.guardduty.amazonaws.com/AWSServiceRoleForAmazonGuardDutyMalwareProtection"
-    }
-  },
-  "Tags": {}
+    },
+    "Tags": {},
+    "Features": [
+        {
+            "Name": "CLOUD_TRAIL",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T11:08:44-05:00"
+        },
+        {
+            "Name": "DNS_LOGS",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T11:08:44-05:00"
+        },
+        {
+            "Name": "FLOW_LOGS",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T11:08:44-05:00"
+        },
+        {
+            "Name": "S3_DATA_EVENTS",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T10:55:27-05:00"
+        },
+        {
+            "Name": "EKS_AUDIT_LOGS",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T10:55:27-05:00"
+        },
+        {
+            "Name": "EBS_MALWARE_PROTECTION",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T10:55:27-05:00"
+        },
+        {
+            "Name": "RDS_LOGIN_EVENTS",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T10:55:27-05:00"
+        },
+        {
+            "Name": "EKS_RUNTIME_MONITORING",
+            "Status": "ENABLED",
+            "UpdatedAt": "2023-04-14T10:55:27-05:00",
+            "AdditionalConfiguration": [
+                {
+                    "Name": "EKS_ADDON_MANAGEMENT",
+                    "Status": "ENABLED",
+                    "UpdatedAt": "2023-04-14T10:55:27-05:00"
+                }
+            ]
+        }
+    ]
 }
  ```
 
-The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` as expected:
+### Verifying that the GuardDuty findings are generated
+
+To list all findings in the region, run the following command:
 
 ```bash
-❯ aws guardduty list-findings --detector-id 94c3858788bc1444ceedab472bab5d7e --region us-east-1
+aws guardduty list-findings --detector-id 80c3c03d44819a984b035b000aa9b3da --region us-east-1
+```
 
+The output should look like this:
+
+```json
 {
     "FindingIds": [
         "f2c3859c6ca25b3057d13470a992bbd7"
     ]
 }
+```
 
-❯ aws guardduty get-findings --detector-id 94c3858788bc1444ceedab472bab5d7e --finding-ids f2c3859c6ca25b3057d13470a992bbd7 --region us-east-1
+To check the finding's details, run the following command:
 
+```bash
+aws guardduty get-findings --detector-id 80c3c03d44819a984b035b000aa9b3da --finding-ids f2c3859c6ca25b3057d13470a992bbd7 --region us-east-1
+```
+
+The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` as expected:
+
+```json
 {
     "Findings": [
         {
@@ -202,3 +300,32 @@ The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContaine
     ]
 }
 ```
+
+### Verifying that the GuardDuty Runtime Monitoring agents are automatically deployed
+
+To verify that the GuardDuty Runtime Monitoring agents are automatically deployed, run the following command:
+
+```bash
+kubectl get pods -A
+```
+
+The output should look like this:
+
+```bash
+NAMESPACE          NAME                                                              READY   STATUS    RESTARTS        AGE
+amazon-guardduty   aws-guardduty-agent-qrm22                                         1/1     Running   0               25m
+argocd             blueprints-addon-argocd-application-controller-0                  1/1     Running   0               3m25s
+argocd             blueprints-addon-argocd-applicationset-controller-7c4c75877579s   1/1     Running   0               3m25s
+argocd             blueprints-addon-argocd-dex-server-c6687d84f-q4697                1/1     Running   1 (3m21s ago)   3m25s
+argocd             blueprints-addon-argocd-notifications-controller-7c74f76c5wh4nb   1/1     Running   0               3m25s
+argocd             blueprints-addon-argocd-redis-595cc69fff-9985j                    1/1     Running   0               3m25s
+argocd             blueprints-addon-argocd-repo-server-7f75c7796c-229c4              1/1     Running   0               3m25s
+argocd             blueprints-addon-argocd-server-86867c9dd8-p6qk7                   1/1     Running   0               3m25s
+argocd             privileged-pod                                                    1/1     Running   0               115s
+kube-system        aws-node-4lhp7                                                    1/1     Running   0               26m
+kube-system        coredns-79989457d9-jncrb                                          1/1     Running   0               32m
+kube-system        coredns-79989457d9-l5jcg                                          1/1     Running   0               32m
+kube-system        kube-proxy-hwkwm                                                  1/1     Running   0               26m
+```
+
+As you can see, the GuardDuty Runtime Monitoring agent is deployed in the `amazon-guardduty` namespace.
