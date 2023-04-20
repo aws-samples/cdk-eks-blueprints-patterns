@@ -40,6 +40,6 @@
   },
   "overrides": {
     "@aws-quickstart/eks-blueprints": "^1.6.0",
-    "aws-cdk": "2.66.1"
+    "aws-cdk": "2.72.0"
   }
 }
