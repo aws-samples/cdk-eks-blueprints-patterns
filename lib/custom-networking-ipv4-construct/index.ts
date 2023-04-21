@@ -36,7 +36,10 @@ export default class CustomNetworkingIPv4Construct {
             ]
         });        
         
-const vpcCniAddOn = new blueprints.addons.VpcCniAddOn({
+        blueprints.EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .region(process.env.CDK_DEFAULT_REGION)
+            .addOns( new blueprints.VpcCniAddOn({
   customNetworkingConfig: {
       subnets: [
           blueprints.getNamedResource("secondary-cidr-subnet-0"),
@@ -46,14 +49,10 @@ const vpcCniAddOn = new blueprints.addons.VpcCniAddOn({
   },
   awsVpcK8sCniCustomNetworkCfg: true,
   eniConfigLabelDef: 'topology.kubernetes.io/zone'
-});        
-        
-        blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION)
-            .addOns( vpcCniAddOn,
+}),
                 new blueprints.AwsLoadBalancerControllerAddOn(),
-                new blueprints.CoreDnsAddOn()
+                new blueprints.CoreDnsAddOn(),
+                new blueprints.KubeProxyAddOn(),
             ).resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined,"100.64.0.0/24",["100.64.0.0/25","100.64.0.128/26","100.64.0.192/26"]))
             .clusterProvider(clusterProvider)
             .build(scope, stackId);
