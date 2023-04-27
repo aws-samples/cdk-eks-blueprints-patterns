@@ -21,12 +21,12 @@ export default class EmrEksConstruct {
         const stackId = `${id}-blueprint`;
 
         EksBlueprint.builder().addOns(
+            new AwsLoadBalancerControllerAddOn,
             new VpcCniAddOn(),
             new CoreDnsAddOn(),
             new MetricsServerAddOn,
             new ClusterAutoScalerAddOn,
             new CertManagerAddOn,
-            new AwsLoadBalancerControllerAddOn,
             new EbsCsiDriverAddOn,
             new KubeProxyAddOn,
             new EmrEksAddOn

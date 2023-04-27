@@ -113,6 +113,18 @@ npx cdk bootstrap
 npx cdk deploy multi-team-blueprint
 ```
 
+# Developer Flow
+
+All files are compiled to the dist folder including `lib` and `bin` directories. For iterative development (e.g. if you make a change to any of the patterns) make sure to run compile:
+
+```bash
+make compile
+```
+
+The `compile` command is optimized to build only modified files and is very fast. 
+
+**NOTE:** Run `make compile` after EACH modification, or alternatively run `npm watch` to watch changes. 
+
 # Deploying Blueprints with External Dependency on AWS Resources
 
 There are cases when the blueprints defined in the patterns have dependencies on existing AWS Resources such as Secrets defined in the account/region.

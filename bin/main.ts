@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { logger } from '@aws-quickstart/eks-blueprints/dist/utils';
+import { logger, userLog } from '@aws-quickstart/eks-blueprints/dist/utils';
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 
-const app = new cdk.App();
 
+
+const app = new cdk.App();
+userLog.info("\n\n=== Run <code>make compile</code> before each run. === \n\n\n");
 
 // CDK Default Environment - default account and region
 const account = process.env.CDK_DEFAULT_ACCOUNT!;

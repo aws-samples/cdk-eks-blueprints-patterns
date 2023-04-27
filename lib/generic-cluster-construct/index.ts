@@ -20,7 +20,7 @@ export default class GenericClusterConstruct {
         const stackID = `${id}-blueprint`;
         
         const clusterProvider = new blueprints.GenericClusterProvider({
-            version: eks.KubernetesVersion.V1_21,
+            version: eks.KubernetesVersion.V1_25,
             managedNodeGroups: [
                 {
                     id: "mng-ondemand",
@@ -50,10 +50,10 @@ export default class GenericClusterConstruct {
             .region(process.env.CDK_DEFAULT_REGION!)
             .clusterProvider(clusterProvider)
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.AppMeshAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
                 new blueprints.CalicoOperatorAddOn,

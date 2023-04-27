@@ -24,10 +24,10 @@ export default class MultiTeamConstruct {
 
         // AddOns for the cluster.
         const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.AwsLoadBalancerControllerAddOn,
             new blueprints.CertManagerAddOn,
             new blueprints.AdotCollectorAddOn,
             new blueprints.AppMeshAddOn,
-            new blueprints.AwsLoadBalancerControllerAddOn,
             new blueprints.NginxAddOn,
             new blueprints.ArgoCDAddOn,
             new blueprints.CalicoOperatorAddOn,
