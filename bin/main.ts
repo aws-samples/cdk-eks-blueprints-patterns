@@ -159,6 +159,9 @@ new KubeflowConstruct(app, 'kubeflow');
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
+import { SecurityHubStackSetup } from '../lib/securityhub-construct/securityhub-setup';
+new SecurityHubStackSetup(app, 'securityhub-setup');
+
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
 
