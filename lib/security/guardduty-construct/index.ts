@@ -16,7 +16,7 @@ export default class GuardDutyWorkloadConstruct {
     const stackID = `${id}-blueprint`;
 
     blueprints.EksBlueprint.builder()
-      .account(process.env.CDK_ACCOUNT_ID!)
+      .account(process.env.CDK_DEFAULT_ACCOUNT!)
       .region(process.env.CDK_DEFAULT_REGION!)
       .addOns(
         new blueprints.ArgoCDAddOn({

@@ -6,9 +6,12 @@ import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
 import * as events from "aws-cdk-lib/aws-events";
 import * as eventTargets from "aws-cdk-lib/aws-events-targets";
 
+const account = process.env.CDK_DEFAULT_ACCOUNT;
+const region = process.env.CDK_DEFAULT_REGION;
+
 export class GuardDutySetupStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+    super(scope, id, { ...props, env: { account, region } });
 
     const environmentName = "main";
     const email = "your-email@example.com";
