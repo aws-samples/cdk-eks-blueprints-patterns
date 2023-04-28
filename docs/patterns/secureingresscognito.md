@@ -42,11 +42,10 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 1. argo-admin-password secret must be defined as plain text (not key/value) in `us-west-2`  region.
 
 ```
-aws secretsmanager create-secret --name argo-admin-password \
+aws secretsmanager create-secret --name argo-admin-secret \
     --description "Admin Password for ArgoCD" \
-    --secret-string {"$zRrGdeYOCQJ"}
-    --region us-west-2
-    --kms-key-id "aws/secretsmanager"
+    --secret-string "password123$" \
+    --region "us-west-2"
 ```
 2. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
 
