@@ -4,7 +4,7 @@
 
 The objective of this pattern is to demonstrate how to enable and configure Amazon ECR image scanning.
 
-The following scanning types are offered.
+The following scanning types are offered:
 
 - Enhanced scanning—Amazon ECR integrates with Amazon Inspector to provide automated, continuous scanning of your repositories. Your container images are scanned for both operating systems and programing language package vulnerabilities. As new vulnerabilities appear, the scan results are updated and Amazon Inspector emits an event to EventBridge to notify you.
 - Basic scanning—Amazon ECR uses the Common Vulnerabilities and Exposures (CVEs) database from the open-source Clair project. With basic scanning, you configure your repositories to scan on push or you can perform manual scans and Amazon ECR provides a list of scan findings.
@@ -21,7 +21,7 @@ You can configure the following parameters in the [ImageScanningSetupStack](../.
 - `scanType` - The type of scan to perform. Valid values are `BASIC` and `ENHANCED`.
 - Enhanced scanning only:
   - `enhancedContinuousScanDuration` - the Amazon ECR automated re-scan duration setting determines how long Amazon Inspector continuously monitors images pushed into repositories. When the number of days from when an image is first pushed exceeds the automated re-scan duration configuration, Amazon Inspector stops monitoring the image. When Amazon Inspector stops monitoring an image, the scan status of the image is changed to inactive with a reason code of expired, and all associated findings for the image are scheduled to be closed. Valid values are `LIFETIME`, `DAYS_30`, and `DAYS_180`.
-  - `enchancedScanRules` - the scanning rules.
+  - `enhancedScanRules` - the scanning rules.
 - Basic scanning only:
   - `basicScanRules` - the scanning rules.
 
@@ -57,7 +57,7 @@ npx cdk deploy image-scanning-setup
 
 The blueprint deploys a sample GitOps workload that pushes images to Amazon ECR and triggers the image scanning.
 
-To deploy the bluepring, run the following command:
+To deploy the blueprint, run the following command:
 
 ```bash
 npx cdk deploy image-scanning-workload-blueprint
@@ -67,7 +67,7 @@ npx cdk deploy image-scanning-workload-blueprint
 
 ### Verifying that the image scanning is enabled
 
-To verify that the image scanning is enabled on the registry level, run the following command:
+To verify that the image scanning is enabled at the registry level, run the following command:
 
 ```bash
 aws ecr get-registry-scanning-configuration
@@ -109,7 +109,7 @@ The output should look similar to the following:
 To verify that the image is pushed to Amazon ECR, run the following command:
 
 ```bash
-aws ecr describe-images --repository-name image-scanning-workload-blueprint-imagescanningrepository754c6116-arh0wk3afnkw
+aws ecr describe-images --repository-name <REPOSITORY-NAME>
 ```
 
 The output should look similar to the following:
@@ -139,7 +139,7 @@ The output should look similar to the following:
 To check the image scanning findings, run the following command:
 
 ```bash
-aws ecr describe-image-scan-findings --repository-name image-scanning-workload-blueprint-imagescanningrepository754c6116-arh0wk3afnkw --image-id imageTag=latest
+aws ecr describe-image-scan-findings --repository-name <REPOSITORY-NAME> --image-id imageTag=latest
 ```
 
 The output should look similar to the following:
