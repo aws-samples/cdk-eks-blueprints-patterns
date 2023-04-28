@@ -146,9 +146,9 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
             .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new KubecostAddOn(),
                 new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.ExternalDnsAddOn({

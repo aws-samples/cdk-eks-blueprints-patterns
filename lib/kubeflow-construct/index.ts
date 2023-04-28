@@ -11,8 +11,8 @@ export default class KubeflowConstruct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
             .addOns( new blueprints.MetricsServerAddOn(),
+            new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
-                new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.KubeProxyAddOn(),
