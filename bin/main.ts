@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { logger } from '@aws-quickstart/eks-blueprints/dist/utils';
+import { logger, userLog } from '@aws-quickstart/eks-blueprints/dist/utils';
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 
-const app = new cdk.App();
 
+
+const app = new cdk.App();
+userLog.info("\n\n=== Run <code>make compile</code> before each run. === \n\n\n");
 
 // CDK Default Environment - default account and region
 const account = process.env.CDK_DEFAULT_ACCOUNT!;
@@ -175,3 +177,15 @@ new PipelineSecureIngressCognito()
     .catch(() => {
         logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
     });
+
+//--------------------------------------------------------------------------
+// Security Patterns
+//--------------------------------------------------------------------------
+
+import { ImageScanningSetupStack } from "../lib/security/image-vulnerability-scanning/image-scanning-setup";
+new ImageScanningSetupStack(app, "image-scanning-setup");
+
+import ImageScanningWorkloadConstruct from "../lib/security/image-vulnerability-scanning";
+new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch(() => {
+    logger.info("ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});

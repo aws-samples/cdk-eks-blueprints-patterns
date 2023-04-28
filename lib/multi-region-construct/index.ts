@@ -34,14 +34,14 @@ export default class MultiRegionConstruct {
         const blueprint = blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .clusterProvider(new blueprints.MngClusterProvider({
-                version: KubernetesVersion.V1_21,
+                version: KubernetesVersion.V1_25,
                 desiredSize: 2,
                 maxSize: 3
             }))
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.CalicoOperatorAddOn,
                 new blueprints.MetricsServerAddOn,

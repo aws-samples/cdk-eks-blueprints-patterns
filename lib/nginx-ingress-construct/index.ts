@@ -48,12 +48,12 @@ export default class NginxIngressConstruct {
             }))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.CalicoOperatorAddOn(),
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
                 }),

@@ -72,7 +72,7 @@ export default class PipelineMultiEnvGitops {
                     * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
         }
 
-        const clusterVersion = eks.KubernetesVersion.V1_21;
+        const clusterVersion = eks.KubernetesVersion.V1_25;
 
         /* eslint-disable */
         const blueMNG = new blueprints.MngClusterProvider({
@@ -110,10 +110,10 @@ export default class PipelineMultiEnvGitops {
             )
             .addOns(
                 // default addons for all environments
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.SecretsStoreAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.AppMeshAddOn({
                     enableTracing: true
