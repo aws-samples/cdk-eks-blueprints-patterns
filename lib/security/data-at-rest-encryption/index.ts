@@ -7,6 +7,7 @@ import {
 } from "@aws-quickstart/eks-blueprints";
 import * as efs from "aws-cdk-lib/aws-efs";
 import * as kms from "aws-cdk-lib/aws-kms";
+import { prevalidateSecrets } from "../../common/construct-utils";
 import { Construct } from "constructs";
 import { SECRET_ARGO_ADMIN_PWD } from "../../multi-region-construct";
 
@@ -14,7 +15,10 @@ const gitUrl = "https://github.com/aws-samples/eks-blueprints-workloads.git";
 const targetRevision = "main";
 
 export default class DataAtRestEncryptionConstruct {
-  build(scope: Construct, id: string) {
+  async buildAsync(scope: Construct, id: string) {
+    
+    await prevalidateSecrets(DataAtRestEncryptionConstruct.name, process.env.CDK_DEFAULT_REGION!, SECRET_ARGO_ADMIN_PWD);
+    
     const stackId = `${id}-blueprint`;
 
     const ebsKmsKeyName = "ebs-kms-encryption-key";
@@ -28,7 +32,7 @@ export default class DataAtRestEncryptionConstruct {
       efsFileSystemName
     ) as efs.FileSystem;
 
-    EksBlueprint.builder()
+    await EksBlueprint.builder()
       .resourceProvider(GlobalResources.Vpc, new blueprints.VpcProvider())
       // create KMS keys
       .resourceProvider(
@@ -77,7 +81,7 @@ export default class DataAtRestEncryptionConstruct {
           adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
         })
       )
-      .teams() // add teams here
-      .build(scope, stackId);
+      .teams()
+      .buildAsync(scope, stackId);
   }
 }
