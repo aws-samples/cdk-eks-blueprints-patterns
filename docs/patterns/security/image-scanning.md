@@ -106,7 +106,7 @@ The output should look similar to the following:
 
 ### Verifying that the image is pushed to Amazon ECR
 
-To verify that the image is pushed to Amazon ECR, run the following command:
+To verify that the image is pushed to Amazon ECR, run the following command (please replace `<REPOSITORY-NAME>` with the repository name):
 
 ```bash
 aws ecr describe-images --repository-name <REPOSITORY-NAME>
@@ -136,7 +136,7 @@ The output should look similar to the following:
 
 ### Checking the image scanning findings
 
-To check the image scanning findings, run the following command:
+To check the image scanning findings, run the following command (please replace `<REPOSITORY-NAME>` with the repository name):
 
 ```bash
 aws ecr describe-image-scan-findings --repository-name <REPOSITORY-NAME> --image-id imageTag=latest
