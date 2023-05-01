@@ -81,10 +81,10 @@ The output should look like this:
 }
 ```
 
-To check the detector's configuration, run the following command:
+To check the detector's configuration, run the following command (please replace `<DETECTOR-ID>` with the ID of the detector):
 
 ```bash
-aws guardduty get-detector --detector-id 80c3c03d44819a984b035b000aa9b3da --region us-east-1
+aws guardduty get-detector --detector-id <DETECTOR-ID> --region us-east-1
 ```
 
 The output should look like this:
@@ -178,10 +178,10 @@ The output should look like this:
 
 ### Verifying that the GuardDuty findings are generated
 
-To list all findings in the region, run the following command:
+To list all findings in the region, run the following command (please replace `<DETECTOR-ID>` with the ID of the detector):
 
 ```bash
-aws guardduty list-findings --detector-id 80c3c03d44819a984b035b000aa9b3da --region us-east-1
+aws guardduty list-findings --detector-id <DETECTOR-ID> --region us-east-1
 ```
 
 The output should look like this:
@@ -194,10 +194,10 @@ The output should look like this:
 }
 ```
 
-To check the finding's details, run the following command:
+To check the finding's details, run the following command (please replace `<DETECTOR-ID>` and `<FINDING-ID>` with the ID of the detector and the ID of the finding):
 
 ```bash
-aws guardduty get-findings --detector-id 80c3c03d44819a984b035b000aa9b3da --finding-ids f2c3859c6ca25b3057d13470a992bbd7 --region us-east-1
+aws guardduty get-findings --detector-id <DETECTOR-ID> --finding-ids <FINDING-ID> --region us-east-1
 ```
 
 The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` as expected:

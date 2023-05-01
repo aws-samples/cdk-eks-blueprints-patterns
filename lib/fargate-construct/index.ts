@@ -21,7 +21,7 @@ export default class FargateConstruct {
         const stackID = `${id}-blueprint`
         const clusterProvider = new blueprints.FargateClusterProvider({
             fargateProfiles,
-            version: eks.KubernetesVersion.V1_21
+            version: eks.KubernetesVersion.V1_25
         });
 
         blueprints.EksBlueprint.builder()
@@ -30,8 +30,8 @@ export default class FargateConstruct {
             .clusterProvider(clusterProvider)
             .teams(platformTeam)
             .addOns(
-                new blueprints.AppMeshAddOn,
                 new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.AppMeshAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
                 new blueprints.MetricsServerAddOn
