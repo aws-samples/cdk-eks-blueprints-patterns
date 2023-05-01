@@ -9,13 +9,14 @@ const targetRevision = "main";
 export default class GuardDutyWorkloadConstruct {
   async buildAsync(scope: Construct, id: string) {
     await prevalidateSecrets(
+      GuardDutyWorkloadConstruct.name, 
       process.env.CDK_DEFAULT_REGION!,
       SECRET_ARGO_ADMIN_PWD
     );
 
     const stackID = `${id}-blueprint`;
 
-    blueprints.EksBlueprint.builder()
+    await blueprints.EksBlueprint.builder()
       .account(process.env.CDK_DEFAULT_ACCOUNT!)
       .region(process.env.CDK_DEFAULT_REGION!)
       .addOns(
@@ -29,6 +30,6 @@ export default class GuardDutyWorkloadConstruct {
         })
       )
       .teams()
-      .build(scope, stackID);
+      .buildAsync(scope, stackID);
   }
 }
