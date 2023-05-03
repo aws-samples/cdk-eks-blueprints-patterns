@@ -93,7 +93,6 @@ new PipelineMultiEnvMonitoring()
 import FargateConstruct from '../lib/fargate-construct';
 new FargateConstruct(app, 'fargate');
 
-
 //-------------------------------------------
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
@@ -158,6 +157,9 @@ new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
 import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
 
+import JupyterHubConstruct from '../lib/jupyterhub-construct';
+new JupyterHubConstruct(app, 'jupyterhub', { env });
+
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
@@ -193,4 +195,12 @@ new ImageScanningSetupStack(app, "image-scanning-setup");
 import ImageScanningWorkloadConstruct from "../lib/security/image-vulnerability-scanning";
 new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch(() => {
     logger.info("ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
+
+import { GuardDutySetupStack } from "../lib/security/guardduty-construct/guardduty-setup";
+new GuardDutySetupStack(app, "guardduty-setup");
+
+import GuardDutyWorkloadConstruct from "../lib/security/guardduty-construct";
+new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch(() => {
+    logger.info("GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
 });
