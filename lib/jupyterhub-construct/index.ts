@@ -1,5 +1,4 @@
 import { Construct } from 'constructs';
-import { GlobalResources, utils, DelegatingHostedZoneProvider } from '@aws-quickstart/eks-blueprints';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 import * as cdk from 'aws-cdk-lib';
@@ -8,28 +7,10 @@ export default class JupyterHubConstruct {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
         const stackId = `${id}-blueprint`;  
 
-        const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.some.example.com");
-        const parentDnsAccountId = scope.node.tryGetContext("parent.dns.account")!;
-        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "some.example.com");
-        const jupyterhubDomain = utils.valueFromContext(scope, "jupyterhub.subzone.name", "jupyterhub.dev.some.example.com");
-
         blueprints.EksBlueprint.builder()
             .account(props.env!.account!)
             .region(props.env!.region!)
-            .resourceProvider(GlobalResources.HostedZone, new DelegatingHostedZoneProvider({
-                parentDomain,
-                subdomain,
-                parentDnsAccountId,
-                delegatingRoleName: 'DomainOperatorRole',
-                wildcardSubdomain: true
-            }))
-            .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('wildcard-cert', `*.${subdomain}`, GlobalResources.HostedZone))
             .addOns(
-                new blueprints.AwsLoadBalancerControllerAddOn(),
-                new blueprints.ExternalDnsAddOn({
-                    hostedZoneResources: [GlobalResources.HostedZone]
-                }),
-                new blueprints.EbsCsiDriverAddOn(),
                 new blueprints.EfsCsiDriverAddOn({replicaCount: 1}),
                 new blueprints.VpcCniAddOn(),
                 new blueprints.KubeProxyAddOn(),
@@ -50,12 +31,7 @@ export default class JupyterHubConstruct {
                         scope: blueprints.utils.valueFromContext(scope, "scope",["openid","name","profile","email"]),
                         usernameKey: blueprints.utils.valueFromContext(scope, "usernameKey", "name"),
                     },
-                    serviceType: blueprints.JupyterHubServiceType.ALB,
-                    ingressHosts: [jupyterhubDomain],
-                    ingressAnnotations: {
-                        'external-dns.alpha.kubernetes.io/hostname': `${jupyterhubDomain}`,
-                    },
-                    certificateResourceName: GlobalResources.Certificate,
+                    serviceType: blueprints.JupyterHubServiceType.CLUSTERIP,
                     values: { 
                         prePuller: { 
                             hook: { enabled: false },
