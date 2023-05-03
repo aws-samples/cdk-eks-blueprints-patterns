@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { logger } from '@aws-quickstart/eks-blueprints/dist/utils';
+import { logger, userLog } from '@aws-quickstart/eks-blueprints/dist/utils';
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 
-const app = new cdk.App();
 
+
+const app = new cdk.App();
+userLog.info("\n\n=== Run <code>make compile</code> before each run. === \n\n\n");
 
 // CDK Default Environment - default account and region
 const account = process.env.CDK_DEFAULT_ACCOUNT!;
@@ -91,7 +93,6 @@ new PipelineMultiEnvMonitoring()
 import FargateConstruct from '../lib/fargate-construct';
 new FargateConstruct(app, 'fargate');
 
-
 //-------------------------------------------
 // Multiple clusters with deployment pipeline.
 //-------------------------------------------
@@ -156,14 +157,14 @@ new RafayConstruct().buildAsync(app, 'rafay-cluster').catch((error) => {
 import KubeflowConstruct from '../lib/kubeflow-construct';
 new KubeflowConstruct(app, 'kubeflow');
 
+import JupyterHubConstruct from '../lib/jupyterhub-construct';
+new JupyterHubConstruct(app, 'jupyterhub', { env });
+
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
 
 new EmrEksConstruct().build(app, 'emrOnEks', [dataTeam]);
-
-import ParalusConstruct from '../lib/paralus-construct';
-new ParalusConstruct(app, 'paralus');
 
 //--------------------------------------------------------------------------
 // Single Cluster, Secure Ingress Auth using cognito
@@ -178,3 +179,23 @@ new PipelineSecureIngressCognito()
     .catch(() => {
         logger.info("Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. See Secure Ingress Auth in the readme for instructions");
     });
+
+//--------------------------------------------------------------------------
+// Security Patterns
+//--------------------------------------------------------------------------
+
+import { ImageScanningSetupStack } from "../lib/security/image-vulnerability-scanning/image-scanning-setup";
+new ImageScanningSetupStack(app, "image-scanning-setup");
+
+import ImageScanningWorkloadConstruct from "../lib/security/image-vulnerability-scanning";
+new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch(() => {
+    logger.info("ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
+
+import { GuardDutySetupStack } from "../lib/security/guardduty-construct/guardduty-setup";
+new GuardDutySetupStack(app, "guardduty-setup");
+
+import GuardDutyWorkloadConstruct from "../lib/security/guardduty-construct";
+new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch(() => {
+    logger.info("GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
