@@ -27,7 +27,7 @@ export default class ParalusConstruct {
                     // update this to your domain, as paralus works based on domain based routing
                     values: {
                         "fqdn": {
-                            "domain": "paralusdemo.com",
+                            "domain": "your-own-domain-name",
                             "hostname": "console-eks",
                             "coreConnectorSubdomain": "*.core-connector.eks",
                             "userSubdomain": "*.user.eks"
