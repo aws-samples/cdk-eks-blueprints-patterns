@@ -184,6 +184,11 @@ new PipelineSecureIngressCognito()
 // Security Patterns
 //--------------------------------------------------------------------------
 
+import EncryptionAtRestConstruct from "../lib/security/data-at-rest-encryption";
+new EncryptionAtRestConstruct().buildAsync(app, "data-at-rest-encryption").catch(() => {
+    logger.info("EncryptionAtRestConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+});
+
 import { ImageScanningSetupStack } from "../lib/security/image-vulnerability-scanning/image-scanning-setup";
 new ImageScanningSetupStack(app, "image-scanning-setup");
 
