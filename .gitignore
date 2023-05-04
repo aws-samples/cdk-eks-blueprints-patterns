@@ -18,3 +18,8 @@ dist
 cdk.context.json
 package-lock.json
 yarn.lock
+
+# mkdocs artifact
+site
+# macOS extraneous file
+.DS_STORE
