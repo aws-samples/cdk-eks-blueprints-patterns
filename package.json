@@ -11,6 +11,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "nginx": "cdk --app \"npx ts-node bin/nginx.ts\"",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "devDependencies": {
@@ -26,7 +27,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "^1.7.2",
+    "@aws-quickstart/eks-blueprints": "file:/../quickstart-amazon-eks-blueprints/aws-quickstart-eks-blueprints-1.7.3.tgz",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
@@ -41,7 +42,8 @@
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "^1.7.2",
-    "aws-cdk": "2.76.0"
+    "@aws-quickstart/eks-blueprints": "file:/../quickstart-amazon-eks-blueprints/aws-quickstart-eks-blueprints-1.7.3.tgz",
+    "aws-cdk": "2.76.0",
+    "xml2js": "0.5.0"
   }
 }

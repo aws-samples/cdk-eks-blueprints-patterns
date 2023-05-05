@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib';
-import { logger, userLog } from '@aws-quickstart/eks-blueprints/dist/utils';
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
+import { logger, userLog } from '@aws-quickstart/eks-blueprints/dist/utils';
+import * as cdk from 'aws-cdk-lib';
 
 
 
 const app = new cdk.App();
+logger.settings.minLevel = 2; // debug., 3 info
 userLog.info("\n\n=== Run <code>make compile</code> before each run. === \n\n\n");
 
 // CDK Default Environment - default account and region
@@ -16,7 +17,8 @@ const env: cdk.Environment = { account: account, region: region };
 HelmAddOn.validateHelmVersions = false;
 
 import NginxIngressConstruct from '../lib/nginx-ingress-construct';
-new NginxIngressConstruct().buildAsync(app, 'nginx').catch(() => {
+new NginxIngressConstruct().buildAsync(app, 'nginx').catch((e) => {
+    logger.debug(e);
     logger.info("NGINX Ingress pattern is not setup due to missing secrets for ArgoCD admin pwd.");
 });
 //-------------------------------------------
