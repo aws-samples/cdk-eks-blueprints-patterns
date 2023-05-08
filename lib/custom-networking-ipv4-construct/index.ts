@@ -22,16 +22,16 @@ export default class CustomNetworkingIPv4Construct {
                     minSize: 2,
                     desiredSize: 2,
                     maxSize: 3,
-                    nodeGroupSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-                    launchTemplate: {
-                        // You can pass Custom Tags to Launch Templates which gets Propogated to worker nodes.
-                        customTags: {
-                            "Name": "mng-custom-nw-large-al2",
-                            "Type": "Managed-Node-Group",
-                            "LaunchTemplate": "Custom",
-                            "Instance": "ONDEMAND"
-                        }
-                    }
+                    nodeGroupSubnets: { subnetType: ec2.SubnetType.PUBLIC }
+                    // launchTemplate: {
+                    //     // You can pass Custom Tags to Launch Templates which gets Propogated to worker nodes.
+                    //     customTags: {
+                    //         "Name": "mng-custom-nw-large-al2",
+                    //         "Type": "Managed-Node-Group",
+                    //         "LaunchTemplate": "Custom",
+                    //         "Instance": "ONDEMAND"
+                    //     }
+                    // }
                 }
             ]
         });        

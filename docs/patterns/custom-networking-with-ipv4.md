@@ -1,7 +1,7 @@
 # Custom Networking on EKS
-On Amazon EKS clusters, the default Container Networking Interface(CNI) is implemented by the Amazon VPC CNI plugin. When VPC CNI is used in EKS clusters, by default the VPC CNI assigns Pods an IP address that's selected from the primary subnet of the VPC. The primary subnet is the subnet CIDR that the primary Elastic Network Interface(ENI) is attached to; usually it's the subnet of the worker node/host in the EKS cluster. If the primary subnet CIDR is too small, the CNI may not be able to have enough IP addresses to assign to the Pods running in the cluster. This is a common challenge for EKS IPv4 clusters.
+On Amazon EKS clusters, the default Container Networking Interface(CNI) is implemented by the Amazon VPC CNI plugin. When VPC CNI is used in EKS clusters, by default the VPC CNI assigns pods an IP address that's selected from the primary subnet of the VPC. The primary subnet is the subnet CIDR that the primary Elastic Network Interface(ENI) is attached to; usually it's the subnet of the worker node/host in the EKS cluster. If the primary subnet CIDR is too small, the CNI may not be able to have enough IP addresses to assign to the pods running in the cluster. This is a common challenge for EKS IPv4 clusters.
 
-Custom Networking provides a solution to the IP exhaustion issue by assigning the Pod IPs from secondary VPC address spaces(CIDR). When custom networking is enabled in VPC CNI, it creates secondary ENIs in the subnet defined under a custom resource named ENIConfig that includes an alternate subnet CIDR range (carved from a secondary VPC CIDR). The VPC CNI assigns Pods IP addresses from the CIDR range defined in the ENIConfig Custom Resource Definition(CRD).
+Custom Networking provides a solution to the IP exhaustion issue by assigning the Pod IPs from secondary VPC address spaces(CIDR). When custom networking is enabled in VPC CNI, it creates secondary ENIs in the subnet defined under a custom resource named ENIConfig that includes an alternate subnet CIDR range (carved from a secondary VPC CIDR). The VPC CNI assigns pods IP addresses from the CIDR range defined in the ENIConfig Custom Resource Definition(CRD).
 
 Using the Custom Networking with IPv4 pattern, you should be able to stand up an EKS cluster with VPC CNI installed and configured with custom networking enabled.
 
@@ -28,7 +28,7 @@ Amazon EKS add-ons are only available with Amazon EKS clusters running Kubernete
 
 ## Usage
 
-This pattern  first creates Secondary CIDRs and Secondary Subnets with specified range of CIDRs as shown below in `resourceProvider` command. Then the VPC CNI addon sets up custom networking based on the parameters `awsVpcK8sCniCustomNetworkCfg`, `eniConfigLabelDef: "topology.kubernetes.io/zone"` for your Amazon EKS cluster workloads with created secondary subnet ranges. This way, when customers experience IP exhaustion in the Primary CIDR, they can use the Secondary CIDRs to assign IP addresses to the application Pods. 
+This pattern  first creates Secondary CIDRs and Secondary Subnets with specified range of CIDRs as shown below in `resourceProvider` command. Then the VPC CNI addon sets up custom networking based on the parameters `awsVpcK8sCniCustomNetworkCfg`, `eniConfigLabelDef: "topology.kubernetes.io/zone"` for your Amazon EKS cluster workloads with created secondary subnet ranges. This way, when customers experience IP exhaustion in the Primary CIDR, they can use the Secondary CIDRs to assign IP addresses to the application pods. 
 
 Note: 
 - When the secondary CIDRs are passed to the VPC resource provider, the secondary subnets are created and registered under names `secondary-cidr-subnet-${order}` with the resource providers.
@@ -62,7 +62,7 @@ const blueprint = blueprints.EksBlueprint.builder()
   .build(app, 'my-stack-name');
 ```
 
-In the diagram shown below, a secondary CIDR (100/64) is assigned to each private subnet that gets created in an availability zone. Worker nodes in the EKS cluster still gets an IP address from the Primary CIDRs(10.0) range whereas the Pods get an IP address from the secondary CIDR range.
+In the diagram shown below, a secondary CIDR (100/64) is assigned to each private subnet that gets created in an availability zone. Worker nodes in the EKS cluster still gets an IP address from the Primary CIDRs(10.0) range whereas the pods get an IP address from the secondary CIDR range.
 
 ![Custom-NW-IPv4](./images/Custom-NW-IPv4.png)
 
@@ -74,19 +74,9 @@ Clone the repository
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 ```
 
-Updating npm
+To deploy custom networking with ipv4 pattern
 
 ```sh
-npm install -g npm@latest
-```
-
-To view patterns and deploy custom networking with ipv4 pattern
-
-```sh
-npm i
-make build
-cdk list
-cdk bootstrap
 cdk deploy custom-networking-ipv4-blueprint
 ```
 
@@ -111,7 +101,7 @@ ip-10-0-18-208.us-east-2.compute.internal   Ready    <none>   70m   v1.24.11-eks
 ip-10-0-61-228.us-east-2.compute.internal   Ready    <none>   70m   v1.24.11-eks-a59e1f0   10.0.61.228   3.23.99.89      Amazon Linux 2   5.10.173-154.642.amzn2.x86_64   containerd://1.6.19
 ```
 
-The worker nodes in the cluster still gets assigned an IP address from the Primary CIDR (10.0.0.0/16) range. However the Pods are assigned IP addresses from the Secondary CIDR(100.64.) ranges.
+The worker nodes in the cluster still gets assigned an IP address from the Primary CIDR (10.0.0.0/16) range. However the pods are assigned IP addresses from the Secondary CIDR(100.64.) ranges.
 
 ```sh
 kubectl get eniconfig
@@ -162,7 +152,7 @@ nginx-8f458dc5b-z9gcm   1/1     Running   0          19s   100.64.0.61    ip-10-
 nginx-8f458dc5b-zsj5l   1/1     Running   0          19s   100.64.0.142   ip-10-0-61-228.us-east-2.compute.internal   <none>           <none>
 ```
 
-Also we can see that the Pods are assigned IP addresses from the secondary CIDR `100.64` range.
+Also we can see that the pods are assigned IP addresses from the secondary CIDR `100.64` range.
 
 
 
@@ -218,12 +208,12 @@ We see from above that `ENI_CONFIG_LABEL_DEF` is set to "topology.kubernetes.io/
 
 - Prefix Delegation
 
-Prefix Delegation is a property of Vpc Cni Plugin that allows customers to increase Pod density on an instance. 
-When using custom networking mode, since the node’s primary ENI is no longer used to assign Pod IP addresses, there is a decrease in the number of Pods that can run on a given EC2 instance type. To work around this limitation you can use prefix delegation with custom networking. With prefix delegation enabled, each secondary IP is replaced with a /28 prefix which negates the IP address loss when you use custom networking
+Prefix Delegation is a property of VPC CNI Plugin that allows customers to increase Pod density on an instance. 
+When using custom networking mode, since the node’s primary ENI is no longer used to assign Pod IP addresses, there is a decrease in the number of pods that can run on a given EC2 instance type. To work around this limitation you can use prefix delegation with custom networking. With prefix delegation enabled, each secondary IP is replaced with a /28 prefix which negates the IP address loss when you use custom networking
 
-Without `prefix-delegation` enabled, an `m5.large` type instance can have 20 Pods running. With `prefix-delegation` enabled, this number increases to 110.
+Without `prefix-delegation` enabled, an `m5.large` type instance can have 20 pods running. With `prefix-delegation` enabled, this number increases to 110.
 
-By default, Prefix Delegation is turned off in Vpc Cni. To check this, run the following command
+By default, Prefix Delegation is turned off in VPC CNI. To check this, run the following command
 ```
 kubectl get ds aws-node -o yaml -n kube-system | yq '.spec.template.spec.containers[].env'
 ```
@@ -246,7 +236,7 @@ To turn on Prefix Delegation, use the following command
 kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true
 ```
 
-Since Vpc Cni runs as a daemonset, you’d need to create new nodes for this to take effect.
+Since VPC CNI runs as a daemonset, you’d need to create new nodes for this to take effect.
 
 ## Cleanup
 
