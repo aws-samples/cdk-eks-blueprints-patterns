@@ -11,30 +11,18 @@ export default class CustomNetworkingIPv4Construct {
     constructor(scope: Construct, id: string) {
         const stackId = `${id}-blueprint`;
         
-        const clusterProvider = new blueprints.GenericClusterProvider({
-            version: KubernetesVersion.V1_24,
-            endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
-            managedNodeGroups: [
-                {
-                    id: "mng1",
-                    amiType: NodegroupAmiType.AL2_X86_64,
-                    instanceTypes: [new ec2.InstanceType('m5.large')],
-                    minSize: 2,
-                    desiredSize: 2,
-                    maxSize: 3,
-                    nodeGroupSubnets: { subnetType: ec2.SubnetType.PUBLIC }
-                    // launchTemplate: {
-                    //     // You can pass Custom Tags to Launch Templates which gets Propogated to worker nodes.
-                    //     customTags: {
-                    //         "Name": "mng-custom-nw-large-al2",
-                    //         "Type": "Managed-Node-Group",
-                    //         "LaunchTemplate": "Custom",
-                    //         "Instance": "ONDEMAND"
-                    //     }
-                    // }
-                }
-            ]
-        });        
+const mngProps = {
+    version: KubernetesVersion.V1_24,
+    endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
+    instanceTypes: [new ec2.InstanceType('m5.large')],
+    amiType: NodegroupAmiType.AL2_X86_64,
+    desiredSize: 2,
+    maxSize: 3,
+    vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }]
+};        
+        
+        
+        const clusterProvider = new blueprints.MngClusterProvider(mngProps)
         
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
