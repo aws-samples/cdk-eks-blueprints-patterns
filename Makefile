@@ -4,7 +4,8 @@
 TSC := node node_modules/.bin/tsc
 ESLINT := node node_modules/.bin/eslint
 CDK := node node_modules/.bin/cdk
-
+PATTERN_ARG := $(firstword $(filter-out pattern,$(MAKECMDGOALS)))
+LAST_ARG := $(lastword $(filter-out $@,$(MAKECMDGOALS)))
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd
 
@@ -29,6 +30,10 @@ mkdocs:
 
 synth: 
 	$(CDK) synth	
+
+pattern:
+	@echo first $(PATTERN_ARG) and last $(LAST_ARG)
+	$(CDK) --app "npx ts-node bin/$(PATTERN_ARG).ts" $(LAST_ARG)
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \
