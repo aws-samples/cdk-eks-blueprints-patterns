@@ -33,8 +33,8 @@ export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
         const cluster = clusterInfo.cluster;
 
         const secretStoreName = "secret-manager-store";
-        const secretStore = new eks.KubernetesManifest(clusterInfo.cluster.stack, "ClusterSecretStore", {
-            cluster: clusterInfo.cluster,
+        const secretStore = new eks.KubernetesManifest(cluster.stack, "ClusterSecretStore", {
+            cluster: cluster,
             manifest: [
                 {
                 apiVersion: "external-secrets.io/v1beta1",
@@ -47,7 +47,7 @@ export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
                     provider: {
                         aws: {
                             service: "SecretsManager",
-                            region: clusterInfo.cluster.stack.region,
+                            region: cluster.stack.region,
                             auth: {
                                 jwt: {
                                     serviceAccountRef: {
@@ -68,8 +68,8 @@ export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
             throw new Error("Database Secret not found in context");
         }
         const databaseInstanceCredentialsSecretName = databaseCredentialsSecret.secretName;
-        const externalSecret = new eks.KubernetesManifest(clusterInfo.cluster.stack, "BackstageDatabaseExternalSecret", {
-            cluster: clusterInfo.cluster,
+        const externalSecret = new eks.KubernetesManifest(cluster.stack, "BackstageDatabaseExternalSecret", {
+            cluster: cluster,
             manifest: [
                 {
                     apiVersion: "external-secrets.io/v1beta1",
