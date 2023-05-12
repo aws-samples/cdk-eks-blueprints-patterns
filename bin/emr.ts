@@ -1,6 +1,6 @@
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
-import { configureApp, logger } from '../lib/common/construct-utils';
+import { configureApp } from '../lib/common/construct-utils';
 
 const app = configureApp();
 

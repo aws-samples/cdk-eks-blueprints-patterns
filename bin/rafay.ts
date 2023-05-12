@@ -1,6 +1,6 @@
 
 import RafayConstruct from '../lib/rafay-construct';
-import { EmptyStack, configureApp, errorHandler } from '../lib/common/construct-utils';
+import { configureApp, errorHandler } from '../lib/common/construct-utils';
 
 const app = configureApp();
 

@@ -1,4 +1,3 @@
-import * as bp from '@aws-quickstart/eks-blueprints';
 import { configureApp, errorHandler } from '../lib/common/construct-utils';
 import PipelineMultiEnvGitops, { populateWithContextDefaults } from '../lib/pipeline-multi-env-gitops';
 import * as cdk from 'aws-cdk-lib';
