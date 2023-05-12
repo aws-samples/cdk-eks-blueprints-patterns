@@ -81,24 +81,44 @@ make build
 - To list the existing CDK EKS Blueprints patterns
 
 ```
-npx cdk list
+make list
 ```
 
 Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. At the bottom, it will show the list of patterns which can be deployed, in case the pattern you are looking for is not available, it is due to the hard dependency which can be fixed by following the docs specific to those patterns.
 
 ```
-bottlerocket-blueprint
-emrOnEks-blueprint
-fargate-blueprint
-generic-cluster-blueprint
-kasten-blueprint
-keptn-blueprint
-kubecost-blueprint
-kubeflow-blueprint
-multi-team-blueprint
-newrelic-cluster-blueprint
-snyk-monitor-blueprint
-starter-blueprint
+To work with patterns use: 
+        $ make pattern <pattern-name> <list | deploy | synth | destroy>
+Example:
+        $ make pattern fargate deploy 
+
+Patterns: 
+
+        bottlerocket
+        data-at-rest
+        datadog
+        dynatrace-operator
+        ecr-image-scanning
+        emr
+        fargate
+        generic-cluster-provider
+        guardduty
+        jupyterhub
+        kasten
+        keptn-control-plane
+        kubecost
+        kubeflow
+        multi-region
+        multi-team
+        newrelic
+        nginx
+        pipeline-multienv-gitops
+        pipeline-multienv-monitoring
+        pipeline
+        rafay
+        secure-ingress-cognito
+        snyk
+        starter
 ```
 
 - Bootstrap your CDK environment.
@@ -110,7 +130,7 @@ npx cdk bootstrap
 - You can then deploy a specific pattern with the following:
 
 ```
-npx cdk deploy multi-team-blueprint
+make pattern multi-team deploy
 ```
 
 # Developer Flow
@@ -121,7 +141,7 @@ All files are compiled to the dist folder including `lib` and `bin` directories.
 make compile
 ```
 
-The `compile` command is optimized to build only modified files and is very fast. 
+The `compile` command is optimized to build only modified files and is fast. 
 
 **NOTE:** Run `make compile` after EACH modification, or alternatively run `npm watch` to watch changes. 
 
@@ -153,25 +173,25 @@ For ``Dynatrace One Agent`
 
 - `dynatrace-tokens` - must contain [API_URL](https://github.com/dynatrace-oss/dynatrace-ssp-addon#aws-secret-manager-secrets), [API_TOKEN](https://github.com/dynatrace-oss/dynatrace-eks-blueprints-addon#aws-secret-manager-secrets) and [PAAS_TOKEN](https://github.com/dynatrace-oss/dynatrace-eks-blueprints-addon#aws-secret-manager-secrets) in Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 
-For `KeptnConstruct` the pattern relies on the following secrets defined:
+For `keptn-control-plane` the pattern relies on the following secrets defined:
 
 - `keptn-secrets` - must contain API_TOKEN and BRIDGE_PASSWORD password in Plain Text. The secret is expected to be defined in `us-east-1` region.
 
-For `NewRelicConstruct` the pattern relies on the following secrets defined:
+For `newrelic` the pattern relies on the following secrets defined:
 
 - `newrelic-pixie-keys` - must contain New Relic (required) and Pixie keys (optional). The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 
 For more information on defining secrets for ArgoCD, please refer to [Blueprints Documentation](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support) as well as [known issues](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#known-issues).
 
-For `NginxIngressConstruct`  please see [NGINX Blueprint documentation](docs/patterns/nginx.md).
+For `nginx`  please see [NGINX Blueprint documentation](docs/patterns/nginx.md).
 
-For `DatadogConstruct` the pattern relies on the following secret defined:
+For `datadog` the pattern relies on the following secret defined:
 
 - `apiKeyAWSSecret` - must contain the Datadog API key in Plain Text named `datadog-api-key`. The secret is expected to be defined in the target region.
 
-For `KubeflowConstruct` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
+For `kubeflow` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
 
-For `SecureIngressCognitoConstruct`  please see [Secure Ingress using Cognito Blueprint documentation](docs/patterns/secureingresscognito.md).
+For `secure-ingress-cognito`  please see [Secure Ingress using Cognito Blueprint documentation](docs/patterns/secureingresscognito.md).
 
 ## Security
 

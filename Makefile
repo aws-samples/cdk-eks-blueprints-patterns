@@ -4,14 +4,18 @@
 TSC := node node_modules/.bin/tsc
 ESLINT := node node_modules/.bin/eslint
 CDK := node node_modules/.bin/cdk
-PATTERN_ARG := $(firstword $(filter-out pattern,$(MAKECMDGOALS)))
-LAST_ARG := $(lastword $(filter-out $@,$(MAKECMDGOALS)))
+pattern: pattern_name := $(firstword $(filter-out pattern, $(MAKECMDGOALS)))
+pattern: pattern_command := $(filter-out pattern $(pattern_name), $(MAKECMDGOALS))
+
+pattern_files := $(notdir $(wildcard bin/*.ts))
+formatted_pattern_names := $(patsubst %.ts,%,$(pattern_files))
+
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd
 
+
 deps: bootstrap
 	npm install
-
 
 lint: 
 	$(ESLINT) . --ext .js,.jsx,.ts,.tsx
@@ -23,17 +27,22 @@ compile:
 	$(TSC) --build --incremental 
 
 list: 
-	$(CDK) list
+	@$ echo "To work with patterns use: \n\t$$ make pattern <pattern-name> <list | deploy | synth | destroy>" 
+	@$ echo "Example:\n\t$$ make pattern fargate deploy \n\nPatterns: \n" 
+	@$ $(foreach pattern, $(formatted_pattern_names),  echo "\t$(pattern)";)
 
 mkdocs:
 	mkdocs serve 
 
-synth: 
-	$(CDK) synth	
-
 pattern:
-	@echo first $(PATTERN_ARG) and last $(LAST_ARG)
-	$(CDK) --app "npx ts-node bin/$(PATTERN_ARG).ts" $(LAST_ARG)
+	@echo $(pattern_name) performing $(pattern_command)
+	$(CDK) --app "npx ts-node bin/$(pattern_name).ts" $(if $(pattern_command),$(pattern_command), list)
+
+test-all:
+	@for pattern in $(formatted_pattern_names) ; do \
+		echo "Building pattern $$pattern"; \
+		$(CDK) --app "npx ts-node bin/$$pattern.ts" list || exit 1 ;\
+    done 
 
 bootstrap:
 	@for LIB in $(HOMEBREW_LIBS) ; do \

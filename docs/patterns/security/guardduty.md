@@ -46,7 +46,7 @@ The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with 
 To deploy the stack, run the following command:
 
 ```bash
-npx cdk deploy guardduty-setup
+make pattern guardduty deploy guardduty-setup
 ```
 
 ### Deploying the blueprint
@@ -56,7 +56,7 @@ The blueprint deploys a sample GitOps workload that triggers a GuardDuty finding
 To deploy the bluepring, run the following command:
 
 ```bash
-npx cdk deploy guardduty-blueprint
+make pattern guardduty deploy guardduty-blueprint
 ```
 
 ## Verify

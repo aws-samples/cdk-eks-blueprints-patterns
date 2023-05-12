@@ -1,9 +1,5 @@
 import { Construct } from 'constructs';
-
-// Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { ClusterAutoScalerAddOn, MetricsServerAddOn } from '@aws-quickstart/eks-blueprints';
-import { ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 
 
 
@@ -17,20 +13,13 @@ export default class StarterConstruct {
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region('us-west-2')
-            .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider("vpc-01b52f57daeeca251"))
-            .addOns( new MetricsServerAddOn,
-                new ClusterAutoScalerAddOn,
+            .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.VpcCniAddOn(), 
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
             )
-            .teams(new blueprints.ApplicationTeam({
-                name: 'kyverno',
-                namespace: 'kyverno',   
-                serviceAccountName: 'kyverno',
-                serviceAccountPolicies: [
-                    ManagedPolicy.fromAwsManagedPolicyName('AWSMarketplaceMeteringFullAccess'),
-                    ManagedPolicy.fromAwsManagedPolicyName('AWSMarketplaceMeteringRegisterUsage'),
-                    ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLicenseManagerConsumptionPolicy'),
-                ],
-            }))// add teams here)
+            .teams()
             .build(scope, stackID);
     }
 }

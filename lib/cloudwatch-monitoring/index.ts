@@ -11,6 +11,7 @@ import * as team from '../teams/multi-account-monitoring';
  * Demonstration of how to use CloudWatch Adot add-on.
  */
 export default class CloudWatchMonitoringConstruct {
+    
     build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;

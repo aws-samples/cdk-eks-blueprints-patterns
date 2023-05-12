@@ -28,7 +28,7 @@ The sample repository contains the following workloads:
 To deploy the pattern, run the following command:
 
 ```bash
-npx cdk deploy data-at-rest-encryption-blueprint
+make pattern data-at-rest-encryption deploy
 ```
 
 ## Verify

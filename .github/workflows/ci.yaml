@@ -48,4 +48,4 @@ jobs:
       run: make list
 
     - name: Run CDK Synth
-      run: make synth
+      run: make test-all
