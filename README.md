@@ -37,7 +37,7 @@ sudo n stable
 
 3. Make sure the following pre-requisites are met:
 
-- Node version must be 16.x or above.
+- Node version is a current stable node version 18.x.
 
 ```bash
 $ node -v
@@ -143,7 +143,7 @@ make compile
 
 The `compile` command is optimized to build only modified files and is fast. 
 
-**NOTE:** Run `make compile` after EACH modification, or alternatively run `npm watch` to watch changes. 
+**NOTE:** Run `make compile` after EACH modification, or alternatively run `npm run watch` to watch changes. 
 
 # Deploying Blueprints with External Dependency on AWS Resources
 

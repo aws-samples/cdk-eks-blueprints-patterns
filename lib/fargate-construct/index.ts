@@ -26,8 +26,6 @@ export default class FargateConstruct {
 
         blueprints.EksBlueprint.builder()
             .account(accountID)
-            .region(process.env.CDK_DEFAULT_REGION!)
-            .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider("vpc-0e6c1a572e50aa1fb"))
             .clusterProvider(clusterProvider)
             .teams(platformTeam)
             .addOns(

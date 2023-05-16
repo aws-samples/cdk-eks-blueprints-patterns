@@ -11,8 +11,6 @@ export default class StarterConstruct {
         
         const stackID = `${id}-blueprint`
         blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region('us-west-2')
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.VpcCniAddOn(), 
