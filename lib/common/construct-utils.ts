@@ -1,7 +1,6 @@
 import { utils } from "@aws-quickstart/eks-blueprints";
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
-import { log } from "console";
 
 export const logger = utils.logger;
 

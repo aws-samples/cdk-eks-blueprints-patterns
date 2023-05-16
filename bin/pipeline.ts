@@ -1,4 +1,4 @@
-import { configureApp, errorHandler, logger } from '../lib/common/construct-utils';
+import { configureApp, errorHandler } from '../lib/common/construct-utils';
 import PipelineConstruct from '../lib/pipeline-stack';
 import * as cdk from 'aws-cdk-lib';
 
