@@ -163,7 +163,7 @@ new JupyterHubConstruct(app, 'jupyterhub', { env });
 import EmrEksConstruct from '../lib/emr-eks';
 import { dataTeam } from '../lib/teams/team-emr-on-eks';
 
-import { SecurityHubStackSetup } from '../lib/securityhub-construct/securityhub-setup';
+import { SecurityHubStackSetup } from '../lib/security/securityhub-construct/securityhub-setup';
 new SecurityHubStackSetup(app, 'securityhub-setup');
 
 

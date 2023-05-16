@@ -8,9 +8,7 @@ const targetRevision = "main";
 
 export default class SecurityHubWorkloadConstruct {
   async buildAsync(scope: Construct, id: string) {
-    await prevalidateSecrets(process.env.CDK_DEFAULT_REGION!, SECRET_ARGO_ADMIN_PWD)
-    }
-  };
+    await prevalidateSecrets(process.env.CDK_DEFAULT_REGION!, SECRET_ARGO_ADMIN_PWD);
 
   const stackID = `${id}-blueprint`;
 
