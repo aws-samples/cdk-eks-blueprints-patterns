@@ -1,6 +1,7 @@
 import { utils } from "@aws-quickstart/eks-blueprints";
 import { HelmAddOn } from '@aws-quickstart/eks-blueprints';
 import * as cdk from 'aws-cdk-lib';
+import { log } from "console";
 
 export const logger = utils.logger;
 
@@ -12,7 +13,7 @@ export function errorHandler(app: cdk.App, ...message: string[]) {
 export function configureApp(logLevel? : number): cdk.App {
     logger.settings.minLevel = logLevel ?? 2; // debug., 3 info
     logger.settings.hideLogPositionForProduction = true;
-    utils.userLog.info("=== Run make compile before each run. === \n\n");
+    utils.userLog.info("=== Run make compile before each run, if any code modification was made. === \n\n");
 
     const account = process.env.CDK_DEFAULT_ACCOUNT!;
     const region = process.env.CDK_DEFAULT_REGION!;
@@ -34,8 +35,11 @@ export async function prevalidateSecrets(pattern: string, region?: string, ...se
 }
 
 export class EmptyStack extends cdk.Stack {
-    constructor(scope: cdk.App) {
-        super(scope, "empty-error-stack")
+    constructor(scope: cdk.App, ...message: string[]) {
+        super(scope, "empty-error-stack");
+        if(message) {
+            message.forEach(m => logger.info(m));
+        }
     }
 }
 
