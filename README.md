@@ -135,6 +135,8 @@ make pattern multi-team deploy
 
 # Developer Flow
 
+## Modifications
+
 All files are compiled to the dist folder including `lib` and `bin` directories. For iterative development (e.g. if you make a change to any of the patterns) make sure to run compile:
 
 ```bash
@@ -143,7 +145,42 @@ make compile
 
 The `compile` command is optimized to build only modified files and is fast. 
 
-**NOTE:** Run `make compile` after EACH modification, or alternatively run `npm run watch` to watch changes. 
+## New Patterns
+
+To create a new pattern, please follow these steps:
+
+1. Under lib create a folder for your pattern, such as `<pattern-name>-construct`. If you plan to create a set of patterns that represent a particular subdomain, e.g. `security` or `hardening`, please create an issue to discuss it first. If approved, you will be able to create a folder with your subdomain name and group your pattern constructs under it. 
+2. Blueprints generally don't require a specific class, however we use a convention of wrapping each pattern in a plain class like `<Pattern-Name>Construct`. This class is generally placed in `index.ts` under your pattern folder. 
+3. Once the pattern implementation is ready, you need to include it in the list of the patterns by creating a file `bin/<pattern-name>.ts`. The implementation of this file is very light, and it is done to allow patterns to run independently.
+
+Example simple synchronous pattern:
+```typescript
+import { configureApp } from '../lib/common/construct-utils';
+import FargateConstruct from '../lib/fargate-construct';
+
+new FargateConstruct(configureApp(), 'fargate'); // configureApp() will create app and configure loggers and perform other prep steps
+```
+
+4. In some cases, patterns need to use async APIs. For example, they may rely on external secrets that you want to validate ahead of the pattern deployment. 
+
+Example async pattern:
+
+```typescript
+import { configureApp, errorHandler } from '../lib/common/construct-utils';
+
+const app = configureApp();
+
+new NginxIngressConstruct().buildAsync(app, 'nginx').catch((e) => {
+    errorHandler(app, "NGINX Ingress pattern is not setup. This maybe due to missing secrets for ArgoCD admin pwd.", e);
+});
+```
+
+5. There are a few utility functions that can be used in the pattern implementation such as secret prevalidation. This function will fail if the corresponding secret is not defined, this preventing the pattern to deploy. 
+
+```typescript
+await prevalidateSecrets(NginxIngressConstruct.name, undefined, SECRET_ARGO_ADMIN_PWD); 
+await prevalidateSecrets("my-pattern-name", 'us-east-1', 'my-secret-name'); // 
+```
 
 # Deploying Blueprints with External Dependency on AWS Resources
 
