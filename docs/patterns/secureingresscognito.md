@@ -63,7 +63,7 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
 
 ```
 make build
-npx cdk deploy secure-ingress-blueprint
+make pattern secure-ingress-cognito deploy secure-ingress-blueprint
 ```
 
 

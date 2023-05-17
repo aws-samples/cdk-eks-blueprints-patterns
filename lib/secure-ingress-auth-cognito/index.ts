@@ -120,16 +120,16 @@ class CognitoIdpStack extends cdk.Stack {
 /**
  * See docs/patterns/secure-ingress-cognito.md for mode details on the setup.
  */
-export class PipelineSecureIngressCognito extends cdk.Stack{
+export class SecureIngressCognito extends cdk.Stack{
 
     async buildAsync(scope: Construct, id: string) {
 
-        await prevalidateSecrets(PipelineSecureIngressCognito.name, undefined, SECRET_ARGO_ADMIN_PWD);
+        await prevalidateSecrets(SecureIngressCognito.name, undefined, SECRET_ARGO_ADMIN_PWD);
 
         const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.mycompany.a2z.com");
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
 
-        const CognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
+        const cognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
             {
                 env: {
                     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -165,9 +165,9 @@ export class PipelineSecureIngressCognito extends cdk.Stack{
                         spec: {
                             ingress: {
                                 host: subdomain,
-                                cognitoUserPoolArn: CognitoIdpStackOut.userPoolOut.userPoolArn,
-                                cognitoUserPoolAppId: CognitoIdpStackOut.userPoolClientOut.userPoolClientId,
-                                cognitoDomainName: CognitoIdpStackOut.userPoolDomainOut.domainName,
+                                cognitoUserPoolArn: cognitoIdpStackOut.userPoolOut.userPoolArn,
+                                cognitoUserPoolAppId: cognitoIdpStackOut.userPoolClientOut.userPoolClientId,
+                                cognitoDomainName: cognitoIdpStackOut.userPoolDomainOut.domainName,
                                 region: process.env.CDK_DEFAULT_REGION,
                             }
                         },

@@ -35,9 +35,9 @@ export default class NginxIngressConstruct {
 
         blueprints.HelmAddOn.validateHelmVersions = false;
 
-        await blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT)
-            .region(process.env.CDK_DEFAULT_REGION)
+        blueprints.EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .region(process.env.CDK_DEFAULT_REGION!)
             .teams(...teams)
             .resourceProvider(GlobalResources.HostedZone, new DelegatingHostedZoneProvider({
                 parentDomain,
@@ -73,12 +73,10 @@ export default class NginxIngressConstruct {
                     },
                     adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                 }),
-                new blueprints.AppMeshAddOn,
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
-                new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAdotAddOn)
-            .buildAsync(scope, `${id}-blueprint`);
+                new blueprints.CloudWatchAdotAddOn)
+            .build(scope, `${id}-blueprint`);
 
             blueprints.HelmAddOn.validateHelmVersions = false;
     }
