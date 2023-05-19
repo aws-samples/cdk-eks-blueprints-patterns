@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16]
+        node-version: [18]
 
     steps:
     - uses: actions/checkout@v2
@@ -48,4 +48,4 @@ jobs:
       run: make list
 
     - name: Run CDK Synth
-      run: make synth
+      run: make test-all

@@ -50,7 +50,7 @@ The `ImageScanningSetupStack` configures the Amazon ECR image scanning and the E
 To deploy the stack, run the following command:
 
 ```bash
-npx cdk deploy image-scanning-setup
+make pattern ecr-image-scanning deploy image-scanning-setup
 ```
 
 ### Deploying the blueprint
@@ -60,7 +60,7 @@ The blueprint deploys a sample GitOps workload that pushes images to Amazon ECR 
 To deploy the blueprint, run the following command:
 
 ```bash
-npx cdk deploy image-scanning-workload-blueprint
+make pattern ecr-image-scanning deploy image-scanning-workload-blueprint
 ```
 
 ## Verify
