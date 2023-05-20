@@ -38,9 +38,9 @@ npm install -g npm@latest
 To view patterns and deploy kubeflow pattern
 
 ```sh
-cdk list
+make list
 cdk bootstrap
-cdk deploy kubeflow-blueprint
+make pattern kubeflow deploy
 ```
 
 

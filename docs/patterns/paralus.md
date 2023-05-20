@@ -49,7 +49,7 @@ To view patterns and deploy paralus pattern
 ```sh
 cdk list
 cdk bootstrap
-cdk deploy paralus-blueprint
+make pattern paralus deploy
 ```
 
 
