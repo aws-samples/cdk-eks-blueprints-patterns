@@ -1,5 +1,9 @@
 # Backstage on EKS
 
+## Architecture
+
+![Architecture](./images/backstage-diagram.png)
+
 ## Setup
 
 Crete the [Backstage application](https://backstage.io/docs/getting-started/create-an-app).
