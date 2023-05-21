@@ -2,7 +2,7 @@
 
 ## Architecture
 
-![Architecture](./images/backstage-diagram.png)
+<img src="./images/backstage-diagram.png" width="720">
 
 ## Setup
 
