@@ -4,7 +4,7 @@
 
 The objective of this pattern is to demonstrate how to enable Security Hub in your AWS account, verify that it is enabled, and get findings from Security Hub.
 
-The pattern will enable Security Hub in the `CDKCDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`, but only if it is not already enabled. If Security Hub is already enabled in the target AWS account and region the stack will fail and be rolled back.
+The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`, but only if it is not already enabled. If Security Hub is already enabled in the target AWS account and region the stack will fail and be rolled back.
 
 ## Prerequisites
 
@@ -17,7 +17,17 @@ The pattern will enable Security Hub in the `CDKCDK_DEFAULT_ACCOUNT` and `CDK_DE
 To deploy the stack, run the following command:
 
 ```bash
-npx cdk deploy securityhub-setup
+make pattern securityhub deploy securityhub-setup
+```
+
+### Deploying the blueprint
+
+The blueprint deploys a sample GitOps workload.
+
+To deploy the blueprint, run the following command:
+
+```bash
+make pattern securityhub deploy securityhub-blueprint
 ```
 
 ## Verify
@@ -42,107 +52,19 @@ The output should look like this:
 }
 ```
 
-### View Critical and Failed Security Standards Controls findings 
+### View Critical and Failed Security Standards Controls findings
 
-To list the critical and faild security standards controls findings in the same account and region, run the following command:
+To list any critical findings, and findings related to controls that have a failed status according to [Security Hub security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards.html) which are enabled in the same account and region, run the following command:
 
 ```bash
 aws securityhub get-findings --filter 'SeverityLabel={Value=CRITICAL,Comparison=EQUALS},ComplianceStatus={Value=FAILED,Comparison=EQUALS}'
 ```
 
-The output should look like this:
-
-```json
-{
-    "FindingIds": [
-        "f2c3859c6ca25b3057d13470a992bbd7"
-    ]
-}
-```
-
-To check the finding's details, run the following command (please replace `<DETECTOR-ID>` and `<FINDING-ID>` with the ID of the detector and the ID of the finding):
-
-```bash
-aws guardduty get-findings --detector-id <DETECTOR-ID> --finding-ids <FINDING-ID> --region us-east-1
-```
-
-The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContainer` as expected:
+The output should look something like this:
 
 ```json
 {
     "Findings": [
-        {
-            "SchemaVersion": "2018-10-08",
-            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.9/finding/8c624a5f-af58-43d1-a955-d9c28d82ce53",
-            "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/securityhub",
-            "ProductName": "Security Hub",
-            "CompanyName": "AWS",
-            "Region": "us-east-1",
-            "GeneratorId": "security-control/IAM.9",
-            "AwsAccountId": "XXXXXXXXXXX",
-            "Types": [
-                "Software and Configuration Checks/Industry and Regulatory Standards"
-            ],
-            "FirstObservedAt": "2023-05-16T00:47:53.341Z",
-            "LastObservedAt": "2023-05-16T00:48:03.373Z",
-            "CreatedAt": "2023-05-16T00:47:53.341Z",
-            "UpdatedAt": "2023-05-16T00:47:53.341Z",
-            "Severity": {
-                "Label": "CRITICAL",
-                "Normalized": 90,
-                "Original": "CRITICAL"
-            },
-            "Title": "Virtual MFA should be enabled for the root user",
-            "Description": "This AWS control checks whether users of your AWS account require a multi-factor authentication (MFA) device to sign in with root user credentials.",
-            "Remediation": {
-                "Recommendation": {
-                    "Text": "For information on how to correct this issue, consult the AWS Security Hub controls documentation.",
-                    "Url": "https://docs.aws.amazon.com/console/securityhub/IAM.9/remediation"
-                }
-            },
-            "ProductFields": {
-                "RelatedAWSResources:0/name": "securityhub-root-account-mfa-enabled-4109eab4",
-                "RelatedAWSResources:0/type": "AWS::Config::ConfigRule",
-                "aws/securityhub/ProductName": "Security Hub",
-                "aws/securityhub/CompanyName": "AWS",
-                "Resources:0/Id": "arn:aws:iam::XXXXXXXXXXX:root",
-                "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/securityhub/arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.9/finding/8c624a5f-af58-43d1-a955-d9c28d82ce53"
-            },
-            "Resources": [
-                {
-                    "Type": "AwsAccount",
-                    "Id": "AWS::::Account:XXXXXXXXXXX",
-                    "Partition": "aws",
-                    "Region": "us-east-1"
-                }
-            ],
-            "Compliance": {
-                "Status": "FAILED",
-                "RelatedRequirements": [
-                    "CIS AWS Foundations Benchmark v1.2.0/1.13"
-                ],
-                "SecurityControlId": "IAM.9",
-                "AssociatedStandards": [
-                    {
-                        "StandardsId": "ruleset/cis-aws-foundations-benchmark/v/1.2.0"
-                    }
-                ]
-            },
-            "WorkflowState": "NEW",
-            "Workflow": {
-                "Status": "NEW"
-            },
-            "RecordState": "ACTIVE",
-            "FindingProviderFields": {
-                "Severity": {
-                    "Label": "CRITICAL",
-                    "Original": "CRITICAL"
-                },
-                "Types": [
-                    "Software and Configuration Checks/Industry and Regulatory Standards"
-                ]
-            }
-        },
         {
             "SchemaVersion": "2018-10-08",
             "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.6/finding/fc59f938-14be-4ee8-b91c-fb1ab510c243",
@@ -156,9 +78,9 @@ The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContaine
                 "Software and Configuration Checks/Industry and Regulatory Standards"
             ],
             "FirstObservedAt": "2023-05-16T00:47:47.321Z",
-            "LastObservedAt": "2023-05-16T00:47:58.460Z",
+            "LastObservedAt": "2023-05-23T12:59:59.172Z",
             "CreatedAt": "2023-05-16T00:47:47.321Z",
-            "UpdatedAt": "2023-05-16T00:47:47.321Z",
+            "UpdatedAt": "2023-05-23T12:59:48.347Z",
             "Severity": {
                 "Label": "CRITICAL",
                 "Normalized": 90,
@@ -217,7 +139,83 @@ The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContaine
                     "Software and Configuration Checks/Industry and Regulatory Standards"
                 ]
             }
+        },
+        {
+            "SchemaVersion": "2018-10-08",
+            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.9/finding/8c624a5f-af58-43d1-a955-d9c28d82ce53",
+            "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/securityhub",
+            "ProductName": "Security Hub",
+            "CompanyName": "AWS",
+            "Region": "us-east-1",
+            "GeneratorId": "security-control/IAM.9",
+            "AwsAccountId": "XXXXXXXXXXX",
+            "Types": [
+                "Software and Configuration Checks/Industry and Regulatory Standards"
+            ],
+            "FirstObservedAt": "2023-05-16T00:47:53.341Z",
+            "LastObservedAt": "2023-05-23T12:59:35.958Z",
+            "CreatedAt": "2023-05-16T00:47:53.341Z",
+            "UpdatedAt": "2023-05-23T12:59:26.083Z",
+            "Severity": {
+                "Label": "CRITICAL",
+                "Normalized": 90,
+                "Original": "CRITICAL"
+            },
+            "Title": "Virtual MFA should be enabled for the root user",
+            "Description": "This AWS control checks whether users of your AWS account require a multi-factor authentication (MFA) device to sign in with root user credentials.",
+            "Remediation": {
+                "Recommendation": {
+                    "Text": "For information on how to correct this issue, consult the AWS Security Hub controls documentation.",
+                    "Url": "https://docs.aws.amazon.com/console/securityhub/IAM.9/remediation"
+                }
+            },
+            "ProductFields": {
+                "RelatedAWSResources:0/name": "securityhub-root-account-mfa-enabled-4109eab4",
+                "RelatedAWSResources:0/type": "AWS::Config::ConfigRule",
+                "aws/securityhub/ProductName": "Security Hub",
+                "aws/securityhub/CompanyName": "AWS",
+                "Resources:0/Id": "arn:aws:iam::XXXXXXXXXXX:root",
+                "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/securityhub/arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.9/finding/8c624a5f-af58-43d1-a955-d9c28d82ce53"
+            },
+            "Resources": [
+                {
+                    "Type": "AwsAccount",
+                    "Id": "AWS::::Account:XXXXXXXXXXX",
+                    "Partition": "aws",
+                    "Region": "us-east-1"
+                }
+            ],
+            "Compliance": {
+                "Status": "FAILED",
+                "RelatedRequirements": [
+                    "CIS AWS Foundations Benchmark v1.2.0/1.13"
+                ],
+                "SecurityControlId": "IAM.9",
+                "AssociatedStandards": [
+                    {
+                        "StandardsId": "ruleset/cis-aws-foundations-benchmark/v/1.2.0"
+                    }
+                ]
+            },
+            "WorkflowState": "NEW",
+            "Workflow": {
+                "Status": "NEW"
+            },
+            "RecordState": "ACTIVE",
+            "FindingProviderFields": {
+                "Severity": {
+                    "Label": "CRITICAL",
+                    "Original": "CRITICAL"
+                },
+                "Types": [
+                    "Software and Configuration Checks/Industry and Regulatory Standards"
+                ]
+            }
         }
     ]
 }
 ```
+
+After activation Security Hub automatically finds any CRITICAL controls that align to the [AWS Foundational Security Best Practices standard](https://docs.aws.amazon.com/securityhub/latest/userguide/fsbp-standard.html) and the [Center for Internet Security (CIS) AWS Foundations Benchmark v1.2.0](https://docs.aws.amazon.com/securityhub/latest/userguide/cis-aws-foundations-benchmark.html).
+
+If you have deployed the [Amazon GuardDuty Protection EKS Blueprints pattern](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/docs/patterns/security/guardduty.md) to the same account you might also notice GuardDuty findings related to the sample workload deployed with a PrivliegedContainer which generates a `PrivilegeEscalation:Kubernetes/PrivilegedContainer` finding. This is because the Amazon GuardDuty integration for Security Hub is enabled by default.

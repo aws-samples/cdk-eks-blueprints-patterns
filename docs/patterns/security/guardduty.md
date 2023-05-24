@@ -53,7 +53,7 @@ make pattern guardduty deploy guardduty-setup
 
 The blueprint deploys a sample GitOps workload that triggers a GuardDuty finding.
 
-To deploy the bluepring, run the following command:
+To deploy the blueprint, run the following command:
 
 ```bash
 make pattern guardduty deploy guardduty-blueprint
