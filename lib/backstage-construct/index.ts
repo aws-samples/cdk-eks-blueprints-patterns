@@ -81,6 +81,6 @@ export class BackstageConstruct extends Construct {
     .resourceProvider(props.databaseResourceName, new databaseInstanceProvider.DatabaseInstanceProvider(databaseInstanceProps))
     .addOns(...addOns)
     .teams()
-    .build(scope, props.backstageLabel+"-cluster");
+    .build(scope, props.backstageLabel+"-blueprint");
   }
 }

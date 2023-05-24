@@ -45,8 +45,4 @@ Fill in the following parameters in the _main.ts_ file
 
 ## Deployment
 
-Run the command (replacing _backstageLabel_ with your set value):
-
-````
-npx cdk deploy {backstageLabel}-cluster
-````
+Follow the deployment instructions detailed in the main README file of this repository, using _{backstageLabel}-blueprint_ as the name of the pattern.
