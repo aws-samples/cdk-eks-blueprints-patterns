@@ -11,6 +11,7 @@ import * as team from '../teams/multi-account-monitoring';
  * Demonstration of how to use CloudWatch Adot add-on.
  */
 export default class CloudWatchMonitoringConstruct {
+    
     build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
@@ -38,13 +39,13 @@ export default class CloudWatchMonitoringConstruct {
             .account(accountID)
             .region(awsRegion)
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.KubeStateMetricsAddOn,
                 new blueprints.PrometheusNodeExporterAddOn,
                 new blueprints.AdotCollectorAddOn,
                 cloudWatchAdotAddOn,
                 new blueprints.XrayAdotAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.SecretsStoreAddOn

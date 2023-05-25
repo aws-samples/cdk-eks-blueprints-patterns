@@ -16,7 +16,7 @@ export default class BottlerocketConstruct {
         const platformTeam = new team.TeamPlatform(accountID);
  
         const clusterProvider = new blueprints.MngClusterProvider({
-            version: eks.KubernetesVersion.V1_21,
+            version: eks.KubernetesVersion.V1_25,
             amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64
         });
         
@@ -25,10 +25,10 @@ export default class BottlerocketConstruct {
             .region('us-east-1')
             .clusterProvider(clusterProvider)
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.AppMeshAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,

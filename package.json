@@ -1,46 +1,46 @@
 {
   "name": "eks-blueprints-patterns",
   "version": "1.1.0",
-  "main": "dist/bin/main.js",
-  "types": "dist/bin/main.d.ts",
-  "bin": {
-    "eks-blueprints-patterns": "dist/bin/main.js"
-  },
+  "main": "dist/lib/common/default-main.js",
+  "types": "dist/lib/common/default-main.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc --skipLibCheck",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "nginx": "cdk --app \"npx ts-node bin/nginx.ts\"",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "devDependencies": {
-    "@types/jest": "^29.2.1",
-    "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.42.0",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.15.12",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^8.26.0",
-    "jest": "^29.2.2",
-    "ts-jest": "^29.0.3",
+    "eslint": "^8.38.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "~4.8.4"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@aws-quickstart/eks-blueprints": "^1.6.0",
+    "@aws-quickstart/eks-blueprints": "^1.7.3",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.5.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.2",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.9",
+    "@paralus/paralus-eks-blueprints-addon": "^0.1.5",
     "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
     "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
-    "aws-cdk": "2.66.1",
+    "aws-cdk": "2.78.0",
     "eks-blueprints-cdk-kubeflow-ext": "0.1.9",
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "^1.6.0",
-    "aws-cdk": "2.66.1"
+    "@aws-quickstart/eks-blueprints": "^1.7.3",
+    "aws-cdk": "2.78.0",
+    "xml2js": "0.5.0"
   }
 }

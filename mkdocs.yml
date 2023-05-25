@@ -1,0 +1,33 @@
+site_name: Amazon EKS Blueprints Patterns
+repo_name: "aws-samples/cdk-eks-blueprints-patterns"
+repo_url: "https://github.com/aws-samples/cdk-eks-blueprints-patterns"
+docs_dir: "docs"
+theme:
+  name: material
+  features:
+    - tabs
+nav:
+  - Overview: 'index.md'
+  - Patterns: 
+    - Kubeflow Pattern: 'patterns/kubeflow.md'
+    - Multi Account Observability Pattern: 'patterns/multi-account-monitoring.md'
+    - Nginx Pattern: 'patterns/nginx.md'
+    - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
+    - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
+markdown_extensions:
+  - def_list
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: "¤"
+plugins:
+  - search

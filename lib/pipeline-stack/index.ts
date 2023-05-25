@@ -21,9 +21,9 @@ export default class PipelineConstruct {
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn, 
                 new blueprints.CertManagerAddOn,
                 new blueprints.AdotCollectorAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn, 
                 new blueprints.NginxAddOn,
                 new blueprints.ArgoCDAddOn,
                 new blueprints.AppMeshAddOn( {

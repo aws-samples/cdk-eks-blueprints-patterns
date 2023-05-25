@@ -1,8 +1,6 @@
 import { Construct } from 'constructs';
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 
-// Blueprints Lib
-import * as blueprints from '@aws-quickstart/eks-blueprints'
-import { ArgoCDAddOn, ClusterAutoScalerAddOn, MetricsServerAddOn } from '@aws-quickstart/eks-blueprints';
 
 
 /**
@@ -13,13 +11,13 @@ export default class StarterConstruct {
         
         const stackID = `${id}-blueprint`
         blueprints.EksBlueprint.builder()
-            .account(process.env.CDK_DEFAULT_ACCOUNT!)
-            .region(process.env.CDK_DEFAULT_REGION!)
-            .addOns( new MetricsServerAddOn,
-                new ClusterAutoScalerAddOn,
-                new ArgoCDAddOn // add other addons here
+            .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
+                new blueprints.VpcCniAddOn(), 
+                new blueprints.MetricsServerAddOn,
+                new blueprints.ClusterAutoScalerAddOn,
             )
-            .teams()// add teams here)
+            .teams()
             .build(scope, stackID);
     }
 }

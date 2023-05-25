@@ -29,13 +29,13 @@ export default class AmpMonitoringConstruct {
             .account(accountID)
             .region(awsRegion)
             .addOns(
+                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,
                 new blueprints.KubeStateMetricsAddOn,
                 new blueprints.PrometheusNodeExporterAddOn,
                 new blueprints.AdotCollectorAddOn,
                 new blueprints.AmpAddOn,
                 new blueprints.XrayAdotAddOn,
-                new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.NginxAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.SecretsStoreAddOn
