@@ -7,6 +7,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import { VpcProvider } from '@aws-quickstart/eks-blueprints';
 
 
+
 export default class CustomNetworkingIPv4Construct {
     constructor(scope: Construct, id: string) {
         const stackId = `${id}-blueprint`;
@@ -42,12 +43,14 @@ const mngProps = {
                 new blueprints.CoreDnsAddOn(),
                 new blueprints.KubeProxyAddOn(),
             )
-            //.resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined,"100.64.0.0/24",["100.64.0.0/25","100.64.0.128/26","100.64.0.192/26"]))
-.resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined, {
+            .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider(undefined, {
                 primaryCidr: "10.2.0.0/16", 
                 secondaryCidr: "100.64.0.0/16",
                 secondarySubnetCidrs: ["100.64.0.0/24","100.64.1.0/24","100.64.2.0/24"]
             }))
+            
+            //.resourceProvider(blueprints.GlobalResources.Vpc, new VpcProvider(undefined,"100.64.0.0/24",["100.64.0.0/25","100.64.0.128/26","100.64.0.192/26"]))
+
             .clusterProvider(clusterProvider)
             .build(scope, stackId);
     }
