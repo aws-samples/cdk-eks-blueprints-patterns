@@ -13,7 +13,7 @@ export default class CustomNetworkingIPv4Construct {
         const stackId = `${id}-blueprint`;
         
 const mngProps = {
-    version: KubernetesVersion.V1_24,
+    version: KubernetesVersion.V1_25,
     endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
     instanceTypes: [new ec2.InstanceType('m5.large')],
     amiType: NodegroupAmiType.AL2_X86_64,
