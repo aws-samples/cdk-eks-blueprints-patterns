@@ -1,31 +1,12 @@
+import * as securityhub from 'aws-cdk-lib/aws-securityhub';
 import { Construct } from "constructs";
-import * as blueprints from "@aws-quickstart/eks-blueprints";
-import { SECRET_ARGO_ADMIN_PWD } from "../../multi-region-construct";
-import { prevalidateSecrets } from "../../common/construct-utils";
+import { Stack, StackProps } from "aws-cdk-lib";
 
-const gitUrl = "https://github.com/aws-samples/eks-blueprints-workloads.git";
-const targetRevision = "main";
+export class SecurityHubStackSetup extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
+    super(scope, id, props);
 
-export default class SecurityHubWorkloadConstruct {
-  async buildAsync(scope: Construct, id: string) {
-    await prevalidateSecrets(process.env.CDK_DEFAULT_REGION!, SECRET_ARGO_ADMIN_PWD);
-
-  const stackID = `${id}-blueprint`;
-
-  blueprints.EksBlueprint.builder()
-    .account(process.env.CDK_DEFAULT_ACCOUNT)
-    .region(process.env.CDK_DEFAULT_REGION!)
-    .addOns(
-      new blueprints.ArgoCDAddOn({
-        bootstrapRepo: {
-          repoUrl: gitUrl,
-          targetRevision: targetRevision,
-          path: "teams/team-danger/dev",
-        },
-        adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
-      })
-    )
-    .teams()
-    .build(scope, stackID);
-  }
-}
+    // Enable Security Hub
+    new securityhub.CfnHub(this, 'MyCfnHub');
+    }
+   }
