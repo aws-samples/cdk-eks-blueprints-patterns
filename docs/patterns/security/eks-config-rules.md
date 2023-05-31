@@ -78,11 +78,11 @@ The output will look something like the following.
 
 You can search for the EKS specific rules. Make a note of the uniquie `ConfigRuleName` of each of the Config rules for EKS security best practices.
 
-Using the unique names of each of your config rules verfiy the Config rule configuraiton and state with the following AWS CLI command.
+Using the unique names of the EKS Config rules from **your account and region** shown after running the previous AWS CLI command, you can verfiy each EKS Config rule configuraiton and state using the following AWS CLI command (Remember to replace the rule names below with your rule names).
 
 ```bash
-aws configservice describe-config-rules --config-rule-names "eks-config-rules-setup-EksEndpointNoPublicAccess49-37QJEXYZALLB" "eks-config-rules-setup-EksOldestSupportedVersionAD-Z65N0TEQSF96" "eks-config-rules-setup-EksSecretsEncrypted7566BFCD-HUQX4WXUDEFA" "eks-config-rules-set
-up-EksSupportedVersionCDB3159A-1VNH10LGMMJX"
+aws configservice describe-config-rules --config-rule-names "eks-config-rules-setup-EksEndpointNoPublicAccess<your rule id>" "eks-config-rules-setup-EksOldestSupportedVersion<your rule id>" "eks-config-rules-setup-EksSecretsEncrypted<your rule id>" "eks-config-rules-set
+up-EksSupportedVersion<your rule id>"
 ```
 
 ```json
