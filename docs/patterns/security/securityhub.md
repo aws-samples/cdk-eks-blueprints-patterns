@@ -48,22 +48,24 @@ If you successfully enabled Security Hub, you will see the following.
 }
 ```
 
-### View Critical and Failed Security Standards Controls findings
+### View findings in Security Hub
+
+The findings that you see in Security Hub will depend what you have configured in your account and region. In this example we deployed the [GuardDuty EKS blueprint](guardduty.md), the [Security Best Practices for Amazon EKS](eks-config-rules.md) Cofing managed rules, and successfully enabled Security Hub using the instructions above which automatcially enables some Security Hub Security standards. The following is an example of findings that this produced.
 
 To list any critical findings, and findings related to controls that have a failed status according to [Security Hub security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards.html) which are enabled in the same account and region, run the following command.
 
 ```bash
-aws securityhub get-findings
+aws securityhub get-findings --filter 'SeverityLabel={Value=CRITICAL,Comparison=EQUALS},ComplianceStatus={Value=FAILED,Comparison=EQUALS}'
 ```
 
-The findings that you see will depend what you have configured in your account and region. In this example we deployed the [GuardDuty EKS blueprint](guardduty.md), the [Security Best Practices for Amazon EKS](eks-config-rules.md) Cofing managed rules, and successfully enabled Security Hub using the instructions above which automatcially enables some Security Hub Security standards. The following is an example of findings that this produced.
+The following IAM finding relates to a failed control that Security Hub checks for across multiple security standards, and will likely be present in your list of findings if you or your organization are not using a hardware MFA device for your AWS root account.
 
 ```json
 {
     "Findings": [
-        {
+                {
             "SchemaVersion": "2018-10-08",
-            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.6/finding/fc59f938-14be-4ee8-b91c-fb1ab510c243",
+            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.6/finding/494ffa38-0b6e-46d1-98f4-e605ec09d045",
             "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/securityhub",
             "ProductName": "Security Hub",
             "CompanyName": "AWS",
@@ -73,7 +75,10 @@ The findings that you see will depend what you have configured in your account a
             "Types": [
                 "Software and Configuration Checks/Industry and Regulatory Standards"
             ],
-            ...
+            "FirstObservedAt": "2023-03-04T00:54:44.307Z",
+            "LastObservedAt": "2023-05-31T01:20:18.210Z",
+            "CreatedAt": "2023-03-04T00:54:44.307Z",
+            "UpdatedAt": "2023-05-31T01:20:05.845Z",
             "Severity": {
                 "Label": "CRITICAL",
                 "Normalized": 90,
@@ -88,15 +93,33 @@ The findings that you see will depend what you have configured in your account a
                 }
             },
             "ProductFields": {
-               ... 
+                "RelatedAWSResources:0/name": "securityhub-root-account-hardware-mfa-enabled-24e3b344",
+                "RelatedAWSResources:0/type": "AWS::Config::ConfigRule",
+                "aws/securityhub/ProductName": "Security Hub",
+                "aws/securityhub/CompanyName": "AWS",
+                "Resources:0/Id": "arn:aws:iam::XXXXXXXXXXX:root",
+                "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/securityhub/arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.6/finding/494ffa38-0b6e-46d1-98f4-e605ec09d045"
             },
             "Resources": [
-                {  ...  }
+                {
+                    "Type": "AwsAccount",
+                    "Id": "AWS::::Account:XXXXXXXXXXX",
+                    "Partition": "aws",
+                    "Region": "us-east-1"
+                }
             ],
             "Compliance": {
                 "Status": "FAILED",
                 "RelatedRequirements": [
-                    "CIS AWS Foundations Benchmark v1.2.0/1.14"
+                    "CIS AWS Foundations Benchmark v1.2.0/1.14",
+                    "CIS AWS Foundations Benchmark v1.4.0/1.6",
+                    "NIST.800-53.r5 AC-2(1)",
+                    "NIST.800-53.r5 AC-3(15)",
+                    "NIST.800-53.r5 IA-2(1)",
+                    "NIST.800-53.r5 IA-2(2)",
+                    "NIST.800-53.r5 IA-2(6)",
+                    "NIST.800-53.r5 IA-2(8)",
+                    "PCI DSS v3.2.1/8.3.1"
                 ],
                 "SecurityControlId": "IAM.6",
                 "AssociatedStandards": [
@@ -105,10 +128,21 @@ The findings that you see will depend what you have configured in your account a
                     },
                     {
                         "StandardsId": "standards/aws-foundational-security-best-practices/v/1.0.0"
+                    },
+                    {
+                        "StandardsId": "standards/cis-aws-foundations-benchmark/v/1.4.0"
+                    },
+                    {
+                        "StandardsId": "standards/nist-800-53/v/5.0.0"
+                    },
+                    {
+                        "StandardsId": "standards/pci-dss/v/3.2.1"
                     }
                 ]
             },
-            ...
+            "WorkflowState": "NEW",
+            "Workflow": {
+                "Status": "NEW"
             },
             "RecordState": "ACTIVE",
             "FindingProviderFields": {
@@ -120,10 +154,25 @@ The findings that you see will depend what you have configured in your account a
                     "Software and Configuration Checks/Industry and Regulatory Standards"
                 ]
             }
-        },
+        }
+    ]
+}
+```
+
+Now search for a finding related to the Security Best Practices for Amazon EKS Config rules, run the following AWS CLI command.
+
+```bash
+aws securityhub get-findings --filters 'GeneratorId={Value="security-control/EKS.1", Comparison="EQUALS"}'
+```
+
+You might see a finding such as the following.
+
+```json
+{
+    "Findings": [
         {
             "SchemaVersion": "2018-10-08",
-            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/EKS.1/finding/cbb429cf-6fac-4cfc-9a62-d11eed3b367d",
+            "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/EKS.1/finding/931a06d9-1b1d-431b-8b91-1ff86829b400",
             "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/securityhub",
             "ProductName": "Security Hub",
             "CompanyName": "AWS",
@@ -133,7 +182,10 @@ The findings that you see will depend what you have configured in your account a
             "Types": [
                 "Software and Configuration Checks/Industry and Regulatory Standards"
             ],
-            ...
+            "FirstObservedAt": "2023-05-09T10:34:36.736Z",
+            "LastObservedAt": "2023-05-30T10:27:41.205Z",
+            "CreatedAt": "2023-05-09T10:34:36.736Z",
+            "UpdatedAt": "2023-05-30T10:27:34.574Z",
             "Severity": {
                 "Label": "HIGH",
                 "Normalized": 70,
@@ -148,24 +200,55 @@ The findings that you see will depend what you have configured in your account a
                 }
             },
             "ProductFields": {
-                ...
+                "RelatedAWSResources:0/name": "securityhub-eks-endpoint-no-public-access-f5aecad6",
+                "RelatedAWSResources:0/type": "AWS::Config::ConfigRule",
+                "aws/securityhub/ProductName": "Security Hub",
+                "aws/securityhub/CompanyName": "AWS",
+                "aws/securityhub/annotation": "Cluster Endpoint of starter-blueprint is Publicly accessible",
+                "Resources:0/Id": "arn:aws:eks:us-east-1:XXXXXXXXXXX:cluster/starter-blueprint",
+                "aws/securityhub/FindingId": "arn:aws:securityhub:us-east-1::product/aws/securityhub/arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/EKS.1/finding/931a06d9-1b1d-431b-8b91-1ff86829b400"
             },
             "Resources": [
                 {
-                    ...
+                    "Type": "AwsEksCluster",
+                    "Id": "arn:aws:eks:us-east-1:XXXXXXXXXXX:cluster/starter-blueprint",
+                    "Partition": "aws",
+                    "Region": "us-east-1"
                 }
             ],
             "Compliance": {
                 "Status": "FAILED",
+                "RelatedRequirements": [
+                    "NIST.800-53.r5 AC-21",
+                    "NIST.800-53.r5 AC-3",
+                    "NIST.800-53.r5 AC-3(7)",
+                    "NIST.800-53.r5 AC-4",
+                    "NIST.800-53.r5 AC-4(21)",
+                    "NIST.800-53.r5 AC-6",
+                    "NIST.800-53.r5 SC-7",
+                    "NIST.800-53.r5 SC-7(11)",
+                    "NIST.800-53.r5 SC-7(16)",
+                    "NIST.800-53.r5 SC-7(20)",
+                    "NIST.800-53.r5 SC-7(21)",
+                    "NIST.800-53.r5 SC-7(3)",
+                    "NIST.800-53.r5 SC-7(4)",
+                    "NIST.800-53.r5 SC-7(9)"
+                ],
                 "SecurityControlId": "EKS.1",
                 "AssociatedStandards": [
                     {
                         "StandardsId": "standards/aws-foundational-security-best-practices/v/1.0.0"
+                    },
+                    {
+                        "StandardsId": "standards/nist-800-53/v/5.0.0"
                     }
                 ]
             },
-            ...
-            "RecordState": "ARCHIVED",
+            "WorkflowState": "NEW",
+            "Workflow": {
+                "Status": "NEW"
+            },
+            "RecordState": "ACTIVE",
             "FindingProviderFields": {
                 "Severity": {
                     "Label": "HIGH",
@@ -175,7 +258,21 @@ The findings that you see will depend what you have configured in your account a
                     "Software and Configuration Checks/Industry and Regulatory Standards"
                 ]
             }
-        },
+        }
+        
+    ]
+}
+```
+
+To see any findings generated by GuardDuty in Security Hub, run the following command. If you completed the threat detection seciton of this module then you should have at least one.
+
+```bash
+aws securityhub get-findings --filters 'ProductName={Value="GuardDuty",Comparison="EQUALS"}'
+```
+
+```json
+{
+    "Findings": [
         {
             "SchemaVersion": "2018-10-08",
             "Id": "arn:aws:guardduty:us-east-1:XXXXXXXXXXX:detector/68b6db88cfef1e59333ecbccd8e816b5/finding/0ec437473c147f649d1437f94d615224",
@@ -222,4 +319,4 @@ The findings that you see will depend what you have configured in your account a
 }
 ```
 
-If you deployed the [Amazon GuardDuty Protection EKS Blueprints pattern](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/docs/patterns/security/guardduty.md) to the same account and region where you enabled Security Hub you should see a GuardDuty related finding like the last one in the above json list. The sample workload deployed with the [GuardDuty pattern](guardduty.md) which contains a privileged container is detected by GuardDuty which generates the `Kubernetes-PrivilegedContainer` finding and it is automatically sent to Security Hub where it can be viewed and triaged alongside other findings from different sources.
+If you deployed the [Amazon GuardDuty Protection EKS Blueprints pattern](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/docs/patterns/security/guardduty.md) to the same account and region where you enabled Security Hub you should see a GuardDuty finding like the above. The sample workload deployed with the [GuardDuty pattern](guardduty.md) which contains a privileged container is detected by GuardDuty, which generates the `Kubernetes-PrivilegedContainer` finding. GuardDuty automatically sent this finding to Security Hub where it can be viewed and triaged.
