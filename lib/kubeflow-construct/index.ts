@@ -8,7 +8,7 @@ export default class KubeflowConstruct {
     constructor(scope: Construct, id: string) {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
-        const ampWorkspaceName = "amp-monitoring";
+        const ampWorkspaceName = "kubeflow-monitoring";
         const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
 
         blueprints.EksBlueprint.builder()

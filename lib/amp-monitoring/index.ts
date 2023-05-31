@@ -25,7 +25,7 @@ export default class AmpMonitoringConstruct {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
-        const ampWorkspaceName = "amp-monitoring";
+        const ampWorkspaceName = "multi-account-monitoring";
         const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
 
         return blueprints.EksBlueprint.builder()
