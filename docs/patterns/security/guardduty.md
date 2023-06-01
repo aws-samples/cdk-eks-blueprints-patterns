@@ -324,10 +324,6 @@ The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContaine
 
 ### Verifying that the GuardDuty Runtime Monitoring agents are automatically deployed
 
-Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found [here](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access).
-
-aws eks update-kubeconfig --name `<your cluster name>` --region `<your region>` --role-arn `<your stack arn>`
-
 To verify that the GuardDuty Runtime Monitoring agents are automatically deployed, run the following command:
 
 ```bash
