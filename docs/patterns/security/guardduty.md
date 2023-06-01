@@ -32,16 +32,29 @@ The sample repository contains the following workloads:
 ## Prerequisites
 
 1. Clone the repository
-1. Follow the usage [instructions](README.md#usage) to install the dependencies
-1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
+3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
+
+Updating npm:
+
+```bash
+npm install -g npm@latest
+```
+
+To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
+
+```bash
+cdk bootstrap
+cdk list
+```
 
 ### Deploying the `GuardDutySetupStack` stack
 
 The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the optional features of your choice enabled. The stack also creates an SNS topic, SNS Subscription, and Amazon EventBridge Rule.
 
-**You can't deploy this stack if you already have GuardDuty enabled in your account because only one GuardDuty detector can be enabled per region.** If you already have GuardDuty enabled, you can skip this step. Make sure that you have all the optional GuardDuty features you would like to use enabled if you manage the GuardDuty configuration manually or by any other means.
+**You can't deploy this stack if you already have GuardDuty enabled in your account because only one GuardDuty detector can be enabled per region.** If you already have GuardDuty enabled, you can skip this step. Make sure that you have all the optional GuardDuty features you would like to use (e.g., EKS Audit Log Monitoring, EKS Runtime Monitoring) enabled if you manage the GuardDuty configuration manually or by any other means. Please refer to the [GuardDuty documentation](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-features-activation-model.html) for more information on features activation.
 
 To deploy the stack, run the following command:
 
@@ -60,6 +73,12 @@ make pattern guardduty deploy guardduty-blueprint
 ```
 
 ## Verify
+
+Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at <https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access>. Please replace `<your cluster name>`, `<your region>`, and `<your cluster role arn>` with the values from the CDK output message.
+
+```bash
+aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn <your cluster role arn>
+```
 
 ### Verifying that the GuardDuty detector is enabled
 
