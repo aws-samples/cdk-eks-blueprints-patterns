@@ -38,7 +38,7 @@ The sample repository contains the following workloads:
 ## Prerequisites
 
 1. Clone the repository
-2. Follow the usage [instructions](README.md#usage) to install the dependencies
+2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
 3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
