@@ -9,8 +9,8 @@ The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAU
 ## Prerequisites
 
 1. Clone the repository.
-1. Follow the usage [instructions](README.md#usage) to install the dependencies.
-1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+2. Follow the usage [instructions](README.md#usage) to install the dependencies.
+3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
 

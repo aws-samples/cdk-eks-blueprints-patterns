@@ -32,8 +32,8 @@ The sample repository contains the following workloads:
 ## Prerequisites
 
 1. Clone the repository
-1. Follow the usage [instructions](README.md#usage) to install the dependencies
-1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+2. Follow the usage [instructions](README.md#usage) to install the dependencies
+3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
 
@@ -304,6 +304,10 @@ The list of findings contains `PrivilegeEscalation:Kubernetes/PrivilegedContaine
 ```
 
 ### Verifying that the GuardDuty Runtime Monitoring agents are automatically deployed
+
+Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found [here](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access).
+
+aws eks update-kubeconfig --name `<your cluster name>` --region `<your region>` --role-arn `<your stack arn>`
 
 To verify that the GuardDuty Runtime Monitoring agents are automatically deployed, run the following command:
 
