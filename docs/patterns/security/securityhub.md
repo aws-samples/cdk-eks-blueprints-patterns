@@ -51,7 +51,7 @@ If you successfully enabled Security Hub, you will see the following.
 
 The findings that you see in Security Hub will depend what you have configured in your account and region. In this example we deployed the [GuardDuty EKS pattern](guardduty.md), the [Security Best Practices for Amazon EKS Config managed rules pattern](eks-config-rules.md), and successfully enabled Security Hub using the instructions above, which automatically enables two of the available Security Hub Security standard controls status checks.
 
-Use the following AWS CLI commands will you to view your account findings in Security Hub.
+Use the following AWS CLI commands to view your findings in Security Hub.
 
 To list any critical findings, and findings related to controls that have a failed status according to [Security Hub security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards.html) which are enabled in the same account and region, run the following command.
 
@@ -59,7 +59,7 @@ To list any critical findings, and findings related to controls that have a fail
 aws securityhub get-findings --filter 'SeverityLabel={Value=CRITICAL,Comparison=EQUALS},ComplianceStatus={Value=FAILED,Comparison=EQUALS}'
 ```
 
-The following is an example of an IAM finding relates to a [failed IAM control](https://docs.aws.amazon.com/securityhub/latest/userguide/iam-controls.html#iam-6) that Security Hub found related to the enabled [Security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/standards-reference.html), and will likely be present in your list of findings if you or your organization are not using a hardware MFA device for your AWS root account.
+The following is an example of an IAM finding that relates to a [failed IAM control](https://docs.aws.amazon.com/securityhub/latest/userguide/iam-controls.html#iam-6) that Security Hub found related to the enabled [Security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/standards-reference.html), and will likely be present in your list of findings if you or your organization are not using a hardware MFA device for your AWS root account.
 
 ```json
 {
@@ -160,7 +160,7 @@ The following is an example of an IAM finding relates to a [failed IAM control](
 }
 ```
 
-Now search for a finding related to the Security Best Practices for Amazon EKS Config rules, run the following AWS CLI command.
+Now search for a finding related to the Security Best Practices for Amazon EKS Config managed rules, run the following AWS CLI command.
 
 ```bash
 aws securityhub get-findings --filters 'GeneratorId={Value="security-control/EKS.1", Comparison="EQUALS"}'

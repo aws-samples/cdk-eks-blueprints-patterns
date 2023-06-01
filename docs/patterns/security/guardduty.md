@@ -47,7 +47,7 @@ To bootstrap the CDK toolkit and list all stacks in the app, run the following c
 
 ```bash
 cdk bootstrap
-cdk list
+make list
 ```
 
 ### Deploying the `GuardDutySetupStack` stack
