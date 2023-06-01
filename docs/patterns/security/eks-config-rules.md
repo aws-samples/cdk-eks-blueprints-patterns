@@ -11,17 +11,22 @@ The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAU
 1. Clone the repository.
 1. Follow the usage [instructions](README.md#usage) to install the dependencies.
 1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
-1. Deploy the CDK EKS Blueprints pattern to enable [AWS Security Hub](securityhub.md).
 
 ## Deploy
 
-To enable AWS Config managed rules for EKS security best practices, run the following command:
+First, use the AWS Config setup blueprints pattern enable AWS Config in your account and region by running the following command.
+
+```bash
+make pattern eks-config-rules deploy eks-config-setup
+```
+
+Now enable the AWS Config managed rules for EKS security best practices by running the following command.
 
 ```bash
 make pattern eks-config-rules deploy eks-config-rules-setup
 ```
 
-## Verify the status of the AWS Config manged rules for EKS security best practices
+## Verify the status of the AWS Config managed rules for EKS security best practices
 
 Using the following AWS CLI command, get a list Config rules with their evaluation status.
 
@@ -76,9 +81,9 @@ The output will look something like the following.
 }
 ```
 
-You can search for the EKS specific rules. Make a note of the uniquie `ConfigRuleName` of each of the Config rules for EKS security best practices.
+You can search for the EKS specific rules. Make a note of the unique `ConfigRuleName` of each of the Config rules for EKS security best practices.
 
-Using the unique names of the EKS Config rules from **your account and region** shown after running the previous AWS CLI command, you can verfiy each EKS Config rule configuraiton and state using the following AWS CLI command (Remember to replace the rule names below with your rule names).
+Using the unique names of the EKS Config rules from **your account and region** shown after running the previous AWS CLI command, you can verify each EKS Config rule configuration and state using the following AWS CLI command (Remember to replace the rule names below with your rule names).
 
 ```bash
 aws configservice describe-config-rules --config-rule-names "eks-config-rules-setup-EksEndpointNoPublicAccess<your rule id>" "eks-config-rules-setup-EksOldestSupportedVersion<your rule id>" "eks-config-rules-setup-EksSecretsEncrypted<your rule id>" "eks-config-rules-set

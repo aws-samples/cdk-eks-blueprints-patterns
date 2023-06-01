@@ -4,17 +4,18 @@
 
 The objective of this pattern is to demonstrate how to enable Security Hub in your AWS account, verify that it is enabled, and get findings from Security Hub.
 
-The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`, but only if it is not already enabled. If Security Hub is already enabled in the target AWS account and region the stack will fail and be rolled back.
+The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`.
 
 ## Prerequisites
 
 1. Clone the repository
 1. Follow the usage [instructions](README.md#usage) to install the dependencies
 1. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+1. Complete the steps to [enable AWS Config and deploy the Security Best Practices for Amazon EKS AWS Config managed rules](eks-config-rules.md).
 
 **Optional (but recommended):**  If you have not done so already, follow the steps to deploy the [GuardDuty stack and blueprint](guardduty.md). Since GuardDuty automatically sends its findings to Security Hub, the sample EKS finding will appear in Security Hub about five minutes after it has been enabled in the same region.
 
-## Deploy
+## Deploy AWS Security Hub
 
 To enable Security Hub in the account and region deploy the stack, run the following command.
 
@@ -24,15 +25,13 @@ make pattern securityhub deploy securityhub-setup
 
 Once deployed, AWS Security Hub will automatically enable the [AWS Foundational Security Best Practices standard](https://docs.aws.amazon.com/securityhub/latest/userguide/fsbp-standard.html) and the [Center for Internet Security (CIS) AWS Foundations Benchmark v1.2.0](https://docs.aws.amazon.com/securityhub/latest/userguide/cis-aws-foundations-benchmark.html) security standard controls status checks.
 
-To increase your EKS security posture awareness, deploy the [Security Best Practices for Amazon EKS](eks-config-rules.md) Cofing managed rules. The compliance status of each of these EKS configuration checks by AWS Config will be sent to Security Hub as findings.
-
 ## Verify
 
-### Verifying that Security Hub is enabled
+### Verify that Security Hub is enabled
 
-Now you can check that the is successfully enabled in the by using the aws CLI to query the same account and region.
+Now you can check that Security Hub is successfully enabled by using the AWS CLI to query the same account and region.
 
-Using the aws CLI run following command in the same account and region where you deployed the stack.
+Using the AWS CLI run following command in the same account and region where you deployed the stack.
 
 ```bash
 aws securityhub describe-hub
@@ -50,7 +49,9 @@ If you successfully enabled Security Hub, you will see the following.
 
 ### View findings in Security Hub
 
-The findings that you see in Security Hub will depend what you have configured in your account and region. In this example we deployed the [GuardDuty EKS blueprint](guardduty.md), the [Security Best Practices for Amazon EKS](eks-config-rules.md) Cofing managed rules, and successfully enabled Security Hub using the instructions above which automatcially enables some Security Hub Security standards. The following is an example of findings that this produced.
+The findings that you see in Security Hub will depend what you have configured in your account and region. In this example we deployed the [GuardDuty EKS pattern](guardduty.md), the [Security Best Practices for Amazon EKS Config managed rules pattern](eks-config-rules.md), and successfully enabled Security Hub using the instructions above, which automatically enables two of the available Security Hub Security standard controls status checks.
+
+Use the following AWS CLI commands will you to view your account findings in Security Hub.
 
 To list any critical findings, and findings related to controls that have a failed status according to [Security Hub security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards.html) which are enabled in the same account and region, run the following command.
 
@@ -58,12 +59,12 @@ To list any critical findings, and findings related to controls that have a fail
 aws securityhub get-findings --filter 'SeverityLabel={Value=CRITICAL,Comparison=EQUALS},ComplianceStatus={Value=FAILED,Comparison=EQUALS}'
 ```
 
-The following IAM finding relates to a failed control that Security Hub checks for across multiple security standards, and will likely be present in your list of findings if you or your organization are not using a hardware MFA device for your AWS root account.
+The following is an example of an IAM finding relates to a [failed IAM control](https://docs.aws.amazon.com/securityhub/latest/userguide/iam-controls.html#iam-6) that Security Hub found related to the enabled [Security standards](https://docs.aws.amazon.com/securityhub/latest/userguide/standards-reference.html), and will likely be present in your list of findings if you or your organization are not using a hardware MFA device for your AWS root account.
 
 ```json
 {
     "Findings": [
-                {
+        {
             "SchemaVersion": "2018-10-08",
             "Id": "arn:aws:securityhub:us-east-1:XXXXXXXXXXX:security-control/IAM.6/finding/494ffa38-0b6e-46d1-98f4-e605ec09d045",
             "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/securityhub",
@@ -264,7 +265,7 @@ You might see a finding such as the following.
 }
 ```
 
-To see any findings generated by GuardDuty in Security Hub, run the following command. If you completed the threat detection seciton of this module then you should have at least one.
+To see any findings generated by GuardDuty in Security Hub, run the following command.
 
 ```bash
 aws securityhub get-findings --filters 'ProductName={Value="GuardDuty",Comparison="EQUALS"}'
@@ -319,4 +320,4 @@ aws securityhub get-findings --filters 'ProductName={Value="GuardDuty",Compariso
 }
 ```
 
-If you deployed the [Amazon GuardDuty Protection EKS Blueprints pattern](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/docs/patterns/security/guardduty.md) to the same account and region where you enabled Security Hub you should see a GuardDuty finding like the above. The sample workload deployed with the [GuardDuty pattern](guardduty.md) which contains a privileged container is detected by GuardDuty, which generates the `Kubernetes-PrivilegedContainer` finding. GuardDuty automatically sent this finding to Security Hub where it can be viewed and triaged.
+If you deployed the [Amazon GuardDuty Protection EKS Blueprints pattern](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/docs/patterns/security/guardduty.md) to the same account and region where you enabled Security Hub you should see a GuardDuty finding like the one above. The sample workload deployed with the [GuardDuty pattern](guardduty.md) which contains a privileged container is detected by GuardDuty and generates the `Kubernetes-PrivilegedContainer` finding. GuardDuty automatically sent this finding to Security Hub where it can be viewed and triaged.
