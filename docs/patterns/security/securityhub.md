@@ -9,7 +9,7 @@ The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAU
 ## Prerequisites
 
 1. Clone the repository
-2. Follow the usage [instructions](README.md#usage) to install the dependencies
+2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
 3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 4. Complete the steps to [enable AWS Config and deploy the Security Best Practices for Amazon EKS AWS Config managed rules](eks-config-rules.md).
 
