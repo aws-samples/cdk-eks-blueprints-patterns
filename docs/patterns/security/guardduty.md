@@ -74,7 +74,7 @@ make pattern guardduty deploy guardduty-blueprint
 
 ## Verify
 
-Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at <https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access>. Please replace `<your cluster name>`, `<your region>`, and `<your cluster role arn>` with the values from the CDK output message.
+Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found [here](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access). Please replace `<your cluster name>`, `<your region>`, and `<your cluster role arn>` with the values from the CDK output message.
 
 ```bash
 aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn <your cluster role arn>
