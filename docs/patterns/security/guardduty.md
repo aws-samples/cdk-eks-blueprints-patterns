@@ -20,7 +20,7 @@ The pattern consists of two components:
 
 The list of optional features is adjustable via the `features` parameter in the [GuardDutySetupStack](../../../lib/security/guardduty-construct/guardduty-setup.ts) stack.
 
-## GitOps confguration
+## GitOps configuration
 
 For GitOps, the blueprint bootstraps the ArgoCD addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
 
@@ -37,7 +37,7 @@ The sample repository contains the following workloads:
 
 ## Deploy
 
-Updating npm:
+To update npm, run the following command:
 
 ```bash
 npm install -g npm@latest
@@ -47,14 +47,16 @@ To bootstrap the CDK toolkit and list all stacks in the app, run the following c
 
 ```bash
 cdk bootstrap
-cdk list
+make list
 ```
 
 ### Deploying the `GuardDutySetupStack` stack
 
-The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the optional features of your choice enabled. The stack also creates an SNS topic, SNS Subscription, and Amazon EventBridge Rule.
+The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the features of your choice enabled. For the purposes of the Security seciton of this workshop only the GuardDuty EKS Protection features are required.
 
-**You can't deploy this stack if you already have GuardDuty enabled in your account because only one GuardDuty detector can be enabled per region.** If you already have GuardDuty enabled, you can skip this step. Make sure that you have all the optional GuardDuty features you would like to use (e.g., EKS Audit Log Monitoring, EKS Runtime Monitoring) enabled if you manage the GuardDuty configuration manually or by any other means. Please refer to the [GuardDuty documentation](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-features-activation-model.html) for more information on features activation.
+![Amazon GuardDuty console](../images/2023-guardduty-2-configure.jpg)
+
+**Note:** You can only deploy this stack if you have not already enabled GuardDuty in the target account and region. If GuardDuty has been enabled already, do not attempt to deploy the stack as GuardDuty can only be enabled once per account and region. Instead, check that the [EKS Protection](https://docs.aws.amazon.com/guardduty/latest/ug/kubernetes-protection.html) features have been enabled either in the AWS GuardDuty console as shown in the image above, or using the AWS CLI, then proceed to **Deploying the blueprint workload** step.
 
 To deploy the stack, run the following command:
 
@@ -62,11 +64,11 @@ To deploy the stack, run the following command:
 make pattern guardduty deploy guardduty-setup
 ```
 
-### Deploying the blueprint
+### Deploying the blueprint workload
 
 The blueprint deploys a sample GitOps workload that triggers a GuardDuty finding.
 
-To deploy the bluepring, run the following command:
+To deploy the blueprint, run the following command:
 
 ```bash
 make pattern guardduty deploy guardduty-blueprint
