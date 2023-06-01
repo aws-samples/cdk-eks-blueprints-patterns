@@ -14,11 +14,28 @@ The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAU
 
 ## Deploy
 
-First, use the AWS Config setup blueprints pattern enable AWS Config in your account and region by running the following command.
+To update npm, run the following command:
+
+```bash
+npm install -g npm@latest
+```
+
+To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
+
+```bash
+cdk bootstrap
+make list
+```
+
+### Deploy AWS Config
+
+Use the AWS Config setup blueprints pattern enable AWS Config in your account and region by running the following command.
 
 ```bash
 make pattern eks-config-rules deploy eks-config-setup
 ```
+
+### Deploy Config Rules for EKS Security Best Practices
 
 Now enable the AWS Config managed rules for EKS security best practices by running the following command.
 
@@ -26,7 +43,9 @@ Now enable the AWS Config managed rules for EKS security best practices by runni
 make pattern eks-config-rules deploy eks-config-rules-setup
 ```
 
-## Verify the status of the AWS Config managed rules for EKS security best practices
+## Verify
+
+### Verify the status of the AWS Config managed rules for EKS security best practices
 
 Using the following AWS CLI command, get a list Config rules with their evaluation status.
 

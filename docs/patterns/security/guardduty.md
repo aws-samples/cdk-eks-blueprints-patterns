@@ -37,7 +37,7 @@ The sample repository contains the following workloads:
 
 ## Deploy
 
-Updating npm:
+To update npm, run the following command:
 
 ```bash
 npm install -g npm@latest

@@ -43,6 +43,19 @@ The sample repository contains the following workloads:
 
 ## Deploy
 
+To update npm, run the following command:
+
+```bash
+npm install -g npm@latest
+```
+
+To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
+
+```bash
+cdk bootstrap
+make list
+```
+
 ### Deploying the `ImageScanningSetupStack` stack
 
 The `ImageScanningSetupStack` configures the Amazon ECR image scanning and the ECR automated re-scan duration in Inspector.

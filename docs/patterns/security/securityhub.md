@@ -15,7 +15,22 @@ The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAU
 
 **Optional (but recommended):**  If you have not done so already, follow the steps to deploy the [GuardDuty stack and blueprint](guardduty.md). Since GuardDuty automatically sends its findings to Security Hub, the sample EKS finding will appear in Security Hub about five minutes after it has been enabled in the same region.
 
-## Deploy AWS Security Hub
+## Deploy
+
+To update npm, run the following command:
+
+```bash
+npm install -g npm@latest
+```
+
+To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
+
+```bash
+cdk bootstrap
+make list
+```
+
+### Deploy AWS Security Hub
 
 To enable Security Hub in the account and region deploy the stack, run the following command.
 

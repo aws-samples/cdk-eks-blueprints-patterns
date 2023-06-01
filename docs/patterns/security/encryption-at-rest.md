@@ -25,6 +25,19 @@ The sample repository contains the following workloads:
 
 ## Deploy
 
+To update npm, run the following command:
+
+```bash
+npm install -g npm@latest
+```
+
+To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
+
+```bash
+cdk bootstrap
+make list
+```
+
 To deploy the pattern, run the following command:
 
 ```bash
