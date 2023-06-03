@@ -18,8 +18,6 @@ export class KonveyorConstruct extends Construct {
     const subdomain = props.konveyorLabel+"."+props.parentDomain;
 
     const addOns: Array<blueprints.ClusterAddOn> = [
-      new blueprints.CalicoOperatorAddOn(),
-      new blueprints.ClusterAutoScalerAddOn(),
       new blueprints.AwsLoadBalancerControllerAddOn(),
       new blueprints.VpcCniAddOn(),
       new blueprints.CoreDnsAddOn(),
