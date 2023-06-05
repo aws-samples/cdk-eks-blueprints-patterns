@@ -5,15 +5,15 @@ import { InstanaOperatorAddon } from "@instana/aws-eks-blueprint-addon";
 
 export const instanaProps = {
   zone: {
-    name: "eks-stack1", // Mandatory Parameter
+    name: "<INSTANA_ZONE_NAME>", // Mandatory Parameter
   },
   cluster: {
-    name: "eks-stack1", // Mandatory Parameter
+    name: "<AMAZON_EKS_CLUSTER_NAME>", // Mandatory Parameter
   },
   agent: {
-    key: "uBp4GXpZQpKrHxMXNcvInQ", // Mandatory Parameter
-    endpointHost: "ingress-red-saas.instana.io", // Mandatory Parameter
-    endpointPort: "443", // Mandatory Parameter
+    key: "<INSTANA_AGENT_KEY>", // Mandatory Parameter
+    endpointHost: "<INSTANA_ENDPOINT_HOST_URL>", // Mandatory Parameter
+    endpointPort: "<INSTANA_ENDPOINT_HOST_PORT>", // Mandatory Parameter
     env: {
       INSTANA_AGENT_TAGS: "staging",
     },
