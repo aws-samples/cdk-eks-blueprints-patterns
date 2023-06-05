@@ -86,8 +86,8 @@ You can find the team-geordie configuration for this pattern in the workload rep
 11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```bash
-npm run build
-npx cdk deploy multi-account-central-pipeline
+make build
+make pattern pipeline-multienv-monitoring deploy multi-account-central-pipeline
 ```
 
 12. Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments. 

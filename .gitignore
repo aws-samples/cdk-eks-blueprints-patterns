@@ -12,8 +12,14 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+cdk.json
 dist
 *.swp
 cdk.context.json
 package-lock.json
 yarn.lock
+
+# mkdocs artifact
+site
+# macOS extraneous file
+.DS_STORE

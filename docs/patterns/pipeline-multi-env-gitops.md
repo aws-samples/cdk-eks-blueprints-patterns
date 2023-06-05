@@ -66,7 +66,7 @@ You can find the App of Apps configuration for this pattern in the workload repo
 Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```bash
-npx cdk deploy eks-blueprint-pipeline-stack
+make pattern pipeline-multienv-gitops deploy eks-blueprint-pipeline-stack
 ```
 
 Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments.
