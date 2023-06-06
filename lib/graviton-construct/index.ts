@@ -10,7 +10,7 @@ export default class GravitonConstruct {
 
     const mngProps = {
       version: eks.KubernetesVersion.V1_25,
-      instanceTypes: [new ec2.InstanceType("t4g.large")],
+      instanceTypes: [new ec2.InstanceType("m7g.large")],
       amiType: eks.NodegroupAmiType.AL2_ARM_64,
     };
 
