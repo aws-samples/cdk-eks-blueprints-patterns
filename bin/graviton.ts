@@ -3,4 +3,4 @@ import GravitonConstruct from "../lib/graviton-construct";
 
 const app = configureApp();
 
-new GravitonConstruct().build(app, "graviton-construct");
+new GravitonConstruct().build(app, "graviton");
