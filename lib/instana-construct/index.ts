@@ -3,28 +3,25 @@ import { loadYaml } from "@aws-quickstart/eks-blueprints/dist/utils";
 import * as cdk from "aws-cdk-lib";
 import { InstanaOperatorAddon } from "@instana/aws-eks-blueprint-addon";
 
-export const instanaProps = {
+const instanaProps = {
   zone: {
-    name: "<INSTANA_ZONE_NAME>", // Mandatory Parameter
+    name: process.env.INSTANA_ZONE_NAME, // Mandatory Parameter
   },
   cluster: {
-    name: "<AMAZON_EKS_CLUSTER_NAME>", // Mandatory Parameter
+    name: process.env.AMAZON_EKS_CLUSTER_NAME, // Mandatory Parameter
   },
   agent: {
-    key: "<INSTANA_AGENT_KEY>", // Mandatory Parameter
-    endpointHost: "<INSTANA_ENDPOINT_HOST_URL>", // Mandatory Parameter
-    endpointPort: "<INSTANA_ENDPOINT_HOST_PORT>", // Mandatory Parameter
+    key: process.env.INSTANA_AGENT_KEY,// Mandatory Parameter
+    endpointHost: process.env.INSTANA_ENDPOINT_HOST_URL,// Mandatory Parameter
+    endpointPort: process.env.INSTANA_ENDPOINT_HOST_PORT, // Mandatory Parameter
     env: {
-      INSTANA_AGENT_TAGS: "staging",
     },
   },
 };
-
 const yamlObject = loadYaml(JSON.stringify(instanaProps));
-
 export default class InstanaConstruct {
   async buildAsync(scope: cdk.App) {
-    const stackID = instanaProps.cluster.name;
+    const stackID = yamlObject.cluster.name!;
 
     const addOns: Array<blueprints.ClusterAddOn> = [
       new InstanaOperatorAddon(yamlObject),
