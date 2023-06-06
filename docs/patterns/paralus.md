@@ -57,7 +57,7 @@ make pattern paralus deploy
 
 Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access
 ```sh
-aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn arn:aws:iam::378123694894:role/paralus-blueprint-paralusblueprintMastersRoleF3287-EI3XEBO1107B
+aws eks update-kubeconfig --name <your cluster name> --region <your region> --role-arn arn:aws:iam::1234567890121:role/paralus-blueprint-paralusblueprintMastersRoleF3287-EI3XEBO1107B
 ```
 
 Let’s verify the resources created by Steps above.
