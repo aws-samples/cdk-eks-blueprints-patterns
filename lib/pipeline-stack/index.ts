@@ -42,12 +42,13 @@ export default class PipelineConstruct {
             );
 
         blueprints.CodePipelineStack.builder()
+            .application("npx ts-node bin/pipeline.ts")
             .name("blueprints-eks-pipeline")
             .owner("aws-samples")
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
-                targetRevision: 'main'
+                targetRevision: 'bug/pipelines'
             })
             .stage({
                 id: 'us-west-1-sandbox',

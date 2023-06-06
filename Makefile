@@ -5,7 +5,7 @@ TSC := node node_modules/.bin/tsc
 ESLINT := node node_modules/.bin/eslint
 CDK := node node_modules/.bin/cdk
 pattern: pattern_name := $(firstword $(filter-out pattern, $(MAKECMDGOALS)))
-pattern: pattern_command := $(filter-out pattern $(pattern_name), $(MAKECMDGOALS))
+pattern: pattern_command := $(subst pattern $(pattern_name), , $(MAKECMDGOALS))
 
 pattern_files := $(notdir $(wildcard bin/*.ts))
 formatted_pattern_names := $(patsubst %.ts,%,$(pattern_files))
