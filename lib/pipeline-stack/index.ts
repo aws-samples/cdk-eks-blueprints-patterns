@@ -42,7 +42,7 @@ export default class PipelineConstruct {
             );
 
         blueprints.CodePipelineStack.builder()
-            .application("npx ts-node bin/pipeline.ts")
+           // .application("npx ts-node bin/pipeline.ts")
             .name("blueprints-eks-pipeline")
             .owner("aws-samples")
             .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
