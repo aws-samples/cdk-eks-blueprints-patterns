@@ -11,7 +11,7 @@ const backstageConstructProps = {
     backstageImageRepository: "e.g.: backstage",
     backstageImageTag: "e.g.: latest",
     parentDomain: "e.g.: example.com",
-    backstageLabel: "e.g.: backstage",
+    backstageLabel: "backstage",
     hostedZoneId: "Hosted zone ID (format: 20x chars/numbers)",
     certificateResourceName: "e.g.: backstage-certificate",
     databaseResourceName: "e.g.: backstage-database",
