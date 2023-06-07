@@ -4,21 +4,21 @@ import { configureApp } from '../lib/common/construct-utils';
 const app = configureApp();
 
 const backstageConstructProps = {
-    account: '...',
-    region: '...',
-    namespace: "backstage",
-    backstageImageRegistry:  "e.g.: {account}.dkr.ecr.{region}.amazonaws.com",
-    backstageImageRepository: "e.g.: backstage",
-    backstageImageTag: "e.g.: latest",
-    parentDomain: "e.g.: example.com",
-    backstageLabel: "backstage",
-    hostedZoneId: "Hosted zone ID (format: 20x chars/numbers)",
-    certificateResourceName: "e.g.: backstage-certificate",
-    databaseResourceName: "e.g.: backstage-database",
-    databaseInstancePort: 5432,
-    databaseSecretResourceName: "e.g.: backstage-database-credentials",
-    username: "e.g.: postgres",
-    databaseSecretTargetName: "e.g.: backstage-database-secret",
+    account: process.env.CDK_DEFAULT_ACCOUNT!, // replace with your account
+    region: process.env.CDK_DEFAULT_REGION!, // replace with your region
+    namespace: "backstage", // replace if you want, not needed
+    backstageImageRegistry:  "youraccount.dkr.ecr.yourregion.amazonaws.com", // replace with your registry
+    backstageImageRepository: "e.g.: backstage", // replace with your repository
+    backstageImageTag: "latest", // replace with your tag
+    parentDomain: "example.com", // replace with your parent domain
+    backstageLabel: "backstage", // replace if you want, not needed
+    hostedZoneId: "1234", // Hosted zone ID (format: 20x chars/numbers)
+    certificateResourceName: "backstage-certificate", // replace if you want, not needed
+    databaseResourceName: "backstage-database", // replace if you want, not needed
+    databaseInstancePort: 5432, // replace if you want, not needed
+    databaseSecretResourceName: "backstage-database-credentials", // replace if you want, not needed
+    username: "postgres", // replace if you want, not needed
+    databaseSecretTargetName: "backstage-database-secret", // replace if you want, not needed
   } as BackstageConstructProps;
   
   new BackstageConstruct(app, 'backstage-stack', backstageConstructProps);
