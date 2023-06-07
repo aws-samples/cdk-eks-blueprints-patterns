@@ -45,6 +45,7 @@ export default class PipelineConstruct {
             .application("npx ts-node bin/pipeline.ts")
             .name("blueprints-eks-pipeline")
             .owner("aws-samples")
+            .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
