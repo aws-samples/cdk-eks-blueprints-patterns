@@ -8,7 +8,11 @@
 
 Crete the [Backstage application](https://backstage.io/docs/getting-started/create-an-app).
 
-Build the corresponding [Docker image](https://backstage.io/docs/deployment/docker).
+Build the corresponding [Docker image](https://backstage.io/docs/deployment/docker). Note: consider the platform you are building on, and the target platform the image will run on, you might want to use the [--platform option](https://docs.docker.com/engine/reference/commandline/buildx_build/), e.g.:
+
+```
+docker buildx build ... --platform=...
+```
 
 (Optional) to show examples on the UI, add to Docker file:
 
