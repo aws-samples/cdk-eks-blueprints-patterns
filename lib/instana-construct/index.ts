@@ -19,19 +19,48 @@ const instanaProps = {
   },
 };
 const yamlObject = loadYaml(JSON.stringify(instanaProps));
+
 export default class InstanaConstruct {
   async buildAsync(scope: cdk.App) {
-    const stackID = yamlObject.cluster.name!;
+    try {
+      checkInstanaProps(instanaProps); // Call the function to check prop values
 
-    const addOns: Array<blueprints.ClusterAddOn> = [
-      new InstanaOperatorAddon(yamlObject),
-    ];
+      const stackID = yamlObject.cluster.name!;
 
-    blueprints.EksBlueprint.builder()
-      .account(process.env.CDK_DEFAULT_ACCOUNT!)
-      .region(process.env.CDK_DEFAULT_REGION!)
-      .addOns(...addOns)
-      .name(stackID)
-      .build(scope, stackID);
+      const addOns: Array<blueprints.ClusterAddOn> = [
+        new InstanaOperatorAddon(yamlObject),
+      ];
+
+      blueprints.EksBlueprint.builder()
+        .account(process.env.CDK_DEFAULT_ACCOUNT!)
+        .region(process.env.CDK_DEFAULT_REGION!)
+        .addOns(...addOns)
+        .name(stackID)
+        .build(scope, stackID);
+
+      console.log("Blueprint built successfully.");
+    } catch (error) {
+      console.error("Error:", error);
+      throw new Error(`environment variables must be setup for the instana-operator pattern to work`);
+    }
   }
+}
+
+function checkInstanaProps(instanaProps: any) {
+  function checkPropValue(propName: string, propValue: any) {
+    if (propValue === undefined || propValue === null || propValue === "") {
+      throw new Error(`Missing or empty value for property '${propName}'.`);
+    }
+  }
+
+  // Check zone
+  checkPropValue("zone.name", instanaProps.zone.name);
+
+  // Check cluster
+  checkPropValue("cluster.name", instanaProps.cluster.name);
+
+  // Check agent
+  checkPropValue("agent.key", instanaProps.agent.key);
+  checkPropValue("agent.endpointHost", instanaProps.agent.endpointHost);
+  checkPropValue("agent.endpointPort", instanaProps.agent.endpointPort);
 }
