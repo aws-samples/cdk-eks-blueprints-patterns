@@ -11,7 +11,7 @@ The pattern also leverages Kubecost to provide real-time cost visibility and ana
 
 ## Architecture
 
-![Kubecost Architecture](./images/secure-ingress-kubecost.png)
+![Kubecost Architecture](./images/secure-ingress-kubecost-new.png)
 
 
 ## Approach
@@ -26,7 +26,7 @@ This blueprint will include the following:
 * [External-DNS](https://github.com/kubernetes-sigs/external-dns) allows integration of exposed Kubernetes services and Ingresses with DNS providers
 * [Kubecost](https://kubecost.com/) provides real-time cost visibility and insights by uncovering patterns that create overspending on infrastructure to help teams prioritize where to focus optimization efforts
 * [Argo CD](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/) is a declarative, GitOps continuous delivery tool for Kubernetes. The Argo CD add-on provisions Argo CD into an EKS cluster, and bootstraping your workloads from public and private Git repositories.
-* Create the necessary Cognito resources like user pool, user pool client, domain etc.., and passed to the Argo CD app of apps pattern from which ingress resources can reference.
+* Create the necessary Cognito resources like user pool, user pool client, domain, [Pre sign-up Lambda trigger and Pre authentication Lambda triggers](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html)  etc.., and passed to the Argo CD app of apps pattern from which ingress resources can reference.
 
 ## GitOps confguration
 
@@ -59,7 +59,10 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
       }
 ```
 
-3. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts` 
+3. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts`. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
+   function does two things. First, it allows new User sign-up only if their Email domain matches with any of the Email Domains configured with `ALLOWED_DOMAINS` environment variable. 
+   Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `AUTO_APPROVED_DOMAINS` environment variable. 
+   The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only Whitelisted Email Ids configured with with `EMAIL_WHITE_LIST` environment variable. 
 
 ```
           environment: {
