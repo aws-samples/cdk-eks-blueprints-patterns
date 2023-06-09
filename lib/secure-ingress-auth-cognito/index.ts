@@ -7,6 +7,7 @@ import { Construct } from 'constructs';
 import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
 
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
@@ -25,6 +26,17 @@ class CognitoIdpStack extends cdk.Stack {
     
     constructor(scope: Construct, id: string, subDomain: string, props?: cdk.StackProps) {
         super(scope, id, props);
+
+        const authChallengeFn = new lambda.Function(this, 'authChallengeFn', {
+          runtime: lambda.Runtime.PYTHON_3_7,
+          code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
+          handler: 'lambda_function.lambda_handler',
+          environment: {
+            'ALLOWED_DOMAINS': 'emaildomain1.com,emaildomain2.com',
+            'AUTO_APPROVED_DOMAINS': 'emaildomain1.com',
+            'EMAIL_WHITE_LIST': 'my-email-1@emaildomain1.com,my-email-2@emaildomain2.com'
+          }
+        });
 
         // Cognito User Pool
         const userPool = new cognito.UserPool(this, 'CognitoIDPUserPool', {
@@ -47,8 +59,13 @@ class CognitoIdpStack extends cdk.Stack {
                     mutable: true,
                     required: true
                 }
-            }
+            },
+            lambdaTriggers: {
+              preSignUp: authChallengeFn,
+              preAuthentication: authChallengeFn,
+            },            
         });
+        
         
         // Output the User Pool ID
 
@@ -149,7 +166,9 @@ export class SecureIngressCognito extends cdk.Stack{
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
-                new KubecostAddOn(),
+                new KubecostAddOn({
+                    version: "1.104.0-rc.7",
+                }),                
                 new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers

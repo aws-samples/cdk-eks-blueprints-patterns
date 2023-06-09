@@ -59,7 +59,17 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
       }
 ```
 
-3. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+3. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts` 
+
+```
+          environment: {
+            'ALLOWED_DOMAINS': 'emaildomain1.com,emaildomain2.com',
+            'AUTO_APPROVED_DOMAINS': 'emaildomain1.com',
+            'EMAIL_WHITE_LIST': 'my-email-1@emaildomain1.com,my-email-2@emaildomain2.com'
+          }
+```
+
+4. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```
 make build
