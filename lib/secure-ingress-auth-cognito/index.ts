@@ -166,9 +166,7 @@ export class SecureIngressCognito extends cdk.Stack{
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
-                new KubecostAddOn({
-                    version: "1.104.0-rc.7",
-                }),                
+                new KubecostAddOn(),
                 new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.ExternalDnsAddOn({
                     hostedZoneResources: [GlobalResources.HostedZone] // you can add more if you register resource providers
