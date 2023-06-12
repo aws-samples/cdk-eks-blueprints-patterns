@@ -36,8 +36,7 @@
     "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
     "aws-cdk": "2.81.0",
     "eks-blueprints-cdk-kubeflow-ext": "0.1.9",
-    "source-map-support": "^0.5.21",
-    "@instana/aws-eks-blueprint-addon": "^1.0.2"
+    "source-map-support": "^0.5.21"
   },
   "overrides": {
     "@aws-quickstart/eks-blueprints": "^1.8.1",
