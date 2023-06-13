@@ -35,11 +35,26 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 
 ## Prerequisites
 
-1. The parent domain must exist.
+1. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
 
-## Deploying
+## Deploy
 
-1. argo-admin-password secret must be defined as plain text (not key/value) in `us-west-2`  region.
+1. Let’s start by setting a few environment variables. Change the Region as needed.
+
+```
+ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+AWS_REGION=us-west-2
+```
+
+2. Clone the repository and install dependency packages. This repository contains CDK v2 code written in TypeScript.
+
+```
+git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
+cd cdk-eks-blueprints-patterns
+npm i
+```
+
+3. argo-admin-password secret must be defined as plain text (not key/value) in `us-west-2`  region.
 
 ```
 aws secretsmanager create-secret --name argo-admin-secret \
@@ -47,19 +62,18 @@ aws secretsmanager create-secret --name argo-admin-secret \
     --secret-string "password123$" \
     --region "us-west-2"
 ```
-2. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
+4. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
 
 Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
 
 ```
- 
     "context": {
         "parent.hostedzone.name": "mycompany.a2z.com",
         "dev.subzone.name": "dev.mycompany.a2z.com"
       }
 ```
 
-3. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts`. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
+5. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts`. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
    function does two things. First, it allows new User sign-up only if their Email domain matches with any of the Email Domains configured with `ALLOWED_DOMAINS` environment variable. 
    Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `AUTO_APPROVED_DOMAINS` environment variable. 
    The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only Whitelisted Email Ids configured with with `EMAIL_WHITE_LIST` environment variable. 
@@ -72,13 +86,18 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
           }
 ```
 
-4. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+6. Execute the commands below to bootstrap the AWS environment in `us-west-2`
+
+```
+cdk bootstrap aws://$ACCOUNT_ID/$AWS_REGION
+```
+
+7. Run the following command from the root of this repository to deploy the pipeline stack:
 
 ```
 make build
 make pattern secure-ingress-cognito deploy secure-ingress-blueprint
 ```
-
 
 ## Cluster Access
 
