@@ -20,6 +20,9 @@ deps: bootstrap
 lint: 
 	$(ESLINT) . --ext .js,.jsx,.ts,.tsx
 
+lint-fix: 
+	$(ESLINT) . --ext .js,.jsx,.ts,.tsx --fix
+
 build:
 	rm -rf dist && $(TSC) --skipLibCheck
 

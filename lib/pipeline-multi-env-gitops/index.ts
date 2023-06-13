@@ -137,6 +137,7 @@ export default class PipelineMultiEnvGitops {
             const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
             blueprints.CodePipelineStack.builder()
+                .application("npx ts-node bin/pipeline-multienv-gitops.ts")
                 .name("eks-blueprint-pipeline")
                 .owner(gitOwner)
                 .repository({
