@@ -12,7 +12,7 @@ export interface DatabaseInstanceProviderProps {
     /**
      * Port to be used by the database
      */
-    databaseInstancePort: number
+    databaseInstancePort: number,
 
     /**
      * The name of the Secret registered as a resource
@@ -21,7 +21,7 @@ export interface DatabaseInstanceProviderProps {
 }
 
 export class DatabaseInstanceProvider implements ResourceProvider<rds.IDatabaseInstance> {
-    readonly props: DatabaseInstanceProviderProps
+    readonly props: DatabaseInstanceProviderProps;
 
     constructor(props: DatabaseInstanceProviderProps) {
         this.props = props;

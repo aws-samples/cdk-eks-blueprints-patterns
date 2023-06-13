@@ -8,12 +8,12 @@ export interface BackstageSecretAddOnProps {
     /**
     * Backstage Namespace
     */
-    namespace: string
+    namespace: string,
 
     /**
      * The name of the Secret
      */
-    databaseSecretTargetName: string
+    databaseSecretTargetName: string,
 
     /**
      * The name of the Secret from the Resource Provider
@@ -22,7 +22,7 @@ export interface BackstageSecretAddOnProps {
 }
 
 export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
-    readonly props: BackstageSecretAddOnProps
+    readonly props: BackstageSecretAddOnProps;
 
     constructor(props: BackstageSecretAddOnProps) {
         this.props = props;

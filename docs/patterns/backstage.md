@@ -6,7 +6,7 @@
 
 ## Setup
 
-Crete the [Backstage application](https://backstage.io/docs/getting-started/create-an-app).
+Create the [Backstage application](https://backstage.io/docs/getting-started/create-an-app).
 
 Build the corresponding [Docker image](https://backstage.io/docs/deployment/docker). Note: consider the platform you are building on, and the target platform the image will run on, you might want to use the [--platform option](https://docs.docker.com/engine/reference/commandline/buildx_build/), e.g.:
 
@@ -49,4 +49,4 @@ Fill in the following parameters in the _main.ts_ file
 
 ## Deployment
 
-Follow the deployment instructions detailed in the main README file of this repository, using _{backstageLabel}-blueprint_ as the name of the pattern.
+Follow the deployment instructions detailed in the main README file of this repository, using _backstage_ as the name of the pattern.

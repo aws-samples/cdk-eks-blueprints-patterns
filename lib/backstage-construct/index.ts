@@ -20,7 +20,7 @@ export interface BackstageConstructProps extends cdk.StackProps {
   databaseInstancePort: number,
   databaseSecretResourceName: string,
   username: string,
-  databaseSecretTargetName: string,
+  databaseSecretTargetName: string
 }
 
 export class BackstageConstruct extends Construct {
@@ -71,7 +71,7 @@ export class BackstageConstruct extends Construct {
       new blueprints.BackstageAddOn(backstageAddOnProps)
     ];
 
-    const blueprint = blueprints.EksBlueprint.builder()
+    blueprints.EksBlueprint.builder()
     .account(props.account)
     .region(props.region)
     .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider())

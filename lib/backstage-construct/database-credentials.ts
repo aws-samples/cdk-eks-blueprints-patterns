@@ -9,15 +9,13 @@ export interface DatabaseInstanceCredentialsProviderProps {
 }
 
 export class DatabaseInstanceCredentialsProvider implements ResourceProvider<ISecret> {
-    readonly props: DatabaseInstanceCredentialsProviderProps
+    readonly props: DatabaseInstanceCredentialsProviderProps;
 
     constructor(props: DatabaseInstanceCredentialsProviderProps) {
         this.props = props;
     }
 
     provide(context: ResourceContext): ISecret {
-        const id = context.scope.node.id;
-
         return new Secret(context.scope, "database-secret", {
             generateSecretString: {
               secretStringTemplate: JSON.stringify({
