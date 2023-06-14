@@ -49,7 +49,7 @@ export default class PipelineConstruct {
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
-                targetRevision: 'bug/pipelines'
+                targetRevision: 'main'
             })
             .stage({
                 id: 'us-west-1-sandbox',
