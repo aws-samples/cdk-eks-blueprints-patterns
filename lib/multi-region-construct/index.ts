@@ -48,7 +48,7 @@ export default class MultiRegionConstruct {
                 new blueprints.VpcCniAddOn,
                 new blueprints.KarpenterAddOn,
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.SecretsStoreAddOn )
             .teams( new team.TeamPlatform(accountID),
                 new team.TeamTroiSetup,

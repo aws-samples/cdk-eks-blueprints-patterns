@@ -122,7 +122,7 @@ export default class PipelineMultiEnvGitops {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
             );
 
         // Argo configuration per environment

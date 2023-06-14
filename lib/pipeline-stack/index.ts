@@ -34,7 +34,7 @@ export default class PipelineConstruct {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.SecretsStoreAddOn)
             .teams(
                 new team.TeamRikerSetup(scope, teamManifestDirList[1]),

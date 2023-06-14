@@ -15,7 +15,13 @@ export class TeamRikerSetup extends ApplicationTeam {
         super({
             name: "riker",
             users: getUserArns(scope, "team-riker.users"),
-            teamManifestDir: teamManifestDir
+            teamManifestDir: teamManifestDir,
+            namespaceHardLimits: {
+                'requests.cpu': '0.5', 
+                'requests.memory': '1Gi',
+                'limits.cpu': '1',
+                'limits.memory': '2Gi'
+            }
         });
     }
 }
