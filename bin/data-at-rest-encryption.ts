@@ -7,6 +7,6 @@ import { configureApp, errorHandler } from '../lib/common/construct-utils';
 //--------------------------------------------------------------------------
 
 const app = configureApp();
-new EncryptionAtRestConstruct().buildAsync(app, "data-at-rest-encryption").catch(() => {
-    errorHandler(app, "EncryptionAtRestConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+new EncryptionAtRestConstruct().buildAsync(app, "data-at-rest-encryption").catch((e) => {
+    errorHandler(app, "EncryptionAtRestConstruct is not setup due to missing secrets for ArgoCD admin pwd", e);
 });
