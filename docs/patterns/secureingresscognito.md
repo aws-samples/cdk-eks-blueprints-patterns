@@ -73,17 +73,15 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
       }
 ```
 
-5. Replace below Email id and Email Domains with actual values in the file `./lib/secure-ingress-auth-cognito/index.ts`. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
-   function does two things. First, it allows new User sign-up only if their Email domain matches with any of the Email Domains configured with `ALLOWED_DOMAINS` environment variable. 
-   Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `AUTO_APPROVED_DOMAINS` environment variable. 
-   The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only Whitelisted Email Ids configured with with `EMAIL_WHITE_LIST` environment variable. 
+5. Create below Parameters with correct Email Ids and Email Domains in the AWS System Manager Parameter Store. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
+   function does two things. First, it allows new User sign-up only if their Email domain matches with any of the Email Domains configured with `/secure-ingress-auth-cognito/ALLOWED_DOMAINS` Parameter. 
+   Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS` Parameter. 
+   The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only Whitelisted Email Ids configured with with `/secure-ingress-auth-cognito/EMAIL_WHITE_LIST` Parameter. 
 
-```
-          environment: {
-            'ALLOWED_DOMAINS': 'emaildomain1.com,emaildomain2.com',
-            'AUTO_APPROVED_DOMAINS': 'emaildomain1.com',
-            'EMAIL_WHITE_LIST': 'my-email-1@emaildomain1.com,my-email-2@emaildomain2.com'
-          }
+```         Parameter Name                                       Value
+    '/secure-ingress-auth-cognito/ALLOWED_DOMAINS': 'emaildomain1.com,emaildomain2.com',
+    '/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS': 'emaildomain1.com',
+    '/secure-ingress-auth-cognito/EMAIL_WHITE_LIST': 'my-email-1@emaildomain1.com,my-email-2@emaildomain2.com'
 ```
 
 6. Execute the commands below to bootstrap the AWS environment in `us-west-2`

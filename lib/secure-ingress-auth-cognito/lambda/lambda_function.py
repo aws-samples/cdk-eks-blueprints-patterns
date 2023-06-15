@@ -1,12 +1,27 @@
 import json
 import os
+import boto3
 
 def lambda_handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
     
-    allowed_domains_list = os.environ['ALLOWED_DOMAINS'].split(",")
-    auto_approved_domains_list = os.environ['AUTO_APPROVED_DOMAINS'].split(",")
-    email_white_list = os.environ['EMAIL_WHITE_LIST'].split(",")    
+    ssmclient = boto3.client('ssm')
+    
+    try:    
+        paramName = '/secure-ingress-auth-cognito/ALLOWED_DOMAINS'
+        resp = ssmclient.get_parameter(Name=paramName)
+        allowed_domains_list = resp['Parameter']['Value']
+        
+        paramName = '/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS'
+        resp = ssmclient.get_parameter(Name=paramName)
+        auto_approved_domains_list = resp['Parameter']['Value']
+        
+        paramName = '/secure-ingress-auth-cognito/EMAIL_WHITE_LIST'
+        resp = ssmclient.get_parameter(Name=paramName)
+        email_white_list = resp['Parameter']['Value']                
+
+    except Exception as e:
+        print("Error in reading the SSM Parameter Store : {}".format(str(e)))   
         
     triggerSource = event['triggerSource']
     
