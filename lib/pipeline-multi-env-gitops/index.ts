@@ -122,7 +122,7 @@ export default class PipelineMultiEnvGitops {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
             );
 
         // Argo configuration per environment
@@ -137,6 +137,7 @@ export default class PipelineMultiEnvGitops {
             const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
             blueprints.CodePipelineStack.builder()
+                .application("npx ts-node bin/pipeline-multienv-gitops.ts")
                 .name("eks-blueprint-pipeline")
                 .owner(gitOwner)
                 .repository({

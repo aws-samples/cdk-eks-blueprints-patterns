@@ -60,7 +60,7 @@ export default class GenericClusterConstruct {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.SecretsStoreAddOn
             )
             .teams(platformTeam)

@@ -34,7 +34,7 @@ export default class PipelineConstruct {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.SecretsStoreAddOn)
             .teams(
                 new team.TeamRikerSetup(scope, teamManifestDirList[1]),
@@ -42,8 +42,10 @@ export default class PipelineConstruct {
             );
 
         blueprints.CodePipelineStack.builder()
+            .application("npx ts-node bin/pipeline.ts")
             .name("blueprints-eks-pipeline")
             .owner("aws-samples")
+            .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
             .repository({
                 repoUrl: 'cdk-eks-blueprints-patterns',
                 credentialsSecretName: 'github-token',
