@@ -140,10 +140,11 @@ export default class PipelineMultiEnvGitops {
                 .application("npx ts-node bin/pipeline-multienv-gitops.ts")
                 .name("eks-blueprint-pipeline")
                 .owner(gitOwner)
+                .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
-                    targetRevision: 'main',
+                    targetRevision: 'enhancement/pipeline-multienv-gitops',
                 })
                 .wave({
                     id: "dev-test",
