@@ -15,6 +15,6 @@ module.exports = {
         "@typescript-eslint/no-unused-vars": [1, {"argsIgnorePattern": "^_"}],
         indent: ['error', 4],
         "prefer-const": "off",
-        "semi": [1,"always"],
+        "semi": ['error',"always"],
     },
 };

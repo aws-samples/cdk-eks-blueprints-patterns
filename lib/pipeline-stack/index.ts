@@ -92,4 +92,4 @@ export default class PipelineConstruct {
             * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
         }
     }
- }
+}

@@ -78,7 +78,7 @@ export default class NginxIngressConstruct {
                 new blueprints.CloudWatchAdotAddOn)
             .build(scope, `${id}-blueprint`);
 
-            blueprints.HelmAddOn.validateHelmVersions = false;
+        blueprints.HelmAddOn.validateHelmVersions = false;
     }
 }
 
