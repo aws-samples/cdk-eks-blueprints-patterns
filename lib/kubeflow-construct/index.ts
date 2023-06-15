@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { KubeflowAddOn } from 'eks-blueprints-cdk-kubeflow-ext';
 import * as amp from 'aws-cdk-lib/aws-aps';
 

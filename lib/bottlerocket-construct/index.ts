@@ -1,7 +1,7 @@
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
-import * as team from '../teams'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
+import * as team from '../teams';
 
 /**
  * Bottlerocket pattern shows how to specify the OS for the node group

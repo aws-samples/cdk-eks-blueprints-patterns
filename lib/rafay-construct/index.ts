@@ -16,7 +16,7 @@ export default class RafayConstruct {
             passwordSecret: "rafay-password-secret", // replace with a secret name in secrets manager that you have created
             clusterName: "eks-cluster-1", // replace with the name that you want the cluster to be created in Rafay Console
             blueprintName: "minimal"
-        } as rafayAddOn.RafayConfig
+        } as rafayAddOn.RafayConfig;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new rafayAddOn.RafayClusterAddOn(rafayConfig)

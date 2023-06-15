@@ -5,9 +5,9 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 // Team implementations
 import * as team from '../teams';
 
-const burnhamManifestDir = './lib/teams/team-burnham/'
-const rikerManifestDir = './lib/teams/team-riker/'
-const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
+const burnhamManifestDir = './lib/teams/team-burnham/';
+const rikerManifestDir = './lib/teams/team-riker/';
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir];
 
 
 export default class PipelineConstruct {

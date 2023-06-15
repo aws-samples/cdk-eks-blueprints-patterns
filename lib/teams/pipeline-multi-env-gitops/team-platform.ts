@@ -8,6 +8,6 @@ export class CorePlatformTeam extends PlatformTeam {
             users: [
                 new ArnPrincipal(`arn:aws:iam::${accountID}:user/platform-user`),
             ],
-        })
+        });
     }
 }

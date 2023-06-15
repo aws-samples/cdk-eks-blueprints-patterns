@@ -1,6 +1,6 @@
 
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import { KubernetesVersion, NodegroupAmiType } from 'aws-cdk-lib/aws-eks';
 import * as eks from "aws-cdk-lib/aws-eks";
@@ -20,7 +20,7 @@ export default class CustomNetworkingIPv4Construct {
         };
 
 
-        const clusterProvider = new blueprints.MngClusterProvider(mngProps)
+        const clusterProvider = new blueprints.MngClusterProvider(mngProps);
 
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
