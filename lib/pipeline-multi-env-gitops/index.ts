@@ -144,7 +144,7 @@ export default class PipelineMultiEnvGitops {
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
-                    targetRevision: 'enhancement/pipeline-multienv-gitops',
+                    targetRevision: 'main',
                 })
                 .wave({
                     id: "dev-test",
