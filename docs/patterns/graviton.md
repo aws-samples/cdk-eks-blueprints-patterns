@@ -1,6 +1,6 @@
 # Graviton on EKS
 
-AWS Graviton processors are designed by AWS to deliver the best price performance for your cloud workloads running in Amazon EC2.
+AWS Graviton processors are designed by AWS to deliver the best price performance for your cloud workloads running in Amazon EC2. These processors are ARM chips running on aarch64 architecture.
 
 AWS Graviton processors are supported by many Linux operating systems including Amazon Linux 2, Red Hat Enterprise Linux, SUSE, and Ubuntu. Many popular applications and services for security, monitoring and management, containers, and continuous integration and delivery (CI/CD) from AWS and software partners also support AWS Graviton-based instances.
 
@@ -19,6 +19,9 @@ For a blueprint pattern, the General Purpose and Compute Optimized categories ma
 This pattern deploys the following resources:
 
 - Creates EKS Cluster Control plane with a managed node group running on an M family Graviton3 processor
+
+### Addons
+Not all of the listed EKS addons support the Graviton processors. To find a list of supported addons, visit the [documentation](https://github.com/aws-quickstart/cdk-eks-blueprints/blob/main/docs/addons/index.md).
 
 ## Prerequisites
 
