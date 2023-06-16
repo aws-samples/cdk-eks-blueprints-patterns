@@ -78,10 +78,34 @@ Example settings: Update the context in `cdk.json` file located in `cdk-eks-blue
    Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS` Parameter. 
    The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only Whitelisted Email Ids configured with with `/secure-ingress-auth-cognito/EMAIL_WHITE_LIST` Parameter. 
 
-```         Parameter Name                                       Value
-    '/secure-ingress-auth-cognito/ALLOWED_DOMAINS': 'emaildomain1.com,emaildomain2.com',
-    '/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS': 'emaildomain1.com',
-    '/secure-ingress-auth-cognito/EMAIL_WHITE_LIST': 'my-email-1@emaildomain1.com,my-email-2@emaildomain2.com'
+```        
+    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/ALLOWED_DOMAINS"
+    export SSM_PARAMETER_VALUE="emaildomain1.com,emaildomain2.com"
+    
+    aws ssm put-parameter \
+      --name "$SSM_PARAMETER_KEY" \
+      --value "$SSM_PARAMETER_VALUE" \
+      --type "String" \
+      --region $AWS_REGION
+    
+    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS"
+    export SSM_PARAMETER_VALUE="emaildomain1.com"
+    
+    aws ssm put-parameter \
+      --name "$SSM_PARAMETER_KEY" \
+      --value "$SSM_PARAMETER_VALUE" \
+      --type "String" \
+      --region $AWS_REGION
+      
+    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/EMAIL_WHITE_LIST"
+    export SSM_PARAMETER_VALUE="my-email-1@emaildomain1.com,my-email-2@emaildomain2.com"
+    
+    aws ssm put-parameter \
+      --name "$SSM_PARAMETER_KEY" \
+      --value "$SSM_PARAMETER_VALUE" \
+      --type "String" \
+      --region $AWS_REGION  
+  
 ```
 
 6. Execute the commands below to bootstrap the AWS environment in `us-west-2`
