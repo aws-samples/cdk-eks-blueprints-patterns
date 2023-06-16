@@ -29,17 +29,17 @@ class CognitoIdpStack extends cdk.Stack {
         super(scope, id, props);
 
         const lambdaExecutionRole = new iam.Role(this, 'Lambda Execution Role', {
-          assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
         });
 
         lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
         lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));     
         
         const authChallengeFn = new lambda.Function(this, 'authChallengeFn', {
-          runtime: lambda.Runtime.PYTHON_3_7,
-          code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
-          handler: 'lambda_function.lambda_handler',
-          role: lambdaExecutionRole,
+            runtime: lambda.Runtime.PYTHON_3_7,
+            code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
+            handler: 'lambda_function.lambda_handler',
+            role: lambdaExecutionRole,
         });
 
 
@@ -66,8 +66,8 @@ class CognitoIdpStack extends cdk.Stack {
                 }
             },
             lambdaTriggers: {
-              preSignUp: authChallengeFn,
-              preAuthentication: authChallengeFn,
+                preSignUp: authChallengeFn,
+                preAuthentication: authChallengeFn,
             },            
         });
         
