@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { KubeflowAddOn } from 'eks-blueprints-cdk-kubeflow-ext';
 import * as amp from 'aws-cdk-lib/aws-aps';
 
@@ -16,7 +16,7 @@ export default class KubeflowConstruct {
             .region(process.env.CDK_DEFAULT_REGION)
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns( new blueprints.MetricsServerAddOn(),
-            new blueprints.AwsLoadBalancerControllerAddOn(),
+                new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.VpcCniAddOn(),
                 new blueprints.CoreDnsAddOn(),
@@ -30,8 +30,8 @@ export default class KubeflowConstruct {
                     ampPrometheusEndpoint: ampPrometheusEndpoint,
                 }),
                 new KubeflowAddOn({
-                     namespace: 'kubeflow-pipelines'
-                 })
+                    namespace: 'kubeflow-pipelines'
+                })
             )
             .teams()// add teams here)
             .build(scope, stackId);

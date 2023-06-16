@@ -25,7 +25,7 @@ export class TeamTroiSetup implements Team {
         sa.node.addDependency(namespace);
         const bucket = new s3.Bucket(stack, 'inf-backend-bucket');
         bucket.grantReadWrite(sa);
-        new cdk.CfnOutput(stack, this.name + '-sa-iam-role', { value: sa.role.roleArn })
+        new cdk.CfnOutput(stack, this.name + '-sa-iam-role', { value: sa.role.roleArn });
     }
 
     setupNamespacePolicies(cluster: eks.Cluster) {
@@ -42,6 +42,6 @@ export class TeamTroiSetup implements Team {
                     'limits.memory': '20Gi'
                 }
             }
-        })
+        });
     }
 }

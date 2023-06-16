@@ -6,9 +6,9 @@ import { Construct } from 'constructs';
 
 // Team implementations
 import * as team from '../teams';
-const burnhamManifestDir = './lib/teams/team-burnham/'
-const rikerManifestDir = './lib/teams/team-riker/'
-const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
+const burnhamManifestDir = './lib/teams/team-burnham/';
+const rikerManifestDir = './lib/teams/team-riker/';
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir];
 
 export const SECRET_GIT_SSH_KEY = 'github-ssh-key';
 export const SECRET_ARGO_ADMIN_PWD = 'argo-admin-secret';

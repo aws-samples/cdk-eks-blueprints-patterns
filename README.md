@@ -182,6 +182,10 @@ await prevalidateSecrets(NginxIngressConstruct.name, undefined, SECRET_ARGO_ADMI
 await prevalidateSecrets("my-pattern-name", 'us-east-1', 'my-secret-name'); // 
 ```
 
+## Contributing 
+
+See [Contributing](CONTRIBUTING.md) guide for requirements on contribution.
+
 # Deploying Blueprints with External Dependency on AWS Resources
 
 There are cases when the blueprints defined in the patterns have dependencies on existing AWS Resources such as Secrets defined in the account/region.

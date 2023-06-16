@@ -177,7 +177,7 @@ export class SecureIngressCognito extends cdk.Stack{
             )
             .buildAsync(scope, `${id}-blueprint`);
 
-            blueprints.HelmAddOn.validateHelmVersions = false; 
+        blueprints.HelmAddOn.validateHelmVersions = false; 
     }
 }
 
