@@ -1,31 +1,30 @@
-import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { BackstageSecretAddOn, BackstageSecretAddOnProps } from './backstage-secret-addon';
 import { DatabaseInstanceCredentialsProvider, DatabaseInstanceCredentialsProviderProps } from './database-credentials'
 import * as databaseInstanceProvider from './rds-database-instance';
 
-export interface BackstageConstructProps extends cdk.StackProps {
-  account: string,
-  region: string,
-  namespace: string,
-  backstageImageRegistry: string,
-  backstageImageRepository: string,
-  backstageImageTag: string,
-  parentDomain: string,
-  backstageLabel: string,
-  hostedZoneId: string,
-  certificateResourceName: string,
-  databaseResourceName: string,
-  databaseInstancePort: number,
-  databaseSecretResourceName: string,
-  username: string,
-  databaseSecretTargetName: string
-}
-
 export class BackstageConstruct extends Construct {
-  constructor(scope: Construct, id: string, props: BackstageConstructProps) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
+
+    const props = {
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
+      namespace: blueprints.utils.valueFromContext(scope, "namespace.name", "backstage"),
+      backstageImageRegistry: blueprints.utils.valueFromContext(scope, "image.registry.name", "youraccount.dkr.ecr.yourregion.amazonaws.com"),
+      backstageImageRepository: blueprints.utils.valueFromContext(scope, "image.repository.name", "backstage"),
+      backstageImageTag: blueprints.utils.valueFromContext(scope, "image.tag.name", "latest"),
+      parentDomain: blueprints.utils.valueFromContext(scope, "parent.domain.name", "example.com"),
+      backstageLabel: blueprints.utils.valueFromContext(scope, "subdomain.label", "backstage"),
+      hostedZoneId: blueprints.utils.valueFromContext(scope, "hosted.zone.id", "1234"),
+      certificateResourceName: blueprints.utils.valueFromContext(scope, "certificate.resource.name", "backstage-certificate"),
+      databaseResourceName: blueprints.utils.valueFromContext(scope, "database.resource.name", "backstage-database"),
+      databaseInstancePort: blueprints.utils.valueFromContext(scope, "database.instance.port", 5432),
+      databaseSecretResourceName: blueprints.utils.valueFromContext(scope, "database.secret.resource.name", "backstage-database-credentials"),
+      username: blueprints.utils.valueFromContext(scope, "database.username", "postgres"),
+      databaseSecretTargetName: blueprints.utils.valueFromContext(scope, "database.secret.target.name", "backstage-database-secret"),
+    }
 
     const subdomain = props.backstageLabel+"."+props.parentDomain;
     

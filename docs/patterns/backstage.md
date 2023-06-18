@@ -20,7 +20,7 @@ docker buildx build ... --platform=...
 COPY --chown=node:node examples /examples
 ```
 
-Create an ECR registry and repository
+Create an Amazon Elastic Container Registry (ECR) registry and repository
 
 ```console
 aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {account}.dkr.ecr.{region}.amazonaws.com
@@ -30,22 +30,43 @@ docker push {account}.dkr.ecr.{region}.amazonaws.com/{repository}:latest
 
 Setup a Hosted Zone in Route 53, with your parent domain (the pattern will create a new subdomain with format _{backstageLabel}.{parent domain}_).
 
-Fill in the following parameters in the _main.ts_ file
-- account: your AWS account number
-- region: the region of your choice
-- namespace: Backstage's namespace
-- backstageImageRegistry: the image registry for the Backstage Helm chart
-- backstageImageRepository: the image repository for the Backstage Helm chart
-- backstageImageTag: the image tag
-- parentDomain: the parent domain in your Hosted Zone
-- backstageLabel: to be used in _{backstageLabel}.{parent domain}_
-- hostedZoneId: the Hosted zone ID (format: 20x chars/numbers)
-- certificateResourceName: resource name of the certificate, registered by the resource provider
-- databaseResourceName: resource name of the database, registered by the resource provider
-- databaseInstancePort: the port the database will use
-- databaseSecretResourceName: resource name of the database's Secret, registered by the resource provider
-- username: the username for the database's credentials,
-- databaseSecretTargetName: the name to be used when creating the Secret
+[Set the CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION environment variables](https://docs.aws.amazon.com/cdk/v2/guide/environments.html), in your AWS profile of the AWS CDK CLI.
+
+The other pattern's parameters are expected to be specified in the CDK context. You can do so by editing the `{root of repository}/cdk.json` file as follows:
+
+```
+    "context": {
+        "namespace.name": ...,
+        "image.registry.name": ...,
+        "image.repository.name": ...,
+        "image.tag.name": ...,
+        "parent.domain.name": ...,
+        "subdomain.label": ...,
+        "hosted.zone.id": ...,
+        "certificate.resource.name": ...,
+        "database.resource.name": ...,
+        "database.instance.port": ...,
+        "database.secret.resource.name": ...,
+        "database.username": ...,
+        "database.secret.target.name": ...,
+      }
+```
+
+Assign values to the above keys according to the follwing criteria (values are required where you don't see _default_ mentioned):
+
+- "namespace.name": Backstage's namespace, the default is "backstage"
+- "image.registry.name": the image registry for the Backstage Helm chart in Amazon ECR, a value similar to "youraccount.dkr.ecr.yourregion.amazonaws.com"
+- image.repository.name: the image repository for the Backstage Helm chart, the default is "backstage"
+- "image.tag.name": the image tag, the default is "latest"
+- "parent.domain.name": the parent domain in your Hosted Zone
+- "subdomain.label": to be used as _{"subdomain.label"}.{"parent.domain.name"}_, the default is "backstage"
+- "hosted.zone.id": the Hosted zone ID (format: 20x chars/numbers)
+- "certificate.resource.name": resource name of the certificate, registered by the resource provider, the default is "backstage-certificate"
+- "database.resource.name": resource name of the database, registered by the resource provider, the default is "backstage-database"
+- "database.instance.port": the port the database will use, the default is 5432
+- "database.secret.resource.name": resource name of the database's Secret, registered by the resource provider, the default is "backstage-database-credentials"
+- "database.username": the username for the database's credentials, the default is "postgres"
+- "database.secret.target.name": the name to be used when creating the Secret, the default is "backstage-database-secret"
 
 ## Deployment
 
