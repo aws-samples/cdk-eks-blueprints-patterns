@@ -19,6 +19,8 @@ export default class GravitonConstruct {
             maxSize: 6,
         };
 
+        const YOUR_DATADOG_SECRET = "your-datadog-secret";
+
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.AwsLoadBalancerControllerAddOn(),
             new blueprints.addons.KubeProxyAddOn(),
@@ -31,9 +33,7 @@ export default class GravitonConstruct {
                 logGroupPrefix: "/aws/eks/graviton-blueprint",
             }),
             new DatadogAddOn({
-                apiKeyAWSSecret: "<secret-name-in-aws-secret-manager>", //preferred
-                apiKeyExistingSecret: "<kubernetes-secret-name>",
-                apiKey: "<api-key>", //insecure
+                apiKeyAWSSecret: YOUR_DATADOG_SECRET,
             }),
             new blueprints.addons.VeleroAddOn(),
             new blueprints.addons.ContainerInsightsAddOn(),
