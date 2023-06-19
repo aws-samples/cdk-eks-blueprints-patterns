@@ -2,7 +2,6 @@ import { Construct } from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
-import { DatadogAddOn } from "@datadog/datadog-eks-blueprints-addon";
 
 export default class GravitonConstruct {
     build(scope: Construct, id: string) {
@@ -19,8 +18,6 @@ export default class GravitonConstruct {
             maxSize: 6,
         };
 
-        const YOUR_DATADOG_SECRET = "your-datadog-secret";
-
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.AwsLoadBalancerControllerAddOn(),
             new blueprints.addons.KubeProxyAddOn(),
@@ -31,9 +28,6 @@ export default class GravitonConstruct {
             new blueprints.addons.MetricsServerAddOn(),
             new blueprints.addons.CloudWatchLogsAddon({
                 logGroupPrefix: "/aws/eks/graviton-blueprint",
-            }),
-            new DatadogAddOn({
-                apiKeyAWSSecret: YOUR_DATADOG_SECRET,
             }),
             new blueprints.addons.VeleroAddOn(),
             new blueprints.addons.ContainerInsightsAddOn(),
