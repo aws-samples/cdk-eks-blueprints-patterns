@@ -10,6 +10,8 @@ The individual patterns can be found in the `lib` directory.  Most of the patter
 
 ## Documentation
 
+Please refer to the Amazon EKS Blueprints Patterns [documentation site](https://aws-samples.github.io/cdk-eks-blueprints-patterns/) for complete list of Amazon EKS Blueprints patterns documentation.
+
 Please refer to the Amazon EKS Blueprints Quick Start [documentation site](https://aws-quickstart.github.io/cdk-eks-blueprints/) for complete project documentation.
 
 ## Usage
