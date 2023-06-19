@@ -9,7 +9,7 @@ const app = configureApp();
 //--------------------------------------------------------------------------
 new PipelineMultiEnvMonitoring()
     .buildAsync(app)
-    .catch(() => {
+    .catch((e) => {
         errorHandler(app, "Multi Account Monitoring pattern is not setup due to missing secrets for GitHub \
-        access and/or CDK Context. See Multi Account Monitoring in the readme for instructions");
+        access and/or CDK Context. See Multi Account Monitoring in the readme for instructions", e);
     });

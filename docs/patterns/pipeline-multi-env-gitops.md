@@ -73,7 +73,7 @@ Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazo
 
 ### Notes
 
-1. In case your pipeline fails on the first run, it's because that the AWS CodeBuild step needs elevated permissions at build time. This is described in the official [docs](https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#troubleshooting). To reolve this, locate `AccessDeniedException` in the CodeBuild build logs, and attach the following inline policy to it:
+1. In case your pipeline fails on the first run, it's because that the AWS CodeBuild step needs elevated permissions at build time. This is described in the official [docs](https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#troubleshooting). To resolve this, locate `AccessDeniedException` in the CodeBuild build logs, and attach the following inline policy to it:
 
     ```json
     {
@@ -93,5 +93,7 @@ Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazo
         ]
     }
     ```
+
+The above inconvenience has been fixed in the Blueprints framework as well as in the pattern, so please report such cases if you encounter them. This item is left here for reference in case customers modify the pattern to require additional permissions at build time. 
 
 2. This pattern consumes multiple Elastic IP addresses, because 3 VPCs with 3 subnets are created by this pattern. Make sure your account limit for EIP are increased to support additional 9 EIPs (1 per Subnets)

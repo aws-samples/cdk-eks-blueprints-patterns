@@ -7,6 +7,8 @@ import { Construct } from 'constructs';
 import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
@@ -25,6 +27,21 @@ class CognitoIdpStack extends cdk.Stack {
     
     constructor(scope: Construct, id: string, subDomain: string, props?: cdk.StackProps) {
         super(scope, id, props);
+
+        const lambdaExecutionRole = new iam.Role(this, 'Lambda Execution Role', {
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+        });
+
+        lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
+        lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));     
+        
+        const authChallengeFn = new lambda.Function(this, 'authChallengeFn', {
+            runtime: lambda.Runtime.PYTHON_3_7,
+            code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
+            handler: 'lambda_function.lambda_handler',
+            role: lambdaExecutionRole,
+        });
+
 
         // Cognito User Pool
         const userPool = new cognito.UserPool(this, 'CognitoIDPUserPool', {
@@ -47,8 +64,13 @@ class CognitoIdpStack extends cdk.Stack {
                     mutable: true,
                     required: true
                 }
-            }
+            },
+            lambdaTriggers: {
+                preSignUp: authChallengeFn,
+                preAuthentication: authChallengeFn,
+            },            
         });
+        
         
         // Output the User Pool ID
 
@@ -177,7 +199,7 @@ export class SecureIngressCognito extends cdk.Stack{
             )
             .buildAsync(scope, `${id}-blueprint`);
 
-            blueprints.HelmAddOn.validateHelmVersions = false; 
+        blueprints.HelmAddOn.validateHelmVersions = false; 
     }
 }
 
