@@ -11,7 +11,7 @@ export default class GravitonConstruct {
         const stackID = `${id}-blueprint`;
 
         const mngProps: blueprints.MngClusterProviderProps = {
-            version: eks.KubernetesVersion.V1_26,
+            version: eks.KubernetesVersion.of("1.27"),
             instanceTypes: [new ec2.InstanceType("m7g.large")],
             amiType: eks.NodegroupAmiType.AL2_ARM_64,
             desiredSize: 3,
@@ -38,7 +38,7 @@ export default class GravitonConstruct {
                 ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint,
             }),
             new blueprints.addons.XrayAdotAddOn(),
-            new blueprints.addons.KubeProxyAddOn("v1.26.2-eksbuild.1"),
+            new blueprints.addons.KubeProxyAddOn("v1.27.1-eksbuild.1"),
             new blueprints.addons.ClusterAutoScalerAddOn(),
             new blueprints.addons.FluxCDAddOn(),
             new blueprints.addons.CloudWatchLogsAddon({
