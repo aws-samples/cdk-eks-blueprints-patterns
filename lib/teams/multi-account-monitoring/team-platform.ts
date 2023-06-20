@@ -5,7 +5,7 @@ export class CorePlatformTeam extends PlatformTeam {
     constructor() {
         super({
             name: `team-platform`
-        })
+        });
     }
 
     protected getOrCreateRole(clusterInfo: ClusterInfo, users: ArnPrincipal[], roleArn?: string | undefined): IRole | undefined {

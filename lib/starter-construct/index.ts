@@ -9,7 +9,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 export default class StarterConstruct {
     build(scope: Construct, id: string) {
         
-        const stackID = `${id}-blueprint`
+        const stackID = `${id}-blueprint`;
         blueprints.EksBlueprint.builder()
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn,

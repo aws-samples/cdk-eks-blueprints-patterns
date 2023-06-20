@@ -7,6 +7,6 @@ const app = configureApp();
 
 new ImageScanningSetupStack(app, "image-scanning-setup");
 
-new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch(() => {
-    errorHandler(app, "ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+new ImageScanningWorkloadConstruct().buildAsync(app, "image-scanning-workload").catch((e) => {
+    errorHandler(app, "ImageScanningWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd", e);
 });

@@ -26,6 +26,6 @@ new PipelineMultiEnvGitops()
             prodEnv: prodEnv,
         },
         { env })
-    .catch(() => {
-        errorHandler(app, "Pipeline pattern is not setup due to missing secrets for GitHub access.");
+    .catch((e) => {
+        errorHandler(app, "Pipeline pattern is not setup due to missing secrets for GitHub access.", e);
     });

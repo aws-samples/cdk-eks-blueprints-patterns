@@ -3,10 +3,10 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 
 // Blueprints Lib
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
-import * as team from '../teams'
+import * as team from '../teams';
 
 /**
  * Demonstrates how to leverage more than one node group along with Fargate profiles.
@@ -60,7 +60,7 @@ export default class GenericClusterConstruct {
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
                 new blueprints.CloudWatchAdotAddOn,
-                new blueprints.XrayAddOn,
+                new blueprints.XrayAdotAddOn,
                 new blueprints.SecretsStoreAddOn
             )
             .teams(platformTeam)
