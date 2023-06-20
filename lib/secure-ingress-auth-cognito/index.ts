@@ -120,9 +120,10 @@ class CognitoIdpStack extends cdk.Stack {
         });
 
         // Add the domain to the user pool
+        const randomText = (Math.random() + 1).toString(36).substring(7);
         const userPoolDomain = userPool.addDomain('CognitoDomain', {
             cognitoDomain: {
-                domainPrefix: 'my-cdk-blueprint',
+                domainPrefix: `my-cdk-blueprint-${randomText}`,
             },
         });
 
