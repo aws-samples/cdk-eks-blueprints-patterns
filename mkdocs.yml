@@ -27,6 +27,7 @@ nav:
     - Multi Account Observability Pattern: 'patterns/multi-account-monitoring.md'
     - Nginx Pattern: 'patterns/nginx.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
+    - Graviton Pattern: 'patterns/graviton.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
