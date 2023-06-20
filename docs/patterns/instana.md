@@ -44,37 +44,82 @@ Go to your Instana Backend application (Instana User Interface), click ... More 
 
 [Instana Agent Configuration](./images/instana-agent.png)
 
+
+## Usage : Using AWS Secret Manager Secrets 
+### AWS Secret Manager Secrets (Optional)
+If you wish to use AWS Secret Manager Secrets to pass Instana props (key, endpoint, and port), then you will be required to setup Secrets first.
+
+To create AWS Secret Manager secrets, you can follow these steps:
+
+1. Log in to the AWS Management Console and open the AWS Secret Manager service.
+2. Search and Select AWS Secrets Manager service.
+3. Select the type of secret as 'Other type of secret'
+4. Under the Key/value pairs add following keys and their values:
+```
+INSTANA_AGENT_KEY=<instana key>
+INSTANA_ENDPOINT_HOST_URL=<instana backend host>
+INSTANA_ENDPOINT_HOST_PORT=<instana backend port>
+```
+5. Assign a name to the Secret (eg. *instana-secret-param*).
+
+### Using AWS Secret Manager Secrets
+To use AWS Secret Manager Secrets follow these steps:
+
+- Go to project/lib/instana-construct/index.ts
+- Add secret name (eg. *instana-secret-param*) under ```secretParamName``` variable.
+
+```typescript
+import { loadYaml } from "@aws-quickstart/eks-blueprints/dist/utils";
+import * as cdk from "aws-cdk-lib";
+import { InstanaOperatorAddon } from "@instana/aws-eks-blueprint-addon";
+import { EksBlueprint } from "@aws-quickstart/eks-blueprints";
+
+export const instanaProps = {
+    secretParamName: 'instana-secret-param'
+};
+
+const yamlObject = loadYaml(JSON.stringify(instanaProps));
+
+export default class InstanaConstruct {
+    async buildAsync(scope: cdk.App, id: string) {
+        try {
+            const stackId = `${id}-blueprint`;
+            const addOns = new InstanaOperatorAddon(yamlObject);
+
+            EksBlueprint.builder()
+                .account(process.env.CDK_DEFAULT_ACCOUNT!)
+                .region(process.env.CDK_DEFAULT_REGION!)
+                .addOns(addOns)
+                .build(scope, stackId);
+            console.log("Blueprint built successfully.");
+        } catch (error) {
+            console.error("Error:", error);
+            throw new Error(`environment variables must be setup for the instana-operator pattern to work`);
+        }
+    }
+}
+```
+
+## Usage : Using Secrets in the Code
+
+### Setting up environment variable
 To set the following environment variables from the CLI, use the corresponding values obtained from the Instana Service Endpoint and Port (as shown in the above screenshot), and the Instana Application Key (also shown in the above screenshot):
 
 - Set the value of **INSTANA_ENDPOINT_HOST_URL** to the Instana Service Endpoint.
 - Set the value of **INSTANA_ENDPOINT_HOST_PORT** to the Instana Service Port.
 - Set the value of **INSTANA_AGENT_KEY** to the Instana Application Key.
 
-You can choose the names for **AMAZON_EKS_CLUSTER_NAME** and **INSTANA_ZONE_NAME** based on your cluster's name, for example, "eks-blueprint".
-
 Set the value of the following environment variable and run it on CLI to set those variables.
 
-```
-export INSTANA_ZONE_NAME=
-export AMAZON_EKS_CLUSTER_NAME=
-export INSTANA_AGENT_KEY=
-export INSTANA_ENDPOINT_HOST_URL=
-export INSTANA_ENDPOINT_HOST_PORT=
-```
+For an example:
 
-For example:
-
-```
-export INSTANA_ZONE_NAME=eks-blueprint
-export AMAZON_EKS_CLUSTER_NAME=eks-blueprint
+```shell
 export INSTANA_AGENT_KEY=abc123
 export INSTANA_ENDPOINT_HOST_URL=instana.example.com
 export INSTANA_ENDPOINT_HOST_PORT="443"
 ```
 
-
-
-## Optional: Configure additional configuration parameters.
+### Configure additional configuration parameters.
 To configure additional parameters for the Instana agent according to your specific use case, follow these steps:
 
 - Go to project/lib/instana-construct/index.ts
@@ -84,33 +129,13 @@ For an example:
 
 ```typescript
 export const instanaProps = {
- zone: {
-    name: process.env.INSTANA_ZONE_NAME, // Mandatory Parameter
-  },
-  cluster: {
-    name: process.env.AMAZON_EKS_CLUSTER_NAME, // Mandatory Parameter
-  },
-  agent: {
+ agent: {
     key: process.env.INSTANA_AGENT_KEY,// Mandatory Parameter
     endpointHost: process.env.INSTANA_ENDPOINT_HOST_URL,//Mandatory Parameter
     endpointPort: process.env.INSTANA_ENDPOINT_HOST_PORT, // Mandatory Parameter,
     env: {
 		INSTANA_AGENT_TAGS: "staging",
-    },
-    configuration_yaml:`
-    com.instana.plugin.host:
-    	tags:
-			- 'dev'
-			- 'app1'
-		com.instana.plugin.javatrace:
-			instrumentation:
-          		enabled: true
-          		opentracing: true
-          		sdk:
-            		packages:
-              			- 'com.instana.backend'
-              			- 'com.instana.frontend'
-    `
+    }
   }
 };
 ```
@@ -121,7 +146,8 @@ export const instanaProps = {
 To view patterns and deploy ```instana-operator``` pattern
 
 ```sh
-make list
+make deps
+make build
 cdk bootstrap
 make pattern instana-operator deploy
 ```
