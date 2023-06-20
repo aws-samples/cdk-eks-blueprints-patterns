@@ -1,7 +1,3 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-        "parent.hostedzone.name": "elamaras.people.aws.dev",
-        "dev.subzone.name": "dev.elamaras.people.aws.dev"
-    }
+    "app": "npx ts-node dist/lib/common/default-main.js"
 }

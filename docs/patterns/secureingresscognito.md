@@ -62,7 +62,7 @@ aws secretsmanager create-secret --name argo-admin-secret \
     --secret-string "password123$" \
     --region "us-west-2"
 ```
-4. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory. 
+4. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the `cdk.json` file of the current directory or in `~/.cdk.json` in your home directory. 
 
 Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
 
