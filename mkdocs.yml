@@ -18,6 +18,7 @@ nav:
     - Nginx Pattern: 'patterns/nginx.md'
     - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
+    - Graviton Pattern: 'patterns/graviton.md'
     - Security Patterns:
       - EKS Config Rules: 'patterns/security/eks-config-rules.md'
       - Encryption At Rest: 'patterns/security/encryption-at-rest.md'
