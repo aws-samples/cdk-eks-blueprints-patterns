@@ -37,28 +37,28 @@ export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
             cluster: cluster,
             manifest: [
                 {
-                apiVersion: "external-secrets.io/v1beta1",
-                kind: "ClusterSecretStore",
-                metadata: {
-                    name: secretStoreName,
-                    namespace: this.props.namespace
-                },
-                spec: {
-                    provider: {
-                        aws: {
-                            service: "SecretsManager",
-                            region: cluster.stack.region,
-                            auth: {
-                                jwt: {
-                                    serviceAccountRef: {
-                                        name: "external-secrets-sa",
-                                        namespace: "external-secrets",
+                    apiVersion: "external-secrets.io/v1beta1",
+                    kind: "ClusterSecretStore",
+                    metadata: {
+                        name: secretStoreName,
+                        namespace: this.props.namespace
+                    },
+                    spec: {
+                        provider: {
+                            aws: {
+                                service: "SecretsManager",
+                                region: cluster.stack.region,
+                                auth: {
+                                    jwt: {
+                                        serviceAccountRef: {
+                                            name: "external-secrets-sa",
+                                            namespace: "external-secrets",
+                                        },
                                     },
                                 },
                             },
                         },
                     },
-                },
                 },
             ],
         });

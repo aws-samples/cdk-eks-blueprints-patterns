@@ -18,12 +18,12 @@ export class DatabaseInstanceCredentialsProvider implements ResourceProvider<ISe
     provide(context: ResourceContext): ISecret {
         return new Secret(context.scope, "database-secret", {
             generateSecretString: {
-              secretStringTemplate: JSON.stringify({
-                username: this.props.username,
-              }),
-              excludePunctuation: true,
-              includeSpace: false,
-              generateStringKey: "password"
+                secretStringTemplate: JSON.stringify({
+                    username: this.props.username,
+                }),
+                excludePunctuation: true,
+                includeSpace: false,
+                generateStringKey: "password"
             }
         });
     }

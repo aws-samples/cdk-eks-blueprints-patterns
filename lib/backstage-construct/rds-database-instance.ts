@@ -32,12 +32,12 @@ export class DatabaseInstanceProvider implements ResourceProvider<rds.IDatabaseI
 
         const databaseCredentialsSecret = context.get<ISecret>(this.props.databaseSecretResourceName);
         if (databaseCredentialsSecret === undefined) {
-          throw new Error("Database Secret not found in context");
+            throw new Error("Database Secret not found in context");
         }
 
         const vpc = context.get<IVpc>(this.props.vpcResourceName);
         if (vpc === undefined) {
-          throw new Error("VPC not found in context");
+            throw new Error("VPC not found in context");
         }
 
         const dbSecurityGroup = new SecurityGroup(context.scope, id+"-security-group", {
@@ -50,12 +50,12 @@ export class DatabaseInstanceProvider implements ResourceProvider<rds.IDatabaseI
             engine: rds.DatabaseInstanceEngine.POSTGRES,
             vpc,
             vpcSubnets: {
-              subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+                subnetType: SubnetType.PRIVATE_WITH_EGRESS,
             },
             securityGroups: [dbSecurityGroup],
             credentials: rds.Credentials.fromSecret(databaseCredentialsSecret),
-          }
+        };
       
-          return new rds.DatabaseInstance(context.scope, id+"-database-instance", rdsConfig);
+        return new rds.DatabaseInstance(context.scope, id+"-database-instance", rdsConfig);
     }
 }
