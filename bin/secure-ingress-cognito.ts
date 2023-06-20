@@ -9,7 +9,7 @@ const app = configureApp();
 
 new SecureIngressCognito()
     .buildAsync(app, 'secure-ingress')
-    .catch(() => {
+    .catch((e) => {
         errorHandler(app, "Secure Ingress Auth pattern is not setup due to missing secrets for ArgoCD admin pwd. \
-            See Secure Ingress Auth in the readme for instructions");
+            See Secure Ingress Auth in the readme for instructions", e);
     });

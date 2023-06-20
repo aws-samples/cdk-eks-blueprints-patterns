@@ -6,6 +6,6 @@ const app = configureApp();
 
 new GuardDutySetupStack(app, "guardduty-setup");
 
-new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch(() => {
-    errorHandler(app, "GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd");
+new GuardDutyWorkloadConstruct().buildAsync(app, "guardduty").catch((e) => {
+    errorHandler(app, "GuardDutyWorkloadConstruct is not setup due to missing secrets for ArgoCD admin pwd", e);
 });

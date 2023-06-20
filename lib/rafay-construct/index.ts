@@ -4,7 +4,7 @@ import { prevalidateSecrets } from '../common/construct-utils';
 import * as cdk from 'aws-cdk-lib';
 
 export default class RafayConstruct {
-     async buildAsync(scope: cdk.App, id: string) {
+    async buildAsync(scope: cdk.App, id: string) {
         await prevalidateSecrets(RafayConstruct.name, undefined, 'rafay-password-secret');
         const stackId = `${id}-blueprint`;
 
@@ -16,12 +16,12 @@ export default class RafayConstruct {
             passwordSecret: "rafay-password-secret", // replace with a secret name in secrets manager that you have created
             clusterName: "eks-cluster-1", // replace with the name that you want the cluster to be created in Rafay Console
             blueprintName: "minimal"
-        } as rafayAddOn.RafayConfig
+        } as rafayAddOn.RafayConfig;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new rafayAddOn.RafayClusterAddOn(rafayConfig)
         ];
-         blueprints.EksBlueprint.builder()
+        blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
             .addOns(...addOns)

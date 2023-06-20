@@ -3,10 +3,10 @@ import { Construct } from "constructs";
 import { Stack, StackProps } from "aws-cdk-lib";
 
 export class SecurityHubStackSetup extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props);
 
-    // Enable Security Hub
-    new securityhub.CfnHub(this, 'MyCfnHub');
+        // Enable Security Hub
+        new securityhub.CfnHub(this, 'MyCfnHub');
     }
-   }
+}

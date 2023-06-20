@@ -51,9 +51,9 @@ export class PipelineMultiEnvMonitoring {
     async buildAsync(scope: Construct) {
         const context = await populateAccountWithContextDefaults();
         // environments IDs consts
-        const PROD1_ENV_ID = `eks-prod1-${context.prodEnv1.region}`
-        const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`
-        const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`
+        const PROD1_ENV_ID = `eks-prod1-${context.prodEnv1.region}`;
+        const PROD2_ENV_ID = `eks-prod2-${context.prodEnv2.region}`;
+        const MON_ENV_ID = `central-monitoring-${context.monitoringEnv.region}`;
 
         const blueprintAmp = new AmpMonitoringConstruct().create(scope, context.prodEnv1.account, context.prodEnv1.region);
         const blueprintCloudWatch = new CloudWatchMonitoringConstruct().create(scope, context.prodEnv2.account, context.prodEnv2.region);
@@ -75,6 +75,7 @@ export class PipelineMultiEnvMonitoring {
         };
 
         blueprints.CodePipelineStack.builder()
+            .application("npx ts-node bin/pipeline-multienv-monitoring.ts")
             .name("multi-account-central-pipeline")
             .owner(gitOwner)
             .codeBuildPolicies([ 
@@ -153,5 +154,5 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
                 },
             },
         }
-    )
+    );
 }
