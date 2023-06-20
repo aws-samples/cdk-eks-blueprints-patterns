@@ -5,9 +5,9 @@ import { prevalidateSecrets } from '../common/construct-utils';
 import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as team from '../teams';
 
-const burnhamManifestDir = './lib/teams/team-burnham/'
-const rikerManifestDir = './lib/teams/team-riker/'
-const teamManifestDirList = [burnhamManifestDir, rikerManifestDir]
+const burnhamManifestDir = './lib/teams/team-burnham/';
+const rikerManifestDir = './lib/teams/team-riker/';
+const teamManifestDirList = [burnhamManifestDir, rikerManifestDir];
 
 const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
@@ -78,7 +78,7 @@ export default class NginxIngressConstruct {
                 new blueprints.CloudWatchAdotAddOn)
             .build(scope, `${id}-blueprint`);
 
-            blueprints.HelmAddOn.validateHelmVersions = false;
+        blueprints.HelmAddOn.validateHelmVersions = false;
     }
 }
 

@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { BatchEksTeam } from '@aws-quickstart/eks-blueprints';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 
@@ -19,8 +19,8 @@ export default class BatchOnEKSConstruct {
                 "logs:CreateLogGroup"
             ],
             resources: ["*"],
-        })
-        const stackID = `${id}-blueprint`
+        });
+        const stackID = `${id}-blueprint`;
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION!)

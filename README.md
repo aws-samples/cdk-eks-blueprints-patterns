@@ -10,6 +10,8 @@ The individual patterns can be found in the `lib` directory.  Most of the patter
 
 ## Documentation
 
+Please refer to the Amazon EKS Blueprints Patterns [documentation site](https://aws-samples.github.io/cdk-eks-blueprints-patterns/) for complete list of Amazon EKS Blueprints patterns documentation.
+
 Please refer to the Amazon EKS Blueprints Quick Start [documentation site](https://aws-quickstart.github.io/cdk-eks-blueprints/) for complete project documentation.
 
 ## Usage
@@ -181,6 +183,10 @@ new NginxIngressConstruct().buildAsync(app, 'nginx').catch((e) => {
 await prevalidateSecrets(NginxIngressConstruct.name, undefined, SECRET_ARGO_ADMIN_PWD); 
 await prevalidateSecrets("my-pattern-name", 'us-east-1', 'my-secret-name'); // 
 ```
+
+## Contributing 
+
+See [Contributing](CONTRIBUTING.md) guide for requirements on contribution.
 
 # Deploying Blueprints with External Dependency on AWS Resources
 

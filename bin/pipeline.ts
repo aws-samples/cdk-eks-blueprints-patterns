@@ -11,6 +11,6 @@ const env: cdk.Environment = { account: account, region: region };
 const app = configureApp();
 
 
-new PipelineConstruct().buildAsync(app, { env }).catch(() => {
-    errorHandler(app, "Pipeline pattern is not setup due to missing secrets for GitHub access.");
+new PipelineConstruct().buildAsync(app, { env }).catch((e) => {
+    errorHandler(app, "Pipeline pattern is not setup due to missing secrets for GitHub access.", e);
 });

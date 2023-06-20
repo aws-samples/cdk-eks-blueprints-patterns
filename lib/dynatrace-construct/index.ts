@@ -13,7 +13,7 @@ export default class DynatraceOperatorConstruct {
         const DynatraceOperator = new DynatraceAddOn({
             // Setup ssmSecret dynatrace-tokens described here (https://github.com/dynatrace-oss/dynatrace-eks-blueprints-addon#aws-secret-manager-secrets)
             ssmSecretName: 'dynatrace-tokens'
-        })
+        });
 
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)

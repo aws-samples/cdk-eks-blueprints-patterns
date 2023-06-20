@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import * as blueprints from '@aws-quickstart/eks-blueprints'
+import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { DatadogAddOn } from '@datadog/datadog-eks-blueprints-addon';
 import { prevalidateSecrets } from '../common/construct-utils';
 
@@ -11,7 +11,7 @@ export default class DatadogConstruct {
 
         await prevalidateSecrets(DatadogConstruct.name, process.env.CDK_DEFAULT_REGION!, SECRET_API_KEY);
 
-        const stackID = `${id}-blueprint`
+        const stackID = `${id}-blueprint`;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new DatadogAddOn({

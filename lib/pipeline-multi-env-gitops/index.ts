@@ -51,9 +51,9 @@ export default class PipelineMultiEnvGitops {
     async buildAsync(scope: Construct, id: string, pipelineProps: PipelineMultiEnvGitopsProps, props?: StackProps) {
 
         // environments IDs consts
-        const DEV_ENV_ID = `dev-${pipelineProps.devEnv.region}`
-        const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`
-        const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`
+        const DEV_ENV_ID = `dev-${pipelineProps.devEnv.region}`;
+        const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`;
+        const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`;
 
         // build teams per environments
         const devTeams = createTeamList('dev', scope, pipelineProps.devEnv.account!);
@@ -140,6 +140,7 @@ export default class PipelineMultiEnvGitops {
                 .application("npx ts-node bin/pipeline-multienv-gitops.ts")
                 .name("eks-blueprint-pipeline")
                 .owner(gitOwner)
+                .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',

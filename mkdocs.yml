@@ -9,11 +9,22 @@ theme:
 nav:
   - Overview: 'index.md'
   - Patterns: 
+    - AWS Batch Pattern: 'patterns/batch.md'
+    - Customer Network with IPV4 Pattern: 'patterns/custom-networking-with-ipv4.md'
+    - Instana Pattern: 'patterns/instana.md'
+    - Jupyterhub Pattern: 'patterns/jupyterhub.md'
     - Kubeflow Pattern: 'patterns/kubeflow.md'
     - Multi Account Observability Pattern: 'patterns/multi-account-monitoring.md'
     - Nginx Pattern: 'patterns/nginx.md'
     - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
+    - Graviton Pattern: 'patterns/graviton.md'
+    - Security Patterns:
+      - EKS Config Rules: 'patterns/security/eks-config-rules.md'
+      - Encryption At Rest: 'patterns/security/encryption-at-rest.md'
+      - GuardDuty: 'patterns/security/guardduty.md'
+      - Image Scanning: 'patterns/security/image-scanning.md'
+      - SecurityHub: 'patterns/security/securityhub.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight

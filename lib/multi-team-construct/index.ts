@@ -3,17 +3,17 @@ import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 
 // Team implementations
-import * as team from '../teams'
-const burnhamManifestDir = './lib/teams/team-burnham/'
-const rikerManifestDir = './lib/teams/team-riker/'
-const teamManifestDirList = [burnhamManifestDir,rikerManifestDir]
+import * as team from '../teams';
+const burnhamManifestDir = './lib/teams/team-burnham/';
+const rikerManifestDir = './lib/teams/team-riker/';
+const teamManifestDirList = [burnhamManifestDir,rikerManifestDir];
 
 export default class MultiTeamConstruct {
     constructor(scope: Construct, id: string) {
         
         // Setup platform team
-        const accountID = process.env.CDK_DEFAULT_ACCOUNT!
-        const platformTeam = new team.TeamPlatform(accountID)
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
+        const platformTeam = new team.TeamPlatform(accountID);
 
         // Teams for the cluster.
         const teams: Array<blueprints.Team> = [
@@ -39,7 +39,7 @@ export default class MultiTeamConstruct {
             new blueprints.SecretsStoreAddOn
         ];
 
-        const stackID = `${id}-blueprint`
+        const stackID = `${id}-blueprint`;
         new blueprints.EksBlueprint(scope, { id: stackID, addOns, teams }, {
             env: {
                 region: 'us-east-2',

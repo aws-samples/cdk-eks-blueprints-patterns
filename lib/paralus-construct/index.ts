@@ -33,7 +33,7 @@ export default class ParalusConstruct {
                             "userSubdomain": "*.user.eks"
                         }
                     }
-                 })
+                })
             )
             .teams()// add teams here)
             .build(scope, stackId);
