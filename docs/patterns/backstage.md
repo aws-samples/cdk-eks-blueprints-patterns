@@ -143,5 +143,5 @@ Navigate to _{"subdomain.label"}.{"parent.domain.name"}_, you should see the scr
 To clean up your EKS Blueprints, run the following commands:
 
 ```sh
-cdk destroy backstage 
+make pattern backstage destroy 
 ```
