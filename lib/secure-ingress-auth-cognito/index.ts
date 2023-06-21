@@ -183,7 +183,7 @@ export class SecureIngressCognito extends cdk.Stack{
                 new blueprints.ArgoCDAddOn({
                     bootstrapRepo: {
                         repoUrl: gitUrl,
-                        targetRevision: "fix/secureIngressCognitoACM",
+                        targetRevision: "main",
                         path: 'secure-ingress-cognito/envs/dev'
                     },
                     bootstrapValues: {

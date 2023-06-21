@@ -16,9 +16,9 @@ def lambda_handler(event, context):
         resp = ssmclient.get_parameter(Name=paramName)
         auto_approved_domains_list = resp['Parameter']['Value']
         
-        paramName = '/secure-ingress-auth-cognito/EMAIL_WHITE_LIST'
+        paramName = '/secure-ingress-auth-cognito/EMAIL_ALLOW_LIST'
         resp = ssmclient.get_parameter(Name=paramName)
-        email_white_list = resp['Parameter']['Value']                
+        email_allow_list = resp['Parameter']['Value']                
 
     except Exception as e:
         print("Error in reading the SSM Parameter Store : {}".format(str(e)))   
@@ -28,7 +28,7 @@ def lambda_handler(event, context):
     # Split the email address so we can compare domains
     emailId = event['request']['userAttributes']['email']
     address = emailId.split('@')
-    #print("address={} allowed_domains_list={} auto_approved_domains_list={} email_white_list={}".format(address,  allowed_domains_list, auto_approved_domains_list, email_white_list))
+    #print("address={} allowed_domains_list={} auto_approved_domains_list={} email_allow_list={}".format(address,  allowed_domains_list, auto_approved_domains_list, email_white_list))
     
     emailDomain = address[1]    
     
@@ -46,8 +46,8 @@ def lambda_handler(event, context):
             raise Exception("Cannot register users with email domains other than allowed domains list={}".format(allowed_domains_list))
             
     elif triggerSource == 'PreAuthentication_Authentication':
-        if emailId not in email_white_list:
-            raise Exception("email id {} is not whitelisted".format(emailId))
+        if emailId not in email_allow_list:
+            raise Exception("email id {} is not allow listed".format(emailId))
     else:
         print("triggerSource={} is incorrect".format(triggerSource))
 
