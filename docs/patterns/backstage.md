@@ -92,37 +92,37 @@ The other pattern's parameters are expected to be specified in the CDK context. 
 
 ```
     "context": {
-        "namespace.name": ...,
-        "image.registry.name": ...,
-        "image.repository.name": ...,
-        "image.tag.name": ...,
-        "parent.domain.name": ...,
-        "subdomain.label": ...,
-        "hosted.zone.id": ...,
-        "certificate.resource.name": ...,
-        "database.resource.name": ...,
-        "database.instance.port": ...,
-        "database.secret.resource.name": ...,
-        "database.username": ...,
-        "database.secret.target.name": ...,
+        "backstage.namespace.name": ...,
+        "backstage.image.registry.name": ...,
+        "backstage.image.repository.name": ...,
+        "backstage.image.tag.name": ...,
+        "backstage.parent.domain.name": ...,
+        "backstage.subdomain.label": ...,
+        "backstage.hosted.zone.id": ...,
+        "backstage.certificate.resource.name": ...,
+        "backstage.database.resource.name": ...,
+        "backstage.database.instance.port": ...,
+        "backstage.database.secret.resource.name": ...,
+        "backstage.database.username": ...,
+        "backstage.database.secret.target.name": ...,
       }
 ```
 
 Assign values to the above keys according to the following criteria (values are required where you don't see _default_ mentioned):
 
-- "namespace.name": Backstage's namespace, the default is "backstage"
-- "image.registry.name": the image registry for the Backstage Helm chart in Amazon ECR, a value similar to "youraccount.dkr.ecr.yourregion.amazonaws.com"
-- image.repository.name: the image repository for the Backstage Helm chart, the default is "backstage"
-- "image.tag.name": the image tag, the default is "latest"
-- "parent.domain.name": the parent domain in your Hosted Zone
-- "subdomain.label": to be used as _{"subdomain.label"}.{"parent.domain.name"}_, the default is "backstage"
-- "hosted.zone.id": the Hosted zone ID (format: 20x chars/numbers)
-- "certificate.resource.name": resource name of the certificate, registered by the resource provider, the default is "backstage-certificate"
-- "database.resource.name": resource name of the database, registered by the resource provider, the default is "backstage-database"
-- "database.instance.port": the port the database will use, the default is 5432
-- "database.secret.resource.name": resource name of the database's Secret, registered by the resource provider, the default is "backstage-database-credentials"
-- "database.username": the username for the database's credentials, the default is "postgres"
-- "database.secret.target.name": the name to be used when creating the Secret, the default is "backstage-database-secret"
+- "backstage.namespace.name": Backstage's namespace, the default is "backstage"
+- "backstage.image.registry.name": the image registry for the Backstage Helm chart in Amazon ECR, a value similar to "youraccount.dkr.ecr.yourregion.amazonaws.com"
+- "backstage.image.repository.name": the image repository for the Backstage Helm chart, the default is "backstage"
+- "backstage.image.tag.name": the image tag, the default is "latest"
+- "backstage.parent.domain.name": the parent domain in your Hosted Zone
+- "backstage.subdomain.label": to be used as _{"subdomain.label"}.{"parent.domain.name"}_, the default is "backstage"
+- "backstage.hosted.zone.id": the Hosted zone ID (format: 20x chars/numbers)
+- "backstage.certificate.resource.name": resource name of the certificate, registered by the resource provider, the default is "backstage-certificate"
+- "backstage.database.resource.name": resource name of the database, registered by the resource provider, the default is "backstage-database"
+- "backstage.database.instance.port": the port the database will use, the default is 5432
+- "backstage.database.secret.resource.name": resource name of the database's Secret, registered by the resource provider, the default is "backstage-database-credentials"
+- "backstage.database.username": the username for the database's credentials, the default is "postgres"
+- "backstage.database.secret.target.name": the name to be used when creating the Secret, the default is "backstage-database-secret"
 
 Run the following commands:
 
