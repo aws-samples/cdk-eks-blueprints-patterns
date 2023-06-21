@@ -39,10 +39,7 @@ def lambda_handler(event, context):
         event['response']['autoConfirmUser'] = False
 
         # This example uses a custom attribute 'custom:domain'
-        if emailDomain in allowed_domains_list:
-            if emailDomain in auto_approved_domains_list:
-                event['response']['autoConfirmUser'] = True
-        else:
+        if emailDomain not in allowed_domains_list:
             raise Exception("Cannot register users with email domains other than allowed domains list={}".format(allowed_domains_list))
             
     elif triggerSource == 'PreAuthentication_Authentication':
