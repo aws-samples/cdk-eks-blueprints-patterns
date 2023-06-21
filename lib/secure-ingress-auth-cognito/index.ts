@@ -9,6 +9,7 @@ import { SECRET_ARGO_ADMIN_PWD } from '../multi-region-construct';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
@@ -151,6 +152,7 @@ export class SecureIngressCognito extends cdk.Stack{
 
         const subdomain: string = utils.valueFromContext(scope, "dev.subzone.name", "dev.mycompany.a2z.com");
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
+        const certificate: ICertificate = blueprints.getNamedResource(GlobalResources.Certificate);
 
         const cognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
             {
@@ -191,6 +193,7 @@ export class SecureIngressCognito extends cdk.Stack{
                                 cognitoUserPoolArn: cognitoIdpStackOut.userPoolOut.userPoolArn,
                                 cognitoUserPoolAppId: cognitoIdpStackOut.userPoolClientOut.userPoolClientId,
                                 cognitoDomainName: cognitoIdpStackOut.userPoolDomainOut.domainName,
+                                certificateArn: certificate.certificateArn,
                                 region: process.env.CDK_DEFAULT_REGION,
                             }
                         },
