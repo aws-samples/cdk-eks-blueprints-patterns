@@ -2,9 +2,9 @@
 
 ## Objective
 
-[Backstage](https://backstage.io/) is an application that aims to facilitate standards and best practices introduction and maintenance, across the organisation, tying all infrastructure tooling, resources, owners, contributors, and administrators together in one place.
+[Backstage](https://backstage.io/) is an application that aims to facilitate introduction and maintenance of standards and best practices, across the organization, tying all infrastructure tooling, resources, owners, contributors, and administrators together in one place.
 
-The base functionality is provided by the Core component, which is assempbled together with Plugins into an App. Plugins extend the Core with additional functionality which could be open source or specific to a company.
+The base functionality is provided by the Core component, which is assembled together with Plugins into an Application. Plugins extend the Core with additional functionalities that can be open source, or proprietary to a company.
 
 The objective of this pattern is to illustrate how to deploy a Backstage pre-built Docker image, using the [Amazon EKS Blueprints Backstage add-on](https://github.com/aws-quickstart/cdk-eks-blueprints/blob/main/docs/addons/backstage.md).
 
@@ -20,16 +20,15 @@ This blueprint will include the following:
 - A new Well-Architected EKS cluster in the region and account you specify
 - An Application Load Balancer (ALB), implementing the Backstage Ingress rules
 - An Amazon RDS for PostgreSQL instance
-- A certificate assigned to the ALB
+- A certificate, assigned to the ALB
 - A Secret in AWS Secrets Manager, storing the database credentials, imported into the cluster via [ExternalsSecretsAddOn](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/external-secrets/)
 - Other popular add-ons
 
 ## Prerequisites
 
-Ensure that you have installed the following tools on your machine.
+Ensure that you have installed the following tools on your machine:
 
 - [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-- [kubectl](https://Kubernetes.io/docs/tasks/tools/)
 - [cdk](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 - [npm](https://docs.npmjs.com/cli/v8/commands/npm-install)
 - [tsc](https://www.typescriptlang.org/download)
@@ -109,7 +108,7 @@ The other pattern's parameters are expected to be specified in the CDK context. 
       }
 ```
 
-Assign values to the above keys according to the follwing criteria (values are required where you don't see _default_ mentioned):
+Assign values to the above keys according to the following criteria (values are required where you don't see _default_ mentioned):
 
 - "namespace.name": Backstage's namespace, the default is "backstage"
 - "image.registry.name": the image registry for the Backstage Helm chart in Amazon ECR, a value similar to "youraccount.dkr.ecr.yourregion.amazonaws.com"
