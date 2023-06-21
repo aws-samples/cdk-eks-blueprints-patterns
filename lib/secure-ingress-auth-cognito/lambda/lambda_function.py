@@ -11,14 +11,6 @@ def lambda_handler(event, context):
         paramName = '/secure-ingress-auth-cognito/ALLOWED_DOMAINS'
         resp = ssmclient.get_parameter(Name=paramName)
         allowed_domains_list = resp['Parameter']['Value']
-        
-        paramName = '/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS'
-        resp = ssmclient.get_parameter(Name=paramName)
-        auto_approved_domains_list = resp['Parameter']['Value']
-        
-        paramName = '/secure-ingress-auth-cognito/EMAIL_ALLOW_LIST'
-        resp = ssmclient.get_parameter(Name=paramName)
-        email_allow_list = resp['Parameter']['Value']                
 
     except Exception as e:
         print("Error in reading the SSM Parameter Store : {}".format(str(e)))   
@@ -41,10 +33,6 @@ def lambda_handler(event, context):
         # This example uses a custom attribute 'custom:domain'
         if emailDomain not in allowed_domains_list:
             raise Exception("Cannot register users with email domains other than allowed domains list={}".format(allowed_domains_list))
-            
-    elif triggerSource == 'PreAuthentication_Authentication':
-        if emailId not in email_allow_list:
-            raise Exception("email id {} is not allow listed".format(emailId))
     else:
         print("triggerSource={} is incorrect".format(triggerSource))
 
