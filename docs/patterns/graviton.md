@@ -48,6 +48,15 @@ Updating npm
 npm install -g npm@latest
 ```
 
+The actual settings for the hosted zone name are expected to be specified in the CDK context. Generically it is inside the cdk.json file of the current directory or in `~/.cdk.json` in your home directory. Example settings:
+```
+{
+  "context": {
+    "parent.hostedzone.name": "mycompany.a2z.com"
+  }
+}
+```
+
 To view patterns and deploy kubeflow pattern
 
 ```sh

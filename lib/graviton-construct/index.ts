@@ -3,6 +3,7 @@ import { CfnWorkspace } from "aws-cdk-lib/aws-aps";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from "constructs";
+import { LookupHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
 
 export default class GravitonConstruct {
     build(scope: Construct, id: string) {
@@ -19,6 +20,7 @@ export default class GravitonConstruct {
             maxSize: 6,
         };
 
+        const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
         const ampWorkspaceName = "blueprints-amp-workspace";
         const ampWorkspace: CfnWorkspace =
             blueprints.getNamedResource(ampWorkspaceName);
@@ -33,6 +35,9 @@ export default class GravitonConstruct {
             new blueprints.addons.ExternalsSecretsAddOn(),
             new blueprints.addons.VpcCniAddOn(),
             new blueprints.addons.MetricsServerAddOn(),
+            new blueprints.ExternalDnsAddOn({
+                hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
+            }),
             new blueprints.addons.AdotCollectorAddOn(),
             new blueprints.addons.AmpAddOn({
                 ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint,
@@ -58,6 +63,7 @@ export default class GravitonConstruct {
                 blueprints.GlobalResources.Vpc,
                 new blueprints.VpcProvider()
             )
+            .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
             .resourceProvider(
                 "efs-file-system",
                 new blueprints.CreateEfsFileSystemProvider({
