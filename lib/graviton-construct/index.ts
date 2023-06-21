@@ -6,7 +6,7 @@ import { Construct } from "constructs";
 import { LookupHostedZoneProvider, GlobalResources, utils } from '@aws-quickstart/eks-blueprints';
 
 export default class GravitonConstruct {
-    build(scope: Construct, id: string) {
+    async buildAsync(scope: Construct, id: string) {
         const account = process.env.CDK_DEFAULT_ACCOUNT!;
         const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
