@@ -7,8 +7,6 @@ import { LookupHostedZoneProvider, GlobalResources, utils } from '@aws-quickstar
 
 export default class GravitonConstruct {
     async buildAsync(scope: Construct, id: string) {
-        const account = process.env.CDK_DEFAULT_ACCOUNT!;
-        const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
 
         const mngProps: blueprints.MngClusterProviderProps = {
@@ -56,9 +54,9 @@ export default class GravitonConstruct {
         ];
         const clusterProvider = new blueprints.MngClusterProvider(mngProps);
 
-        blueprints.EksBlueprint.builder()
-            .account(account)
-            .region(region)
+        await blueprints.EksBlueprint.builder()
+            .account(process.env.CDK_DEFAULT_ACCOUNT)
+            .region(process.env.CDK_DEFAULT_REGION)
             .resourceProvider(
                 blueprints.GlobalResources.Vpc,
                 new blueprints.VpcProvider()
@@ -79,6 +77,6 @@ export default class GravitonConstruct {
             )
             .clusterProvider(clusterProvider)
             .addOns(...addOns)
-            .build(scope, stackID);
+            .buildAsync(scope, stackID);
     }
 }
