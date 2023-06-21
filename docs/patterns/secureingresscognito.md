@@ -62,51 +62,46 @@ aws secretsmanager create-secret --name argo-admin-secret \
     --secret-string "password123$" \
     --region "us-west-2"
 ```
-4. The actual settings for the hosted zone name and expected subzone name are expected to be specified in the CDK context. Generically it is inside the `cdk.json` file of the current directory or in `~/.cdk.json` in your home directory. 
+4. The CDK code expects the allowed domain and subdomain names in the CDK context file (cdk.json).
 
-Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
+Create two environment variables. The PARENT_HOSTED_ZONE variable contains your company’s domain name. The DEV_SUBZONE_NAME will be the address for your Kubecost dashboard. 
+
+Generate the cdk.json file:
 
 ```
+PARENT_HOSTED_ZONE=mycompany.a2z.com
+DEV_SUBZONE_NAME=dev.mycompany.a2z.com
+cat << EOF > cdk.json
+{
+    "app": "npx ts-node dist/lib/common/default-main.js",
     "context": {
-        "parent.hostedzone.name": "mycompany.a2z.com",
-        "dev.subzone.name": "dev.mycompany.a2z.com"
+        "parent.hostedzone.name": "${PARENT_HOSTED_ZONE}",
+        "dev.subzone.name": "${DEV_SUBZONE_NAME}"
       }
+}
+EOF
 ```
 
-5. Create below Parameters with correct Email Ids and Email Domains in the AWS System Manager Parameter Store. The sample custom logic implemented (for demo purpose here) in `Pre sign-up Lambda trigger`
-   function does two things. First, it allows new User sign-up only if their Email domain matches with any of the Email Domains configured with `/secure-ingress-auth-cognito/ALLOWED_DOMAINS` Parameter. 
-   Second, it auto approves the new User sign-up without needing to verify Email Verification code, if their Email domain matches with any of the Email Domains configured with `/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS` Parameter. 
-   The custom logic implemented in `Pre authentication Lambda trigger` function allows logins for only allow listed Email Ids configured with with `/secure-ingress-auth-cognito/EMAIL_ALLOW_LIST` Parameter. 
 
-```        
-    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/ALLOWED_DOMAINS"
-    export SSM_PARAMETER_VALUE="emaildomain1.com,emaildomain2.com"
-    
-    aws ssm put-parameter \
-      --name "$SSM_PARAMETER_KEY" \
-      --value "$SSM_PARAMETER_VALUE" \
-      --type "String" \
-      --region $AWS_REGION
-    
-    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/AUTO_APPROVED_DOMAINS"
-    export SSM_PARAMETER_VALUE="emaildomain1.com"
-    
-    aws ssm put-parameter \
-      --name "$SSM_PARAMETER_KEY" \
-      --value "$SSM_PARAMETER_VALUE" \
-      --type "String" \
-      --region $AWS_REGION
-      
-    export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/EMAIL_ALLOW_LIST"
-    export SSM_PARAMETER_VALUE="my-email-1@emaildomain1.com,my-email-2@emaildomain2.com"
-    
-    aws ssm put-parameter \
-      --name "$SSM_PARAMETER_KEY" \
-      --value "$SSM_PARAMETER_VALUE" \
-      --type "String" \
-      --region $AWS_REGION  
-  
+5. In this solution, we’ll allow access to the Kubecost dashboard based on user email addresses. You can control access to the dashboard by allow-listing an entire domain or individual email addresses. 
+
+Users are required to sign-up before they can access the Kubecost dashboard. The pre sign-up Lambda trigger only allows sign-ups when user’s email domain matches allow-listed domains. When users sign-up, Cognito sends a verification code to their email address. Users have to verify access (using the one time valid code) to their email before they get access to the dashboard. 
+
+If you’d like to limit access to the dashboard by email addresses, you can also create a parameter to store allowed email addresses and add a logic to the pre authentication Lambda trigger.
+
+Create below parameters with allowed email addresses and domains in the AWS Systems Manager Parameter Store:
+
 ```
+export SSM_PARAMETER_KEY="/secure-ingress-auth-cognito/ALLOWED_DOMAINS"
+export SSM_PARAMETER_VALUE="emaildomain1.com,emaildomain2.com"
+
+aws ssm put-parameter \
+  --name "$SSM_PARAMETER_KEY" \
+  --value "$SSM_PARAMETER_VALUE" \
+  --type "String" \
+  --region $AWS_REGION
+```
+
 
 6. Execute the commands below to bootstrap the AWS environment in `us-west-2`
 
