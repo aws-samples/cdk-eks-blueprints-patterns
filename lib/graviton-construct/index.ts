@@ -34,6 +34,8 @@ export default class GravitonConstruct {
             new blueprints.addons.VpcCniAddOn(),
             new blueprints.addons.MetricsServerAddOn(),
             new blueprints.ExternalDnsAddOn({
+                repository: 'https://kubernetes-sigs.github.io/external-dns/',
+                version: '1.13.0',
                 hostedZoneResources: [blueprints.GlobalResources.HostedZone] // you can add more if you register resource providers
             }),
             new blueprints.addons.AdotCollectorAddOn(),
