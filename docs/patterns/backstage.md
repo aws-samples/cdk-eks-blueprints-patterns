@@ -44,9 +44,20 @@ npx @backstage/create-app@latest
 Build the corresponding [Docker image](https://backstage.io/docs/deployment/docker), commands reported here for your convenience:
 
 ```sh
+cd ./backstage
 yarn install --frozen-lockfile
 yarn tsc
 yarn build:backend --config app-config.yaml
+```
+
+Note: if the above command throws an error caused by app-config.yaml not found, you can explicitly set the path to the file:
+
+```sh
+ yarn build:backend --config {your current directory}/app-config.yaml
+```
+Then you can progress with the docker image build:
+
+```sh
 docker image build . -f packages/backend/Dockerfile --tag backstage
 ```
 
@@ -84,6 +95,7 @@ Clone the repository:
 
 ```sh
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
+cd cdk-eks-blueprints-patterns
 ```
 
 [Set the CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION environment variables](https://docs.aws.amazon.com/cdk/v2/guide/environments.html), in your AWS profile of the AWS CDK CLI.
