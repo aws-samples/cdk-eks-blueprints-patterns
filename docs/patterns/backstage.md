@@ -53,7 +53,7 @@ yarn build:backend --config app-config.yaml
 Note: if the above command throws an error caused by app-config.yaml not found, you can explicitly set the path to the file:
 
 ```sh
- yarn build:backend --config {your current directory}/app-config.yaml
+ yarn build:backend --config $(pwd)/app-config.yaml
 ```
 Then you can progress with the docker image build:
 
@@ -67,11 +67,7 @@ Note: consider the platform you are building on, and the target platform the ima
 docker buildx build ... --platform=...
 ```
 
-Note: you might need to enable BuildKit manually with:
-
-```sh
-DOCKER_BUILDKIT=1 docker image build . -f packages/backend/Dockerfile --tag backstage
-```
+Note: If you are running a version of Docker Engine version earlier than 23.0, you might need to enable BuildKit manually, like explained in the [Getting Started section](https://docs.docker.com/build/buildkit/#getting-started) of the BuildKit webpage.
 
 (Optional) to show examples on the UI, add to Docker file:
 
