@@ -28,7 +28,7 @@ This blueprint will include the following:
 
 Ensure that you have installed the following tools on your machine:
 
-- [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+- [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (also ensure it is [configured](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html#getting-started-quickstart-new))
 - [cdk](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 - [npm](https://docs.npmjs.com/cli/v8/commands/npm-install)
 - [tsc](https://www.typescriptlang.org/download)
@@ -159,6 +159,8 @@ You can assign values to the above keys according to the following criteria (val
 - "backstage.database.username": the username for the database's credentials, the default is "postgres"
 - "backstage.database.secret.target.name": the name to be used when creating the Secret, the default is "backstage-database-secret"
 
+If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
+
 Run the following commands:
 
 ```sh
@@ -166,10 +168,23 @@ make deps
 make build
 make pattern backstage deploy
 ```
+When deployment completes, the output will be similar to the following:
 
-Navigate to _backstage.$PARENT_DOMAIN_NAME_, you should see the screen below:
+<img src="./images/backstage-console-output.png" width="720">
+
+Navigate to the URL indicated by the first line in the output (_backstage-blueprint.BackstagebaseURL = https://backstage..._), you should see the screen below:
 
 <img src="./images/backstage-screen.png" width="720">
+
+To see the deployed resources within the cluster, please run:
+
+```sh
+kubectl get pod,svc,secrets,ingress -A
+```
+
+A sample output is shown below:
+
+<img src="./images/backstage-kubectl-output" width="720">
 
 ## Next steps
 
