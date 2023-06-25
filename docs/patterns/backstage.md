@@ -35,6 +35,13 @@ Ensure that you have installed the following tools on your machine:
 - [make](https://www.gnu.org/software/make/)
 - [Docker](https://docs.docker.com/get-docker/)
 
+Let’s start by setting the account and region environment variables:
+
+```sh
+ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+AWS_REGION=$(aws configure get region)
+```
+
 Create the [Backstage application](https://backstage.io/docs/getting-started/create-an-app), command reported here for your convenience:
 
 ```sh
@@ -75,15 +82,20 @@ Note: If you are running a version of Docker Engine version earlier than 23.0, y
 COPY --chown=node:node examples /examples
 ```
 
-Create an Amazon Elastic Container Registry (ECR) registry and repository
+Create an Amazon Elastic Container Registry (ECR) repository, named _backstage_:
 
 ```sh
-aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin {account}.dkr.ecr.{region}.amazonaws.com
-docker tag {the new image id here} {account}.dkr.ecr.{region}.amazonaws.com/{repository}:latest
-docker push {account}.dkr.ecr.{region}.amazonaws.com/{repository}:latest
+aws ecr create-repository --repository-name backstage
 ```
 
-Setup a Hosted Zone in Route 53, with your parent domain (the pattern will create a new subdomain with format _{backstageLabel}.{parent domain}_).
+```sh
+DOCKER_IMAGE_ID=... #see output of image id from above image creation
+aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+docker tag $DOCKER_IMAGE_ID $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/backstage:latest
+docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/backstage:latest
+```
+
+Setup a Hosted Zone in Route 53, with your parent domain. The pattern will create a new subdomain with format _{backstage subdomain label}.{parent domain}_. The default value for _{backstage subdomain label}_ is _backstage_ (see parameters below).
 
 ## Deployment
 
@@ -94,9 +106,24 @@ git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 cd cdk-eks-blueprints-patterns
 ```
 
-[Set the CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION environment variables](https://docs.aws.amazon.com/cdk/v2/guide/environments.html), in your AWS profile of the AWS CDK CLI.
+Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file (edit _PARENT_DOMAIN_NAME_ as it fits):
 
-The other pattern's parameters are expected to be specified in the CDK context. You can do so by editing the `{root of repository}/cdk.json` file as follows:
+```sh
+PARENT_DOMAIN_NAME=example.com
+HOSTED_ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name $PARENT_DOMAIN_NAME --query "HostedZones[].Id" --output text | xargs basename)
+cat << EOF > cdk.json
+{
+    "app": "npx ts-node dist/lib/common/default-main.js",
+    "context": {
+        "backstage.image.registry.name": "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com",
+        "backstage.parent.domain.name":"${PARENT_DOMAIN_NAME}",
+        "backstage.hosted.zone.id": "${HOSTED_ZONE_ID}"
+      }
+}
+EOF
+```
+
+(Optional) The full list of parameters you can set in the _context_ is:
 
 ```
     "context": {
@@ -116,7 +143,7 @@ The other pattern's parameters are expected to be specified in the CDK context. 
       }
 ```
 
-Assign values to the above keys according to the following criteria (values are required where you don't see _default_ mentioned):
+You can assign values to the above keys according to the following criteria (values are required where you don't see _default_ mentioned):
 
 - "backstage.namespace.name": Backstage's namespace, the default is "backstage"
 - "backstage.image.registry.name": the image registry for the Backstage Helm chart in Amazon ECR, a value similar to "youraccount.dkr.ecr.yourregion.amazonaws.com"
@@ -136,14 +163,17 @@ Run the following commands:
 
 ```sh
 make deps
-npm i
 make build
 make pattern backstage deploy
 ```
 
-Navigate to _{"subdomain.label"}.{"parent.domain.name"}_, you should see the screen below:
+Navigate to _backstage.$PARENT_DOMAIN_NAME_, you should see the screen below:
 
 <img src="./images/backstage-screen.png" width="720">
+
+## Next steps
+
+You can go the [AWS Blog](https://aws.amazon.com/blogs/) to explore how to use Backstage e.g., [as an API Developer Portal for Amazon API Gateway](https://aws.amazon.com/blogs/opensource/how-traveloka-uses-backstage-as-an-api-developer-portal-for-amazon-api-gateway/) or [to provision infrastructure using AWS Proton](https://aws.amazon.com/blogs/containers/provisioning-infrastructure-using-the-aws-proton-open-source-backstage-plugin/). On the Backstage website you can also see other examples of [how to use and expand Backstage](https://backstage.io/demos/).
 
 ## Cleanup
 
