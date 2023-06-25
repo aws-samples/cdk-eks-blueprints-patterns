@@ -184,7 +184,7 @@ kubectl get pod,svc,secrets,ingress -A
 
 A sample output is shown below:
 
-<img src="./images/backstage-kubectl-output" width="720">
+<img src="./images/backstage-kubectl-output.png" width="720">
 
 ## Next steps
 
