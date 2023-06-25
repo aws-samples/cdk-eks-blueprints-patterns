@@ -170,11 +170,11 @@ make pattern backstage deploy
 ```
 When deployment completes, the output will be similar to the following:
 
-<img src="./images/backstage-console-output.png" width="720">
+![Backstage deployment output](./images/backstage-console-output.png)
 
 Navigate to the URL indicated by the first line in the output (_backstage-blueprint.BackstagebaseURL = https://backstage..._), you should see the screen below:
 
-<img src="./images/backstage-screen.png" width="720">
+![Backstage console](./images/backstage-screen.png)
 
 To see the deployed resources within the cluster, please run:
 
@@ -184,7 +184,7 @@ kubectl get pod,svc,secrets,ingress -A
 
 A sample output is shown below:
 
-<img src="./images/backstage-kubectl-output.png" width="720">
+![Backstage kubectl output](./images/backstage-kubectl-output.png)
 
 ## Next steps
 
