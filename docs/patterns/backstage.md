@@ -60,7 +60,7 @@ yarn build:backend --config app-config.yaml
 Note: if the above command throws an error caused by app-config.yaml not found, you can explicitly set the path to the file:
 
 ```sh
- yarn build:backend --config $(pwd)/app-config.yaml
+yarn build:backend --config $(pwd)/app-config.yaml
 ```
 Then you can progress with the docker image build:
 
