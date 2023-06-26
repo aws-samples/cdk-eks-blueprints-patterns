@@ -50,10 +50,10 @@ Go to your Instana Backend application (Instana User Interface), click ... More 
 If you wish to use AWS Secret Manager Secrets to pass Instana props (key, endpoint, and port), then you will be required to setup Secrets first.
 
 ```shell
-export SECRET_NAME="instana-secret-params"
-export INSTANA_AGENT_KEY=abc123
-export INSTANA_ENDPOINT_HOST_URL=instana.example.com
-export INSTANA_ENDPOINT_HOST_PORT="443"
+export SECRET_NAME=<aws_secret_name>
+export INSTANA_AGENT_KEY=<instana_key>
+export INSTANA_ENDPOINT_HOST_URL=<instana_host_endpoint>
+export INSTANA_ENDPOINT_HOST_PORT=<instana_port>"
 aws secretsmanager create-secret \
   --name $SECRET_NAME \
   --secret-string "{\"INSTANA_AGENT_KEY\":\"${INSTANA_AGENT_KEY}\",
