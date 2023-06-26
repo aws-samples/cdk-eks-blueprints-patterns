@@ -49,18 +49,15 @@ Go to your Instana Backend application (Instana User Interface), click ... More 
 ### AWS Secret Manager Secrets (Optional)
 If you wish to use AWS Secret Manager Secrets to pass Instana props (key, endpoint, and port), then you will be required to setup Secrets first.
 
-To create AWS Secret Manager secrets, you can follow these steps:
+```shell
+aws secretsmanager create - secret-- name "<secret_name>"-- secret -
+  string "{\"INSTANA_AGENT_KEY\":\"<instana_key>\",
+    \"INSTANA_ENDPOINT_HOST_URL\":\"<instana_host_endpoint>\",
+    \"INSTANA_ENDPOINT_HOST_PORT\":\"<instana_port>\"
+   }"
+```
+secret_name = AWS Secret Manager Secret name (eg. *instana-secret-params*).
 
-1. Log in to the AWS Management Console and open the AWS Secret Manager service.
-2. Search and Select AWS Secrets Manager service.
-3. Select the type of secret as 'Other type of secret'
-4. Under the Key/value pairs add following keys and their values:
-```
-INSTANA_AGENT_KEY=<instana key>
-INSTANA_ENDPOINT_HOST_URL=<instana backend host>
-INSTANA_ENDPOINT_HOST_PORT=<instana backend port>
-```
-5. Assign a name to the Secret (eg. *instana-secret-params*).
 
 ### Using AWS Secret Manager Secrets
 To use AWS Secret Manager Secrets follow these steps:
