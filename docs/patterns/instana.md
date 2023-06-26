@@ -93,12 +93,10 @@ export default class InstanaConstruct {
             await prevalidateSecrets(InstanaConstruct.name, undefined, 'instana-secret-params');
 
             const secretParamName: string = utils.valueFromContext(scope, "secretParamName", undefined);
-            console.log(`secretParamName is ${secretParamName}`);
             if(secretParamName != undefined) {
                 instanaProps.secretParamName = secretParamName;
             }
             const yamlObject = loadYaml(JSON.stringify(instanaProps));
-            console.log(`instanaProps is ${yamlObject}`);
             const stackId = `${id}-blueprint`;
             const addOns = new InstanaOperatorAddon(yamlObject);
             EksBlueprint.builder()
