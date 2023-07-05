@@ -25,7 +25,7 @@ export class GravitonBuilder {
                 new blueprints.addons.PrometheusNodeExporterAddOn(),
                 new blueprints.addons.SecretsStoreAddOn(),
                 new blueprints.addons.VpcCniAddOn(),
-                );
+        );
     }
 }
 
