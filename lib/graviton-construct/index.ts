@@ -3,6 +3,7 @@ import { CfnWorkspace } from "aws-cdk-lib/aws-aps";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from "constructs";
+import { GravitonBuilder } from '../common/graviton-builder';
 
 export default class GravitonConstruct {
     build(scope: Construct, id: string) {
@@ -19,39 +20,26 @@ export default class GravitonConstruct {
             maxSize: 6,
         };
 
-        const ampWorkspaceName = "blueprints-amp-workspace";
+        const ampWorkspaceName = "graviton-amp-workspace";
         const ampWorkspace: CfnWorkspace =
             blueprints.getNamedResource(ampWorkspaceName);
 
         const addOns: Array<blueprints.ClusterAddOn> = [
-            new blueprints.addons.AwsLoadBalancerControllerAddOn(),
-            new blueprints.addons.CertManagerAddOn(),
-            new blueprints.addons.KubeStateMetricsAddOn(),
-            new blueprints.addons.PrometheusNodeExporterAddOn(),
-            new blueprints.addons.GrafanaOperatorAddon(),
-            new blueprints.addons.SecretsStoreAddOn(),
-            new blueprints.addons.ExternalsSecretsAddOn(),
-            new blueprints.addons.VpcCniAddOn(),
-            new blueprints.addons.MetricsServerAddOn(),
             new blueprints.addons.AdotCollectorAddOn(),
             new blueprints.addons.AmpAddOn({
                 ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint,
             }),
-            new blueprints.addons.XrayAdotAddOn(),
-            new blueprints.addons.KubeProxyAddOn("v1.27.1-eksbuild.1"),
-            new blueprints.addons.ClusterAutoScalerAddOn(),
-            new blueprints.addons.FluxCDAddOn(),
             new blueprints.addons.CloudWatchLogsAddon({
                 logGroupPrefix: "/aws/eks/graviton-blueprint",
             }),
-            new blueprints.addons.IstioBaseAddOn(),
-            new blueprints.addons.IstioControlPlaneAddOn(),
-            new blueprints.addons.CalicoOperatorAddOn(),
             new blueprints.addons.EfsCsiDriverAddOn(),
+            new blueprints.addons.FluxCDAddOn(),
+            new blueprints.addons.GrafanaOperatorAddon(),
+            new blueprints.addons.XrayAdotAddOn(),
         ];
         const clusterProvider = new blueprints.MngClusterProvider(mngProps);
 
-        blueprints.EksBlueprint.builder()
+        GravitonBuilder.builder()
             .account(account)
             .region(region)
             .resourceProvider(
