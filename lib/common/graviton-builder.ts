@@ -23,7 +23,7 @@ export class GravitonBuilder extends blueprints.BlueprintBuilder {
             builder.addOns(
                 new blueprints.addons.IstioBaseAddOn(),
                 new blueprints.addons.IstioControlPlaneAddOn(),
-            )
+            );
         }
 
         if (options.addMetricsAddons) {
@@ -31,20 +31,20 @@ export class GravitonBuilder extends blueprints.BlueprintBuilder {
                 new blueprints.addons.KubeStateMetricsAddOn(),
                 new blueprints.addons.MetricsServerAddOn(),
                 new blueprints.addons.PrometheusNodeExporterAddOn(),
-            )
+            );
         }
 
         if (options.addSecretAddons) {
             builder.addOns(
                 new blueprints.addons.ExternalsSecretsAddOn(),
                 new blueprints.addons.SecretsStoreAddOn(),
-            )
+            );
         }
 
         if (options.addCalicoAddon) {
             builder.addOns(
                 new blueprints.addons.CalicoOperatorAddOn(),
-            )
+            );
         }
         
         builder
