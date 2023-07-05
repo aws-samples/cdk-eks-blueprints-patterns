@@ -3,7 +3,7 @@ import { CfnWorkspace } from "aws-cdk-lib/aws-aps";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from "constructs";
-import { GravitonBuilder } from '../common/graviton-builder';
+import { GravitonBuilder, GravitonOptions } from '../common/graviton-builder';
 
 export default class GravitonConstruct {
     build(scope: Construct, id: string) {
@@ -11,20 +11,21 @@ export default class GravitonConstruct {
         const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
 
-        const mngProps: blueprints.MngClusterProviderProps = {
-            version: eks.KubernetesVersion.of("1.27"),
-            instanceTypes: [new ec2.InstanceType("m7g.large")],
-            amiType: eks.NodegroupAmiType.AL2_ARM_64,
-            desiredSize: 3,
-            minSize: 2,
-            maxSize: 6,
-        };
-
         const ampWorkspaceName = "graviton-amp-workspace";
         const ampWorkspace: CfnWorkspace =
             blueprints.getNamedResource(ampWorkspaceName);
 
+        const options: GravitonOptions = {
+            KubernetesVersion: "1.27",
+            instanceFamily: ec2.InstanceClass.M7G,
+            addIstioAddons: true,
+            addMetricsAddons: true,
+            addSecretAddons: true,
+            addCalicoAddon: true
+        };
+
         const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.addons.CertManagerAddOn(),
             new blueprints.addons.AdotCollectorAddOn(),
             new blueprints.addons.AmpAddOn({
                 ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint,
@@ -37,9 +38,8 @@ export default class GravitonConstruct {
             new blueprints.addons.GrafanaOperatorAddon(),
             new blueprints.addons.XrayAdotAddOn(),
         ];
-        const clusterProvider = new blueprints.MngClusterProvider(mngProps);
 
-        GravitonBuilder.builder()
+        GravitonBuilder.builder(options)
             .account(account)
             .region(region)
             .resourceProvider(
@@ -59,7 +59,6 @@ export default class GravitonConstruct {
                     ampWorkspaceName
                 )
             )
-            .clusterProvider(clusterProvider)
             .addOns(...addOns)
             .build(scope, stackID);
     }
