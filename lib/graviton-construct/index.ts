@@ -16,7 +16,8 @@ export default class GravitonConstruct {
 
         const options: GravitonOptions = {
             KubernetesVersion: "1.27",
-            instanceFamily: ec2.InstanceClass.M7G,
+            instanceClass: ec2.InstanceClass.M7G,
+            instanceSize: ec2.InstanceSize.LARGE,
             addIstioAddons: true,
             addMetricsAddons: true,
             addSecretAddons: true,

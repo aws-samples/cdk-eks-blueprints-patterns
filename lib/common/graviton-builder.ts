@@ -7,7 +7,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 
 export interface GravitonOptions {
     KubernetesVersion: string,
-    instanceFamily: ec2.InstanceClass,
+    instanceClass: ec2.InstanceClass,
+    instanceSize: ec2.InstanceSize,
     addIstioAddons: boolean,
     addMetricsAddons: boolean,
     addSecretAddons: boolean,
@@ -51,7 +52,7 @@ export class GravitonBuilder extends blueprints.BlueprintBuilder {
             .clusterProvider(
                 new blueprints.MngClusterProvider({
                     version: eks.KubernetesVersion.of(options.KubernetesVersion),
-                    instanceTypes: [new ec2.InstanceType(options.instanceFamily)],
+                    instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
                     amiType: eks.NodegroupAmiType.AL2_ARM_64,
                     desiredSize: 3,
                     minSize: 2,
