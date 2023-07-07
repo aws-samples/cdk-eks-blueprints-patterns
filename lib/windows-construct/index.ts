@@ -46,7 +46,6 @@ export default class WindowsConstruct {
         WindowsBuilder.builder(options)
             .account(account)
             .region(region)
-            .addAwsLoadBalancerControllerAddOn()
             .resourceProvider("node-role", nodeRole)
             .resourceProvider(
                 blueprints.GlobalResources.Vpc,

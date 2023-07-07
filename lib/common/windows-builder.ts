@@ -28,12 +28,6 @@ export interface WindowsOptions {
 
 export class WindowsBuilder extends blueprints.BlueprintBuilder {
 
-    public addAwsLoadBalancerControllerAddOn(props?: blueprints.AwsLoadBalancerControllerProps) : WindowsBuilder {
-        return this.addOns(
-            new blueprints.addons.AwsLoadBalancerControllerAddOn(props)
-        );
-    }
-
     public static builder(options: WindowsOptions): WindowsBuilder {
         const builder = new WindowsBuilder();
 
@@ -65,7 +59,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                     id: "usage-tracking-addon",
                     builder: UsageTrackingAddOn.builder(),
                 }),
-                new blueprints.addons.CoreDnsAddOn(),
+                new blueprints.addons.VpcCniAddOn()
             );
         return builder;
     }

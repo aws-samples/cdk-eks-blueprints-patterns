@@ -49,7 +49,7 @@ aws eks update-kubeconfig --name windows-eks-blueprint --region <your region> --
 Let's verify the resources created from the steps above.
 
 ```sh
-kubectl get nodes -o json | jq -r '.items[] | "Name: ",.metadata.name,"\nInstance Type: ",.metadata.labels."beta.kubernetes.io/instance-type","\nArch: ",.metadata.labels."beta.kubernetes.io/arch","\n"' # Output shows node on M famGraviton3 processor and ARM architecture
+kubectl get nodes -o json | jq -r '.items[] | "Name: ",.metadata.name,"\nInstance Type: ",.metadata.labels."beta.kubernetes.io/instance-type","\nOS Type: ",.metadata.labels."beta.kubernetes.io/os","\n"' # Output shows Windows and Linux Nodes
 ```
 
 ## Cleanup
