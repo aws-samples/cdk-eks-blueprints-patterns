@@ -34,7 +34,7 @@ export default class WindowsConstruct {
                 "Name": "Managed-Node-Group",
                 "Type": "Windows-Node-Group",
                 "LaunchTemplate": "WindowsLT",
-                "kubernetes.io/cluster/blueprint-construct-dev": "owned"
+                "`kubernetes.io/cluster/${id}-eks-blueprint`" : "owned"
             }
         };
 
