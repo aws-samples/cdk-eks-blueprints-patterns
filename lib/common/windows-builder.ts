@@ -58,8 +58,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                 new blueprints.NestedStackAddOn({
                     id: "usage-tracking-addon",
                     builder: UsageTrackingAddOn.builder(),
-                }),
-                new blueprints.addons.VpcCniAddOn()
+                })
             );
         return builder;
     }
