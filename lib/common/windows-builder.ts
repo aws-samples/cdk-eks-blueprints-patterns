@@ -39,10 +39,20 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                 new blueprints.GenericClusterProvider({
                     version: options.kubernetesVersion,
                     tags: options.clusterProviderTags,
+                    role: blueprints.getResource(context => {
+                        return new iam.Role(context.scope, 'ClusterRole', { 
+                            assumedBy: new iam.ServicePrincipal("eks.amazonaws.com"),
+                            managedPolicies: [
+                                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKSClusterPolicy"),
+                                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKSVPCResourceController")
+                            ]
+                        });
+                    }),
                     mastersRole: blueprints.getResource(context => {
                         return new iam.Role(context.scope, 'AdminRole', { assumedBy: new iam.AccountRootPrincipal() });
                     }),
                     managedNodeGroups: [
+                        addGenericNodeGroup(options),
                         addWindowsNodeGroup(options)
                     ]
                 })
@@ -52,6 +62,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                     id: "usage-tracking-addon",
                     builder: UsageTrackingAddOn.builder(),
                 }),
+                new blueprints.addons.CoreDnsAddOn(),
             );
         return builder;
     }
@@ -62,7 +73,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
  */
 export class UsageTrackingAddOn extends NestedStack {
 
-    static readonly USAGE_ID = "qp-1ub15bkuc";
+    static readonly USAGE_ID = "qp-1ubotkd2d";
 
     public static builder(): blueprints.NestedStackBuilder {
         return {
@@ -77,19 +88,31 @@ export class UsageTrackingAddOn extends NestedStack {
     }
 }
 
+function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
+
+    return {
+        id: "mng-linux",
+        amiType: NodegroupAmiType.AL2_X86_64,
+        instanceTypes: [new ec2.InstanceType('m5.4xlarge')],
+        desiredSize: options.desiredNodeSize,
+        minSize: options.minNodeSize, 
+        maxSize: options.maxNodeSize,
+        nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
+        nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+        launchTemplate: {
+            tags: {
+                "Name": "Mng-linux",
+                "Type": "Managed-linux-Node-Group",
+                "LaunchTemplate": "Linux-Launch-Template",
+            },
+            requireImdsv2: false
+        }
+    };
+}
+
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
     
-    const windowsUserData = ec2.UserData.forWindows();
-    windowsUserData.addCommands(`
-      $ErrorActionPreference = 'Stop'
-      $EKSBootstrapScriptPath = "C:\\\\Program Files\\\\Amazon\\\\EKS\\\\Start-EKSBootstrap.ps1"
-      Try {
-        & $EKSBootstrapScriptPath -EKSClusterName 'windows-eks-cluster'
-      } Catch {
-        Throw $_
-      }
-    `);
     const ebsDeviceProps: ec2.EbsDeviceProps = {
         deleteOnTermination: false,
         volumeType: ec2.EbsDeviceVolumeType.GP2
@@ -97,12 +120,13 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 
     return {
         id: "mng-windows-ami",
-        amiType: NodegroupAmiType.AL2_X86_64,
+        amiType: NodegroupAmiType.WINDOWS_CORE_2019_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
         desiredSize: options.desiredNodeSize,
         minSize: options.minNodeSize, 
         maxSize: options.maxNodeSize,
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
+        nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         launchTemplate: {
             blockDevices: [
                 {
@@ -110,17 +134,9 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
                     volume: ec2.BlockDeviceVolume.ebs(options.blockDeviceSize, ebsDeviceProps),
                 }
             ],
-            machineImage: ec2.MachineImage.genericWindows({
-                'us-east-1': 'ami-0e80b8d281637c6c1',
-                'us-east-2': 'ami-039ecff89038848a6',
-                'us-west-1': 'ami-0c0815035bf1efb6e',
-                'us-west-2': 'ami-029e1340b254a7667',
-                'eu-west-1': 'ami-09af50f599f7f882c',
-                'eu-west-2': 'ami-0bf1fec1eaef78230',
-            }),
             securityGroup: blueprints.getNamedResource("my-cluster-security-group") as ec2.ISecurityGroup,
             tags: options.launchTemplateTags,
-            userData: windowsUserData,
+            requireImdsv2: false
         }
     };
 }
