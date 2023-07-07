@@ -22,15 +22,20 @@ export default class WindowsConstruct {
             kubernetesVersion: eks.KubernetesVersion.of("1.27"),
             instanceClass: ec2.InstanceClass.M5,
             instanceSize: ec2.InstanceSize.XLARGE4,
-            desiredNodeSize: 3,
+            desiredNodeSize: 2,
             minNodeSize: 2,
-            maxNodeSize: 4,
+            maxNodeSize: 3,
             blockDeviceSize: 50,
             clusterProviderTags: {
                 "Name": "blueprints-windows-eks-cluster",
                 "Type": "generic-windows-cluster"
             },
-            launchTemplateTags: {
+            genericNodeGroupTags: {
+                "Name": "Mng-linux",
+                "Type": "Managed-linux-Node-Group",
+                "LaunchTemplate": "Linux-Launch-Template",
+            },
+            windowsNodeGroupTags: {
                 "Name": "Managed-Node-Group",
                 "Type": "Windows-Node-Group",
                 "LaunchTemplate": "WindowsLT",
