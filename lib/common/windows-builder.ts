@@ -18,7 +18,10 @@ export interface WindowsOptions {
     clusterProviderTags: {
         [key: string]: string;
     },
-    launchTemplateTags: {
+    genericNodeGroupTags: {
+        [key: string]: string;
+    }
+    windowsNodeGroupTags: {
         [key: string]: string;
     }
 }
@@ -100,11 +103,7 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         launchTemplate: {
-            tags: {
-                "Name": "Mng-linux",
-                "Type": "Managed-linux-Node-Group",
-                "LaunchTemplate": "Linux-Launch-Template",
-            },
+            tags: options.genericNodeGroupTags,
             requireImdsv2: false
         }
     };
@@ -119,7 +118,7 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
     };
 
     return {
-        id: "mng-windows-ami",
+        id: "mng-windows",
         amiType: NodegroupAmiType.WINDOWS_CORE_2019_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
         desiredSize: options.desiredNodeSize,
@@ -127,16 +126,7 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
         maxSize: options.maxNodeSize,
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-        launchTemplate: {
-            blockDevices: [
-                {
-                    deviceName: "/dev/sda1",
-                    volume: ec2.BlockDeviceVolume.ebs(options.blockDeviceSize, ebsDeviceProps),
-                }
-            ],
-            securityGroup: blueprints.getNamedResource("my-cluster-security-group") as ec2.ISecurityGroup,
-            tags: options.launchTemplateTags,
-            requireImdsv2: false
-        }
+        diskSize: options.blockDeviceSize,
+        tags: options.windowsNodeGroupTags,
     };
 }
