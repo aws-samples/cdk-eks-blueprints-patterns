@@ -4,8 +4,11 @@ import * as cdk from 'aws-cdk-lib';
 
 export const logger = utils.logger;
 
-export function errorHandler(app: cdk.App, ...message: string[]) {
+export function errorHandler(app: cdk.App, message: string, error?: Error) {
     logger.info(message);
+    if(error){
+        logger.error(error.name, error.message, error.stack);
+    }
     new EmptyStack(app);
 }
 

@@ -1,6 +1,9 @@
 import { Construct } from "constructs";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
+import { GlobalResources } from "@aws-quickstart/eks-blueprints";
 import { TeamRikerSetup, TeamScan } from "../teams";
+
+
 
 export class ImportClusterConstruct {
 
@@ -29,11 +32,12 @@ export class ImportClusterConstruct {
 
         blueprints.EksBlueprint.builder()
             .clusterProvider(importClusterProvider)
-            .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider(vpcId)) // Important! register cluster VPC
-            .addOns(new blueprints.CalicoOperatorAddOn())
+            .resourceProvider(GlobalResources.Vpc, new blueprints.VpcProvider(vpcId)) // Important! register cluster VPC
             .addOns(new blueprints.AppMeshAddOn())
             .teams(new TeamRikerSetup(scope, "./lib/teams/team-riker/"))
             .teams(new TeamScan())
+            .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .region('us-east-2')
             .build(scope, "imported-cluster");
     }
 }
