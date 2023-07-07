@@ -104,11 +104,6 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
-    
-    const ebsDeviceProps: ec2.EbsDeviceProps = {
-        deleteOnTermination: false,
-        volumeType: ec2.EbsDeviceVolumeType.GP2
-    };
 
     return {
         id: "mng-windows",
