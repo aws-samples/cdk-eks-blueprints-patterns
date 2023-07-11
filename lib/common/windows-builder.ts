@@ -7,6 +7,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { NodegroupAmiType } from 'aws-cdk-lib/aws-eks';
 
+
 export interface WindowsOptions {
     kubernetesVersion: eks.KubernetesVersion,
     instanceClass: ec2.InstanceClass,
@@ -116,5 +117,12 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         diskSize: options.blockDeviceSize,
         tags: options.windowsNodeGroupTags,
+        taints: [
+            {
+                key: "os",
+                value: "windows",
+                effect: eks.TaintEffect.NO_SCHEDULE
+            }
+        ]
     };
 }
