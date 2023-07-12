@@ -21,9 +21,9 @@ The pattern exposes the `WindowsBuilder` construct to build cluster with windows
 
 The `WindowsBuilder` provides a set of options, most of which are similar to managed node groups. 
 
-In addition, it provides an attribute `noScheduleForWindowsNodes : true | false`. When set to `true` it will automatically add a `NoSchedule` taint to the Windows nodes. This approach is a safe way to disallow any application that does not provide proper tolerations to be schedule on Windows nodes. 
+In addition, it provides an attribute `noScheduleForWindowsNodes : true | false`. When set to `true` it will automatically add a `NoSchedule` taint to the Windows nodes. This approach is a safe way to disallow any application that does not provide proper tolerations to be scheduled on Windows nodes. 
 
-In this scenarion, in order to schedule a workload (application/add-on) on Windows nodes, customers can apply the following node selectors and tolerations to their deployments:
+In this scenario, in order to schedule a workload (application/add-on) on Windows nodes, customers can apply the following node selectors and tolerations to their deployments:
 
 ```yaml
 nodeSelector:
