@@ -15,6 +15,26 @@ Ensure that you have installed the following tools on your machine.
 4. [npm](https://docs.npmjs.com/cli/v8/commands/npm-install)
 5. `make`
 
+## Configuration Options
+
+The pattern exposes the `WindowsBuilder` construct to build cluster with windows node groups. At the moment, adding windows nodes to the cluster requires at least one linux node group present to deploy core add-ons, such as VPC-CNI and CoreDNS. 
+
+The `WindowsBuilder` provides a set of options, most of which are similar to managed node groups. 
+
+In addition, it provides an attribute `noScheduleForWindowsNodes : true | false`. When set to `true` it will automatically add a `NoSchedule` taint to the Windows nodes. This approach is a safe way to disallow any application that does not provide proper tolerations to be schedule on Windows nodes. 
+
+In this scenarion, in order to schedule a workload (application/add-on) on Windows nodes, customers can apply the following node selectors and tolerations to their deployments:
+
+```yaml
+nodeSelector:
+  kubernetes.io/os: windows
+tolerations:
+  - key: "os"
+    operator: "Equal"
+    value: "windows"
+    effect: "NoSchedule"
+```
+
 ## Deploy EKS Cluster with Amazon EKS Blueprints for CDK
 
 Clone the repository

@@ -28,6 +28,7 @@ export default class WindowsConstruct {
             minNodeSize: 2,
             maxNodeSize: 3,
             blockDeviceSize: 50,
+            noScheduleForWindowsNodes: true,
             clusterProviderTags: {
                 "Name": "blueprints-windows-eks-cluster",
                 "Type": "generic-windows-cluster"
@@ -47,7 +48,7 @@ export default class WindowsConstruct {
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new WindowsVpcCni()
-        ]
+        ];
 
         WindowsBuilder.builder(options)
             .addOns(...addOns)

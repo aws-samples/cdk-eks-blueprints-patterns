@@ -16,6 +16,7 @@ export interface WindowsOptions {
     minNodeSize: number,
     maxNodeSize: number,
     blockDeviceSize: number,
+    noScheduleForWindowsNodes: boolean,
     clusterProviderTags: {
         [key: string]: string;
     },
@@ -105,8 +106,7 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
-
-    return {
+    const result : blueprints.ManagedNodeGroup = {
         id: "mng-windows",
         amiType: NodegroupAmiType.WINDOWS_CORE_2019_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
@@ -116,13 +116,18 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         diskSize: options.blockDeviceSize,
-        tags: options.windowsNodeGroupTags,
-        taints: [
+        tags: options.windowsNodeGroupTags
+    };
+
+    if(options.noScheduleForWindowsNodes) {
+        blueprints.utils.setPath(result, "taints", [
             {
                 key: "os",
                 value: "windows",
                 effect: eks.TaintEffect.NO_SCHEDULE
             }
-        ]
-    };
+        ]);
+    }
+
+    return result;
 }

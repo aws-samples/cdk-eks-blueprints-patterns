@@ -2,7 +2,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
 
 export class WindowsVpcCni implements blueprints.ClusterAddOn {
-    id: "amazon-vpc-cni"
+    id: "amazon-vpc-cni";
 
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
