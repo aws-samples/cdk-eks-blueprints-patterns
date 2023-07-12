@@ -15,7 +15,8 @@ export default class WindowsConstruct {
             [
                 iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKSWorkerNodePolicy"),
                 iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly"),
-                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore")
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"),
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKS_CNI_Policy")
             ]);
 
         const options: WindowsOptions = {
