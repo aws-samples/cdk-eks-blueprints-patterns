@@ -81,7 +81,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
 
 8. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
-9. Bootstrap your 4 AWS Accounts using [deploying pipelines approach] (https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#deploying-pipelines) in this link. If you have bootstrap already done, please remove those before doing this step.
+9. Bootstrap all 4 AWS accounts using step mentioned for **different environment for deploying CDK applications** in [Deploying Pipelines](https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#deploying-pipelines). If you have bootstrapped earlier, please remove them before proceeding with this step. Remember to set `pipelineEnv` account number in `--trust` flag.
 
 10. Modify the code of `lib/pipeline-multi-env-gitops/index.ts` in your forked repo to point to your GitHub username/organisation. Look for the declared const of `gitOwner` and change it to your GitHub username. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo.
 
