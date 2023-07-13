@@ -108,7 +108,7 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
     const result : blueprints.ManagedNodeGroup = {
         id: "mng-windows",
-        amiType: NodegroupAmiType.WINDOWS_CORE_2019_X86_64,
+        amiType: NodegroupAmiType.WINDOWS_CORE_2022_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
         desiredSize: options.desiredNodeSize,
         minSize: options.minNodeSize, 

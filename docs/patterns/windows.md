@@ -72,7 +72,99 @@ Let's verify the resources created from the steps above.
 kubectl get nodes -o json | jq -r '.items[] | "Name: ",.metadata.name,"\nInstance Type: ",.metadata.labels."beta.kubernetes.io/instance-type","\nOS Type: ",.metadata.labels."beta.kubernetes.io/os","\n"' # Output shows Windows and Linux Nodes
 ```
 
+## Deploy sample windows application
+
+Create a namespace for the windows app called windows
+
+```sh
+kubectl create ns windows
+```
+
+Create a yaml file for the app from the configuration below and save it as windows-server-2022.yaml
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: windows-server-iis-ltsc2022
+  namespace: windows
+spec:
+  selector:
+    matchLabels:
+      app: windows-server-iis-ltsc2022
+      tier: backend
+      track: stable
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: windows-server-iis-ltsc2022
+        tier: backend
+        track: stable
+    spec:
+      containers:
+      - name: windows-server-iis-ltsc2022
+        image: mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2022
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: IfNotPresent
+        command:
+        - powershell.exe
+        - -command
+        - "Add-WindowsFeature Web-Server; Invoke-WebRequest -UseBasicParsing -Uri 'https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.6/ServiceMonitor.exe' -OutFile 'C:\\ServiceMonitor.exe'; echo '<html><body><br/><br/><H1>Our first pods running on Windows managed node groups! Powered by Windows Server LTSC 2022.<H1></body><html>' > C:\\inetpub\\wwwroot\\iisstart.htm; C:\\ServiceMonitor.exe 'w3svc'; "
+      nodeSelector:
+        kubernetes.io/os: windows
+      tolerations:
+          - key: "os"
+            operator: "Equal"
+            value: "windows"
+            effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: windows-server-iis-ltsc2022-service
+  namespace: windows
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: windows-server-iis-ltsc2022
+    tier: backend
+    track: stable
+  sessionAffinity: None
+  type: LoadBalancer
+```
+
+Deploy the sample app
+
+```sh
+kubectl apply -f windows-server-2022.yaml
+```
+
+Verify the resources created successfully
+
+```sh
+kubectl get -n windows svc,deploy,pods
+```
+
+### Reference
+
+Please reference our [blog](https://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20ourhttps://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20our) on Deploying Amazon EKS Windows managed node groups to learn more about this topic.
+
+
 ## Cleanup
+
+First delete the windows app
+
+```sh
+kubectl delete -f windows-server-2022.yaml
+kubectl delete ns windows
+```
 
 To clean up your EKS Blueprint, run the following command:
 
