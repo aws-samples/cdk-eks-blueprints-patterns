@@ -85,7 +85,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
 
 10. Modify the code of `lib/pipeline-multi-env-gitops/index.ts` in your forked repo to point to your GitHub username/organisation. Look for the declared const of `gitOwner` and change it to your GitHub username. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo.
 
-11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
+11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack in `pipelineEnv` account:
 
 ```bash
 make build
