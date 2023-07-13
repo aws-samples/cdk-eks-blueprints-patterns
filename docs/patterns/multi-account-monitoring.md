@@ -40,11 +40,13 @@ You can find the team-geordie configuration for this pattern in the workload rep
 
 4. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url` in `pipelineEnv` account. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
 
-5. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline in `pipelineEnv` account. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
+5. `github-token` secret must be stored as a plain text in AWS Secrets Manager for the GitHub pipeline in `pipelineEnv` account. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read the repository
    2. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
-6. `cdk-context` secret secret must be stored as a plain text in the following format in AWS Secrets Manager for cdk context for all the 4 AWS accounts used by the solution in `pipelineEnv` account..
+6. Create secret `cdk-context` in `us-east-1` region as a plain text in AWS Secrets Manager for the GitHub pipeline in `pipelineEnv` account.
+
+`cdk-context` secret must be stored as a plain text in the following format in AWS Secrets Manager for cdk context for all the 4 AWS accounts used by the solution in `pipelineEnv` account. This secret must be created in `us-east-1` region.
 
     ```
     {
@@ -81,7 +83,7 @@ You can find the team-geordie configuration for this pattern in the workload rep
 
 9. Bootstrap your 4 AWS Accounts using [deploying pipelines approach] (https://aws-quickstart.github.io/cdk-eks-blueprints/pipelines/#deploying-pipelines) in this link. If you have bootstrap already done, please remove those before doing this step.
 
-10. Modify the code in your forked repo to point to your GitHub username/organisation. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo. Open the [pattern file source code](../../lib/pipeline-multi-env-gitops/index.ts) and look for the declared const of `gitOwner`. Change it to your GitHub username.
+10. Modify the code of `lib/pipeline-multi-env-gitops/index.ts` in your forked repo to point to your GitHub username/organisation. Look for the declared const of `gitOwner` and change it to your GitHub username. This is needed because the AWS CodePipeline that will be automatically created will be triggered upon commits that are made in your forked repo.
 
 11. Once all pre-requisites are set you are ready to deploy the pipeline. Run the following command from the root of this repository to deploy the pipeline stack:
 
