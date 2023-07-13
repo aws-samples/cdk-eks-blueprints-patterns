@@ -74,8 +74,6 @@ kubectl get nodes -o json | jq -r '.items[] | "Name: ",.metadata.name,"\nInstanc
 
 ## Deploy sample windows application
 
-These steps come from this blog [here](https://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20ourhttps://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20our)
-
 Create a namespace for the windows app called windows
 
 ```sh
@@ -153,6 +151,10 @@ Verify the resources created successfully
 ```sh
 kubectl get -n windows svc,deploy,pods
 ```
+
+### Reference
+
+Please reference our [blog](https://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20ourhttps://aws.amazon.com/blogs/containers/deploying-amazon-eks-windows-managed-node-groups/#:~:text=2.-,Deploy%20a%20sample%20application,-Now%20that%20our) on Deploying Amazon EKS Windows managed node groups to learn more about this topic.
 
 
 ## Cleanup
