@@ -43,7 +43,7 @@ pattern:
 	@:
 %:
 	@:
-	
+
 test-all:
 	@for pattern in $(formatted_pattern_names) ; do \
 		echo "Building pattern $$pattern"; \
