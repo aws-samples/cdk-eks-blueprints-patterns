@@ -167,7 +167,8 @@ export default class PipelineMultiEnvGitops {
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
-                    targetRevision: 'main',
+                    targetRevision: 'update-gitops-pattern',
+                    // targetRevision: 'main',
                 })
                 .wave({
                     id: 'dev-test',
