@@ -40,6 +40,9 @@ mkdocs:
 pattern:
 	@echo $(pattern_name) performing $(pattern_command)
 	$(CDK) --app "npx ts-node bin/$(pattern_name).ts" $(if $(pattern_command),$(pattern_command), list)
+	@:
+%:
+	@:
 
 test-all:
 	@for pattern in $(formatted_pattern_names) ; do \

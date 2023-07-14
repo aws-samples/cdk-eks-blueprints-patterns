@@ -1,12 +1,12 @@
 # IBM Instana on EKS pattern
-The IBM Instana Addon for Amazon EKS Blueprint is designed to enhance observability, monitoring, and management capabilities for applications running on Amazon Elastic Kubernetes Service (EKS). Instana Addon focuses on enhancing the user experience by reducing the complexity and time required to install and configure an Instana host agent on Amazon EKS cluster.
+The IBM® Instana® Addon for Amazon EKS Blueprint is designed to enhance observability, monitoring, and management capabilities for applications running on Amazon Elastic Kubernetes Service (EKS). Instana Addon focuses on enhancing the user experience by reducing the complexity and time required to install and configure an Instana host agent on Amazon EKS cluster.
 
-This Addon will use IBM Instana Kubernetes operator in the namespace ```instana-agent``` to install and manage the Instana agent. It also configures custom resource values to configure the operator.
+This Addon will use IBM® Instana® Agent Operator in the namespace ```instana-agent``` to install and manage Instana Agent. It also configures custom resource values to configure the operator.
 
 This pattern deploys the following resources:
 
 - Creates EKS Cluster Control plane with public endpoint (for demo purpose only) with a managed node group
-- Install and set up the Instana Host Agent for monitoring your EKS workloads. (by using the provided environment variable and additional configuration parameters)
+- Install and set up Instana Agent for monitoring your EKS workloads. (by using the provided environment variable and additional configuration parameters)
 
 
 ## Prerequisites:
@@ -133,7 +133,7 @@ export INSTANA_ENDPOINT_HOST_PORT="443"
 ```
 
 ### Configure additional configuration parameters.
-To configure additional parameters for the Instana agent according to your specific use case, follow these steps:
+To configure additional parameters for Instana Agent according to your specific use case, follow these steps:
 
 - Go to project/lib/instana-construct/index.ts
 - Add the additional configuration parameters under ```const instanaProps``` variable.
@@ -167,7 +167,6 @@ make pattern instana-operator deploy
 
 
 ## Verify the resources
-
 
 Run update-kubeconfig command. You should be able to get the command from CDK output message. More information can be found at https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/#cluster-access
 ```sh
