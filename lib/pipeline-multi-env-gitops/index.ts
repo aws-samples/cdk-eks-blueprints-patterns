@@ -2,7 +2,6 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { getSecretValue } from '@aws-quickstart/eks-blueprints/dist/utils/secrets-manager-utils';
 import * as cdk from 'aws-cdk-lib';
 import { StackProps } from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
@@ -11,6 +10,7 @@ import * as team from '../teams/pipeline-multi-env-gitops';
 //pattern wide consts
 const GITHUB_ORG = 'aws-samples';
 const CLUSTER_VERSION = eks.KubernetesVersion.V1_26;
+const WORKLOAD_REPO = `git@github.com:${GITHUB_ORG}/eks-blueprints-workloads.git`;
 
 export function populateWithContextDefaults(
     app: cdk.App,
@@ -205,14 +205,8 @@ function buildTeams(envId: string, account: string): Array<blueprints.Team> {
 }
 function createArgoAddonConfig(
     environment: string,
-    repoUrl: string = `git@github.com:${GITHUB_ORG}/eks-blueprints-workloads.git`
+    repoUrl: string = WORKLOAD_REPO
 ): blueprints.ArgoCDAddOn {
-    interface argoProjectParams {
-        githubOrg: string;
-        githubRepository: string;
-        projectNamespace: string;
-    }
-
     const argoConfig = new blueprints.ArgoCDAddOn({
         version: '5.37.0',
         bootstrapRepo: {
