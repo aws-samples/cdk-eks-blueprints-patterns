@@ -148,12 +148,17 @@ export default class PipelineMultiEnvGitops {
             .addOns(...addons);
 
         // custom addons per environment
-        const devAddons = buildPerEnvAddons('dev', DEV_ENV_ID);
-        const testAddons = buildPerEnvAddons('test', DEV_ENV_ID);
-        const prodAddons = buildPerEnvAddons('prod', PROD_ENV_ID);
+        const devAddons = buildEnvAddons('dev', DEV_ENV_ID);
+        const testAddons = buildEnvAddons('test', DEV_ENV_ID);
+        const prodAddons = buildEnvAddons('prod', PROD_ENV_ID);
+
+        // teams per environment
+        const devTeams = buildTeams('dev', pipelineProps.devEnv.account!);
+        const testTeams = buildTeams('test', pipelineProps.devEnv.account!);
+        const prodTeams = buildTeams('prod', pipelineProps.prodEnv.account!);
 
         try {
-            // const { gitOwner, gitRepositoryName } = await getRepositoryData();
+            // TODO - add dynamic gitowner suport when using codeStar config const { gitOwner, gitRepositoryName } = await getRepositoryData();
             const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
             blueprints.CodePipelineStack.builder()
@@ -178,12 +183,7 @@ export default class PipelineMultiEnvGitops {
                                     pipelineProps.devEnv.account
                                 )
                                 .name(DEV_ENV_ID)
-                                .teams(
-                                    ...createTeamList(
-                                        'dev',
-                                        pipelineProps.devEnv.account!
-                                    )
-                                )
+                                .teams(...devTeams)
                                 .addOns(...devAddons),
                         },
                         {
@@ -194,12 +194,7 @@ export default class PipelineMultiEnvGitops {
                                     pipelineProps.devEnv.account
                                 )
                                 .name(TEST_ENV_ID)
-                                .teams(
-                                    ...createTeamList(
-                                        'test',
-                                        pipelineProps.devEnv.account!
-                                    )
-                                )
+                                .teams(...testTeams)
                                 .addOns(...testAddons),
                         },
                     ],
@@ -222,12 +217,7 @@ export default class PipelineMultiEnvGitops {
                                     pipelineProps.prodEnv.account
                                 )
                                 .name(PROD_ENV_ID)
-                                .teams(
-                                    ...createTeamList(
-                                        'prod',
-                                        pipelineProps.prodEnv.account!
-                                    )
-                                )
+                                .teams(...prodTeams)
                                 .addOns(...prodAddons),
                         },
                     ],
@@ -239,10 +229,7 @@ export default class PipelineMultiEnvGitops {
     }
 }
 
-function createTeamList(
-    envId: string,
-    account: string
-): Array<blueprints.Team> {
+function buildTeams(envId: string, account: string): Array<blueprints.Team> {
     // Teams ids has to be globally unique --> injecting environment ID
     const teamsList = [
         new team.CorePlatformTeam(account, envId),
@@ -320,7 +307,7 @@ function buildEnv(
     return env;
 }
 
-function buildPerEnvAddons(
+function buildEnvAddons(
     envName: string,
     envId: string
 ): blueprints.ClusterAddOn[] {
