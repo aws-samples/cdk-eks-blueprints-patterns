@@ -11,12 +11,13 @@ export default class InferentiaConstruct {
         const stackID = `${id}-blueprint`;
 
         const nodeRole = new blueprints.CreateRoleProvider("blueprint-node-role", new iam.ServicePrincipal("ec2.amazonaws.com"),
-        [
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKSWorkerNodePolicy"),
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly"),
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"),
-            iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3ReadOnlyAccess")
-        ]);
+            [
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKSWorkerNodePolicy"),
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ContainerRegistryReadOnly"),
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMManagedInstanceCore"),
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3ReadOnlyAccess")
+            ]
+        );
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.AwsLoadBalancerControllerAddOn(),
@@ -54,15 +55,15 @@ export default class InferentiaConstruct {
 
 function addGPUNodeGroup(): blueprints.ManagedNodeGroup {
 
-  return {
-      id: "ng-gpu-inf1",
-      amiType: NodegroupAmiType.AL2_X86_64_GPU,
-      instanceTypes: [new ec2.InstanceType('inf1.2xlarge')],
-      desiredSize: 2,
-      minSize: 1,
-      maxSize: 4, 
-      nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
-      nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-      diskSize: 40,
-  };
+    return {
+        id: "ng-gpu-inf1",
+        amiType: NodegroupAmiType.AL2_X86_64_GPU,
+        instanceTypes: [new ec2.InstanceType('inf1.2xlarge')],
+        desiredSize: 2,
+        minSize: 1,
+        maxSize: 4, 
+        nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
+        nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+        diskSize: 40,
+    };
 }
