@@ -102,7 +102,7 @@ export default class PipelineMultiEnvGitops {
         //     // scope,
         //     pipelineProps.prodEnv.account!
         // );
-        console.log(createTeamList('dev', pipelineProps.devEnv.account!));
+        // console.log(createTeamList('dev', pipelineProps.devEnv.account!));
         try {
             // github-token is needed for CDK Pipeline functionality
             await getSecretValue(
@@ -158,11 +158,20 @@ export default class PipelineMultiEnvGitops {
             }),
             new blueprints.MetricsServerAddOn(),
         ];
+
         const blueprint = blueprints.EksBlueprint.builder()
             .version(CLUSTER_VERSION)
             .clusterProvider(genClusterProvider)
             .addOns(...addons);
 
+        // const devAddons: blueprints.ClusterAddOn[] = [
+        //     new blueprints.KarpenterAddOn(buildKarpenterConfig(DEV_ENV_ID)),
+        //     createArgoAddonConfig('dev'),
+        // ];
+        const devAddons = buildPerEnvAddons('dev', DEV_ENV_ID);
+        const testAddons = buildPerEnvAddons('test', DEV_ENV_ID);
+        const prodAddons = buildPerEnvAddons('prod', PROD_ENV_ID);
+        // console.log(devAddons)
         // Argo configuration per environment
         const devArgoAddonConfig = createArgoAddonConfig('dev');
         const testArgoAddonConfig = createArgoAddonConfig('test');
@@ -203,7 +212,6 @@ export default class PipelineMultiEnvGitops {
                                     pipelineProps.devEnv.account
                                 )
                                 .name(DEV_ENV_ID)
-                                // .teams(...devTeams)
                                 .teams(
                                     ...createTeamList(
                                         'dev',
@@ -211,11 +219,12 @@ export default class PipelineMultiEnvGitops {
                                     )
                                 )
                                 .addOns(
-                                    //custom addons per environ
-                                    new blueprints.KarpenterAddOn(
-                                        buildKarpenterConfig(DEV_ENV_ID)
-                                    ),
-                                    devArgoAddonConfig
+                                    ...devAddons
+                                    // //custom addons per environ
+                                    // new blueprints.KarpenterAddOn(
+                                    //     buildKarpenterConfig(DEV_ENV_ID)
+                                    // ),
+                                    // devArgoAddonConfig
                                 ),
                         },
                         {
@@ -233,37 +242,49 @@ export default class PipelineMultiEnvGitops {
                                     )
                                 )
                                 .addOns(
-                                    new blueprints.KarpenterAddOn(
-                                        buildKarpenterConfig(TEST_ENV_ID)
-                                    ),
-                                    testArgoAddonConfig
+                                    ...testAddons
+                                    // new blueprints.KarpenterAddOn(
+                                    //     buildKarpenterConfig(TEST_ENV_ID)
+                                    // ),
+                                    // testArgoAddonConfig
                                 ),
                         },
                     ],
-                    // props: {
-                    //     post: [
-                    //         new blueprints.pipelines.cdkpipelines.ManualApprovalStep(
-                    //             'manual-approval-before-production'
-                    //         ),
-                    //     ],
-                    // },
+                    props: {
+                        post: [
+                            new blueprints.pipelines.cdkpipelines.ManualApprovalStep(
+                                'manual-approval-before-production'
+                            ),
+                        ],
+                    },
                 })
-                // .wave({
-                //     id: 'prod',
-                //     stages: [
-                //         {
-                //             id: PROD_ENV_ID,
-                //             stackBuilder: blueprint
-                //                 .clone(
-                //                     pipelineProps.prodEnv.region,
-                //                     pipelineProps.prodEnv.account
-                //                 )
-                //                 .name(PROD_ENV_ID)
-                //                 .teams(...prodTeams)
-                //                 .addOns(prodArgoAddonConfig),
-                //         },
-                //     ],
-                // })
+                .wave({
+                    id: 'prod',
+                    stages: [
+                        {
+                            id: PROD_ENV_ID,
+                            stackBuilder: blueprint
+                                .clone(
+                                    pipelineProps.prodEnv.region,
+                                    pipelineProps.prodEnv.account
+                                )
+                                .name(PROD_ENV_ID)
+                                .teams(
+                                    ...createTeamList(
+                                        'prod',
+                                        pipelineProps.prodEnv.account!
+                                    )
+                                )
+                                .addOns(
+                                    ...prodAddons
+                                    // new blueprints.KarpenterAddOn(
+                                    //     buildKarpenterConfig(PROD_ENV_ID)
+                                    // ),
+                                    // prodArgoAddonConfig
+                                ),
+                        },
+                    ],
+                })
                 .build(scope, 'eks-blueprint-pipeline-stack', props);
         } catch (error) {
             console.log(error);
@@ -273,7 +294,6 @@ export default class PipelineMultiEnvGitops {
 
 function createTeamList(
     envId: string,
-    // scope: Construct,
     account: string
 ): Array<blueprints.Team> {
     // Teams ids has to be globally unique --> injecting environment ID
@@ -351,4 +371,14 @@ function buildEnv(
     };
 
     return env;
+}
+
+function buildPerEnvAddons(
+    envName: string,
+    envId: string
+): blueprints.ClusterAddOn[] {
+    return [
+        new blueprints.KarpenterAddOn(buildKarpenterConfig(envId)),
+        createArgoAddonConfig(envName),
+    ];
 }
