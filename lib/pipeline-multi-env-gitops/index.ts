@@ -7,7 +7,6 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import { Construct } from 'constructs';
 // Team implementations
 import * as team from '../teams/pipeline-multi-env-gitops';
-import { createNamespace } from '@aws-quickstart/eks-blueprints/dist/utils';
 
 //pattern wide consts
 const GITHUB_ORG = 'tsahiduek';
@@ -15,48 +14,14 @@ const CLUSTER_VERSION = eks.KubernetesVersion.V1_26;
 
 export function populateWithContextDefaults(
     app: cdk.App,
-    defaultAccount: string,
-    defaultRegion: string
+    defAccount: string,
+    defRegion: string
 ) {
-    // Populate Context Defaults for the pipeline account
-    // let pipeline_account = app.node.tryGetContext('pipeline_account');
-    // pipeline_account = pipeline_account ?? defaultAccount;
-    // let pipeline_region = app.node.tryGetContext('pipeline_region');
-    // pipeline_region = pipeline_region ?? defaultRegion;
-    // const pipelineEnv: cdk.Environment = {
-    //     account: pipeline_account,
-    //     region: pipeline_region,
-    // };
-
     // build pipeline, dev-tes, and prod accounts
-    const pipelineEnv = buildEnv(
-        app,
-        defaultAccount,
-        defaultRegion,
-        'pipeline'
-    );
-    const devEnv = buildEnv(app, defaultAccount, defaultRegion, 'dev');
-    const prodEnv = buildEnv(app, defaultAccount, defaultRegion, 'prod');
+    const pipelineEnv = buildEnv(app, defAccount, defRegion, 'pipeline');
+    const devEnv = buildEnv(app, defAccount, defRegion, 'dev');
+    const prodEnv = buildEnv(app, defAccount, defRegion, 'prod');
 
-    // // Populate Context Defaults for the Development account
-    // let dev_account = app.node.tryGetContext('dev_account');
-    // dev_account = dev_account ?? defaultAccount;
-    // let dev_region = app.node.tryGetContext('dev_region');
-    // dev_region = dev_region ?? defaultRegion;
-    // const devEnv: cdk.Environment = {
-    //     account: dev_account,
-    //     region: dev_region,
-    // };
-
-    // // Populate Context Defaults for the Production  account
-    // let prod_account = app.node.tryGetContext('prod_account');
-    // prod_account = prod_account ?? defaultAccount;
-    // let prod_region = app.node.tryGetContext('prod_region');
-    // prod_region = prod_region ?? defaultRegion;
-    // const prodEnv: cdk.Environment = {
-    //     account: prod_account,
-    //     region: prod_region,
-    // };
     return { devEnv, pipelineEnv, prodEnv };
 }
 
@@ -64,7 +29,7 @@ export interface PipelineMultiEnvGitopsProps {
     /**
      * The CDK environment where dev&test, prod, and piplines will be deployed to
      */
-    devEnv: cdk.Environment;
+    devTestEnv: cdk.Environment;
     prodEnv: cdk.Environment;
     pipelineEnv: cdk.Environment;
 }
@@ -82,8 +47,8 @@ export default class PipelineMultiEnvGitops {
         props?: StackProps
     ) {
         // environments IDs consts
-        const DEV_ENV_ID = `dev-${pipelineProps.devEnv.region}`;
-        const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`;
+        const DEV_ENV_ID = `dev-${pipelineProps.devTestEnv.region}`;
+        const TEST_ENV_ID = `test-${pipelineProps.devTestEnv.region}`;
         const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`;
 
         try {
@@ -153,8 +118,8 @@ export default class PipelineMultiEnvGitops {
         const prodAddons = buildEnvAddons('prod', PROD_ENV_ID);
 
         // teams per environment
-        const devTeams = buildTeams('dev', pipelineProps.devEnv.account!);
-        const testTeams = buildTeams('test', pipelineProps.devEnv.account!);
+        const devTeams = buildTeams('dev', pipelineProps.devTestEnv.account!);
+        const testTeams = buildTeams('test', pipelineProps.devTestEnv.account!);
         const prodTeams = buildTeams('prod', pipelineProps.prodEnv.account!);
 
         try {
@@ -169,8 +134,7 @@ export default class PipelineMultiEnvGitops {
                 .repository({
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
-                    targetRevision: 'update-gitops-pattern',
-                    // targetRevision: 'main', // TODO change to main
+                    targetRevision: 'main',
                 })
                 .wave({
                     id: 'dev-test',
@@ -179,8 +143,8 @@ export default class PipelineMultiEnvGitops {
                             id: DEV_ENV_ID,
                             stackBuilder: blueprint
                                 .clone(
-                                    pipelineProps.devEnv.region,
-                                    pipelineProps.devEnv.account
+                                    pipelineProps.devTestEnv.region,
+                                    pipelineProps.devTestEnv.account
                                 )
                                 .name(DEV_ENV_ID)
                                 .teams(...devTeams)
@@ -190,8 +154,8 @@ export default class PipelineMultiEnvGitops {
                             id: TEST_ENV_ID,
                             stackBuilder: blueprint
                                 .clone(
-                                    pipelineProps.devEnv.region,
-                                    pipelineProps.devEnv.account
+                                    pipelineProps.devTestEnv.region,
+                                    pipelineProps.devTestEnv.account
                                 )
                                 .name(TEST_ENV_ID)
                                 .teams(...testTeams)
