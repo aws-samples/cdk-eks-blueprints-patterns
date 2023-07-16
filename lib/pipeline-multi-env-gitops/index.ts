@@ -9,7 +9,7 @@ import { Construct } from 'constructs';
 import * as team from '../teams/pipeline-multi-env-gitops';
 
 //pattern wide consts
-const GITHUB_ORG = 'tsahiduek';
+const GITHUB_ORG = 'aws-samples';
 const CLUSTER_VERSION = eks.KubernetesVersion.V1_26;
 
 export function populateWithContextDefaults(
