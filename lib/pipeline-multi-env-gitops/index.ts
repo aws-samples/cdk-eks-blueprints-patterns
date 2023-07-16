@@ -86,23 +86,6 @@ export default class PipelineMultiEnvGitops {
         const TEST_ENV_ID = `test-${pipelineProps.devEnv.region}`;
         const PROD_ENV_ID = `prod-${pipelineProps.prodEnv.region}`;
 
-        // // build teams per environments
-        // const devTeams = createTeamList(
-        //     'dev',
-        //     // scope,
-        //     pipelineProps.devEnv.account!
-        // );
-        // const testTeams = createTeamList(
-        //     'test',
-        //     // scope,
-        //     pipelineProps.devEnv.account!
-        // );
-        // const prodTeams = createTeamList(
-        //     'prod',
-        //     // scope,
-        //     pipelineProps.prodEnv.account!
-        // );
-        // console.log(createTeamList('dev', pipelineProps.devEnv.account!));
         try {
             // github-token is needed for CDK Pipeline functionality
             await getSecretValue(
@@ -164,32 +147,15 @@ export default class PipelineMultiEnvGitops {
             .clusterProvider(genClusterProvider)
             .addOns(...addons);
 
-        // const devAddons: blueprints.ClusterAddOn[] = [
-        //     new blueprints.KarpenterAddOn(buildKarpenterConfig(DEV_ENV_ID)),
-        //     createArgoAddonConfig('dev'),
-        // ];
+        // custom addons per environment
         const devAddons = buildPerEnvAddons('dev', DEV_ENV_ID);
         const testAddons = buildPerEnvAddons('test', DEV_ENV_ID);
         const prodAddons = buildPerEnvAddons('prod', PROD_ENV_ID);
-        // console.log(devAddons)
-        // Argo configuration per environment
-        const devArgoAddonConfig = createArgoAddonConfig('dev');
-        const testArgoAddonConfig = createArgoAddonConfig('test');
-        const prodArgoAddonConfig = createArgoAddonConfig('prod');
 
         try {
             // const { gitOwner, gitRepositoryName } = await getRepositoryData();
             const gitRepositoryName = 'cdk-eks-blueprints-patterns';
-            const karpenterProps = {
-                subnetTags: {
-                    'aws:cloudformation:stack-name': `${DEV_ENV_ID}-${DEV_ENV_ID}-blueprint`,
-                },
-                securityGroupTags: {
-                    'aws:eks:cluster-name': `${DEV_ENV_ID}-blueprint`,
-                },
-                interruptionHandling: true,
-            };
-            const karpenterPropsDev = buildKarpenterConfig(DEV_ENV_ID);
+
             blueprints.CodePipelineStack.builder()
                 .application('npx ts-node bin/pipeline-multienv-gitops.ts')
                 .name('eks-blueprint-pipeline')
@@ -199,7 +165,7 @@ export default class PipelineMultiEnvGitops {
                     repoUrl: gitRepositoryName,
                     credentialsSecretName: 'github-token',
                     targetRevision: 'update-gitops-pattern',
-                    // targetRevision: 'main',
+                    // targetRevision: 'main', // TODO change to main
                 })
                 .wave({
                     id: 'dev-test',
@@ -218,14 +184,7 @@ export default class PipelineMultiEnvGitops {
                                         pipelineProps.devEnv.account!
                                     )
                                 )
-                                .addOns(
-                                    ...devAddons
-                                    // //custom addons per environ
-                                    // new blueprints.KarpenterAddOn(
-                                    //     buildKarpenterConfig(DEV_ENV_ID)
-                                    // ),
-                                    // devArgoAddonConfig
-                                ),
+                                .addOns(...devAddons),
                         },
                         {
                             id: TEST_ENV_ID,
@@ -241,13 +200,7 @@ export default class PipelineMultiEnvGitops {
                                         pipelineProps.devEnv.account!
                                     )
                                 )
-                                .addOns(
-                                    ...testAddons
-                                    // new blueprints.KarpenterAddOn(
-                                    //     buildKarpenterConfig(TEST_ENV_ID)
-                                    // ),
-                                    // testArgoAddonConfig
-                                ),
+                                .addOns(...testAddons),
                         },
                     ],
                     props: {
@@ -275,13 +228,7 @@ export default class PipelineMultiEnvGitops {
                                         pipelineProps.prodEnv.account!
                                     )
                                 )
-                                .addOns(
-                                    ...prodAddons
-                                    // new blueprints.KarpenterAddOn(
-                                    //     buildKarpenterConfig(PROD_ENV_ID)
-                                    // ),
-                                    // prodArgoAddonConfig
-                                ),
+                                .addOns(...prodAddons),
                         },
                     ],
                 })
