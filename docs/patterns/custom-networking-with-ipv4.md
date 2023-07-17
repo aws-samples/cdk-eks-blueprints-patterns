@@ -137,7 +137,7 @@ const blueprint = blueprints.EksBlueprint.builder()
 
 In the diagram shown below, a secondary CIDR (100/64) is assigned to each private subnet that gets created in an availability zone. Worker nodes in the EKS cluster still gets an IP address from the Primary CIDRs(10.0) range whereas the pods get an IP address from the secondary CIDR range.
 
-![Custom-NW-IPv4](./images/Custom-NW-IPv4.png)
+![Custom-NW-IPv4](./images/custom-nw-mng.png)
 
 This can be verified by issuing the following command
 

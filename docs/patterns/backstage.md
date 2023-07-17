@@ -172,7 +172,7 @@ When deployment completes, the output will be similar to the following:
 
 ![Backstage deployment output](./images/backstage-console-output.png)
 
-Navigate to the URL indicated by the first line in the output (_backstage-blueprint.BackstagebaseURL = https://backstage..._), you should see the screen below:
+Navigate to the URL indicated by the first line in the output (_backstage-blueprint.BackstagebaseURL ...), you should see the screen below:
 
 ![Backstage console](./images/backstage-screen.png)
 
