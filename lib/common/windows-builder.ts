@@ -68,7 +68,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
  */
 export class UsageTrackingAddOn extends NestedStack {
 
-    static readonly USAGE_ID = "qp-1ubotkd2d";
+    static readonly USAGE_ID = "qs-1ubotj5kl";
 
     public static builder(): blueprints.NestedStackBuilder {
         return {
