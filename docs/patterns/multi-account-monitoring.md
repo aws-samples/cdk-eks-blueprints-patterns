@@ -109,17 +109,81 @@ You can find the team-geordie configuration for this pattern in the workload rep
 
 1. Create the following IAM users and attach `administrator` policy to required accounts.
     
-    1. IAM user `pipeline-admin` with `administrator` in Pipeline AWS Account
+    1. IAM user `pipeline-admin` with `administrator` policy in Pipeline AWS Account
 
-    1. IAM user `prod1-admin` with `administrator` in Prod 1 AWS Account
+        ```bash
+        aws iam create-user \
+        [--profile pipelineEnv-admin-profile] \
+        --user-name pipeline-admin
+
+        aws iam attach-user-policy \
+        [--profile pipelineEnv-admin-profile] \
+        --user-name pipeline-admin \
+        --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+        ```
+
+    1. IAM user `prod1-admin` with `administrator` policy in Prod 1 AWS Account
+
+        ```bash
+        aws iam create-user \
+        [--profile prodEnv1-admin-profile] \
+        --user-name prod1-admin
+
+        aws iam attach-user-policy \
+        [--profile prodEnv1-admin-profile] \
+        --user-name prod1-admin \
+        --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+        ```
     
-    1. IAM user `prod2-admin` with `administrator` in Prod 2 AWS Account
+    1. IAM user `prod2-admin` with `administrator` policy in Prod 2 AWS Account
+
+        ```bash
+        aws iam create-user \
+        [--profile prodEnv2-admin-profile] \
+        --user-name prod2-admin
+
+        aws iam attach-user-policy \
+        [--profile prodEnv2-admin-profile] \
+        --user-name prod2-admin \
+        --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+        ```    
     
-    1. IAM user `mon-admin` with `administrator` in Monitoring AWS Account
+    1. IAM user `mon-admin` with `administrator` policy in Monitoring AWS Account
+
+        ```bash
+        aws iam create-user \
+        [--profile monitoringEnv-admin-profile] \
+        --user-name mon-admin
+
+        aws iam attach-user-policy \
+        [--profile monitoringEnv-admin-profile] \
+        --user-name mon-admin \
+        --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+        ```
     
     1. IAM user `team-geordi` in Prod 1 and Prod 2 AWS Account
+
+        ```bash
+        aws iam create-user \
+        [--profile prodEnv1-admin-profile] \
+        --user-name team-geordi
+
+        aws iam create-user \
+        [--profile prodEnv2-admin-profile] \
+        --user-name team-geordi        
+        ```    
     
     1. IAM user `team-platform` in Prod 1 and Prod 2 AWS Account
+
+        ```bash
+        aws iam create-user \
+        [--profile prodEnv1-admin-profile] \
+        --user-name team-platform
+
+        aws iam create-user \
+        [--profile prodEnv2-admin-profile] \
+        --user-name team-platform     
+        ```
 
 1. Install project dependencies by running `npm install` in the main folder of this cloned repository
 
