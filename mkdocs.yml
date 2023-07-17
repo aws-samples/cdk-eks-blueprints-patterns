@@ -28,6 +28,7 @@ nav:
     - Nginx Pattern: 'patterns/nginx.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
     - Graviton Pattern: 'patterns/graviton.md'
+    - Windows Pattern: 'patterns/windows.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
