@@ -156,10 +156,7 @@ us-east-2c   47m
 
 An ENIConfig custom resource is created in each AZ.  Number of secondary ENIs associated with the Worker node varies by instance type.
 
-![Custom-NW-MNG](./images/Custom-nw-mng.png)
-
-
-
+![Custom-NW-MNG](./images/custom-nw-mng.png)
 
 ## Additional Configuration Options
 
