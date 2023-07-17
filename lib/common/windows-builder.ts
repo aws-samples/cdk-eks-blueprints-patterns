@@ -47,9 +47,6 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                             ]
                         });
                     }),
-                    mastersRole: blueprints.getResource(context => {
-                        return new iam.Role(context.scope, 'AdminRole', { assumedBy: new iam.AccountRootPrincipal() });
-                    }),
                     managedNodeGroups: [
                         addGenericNodeGroup(options),
                         addWindowsNodeGroup(options)

@@ -35,7 +35,12 @@ For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blue
 
 ## Prerequisites
 
-1. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
+Ensure that you have installed the following tools on your machine.
+
+1. [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+2. [kubectl](https://Kubernetes.io/docs/tasks/tools/)
+3. [cdk](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
+4. [npm](https://docs.npmjs.com/cli/v8/commands/npm-install)
 
 ## Deploy
 
