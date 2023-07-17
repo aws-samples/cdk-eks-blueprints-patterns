@@ -85,7 +85,7 @@ relay-server-79448564cb-nf5tj                              2/2     Running
 
 ## Configure DNS Settings
 
-Once Paralus is installed, continue with following steps to configure DNS settings, reset default password and start using Phttps://www.databricks.com/aralus
+Once Paralus is installed, continue with following steps to configure DNS settings, reset default password and start using Paralus.
 
 Obtain the external ip address by executing below command against the installation
 `kubectl get svc blueprints-addon-paralus-contour-envoy -n paralus-system`

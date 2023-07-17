@@ -143,7 +143,7 @@ export class GravitonBuilder extends blueprints.BlueprintBuilder {
  */
 export class UsageTrackingAddOn extends NestedStack {
 
-    static readonly USAGE_ID = "qp-1ub15bkuc";
+    static readonly USAGE_ID = "qs-1ub15dn1f";
 
     public static builder(): blueprints.NestedStackBuilder {
         return {
