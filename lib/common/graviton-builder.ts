@@ -126,7 +126,7 @@ export class GravitonBuilder extends blueprints.BlueprintBuilder {
             )
             .addOns(
                 new blueprints.NestedStackAddOn({
-                    id: "usage-tracking-addons",
+                    id: "usage-tracking-addon",
                     builder: UsageTrackingAddOn.builder(),
                 }),
                 new blueprints.addons.AwsLoadBalancerControllerAddOn(),
