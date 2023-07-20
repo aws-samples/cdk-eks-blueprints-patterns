@@ -84,9 +84,15 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
 
    ```bash
    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linux  brew/bin/brew shellenv)"
+   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
    test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.profile    
+   ```
+
+   Verify brew installation
+
+   ```bash
+   brew -v   
    ```
 
 Post completing the above, continue from Step: [Repo setup](#repo-setup)
