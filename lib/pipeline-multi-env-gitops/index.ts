@@ -142,10 +142,8 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: DEV_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(
-                                    pipelineProps.devTestEnv.region,
-                                    pipelineProps.devTestEnv.account
-                                )
+                                .clone()
+                                .withEnv(pipelineProps.devTestEnv)
                                 .name(DEV_ENV_ID)
                                 .teams(...devTeams)
                                 .addOns(...devAddons),
@@ -153,10 +151,8 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: TEST_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(
-                                    pipelineProps.devTestEnv.region,
-                                    pipelineProps.devTestEnv.account
-                                )
+                                .clone()
+                                .withEnv(pipelineProps.devTestEnv)
                                 .name(TEST_ENV_ID)
                                 .teams(...testTeams)
                                 .addOns(...testAddons),
@@ -176,10 +172,8 @@ export default class PipelineMultiEnvGitops {
                         {
                             id: PROD_ENV_ID,
                             stackBuilder: blueprint
-                                .clone(
-                                    pipelineProps.prodEnv.region,
-                                    pipelineProps.prodEnv.account
-                                )
+                                .clone()
+                                .withEnv(pipelineProps.prodEnv)
                                 .name(PROD_ENV_ID)
                                 .teams(...prodTeams)
                                 .addOns(...prodAddons),
