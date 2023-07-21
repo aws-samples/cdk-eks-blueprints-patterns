@@ -74,7 +74,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.profile
     export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
     ```
-Post completing the above, continue from [Verify Node.js and npm Installation](#verify-node.js-and-npm-installation)
+Post completing the above, continue from [Verify Node.js and npm Installation](#verify-nodejs-and-npm-installation)
 
 ### Ubuntu Setup
 
@@ -133,7 +133,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
     ```
 
-Post completing the above, continue from [Verify Node.js and npm Installation](#verify-node.js-and-npm-installation)
+Post completing the above, continue from [Verify Node.js and npm Installation](#verify-nodejs-and-npm-installation)
 
 ### Mac Setup    
 
