@@ -19,6 +19,63 @@ Before proceeding, make sure [AWS CLI](https://docs.aws.amazon.com/cli/latest/us
 
 To use the eks-blueprints and patterns module, you must have [Node.js](https://nodejs.org/en/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. You will also use `make` and `brew` to simplify build and other common actions. 
 
+### RHEL Setup
+
+Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprints-patterns` in your Amazon Linux/CentOS/RHEL Linux machine.
+
+1. **Update the package list** 
+
+    Update the package list to ensure you're installing the latest versions.
+
+    ```bash
+    sudo yum update
+    ```
+
+1. **Install `make`**
+
+    ```bash
+    sudo yum install make
+    ```
+1. **Install `brew`** on ubuntu by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
+   
+   ```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   
+   Add Homebrew to your PATH
+
+   ```bash
+   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+   test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+   echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.profile
+   ```
+
+   Verify brew installation
+
+   ```bash
+   brew -v
+   ```
+
+1. **Install `Node.js` and `npm`**
+
+    Install Node.js v18 and npm using brew.
+
+    ```bash
+    brew install node@18
+    ```
+
+    Note: Node.js package includes npm
+
+    Set PATH for node@18
+
+    ```bash
+    test -r ~/.bash_profile && echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.bash_profile
+    echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.profile
+    export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
+    ```
+Post completing the above, continue from [Verify Node.js and npm Installation](#verify-node.js-and-npm-installation)
+
 ### Ubuntu Setup
 
 Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprints-patterns` in your Ubuntu Linux machine.
@@ -58,7 +115,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
    brew -v
    ```
 
-1. **Install `node.js` and `npm`**
+1. **Install `Node.js` and `npm`**
 
     Install Node.js v18 and npm using brew.
 
@@ -66,44 +123,17 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     brew install node@18
     ```
 
-    Note: node.js package includes npm
+    Note: Node.js package includes npm
 
     Set PATH for node@18
 
     ```bash
-    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
     test -r ~/.bash_profile && echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.bash_profile
     echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.profile
     export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
     ```
 
-1. **Verify node.js and npm Installation**
-
-    Check the installed version of Node.js:
-
-    ```bash
-    node -v
-    ```
-
-    The output should be `v18.x.x`.
-
-    Check the installed version of npm:
-
-    ```bash
-    npm -v
-    ```
-
-    The output should be a version greater than `9.7.x`.
-
-    If your npm version is not `9.7.x` or above, update npm with the following command:
-
-    ```bash
-    sudo npm install -g npm@latest
-    ```
-
-    Verify the installed version by running `npm -v`.
-
-Post completing the above, continue from [Repo setup](#repo-setup)
+Post completing the above, continue from [Verify Node.js and npm Installation](#verify-node.js-and-npm-installation)
 
 ### Mac Setup    
 
@@ -115,7 +145,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
    brew install make
    brew install node@18
    ```
-    Note: node.js package includes npm
+    Note: Node.js package includes npm
 
     Set PATH for node@18
 
@@ -124,25 +154,24 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     export PATH="/opt/homebrew/opt/node@18/bin:$PATH"
     ```
 
-1. **Verify node.js and npm Installation**
+ ### Verify `Node.js` and `npm` Installation
 
-    Check the installed version of Node.js:
+1. Check the installed version of Node.js
 
     ```bash
     node -v
     ```
-
     The output should be `v18.x.x`.
 
-    Check the installed version of npm:
+1. Check the installed version of npm
 
     ```bash
     npm -v
     ```
 
-    The output should be a version greater than `9.7.x`.
+    The output should be a version greater than `9.x.x`.
 
-    If your npm version is not `9.7.x` or above, update npm with the following command:
+    If your npm version is not `9.x.x` or above, update npm with the following command:
 
     ```bash
     sudo npm install -g npm@latest
