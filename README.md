@@ -31,24 +31,53 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     sudo apt update
     ```
 
-1. **Install make**
+1. **Install `make`**
 
     ```bash
     sudo apt install make
     ```
 
-1. **Install Node.js and npm**
+1. **Install `brew`** on ubuntu by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
+   
+   ```bash
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   
+   Add Homebrew to your PATH
 
-    Install Node.js and npm using the NodeSource binary distributions.
- 
+   ```bash
+   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+   test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
+   echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.profile
+   ```
+
+   Verify brew installation
+
+   ```bash
+   brew -v
+   ```
+
+1. **Install `node.js` and `npm`**
+
+    Install Node.js v18 and npm using brew.
+
     ```bash
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
-    sudo apt-get install -y nodejs
+    brew install node@18
     ```
-    
-    Note: The Node.js package from NodeSource includes npm
 
-1. **Verify Node.js and npm Installation**
+    Note: node.js package includes npm
+
+    Set PATH for node@18
+
+    ```bash
+    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+    test -r ~/.bash_profile && echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.bash_profile
+    echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.profile
+    export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
+    ```
+
+1. **Verify node.js and npm Installation**
 
     Check the installed version of Node.js:
 
@@ -56,7 +85,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     node -v
     ```
 
-    The output should be `v20.x.x`.
+    The output should be `v18.x.x`.
 
     Check the installed version of npm:
 
@@ -74,66 +103,52 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
 
     Verify the installed version by running `npm -v`.
 
-1. Install brew on ubuntu by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
-   
-   ```bash
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-   
-   Add Homebrew to your PATH
-
-   ```bash
-   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-   test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bash_profile
-   echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.profile    
-   ```
-
-   Verify brew installation
-
-   ```bash
-   brew -v   
-   ```
-
-Post completing the above, continue from Step: [Repo setup](#repo-setup)
+Post completing the above, continue from [Repo setup](#repo-setup)
 
 ### Mac Setup    
 
 Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprints-patterns` in your local Mac laptop.
 
-1. Install `make` and `node` using brew
+1. **Install `make`, `node` and `npm` using brew**
 
    ```bash
    brew install make
-   brew install node
+   brew install node@18
    ```
+    Note: node.js package includes npm
 
-2. Install `npm`
-
-   ```bash
-   sudo npm install -g n
-   sudo n stable
-   ```
-
-3. Make sure the following pre-requisites are met:
-
-- Node version is a current stable node version 18.x.
+    Set PATH for node@18
 
     ```bash
-    $ node -v
-    v20.3.1
+    echo 'export PATH="/opt/homebrew/opt/node@18/bin:$PATH"' >> ~/.zshrc
+    export PATH="/opt/homebrew/opt/node@18/bin:$PATH"
     ```
 
-Update (provided Node version manager is installed): `n stable`. May require `sudo`.
+1. **Verify node.js and npm Installation**
 
--  NPM version must be 8.4 or above:
+    Check the installed version of Node.js:
 
     ```bash
-    $ npm -v
-    9.7.2
+    node -v
     ```
 
-Updating npm: `sudo n stable` where stable can also be a specific version above 8.4. May require `sudo`.
+    The output should be `v18.x.x`.
+
+    Check the installed version of npm:
+
+    ```bash
+    npm -v
+    ```
+
+    The output should be a version greater than `9.7.x`.
+
+    If your npm version is not `9.7.x` or above, update npm with the following command:
+
+    ```bash
+    sudo npm install -g npm@latest
+    ```
+
+    Verify the installed version by running `npm -v`.
 
 ### Repo setup
 
