@@ -36,7 +36,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     ```bash
     sudo yum install make
     ```
-1. **Install `brew`** on ubuntu by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
+1. **Install `brew`** by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
    
    ```bash
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -74,7 +74,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     echo 'export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"' >> ~/.profile
     export PATH="/home/linuxbrew/.linuxbrew/opt/node@18/bin:$PATH"
     ```
-Post completing the above, continue from [Verify Node.js and npm Installation](#verify-nodejs-and-npm-installation)
+Post completing the above, continue from [Verify Node.js and npm Installation](#verify-nodejs-and-npm-installationbash)
 
 ### Ubuntu Setup
 
@@ -94,7 +94,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
     sudo apt install make
     ```
 
-1. **Install `brew`** on ubuntu by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
+1. **Install `brew`** by following instructions as detailed in [docs.brew.sh](https://docs.brew.sh/Homebrew-on-Linux)
    
    ```bash
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
