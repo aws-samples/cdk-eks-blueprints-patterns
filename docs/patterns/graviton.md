@@ -48,7 +48,7 @@ Updating npm
 npm install -g npm@latest
 ```
 
-To view patterns and deploy kubeflow pattern
+To view patterns and deploy graviton pattern
 
 ```sh
 make list

@@ -7,7 +7,7 @@ export default class KarpenterConstruct {
         const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
 
-        const addon = new blueprints.addons.KarpenterAddOn({
+        const karpenterAddon = new blueprints.addons.KarpenterAddOn({
             requirements: [
                 { key: 'node.kubernetes.io/instance-type', op: 'In', vals: ['m5.large'] },
                 { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: ['us-west-2c']},
@@ -31,9 +31,15 @@ export default class KarpenterConstruct {
             .account(account)
             .region(region)
             .addOns(
-                addon,
+                new blueprints.addons.AwsLoadBalancerControllerAddOn(),
+                new blueprints.addons.VpcCniAddOn(),
+                new blueprints.addons.CoreDnsAddOn(),
+                new blueprints.addons.KubeProxyAddOn(),
+                new blueprints.addons.CertManagerAddOn(),
+                new blueprints.addons.KubeStateMetricsAddOn(),
                 new blueprints.addons.SSMAgentAddOn(),
                 new blueprints.addons.MetricsServerAddOn(),
+                karpenterAddon,
             )
             .build(scope, stackID);
 
