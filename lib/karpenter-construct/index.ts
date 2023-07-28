@@ -15,10 +15,10 @@ export default class KarpenterConstruct {
                 { key: 'karpenter.sh/capacity-type', op: 'In', vals: ['on-demand']},
             ],
             subnetTags: {
-                "Name": "karpenter-blueprint/karpenter-blueprint-vpc/PrivateSubnet1",
+                "Name": `${stackID}/${stackID}-vpc/*`,
             },
             securityGroupTags: {
-                "kubernetes.io/cluster/karpenter-blueprint": "owned",
+                [`kubernetes.io/cluster/${stackID}`]: "owned",
             },
             consolidation: { enabled: true },
             ttlSecondsUntilExpired: 2592000,
