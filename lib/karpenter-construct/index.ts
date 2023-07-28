@@ -1,6 +1,6 @@
 import { EksBlueprint } from "@aws-quickstart/eks-blueprints";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
-import { Construct } from "constructs"
+import { Construct } from "constructs";
 export default class KarpenterConstruct {
     constructor(scope: Construct, id: string) {
         const account = process.env.CDK_DEFAULT_ACCOUNT!;
@@ -27,7 +27,7 @@ export default class KarpenterConstruct {
         });
 
 
-    EksBlueprint.builder()
+        EksBlueprint.builder()
             .account(account)
             .region(region)
             .addOns(
@@ -43,5 +43,5 @@ export default class KarpenterConstruct {
             )
             .build(scope, stackID);
 
-}
+    }
 }
