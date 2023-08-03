@@ -1,7 +1,3 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-        "gitlab.url": "https://gitlab.com",
-        "gitlab.token": "glrt-6Yyeyy7Bbbu-fT-VaVSb"
-      }
+    "app": "npx ts-node dist/lib/common/default-main.js"
 }
