@@ -3,7 +3,6 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as team from '../teams';
 import { CpuArch, GitlabRunnerHelmAddon } from './gitlabrunnerhelmaddon';
-import { utils } from '@aws-quickstart/eks-blueprints';
 import { GitlabRunnerSecretAddon } from './gitlabrunnersecretaddon';
 
 /**
@@ -50,8 +49,8 @@ export default class GitlabRunnerConstruct {
                 interruptionHandling: true,
             }),
             new GitlabRunnerHelmAddon({
-                    arch: CpuArch.X86_64,
-                    secretName: "gitlab-runner"
+                arch: CpuArch.X86_64,
+                secretName: "gitlab-runner"
             }),
             new GitlabRunnerSecretAddon()
         ];
