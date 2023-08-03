@@ -56,7 +56,7 @@ export class GitlabRunnerSecretAddon implements blueprints.ClusterAddOn {
                             kind: "ClusterSecretStore",
                         },
                         target: {
-                            name: "gitlab-runner-secret"
+                            name: "gitlab-runner"
                         },
                         data: [
                             {

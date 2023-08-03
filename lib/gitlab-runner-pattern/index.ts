@@ -51,7 +51,7 @@ export default class GitlabRunnerConstruct {
             }),
             new GitlabRunnerHelmAddon({
                     arch: CpuArch.X86_64,
-                    secretName: "gitlab-runner-secret"
+                    secretName: "gitlab-runner"
             }),
             new GitlabRunnerSecretAddon()
         ];
