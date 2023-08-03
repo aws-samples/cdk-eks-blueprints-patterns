@@ -2,8 +2,9 @@ import { Construct } from 'constructs';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as team from '../teams';
-import { GitlabRunnerHelmAddon } from './gitlabrunnerhelmaddon';
+import { CpuArch, GitlabRunnerHelmAddon } from './gitlabrunnerhelmaddon';
 import { utils } from '@aws-quickstart/eks-blueprints';
+import { GitlabRunnerSecretAddon } from './gitlabrunnersecretaddon';
 
 /**
 
@@ -13,11 +14,9 @@ export default class GitlabRunnerConstruct {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);
-        const gitlabUrl: string = utils.valueFromContext(scope, "gitlab.url", undefined);
-        const gitlabToken: string = utils.valueFromContext(scope, "gitlab.token", undefined);
        
         const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
-            ["team1", { selectors: [{ namespace: "gitlab-runner" }] }]
+            ["team1", { selectors: [{ namespace: "gitlab-runner" }, { namespace: "karpenter" }] }]
         ]);
 
         const stackID = `${id}-blueprint`;
@@ -31,10 +30,11 @@ export default class GitlabRunnerConstruct {
             new blueprints.addons.VpcCniAddOn(),
             new blueprints.addons.CoreDnsAddOn(),
             new blueprints.addons.MetricsServerAddOn(),
+            new blueprints.addons.ExternalsSecretsAddOn(),
             new blueprints.addons.KarpenterAddOn({
                 requirements: [
                     { key: 'node.kubernetes.io/instance-type', op: 'In', vals: ['m5.large'] },
-                    { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: ['us-west-2c']},
+                    { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: [`${process.env.CDK_DEFAULT_REGION}c`]},
                     { key: 'kubernetes.io/arch', op: 'In', vals: ['amd64','arm64']},
                     { key: 'karpenter.sh/capacity-type', op: 'In', vals: ['on-demand']},
                 ],
@@ -50,11 +50,10 @@ export default class GitlabRunnerConstruct {
                 interruptionHandling: true,
             }),
             new GitlabRunnerHelmAddon({
-                values: {
-                    gitlabUrl: gitlabUrl,
-                    runnerRegistrationToken: gitlabToken,
-                }
+                    arch: CpuArch.X86_64,
+                    secretName: "gitlab-runner-secret"
             }),
+            new GitlabRunnerSecretAddon()
         ];
 
         blueprints.EksBlueprint.builder()
