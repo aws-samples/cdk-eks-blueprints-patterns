@@ -5,7 +5,7 @@ Customers can easily add runners to their GitLab instance to perform various CI/
 
 In this pattern, we’ll discuss how customers can maximize their CI/CD capabilities by managing their GitLab runner and executor fleet with Amazon Elastic Kubernetes Service (Amazon EKS) on Fargate.
 
-![Architecture](./gitlab-runner-fargate.md)
+![Architecture](./images/gitlab.png)
 
 ## Prerequisites:
 
