@@ -13,6 +13,7 @@ export default class GitlabRunnerConstruct {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);
+        const gitlabUrl: string = utils.valueFromContext(scope, "gitlab.url", undefined);
         const gitlabToken: string = utils.valueFromContext(scope, "gitlab.token", undefined);
        
         const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
@@ -29,8 +30,6 @@ export default class GitlabRunnerConstruct {
             new blueprints.addons.AwsLoadBalancerControllerAddOn(),
             new blueprints.addons.VpcCniAddOn(),
             new blueprints.addons.CoreDnsAddOn(),
-            new blueprints.addons.KubeProxyAddOn(),
-            new blueprints.addons.CertManagerAddOn(),
             new blueprints.addons.MetricsServerAddOn(),
             new blueprints.addons.KarpenterAddOn({
                 requirements: [
@@ -52,6 +51,7 @@ export default class GitlabRunnerConstruct {
             }),
             new GitlabRunnerHelmAddon({
                 values: {
+                    gitlabUrl: gitlabUrl,
                     runnerRegistrationToken: gitlabToken,
                 }
             }),

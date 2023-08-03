@@ -19,7 +19,7 @@ const defaultProps: blueprints.HelmAddOnProps & GitlabRunnerAddonProps = {
     namespace: 'gitlab-runner',
     repository: 'https://charts.gitlab.io/',
     release: 'gitlab-runner',
-    version: 'v0.17.1',
+    version: 'v0.55.0',
     createNamespace: true,
     values: {
         gitlabUrl: "https://gitlab.com/",
