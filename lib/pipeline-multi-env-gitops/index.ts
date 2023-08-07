@@ -80,30 +80,7 @@ export default class PipelineMultiEnvGitops {
         const addons: blueprints.ClusterAddOn[] = [
             new blueprints.AwsLoadBalancerControllerAddOn(),
             new blueprints.CertManagerAddOn(),
-            new blueprints.SecretsStoreAddOn({
-                values: {
-                    linux: {
-                        affinity: {
-                            nodeAffinity: {
-                                requiredDuringSchedulingIgnoredDuringExecution:
-                                    {
-                                        nodeSelectorTerms: [
-                                            {
-                                                matchExpressions: [
-                                                    {
-                                                        key: 'eks.amazonaws.com/compute-type',
-                                                        operator: 'NotIn',
-                                                        values: ['fargate'],
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                    },
-                            },
-                        },
-                    },
-                },
-            }),
+            new blueprints.SecretsStoreAddOn(),
             new blueprints.MetricsServerAddOn(),
         ];
 
