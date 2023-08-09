@@ -19,13 +19,20 @@ const { devEnv, pipelineEnv, prodEnv }:
 // Multiple clusters, multiple reginos ,multiple teams, GitOps bootstrapped.
 //--------------------------------------------------------------------------
 new PipelineMultiEnvGitops()
-    .buildAsync(app, 'pipeline-multi-env',
+    .buildAsync(
+        app,
+        'pipeline-multi-env',
         {
-            devEnv: devEnv,
+            devTestEnv: devEnv,
             pipelineEnv: pipelineEnv,
             prodEnv: prodEnv,
         },
-        { env })
+        { env }
+    )
     .catch((e) => {
-        errorHandler(app, "Pipeline pattern is not setup due to missing secrets for GitHub access.", e);
+        errorHandler(
+            app,
+            'Pipeline pattern is not setup due to missing secrets for GitHub access.',
+            e
+        );
     });
