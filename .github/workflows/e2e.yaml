@@ -1,10 +1,11 @@
-name: "E2E Pipeline for EKS Blueprints Patterns"
+name: "E2E Pipeline for CDK Observability Accelerator"
 on:
   issue_comment:
     types: [created]
 jobs:
   checkPermissions:
     runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test') # check the comment if it contains the keywords
     steps:
     - id: checkUserPermissions
       uses: actions-cool/check-user-permission@main
@@ -14,9 +15,9 @@ jobs:
       run_test: ${{ steps.checkUserPermissions.outputs.require-result }}
   e2ePipeline:
     runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test') && needs.checkPermissions.outputs.run_test == 'true'
     needs:
     - checkPermissions
-    if: needs.checkPermissions.outputs.run_test == 'true'
     steps:
     - name: Dump GitHub context
       env:
@@ -40,7 +41,6 @@ jobs:
         aws-region: us-west-2
     - name: Run CodeBuild
       uses: aws-actions/aws-codebuild-run-build@v1
-      if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test')   # check the comment if it contains the keywords
       with:
         project-name: cdk-pattern-test
         # buildspec-override: path/to/buildspec.yaml or inline buildspec definition
@@ -62,3 +62,4 @@ jobs:
         sha: ${{ steps.comment-branch.outputs.head_sha }}
         token: ${{ secrets.CI_TOKEN }}
         status: ${{ job.status }}
+
