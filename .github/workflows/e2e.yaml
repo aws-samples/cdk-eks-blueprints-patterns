@@ -18,6 +18,9 @@ jobs:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test') && needs.checkPermissions.outputs.run_test == 'true'
     needs:
     - checkPermissions
+    permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read 
     steps:
     - name: Dump GitHub context
       env:
