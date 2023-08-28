@@ -24,6 +24,7 @@ export default class InstanaConstruct {
                 .account(process.env.CDK_DEFAULT_ACCOUNT!)
                 .region(process.env.CDK_DEFAULT_REGION!)
                 .addOns(addOns)
+                .version('auto')
                 .build(scope, stackId);
             console.log("Blueprint built successfully.");
         } catch (error) {

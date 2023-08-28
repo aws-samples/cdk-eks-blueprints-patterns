@@ -38,6 +38,7 @@ export default class CloudWatchMonitoringConstruct {
         return blueprints.EksBlueprint.builder()
             .account(accountID)
             .region(awsRegion)
+            .version('auto')
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn,
                 new blueprints.CertManagerAddOn,

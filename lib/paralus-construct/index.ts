@@ -36,6 +36,7 @@ export default class ParalusConstruct {
                 })
             )
             .teams()// add teams here)
+            .version('auto')
             .build(scope, stackId);
     }
 }

@@ -20,6 +20,7 @@ export default class PipelineConstruct {
         const blueprint = blueprints.EksBlueprint.builder()
             .account(account) // the supplied default will fail, but build and synth will pass
             .region('us-west-1')
+            .version('auto')
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn, 
                 new blueprints.CertManagerAddOn,

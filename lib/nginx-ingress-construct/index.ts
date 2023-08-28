@@ -39,6 +39,7 @@ export default class NginxIngressConstruct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION!)
             .teams(...teams)
+            .version('auto')
             .resourceProvider(GlobalResources.HostedZone, new DelegatingHostedZoneProvider({
                 parentDomain,
                 subdomain,
