@@ -33,8 +33,8 @@ export default class EmrEksConstruct {
         ).teams(
             ...teams
         )
-        .version('auto')
-        .build(scope, stackId);
+            .version('auto')
+            .build(scope, stackId);
     }
 
 }
