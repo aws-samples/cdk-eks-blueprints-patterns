@@ -32,7 +32,8 @@ export default class EmrEksConstruct {
             new EmrEksAddOn
         ).teams(
             ...teams
-        ).version('auto')
+        )
+        .version('auto')
         .build(scope, stackId);
     }
 
