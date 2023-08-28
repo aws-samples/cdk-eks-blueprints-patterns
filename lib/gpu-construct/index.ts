@@ -39,7 +39,7 @@ export default class GpuConstruct {
             gfd: {
                 version: 'v0.8.0'
             }
-        }
+        };
 
         GpuBuilder.builder(options)
             .account(account)
