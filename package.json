@@ -25,8 +25,11 @@
   },
   "dependencies": {
     "@aws-quickstart/eks-blueprints": "1.10.1",
+    "@aws-sdk/client-eks": "^3.316.0",
+    "@claranet-ch/konveyor-eks-blueprint-addon": "^1.0.2",
     "@datadog/datadog-eks-blueprints-addon": "^0.1.2",
     "@dynatrace/dynatrace-eks-blueprints-addon": "^0.0.3",
+    "@instana/aws-eks-blueprint-addon": "^1.0.4",
     "@kastenhq/kasten-eks-blueprints-addon": "^1.0.1",
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.5.0",
     "@komodor/komodor-eks-blueprints-addon": "^1.2.0",
@@ -36,10 +39,8 @@
     "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
     "@snyk-partners/snyk-monitor-eks-blueprints-addon": "^1.1.0",
     "aws-cdk": "2.88.0",
-    "@aws-sdk/client-eks": "^3.316.0",
     "eks-blueprints-cdk-kubeflow-ext": "0.1.9",
-    "source-map-support": "^0.5.21",
-    "@instana/aws-eks-blueprint-addon": "^1.0.4"
+    "source-map-support": "^0.5.21"
   },
   "overrides": {
     "@aws-quickstart/eks-blueprints": "1.10.1",
