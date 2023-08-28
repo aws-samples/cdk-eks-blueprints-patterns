@@ -40,7 +40,7 @@ export default class MultiTeamConstruct {
         ];
 
         const stackID = `${id}-blueprint`;
-        new blueprints.EksBlueprint(scope, { id: stackID, addOns, teams }, {
+        new blueprints.EksBlueprint(scope, { id: stackID, addOns, teams, version: 'auto' }, {
             env: {
                 region: 'us-east-2',
             },
