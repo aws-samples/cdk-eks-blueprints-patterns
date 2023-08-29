@@ -20,6 +20,14 @@ Before using gMaestro, you need to:
 
 3. Create a secret (as a plaintext) in AWS Secrets Manager copy its value from the following place:
    1. Deployment section `MAESTRO_CLIENT_ID`
+   2. Secret must be defined as plain text (not key/value)
+      ```bash
+      export MAESTRO_CLIENT_ID=<MAESTRO_CLIENT_ID>
+      export MAESTRO_SECRET_NAME=<MAESTRO_SECRET_NAME>
+      aws secretsmanager create-secret --name ${MAESTRO_SECRET_NAME} \
+          --description "Encrypted client ID for Granulate gMaestro" \
+          --secret-string "${MAESTRO_CLIENT_ID}"
+      ```
 
 4. Follow the usage [instructions](../../README.md#usage) to install the dependencies
    
@@ -45,6 +53,18 @@ Update the patterns parameters:
 
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
+### Using AWS Secret Manager Secrets
+To use AWS Secret Manager Secrets follow these steps:
+
+1. The actual settings for the secret name (```secretParamName```) are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory.
+
+	 Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
+	 ```json
+	"context": {
+         "CLIENT_ID_SECRET_NAME": "granulate-client-id"
+     }
+    ```
+ 
 Run the following commands:
 
 ```sh

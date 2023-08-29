@@ -12,7 +12,7 @@ export default class GmaestroConstruct {
         const stackId = `${id}-blueprint`;
 
         let gmaestroAddOnProps = {
-            clientIdSecretName: CLIENT_ID_SECRET_NAME, // replace with a secret name in secrets manager that you have created
+            clientIdSecretName: CLIENT_ID_SECRET_NAME,
             clusterName: "test_cluster", // replace with the service name from the deployment yaml,
         } as gmaestroAddOn.GmaestroAddOnProps;
 
