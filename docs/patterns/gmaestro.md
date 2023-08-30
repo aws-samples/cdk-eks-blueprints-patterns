@@ -19,15 +19,21 @@ Before using gMaestro, you need to:
 ![GmaestroConfigFile](images/gmaestro-config-file.png)
 
 3. Create a secret (as a plaintext) in AWS Secrets Manager copy its value from the following place:
-   1. Deployment section `MAESTRO_CLIENT_ID`
-   2. Secret must be defined as plain text (not key/value)
+   1. Secret must be defined as plain text (not key/value)
       ```bash
       export MAESTRO_CLIENT_ID=<MAESTRO_CLIENT_ID>
       export MAESTRO_SECRET_NAME=<MAESTRO_SECRET_NAME>
+      export MAESTRO_SERVICE_NAME=<MAESTRO_SERVICE_NAME>
+      export MAESTRO_NAMESPACE_NAME=<MAESTRO_NAMESPACE_NAME>"
       aws secretsmanager create-secret --name ${MAESTRO_SECRET_NAME} \
           --description "Encrypted client ID for Granulate gMaestro" \
           --secret-string "${MAESTRO_CLIENT_ID}"
       ```
+      
+- **MAESTRO_SECRET_NAME** The AWS secret name from the prerequisite.
+- **MAESTRO_CLIENT_ID** Copy from the Deployment section `MAESTRO_CLIENT_ID` value.
+- **MAESTRO_SERVICE_NAME** Copy from the Deployment section `MAESTRO_SERVICE_NAME` value.
+- **MAESTRO_NAMESPACE_NAME** The namespace where gMaestro will be installed
 
 4. Follow the usage [instructions](../../README.md#usage) to install the dependencies
    
@@ -40,17 +46,6 @@ git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 cd cdk-eks-blueprints-patterns
 ```
 
-Update the patterns parameters:
-
-- `clientIdSecretName: string` - The secret name from the prerequisite
-
-- `clusterName: string` - Copy from the Deployment section `MAESTRO_SERVICE_NAME` value
-
-- `createNamespace: boolean` - If you want CDK to create the namespace for you
-
-- `namespace: string` (optional) - The namespace where gMaestro will be installed. `default` namespace is used as default.
-
-
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
 ### Using AWS Secret Manager Secrets
@@ -60,9 +55,9 @@ To use AWS Secret Manager Secrets follow these steps:
 
 	 Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
 	 ```json
-	"context": {
-         "CLIENT_ID_SECRET_NAME": "granulate-client-id"
-     }
+    "context": {
+        "secretParamName": "gmaestro-secret-param"
+    }
     ```
  
 Run the following commands:
