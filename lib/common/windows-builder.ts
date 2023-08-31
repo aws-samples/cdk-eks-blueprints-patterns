@@ -86,7 +86,7 @@ export class UsageTrackingAddOn extends NestedStack {
 function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
 
     return {
-        id: "mng-linux",
+        id: options.genericNodeGroupTags["Name"],
         amiType: NodegroupAmiType.AL2_X86_64,
         instanceTypes: [new ec2.InstanceType('m5.4xlarge')],
         desiredSize: options.desiredNodeSize,
@@ -104,7 +104,7 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
     const result : blueprints.ManagedNodeGroup = {
-        id: "mng-windows",
+        id: options.windowsNodeGroupTags["Name"],
         amiType: NodegroupAmiType.WINDOWS_CORE_2022_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
         desiredSize: options.desiredNodeSize,
@@ -113,7 +113,7 @@ function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         diskSize: options.blockDeviceSize,
-        tags: options.windowsNodeGroupTags
+        tags: options.windowsNodeGroupTags,
     };
 
     if(options.noScheduleForWindowsNodes) {
