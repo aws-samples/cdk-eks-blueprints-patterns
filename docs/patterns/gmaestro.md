@@ -6,6 +6,7 @@ For additional information, visit [gMaestro documentation](https://gmaestro.gitb
 
 This pattern deploys the following resources:
 - Creates a single EKS cluster that includes a managed node group
+- Deploys supporting add-ons: ClusterAutoScaler and MetricsServer
 - Deploys a single granulate-gmaestro deployment with a single pod on the EKS cluster
 
 
