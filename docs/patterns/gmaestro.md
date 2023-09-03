@@ -18,7 +18,7 @@ Before using gMaestro, you need to:
 
 ![GmaestroConfigFile](images/gmaestro-config-file.png)
 
-3. Create a secret (as a plaintext) in AWS Secrets Manager copy its value from the following place:
+3. Create a secret (as a plaintext) in AWS Secrets Manager:
    1. Secret must be defined as plain text (not key/value)
       ```bash
       export MAESTRO_CLIENT_ID=<MAESTRO_CLIENT_ID>
@@ -58,7 +58,7 @@ To use AWS Secret Manager Secrets follow these steps:
         "secretParamName": "gmaestro-secret-param"
     }
     ```
-3. Make sure to update `CLIENT_ID_SECRET_NAME` in `lib/gmaestro-construct/index.ts` accordingly
+3. Make sure to update `MAESTRO_SECRET_NAME` in `lib/gmaestro-construct/index.ts` accordingly
  
 Run the following commands:
 

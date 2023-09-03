@@ -3,7 +3,7 @@ import * as gmaestroAddOn from '@granulate/gmaestro-eks-blueprints-addon';
 import * as cdk from 'aws-cdk-lib';
 import {prevalidateSecrets} from "../common/construct-utils";
 
-const CLIENT_ID_SECRET_NAME = 'gmaestro-secret-param';
+const MAESTRO_SECRET_NAME = 'gmaestro-secret-param';
 
 export const gmaestroProps: { [key: string]: any } = {
     "clusterName": process.env.MAESTRO_SERVICE_NAME,
@@ -13,18 +13,19 @@ export const gmaestroProps: { [key: string]: any } = {
 
 export default class GmaestroConstruct {
     async buildAsync(scope: cdk.App, id: string) {
-        await prevalidateSecrets(GmaestroConstruct.name, process.env.CDK_DEFAULT_REGION!, CLIENT_ID_SECRET_NAME);
+        await prevalidateSecrets(GmaestroConstruct.name, process.env.CDK_DEFAULT_REGION!, MAESTRO_SECRET_NAME);
 
         const stackId = `${id}-blueprint`;
 
         let gmaestroAddOnProps = {
-            clientIdSecretName: CLIENT_ID_SECRET_NAME,
+            clientIdSecretName: MAESTRO_SECRET_NAME,
             clusterName: gmaestroProps.clusterName,
             createNamespace: gmaestroProps.createNamespace,
             namespace: gmaestroProps.namespace,
         } as gmaestroAddOn.GmaestroAddOnProps;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.addons.ClusterAutoScalerAddOn(),
             new gmaestroAddOn.GmaestroAddOn(gmaestroAddOnProps)
         ];
         blueprints.EksBlueprint.builder()
