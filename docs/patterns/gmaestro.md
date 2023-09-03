@@ -21,19 +21,12 @@ Before using gMaestro, you need to:
 3. Create a secret (as a plaintext) in AWS Secrets Manager:
    1. Secret must be defined as plain text (not key/value)
       ```bash
-      export MAESTRO_CLIENT_ID=<MAESTRO_CLIENT_ID>
-      export MAESTRO_SECRET_NAME=<MAESTRO_SECRET_NAME>
-      export MAESTRO_SERVICE_NAME=<MAESTRO_SERVICE_NAME>
-      export MAESTRO_NAMESPACE_NAME=<MAESTRO_NAMESPACE_NAME>"
+      export MAESTRO_CLIENT_ID="<MAESTRO_CLIENT_ID value from the deployment section in the downloaded config file>"
+      export MAESTRO_SECRET_NAME="<MAESTRO_SECRET_NAME your preferred secret name>"
       aws secretsmanager create-secret --name ${MAESTRO_SECRET_NAME} \
           --description "Encrypted client ID for Granulate gMaestro" \
           --secret-string "${MAESTRO_CLIENT_ID}"
       ```
-      
-- **MAESTRO_SECRET_NAME** The AWS secret name from the prerequisite.
-- **MAESTRO_CLIENT_ID** Copy from the Deployment section `MAESTRO_CLIENT_ID` value.
-- **MAESTRO_SERVICE_NAME** Copy from the Deployment section `MAESTRO_SERVICE_NAME` value.
-- **MAESTRO_NAMESPACE_NAME** The namespace where gMaestro will be installed
 
 4. Follow the usage [instructions](../../README.md#usage) to install the dependencies
    
@@ -55,11 +48,12 @@ To use AWS Secret Manager Secrets follow these steps:
 2. Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory (In this case `MAESTRO_SECRET_NAME` is `gmaestro-secret-param`)
      ```json
     "context": {
-        "secretParamName": "gmaestro-secret-param"
+        "secretParamName": "<MAESTRO_SECRET_NAME>",
+        "clusterName": "<MAESTRO_SERVICE_NAME value from the deployment section in the downloaded config file>",
+        "namespace": "<Where gMaestro will be installed>",  
     }
     ```
-3. Make sure to update `MAESTRO_SECRET_NAME` in `lib/gmaestro-construct/index.ts` accordingly
- 
+
 Run the following commands:
 
 ```sh
