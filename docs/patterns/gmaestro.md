@@ -52,13 +52,13 @@ If you haven't done it before, [bootstrap your cdk account and region](https://d
 To use AWS Secret Manager Secrets follow these steps:
 
 1. The actual settings for the secret name (```secretParamName```) are expected to be specified in the CDK context. Generically it is inside the cdk.context.json file of the current directory or in `~/.cdk.json` in your home directory.
-
-	 Example settings: Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory
-	 ```json
+2. Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory (In this case `MAESTRO_SECRET_NAME` is `gmaestro-secret-param`)
+     ```json
     "context": {
         "secretParamName": "gmaestro-secret-param"
     }
     ```
+3. Make sure to update `CLIENT_ID_SECRET_NAME` in `lib/gmaestro-construct/index.ts` accordingly
  
 Run the following commands:
 
