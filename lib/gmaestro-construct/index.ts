@@ -19,6 +19,7 @@ export default class GmaestroConstruct {
         } as gmaestroAddOn.GmaestroAddOnProps;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
+            new blueprints.MetricsServerAddOn(),
             new blueprints.addons.ClusterAutoScalerAddOn(),
             new gmaestroAddOn.GmaestroAddOn(gmaestroAddOnProps)
         ];
