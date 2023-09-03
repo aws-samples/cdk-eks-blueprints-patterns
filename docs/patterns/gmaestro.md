@@ -1,13 +1,13 @@
 # gMaestro on EKS pattern
 
-gMaestro is a Kubernetes cost optimization solution that helps companies reduce spending on unutilized resources by up to 60%.
-With gMaestro, you gain full visibility into K8s clusters, seamlessly interact with HPA scaling policies, and achieve your cost-performance goals by applying custom rightsizing recommendations based on actual usage in production.
+gMaestro is a Kubernetes cost optimization solution that helps companies reduce spending on un-utilized resources.
+For additional information, visit [gMaestro documentation](https://gmaestro.gitbook.io/gmaestro-docs/).
+
 
 This pattern deploys the following resources:
 - Creates a single EKS cluster that includes a managed node group
 - Deploys a single granulate-gmaestro deployment with a single pod on the EKS cluster
 
-For additional information, visit [gMaestro documentation](https://gmaestro.gitbook.io/gmaestro-docs/).
 
 ## Prerequisite 
 Before using gMaestro, you need to:
@@ -88,15 +88,8 @@ The first rightsizing recommendations may take up to 5 minutes to load.
 To clean up your EKS Blueprints, run the following commands:
 
 ```sh
-cdk destroy gmaestro
+make pattern gmaestro destroy
 ```
-
-## Security issue
-
-1. The implementation requires access to the AWS Secrets Manager at build time to retrieve secret values.
-2. The secret value will be stored as plain text in the resulting CloudFormation stack, meaning that any user with access to view CloudFormation stack can gain access to this secret.
-
-Note: This secret is specific to gMaestro and don't affect customer account beyond the scope of the gMaestro add-on.
 
 ## Support
 
