@@ -1,7 +1,3 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-        "konveyor.parent.domain.name":"agusriv.people.aws.dev",
-        "konveyor.hosted.zone.id": "Z08644797SKWTOGQ3NMO"
-      }
+  "app": "npx ts-node dist/lib/common/default-main.js"
 }
