@@ -6,16 +6,25 @@ import {prevalidateSecrets} from "../common/construct-utils";
 
 export default class GmaestroConstruct {
     async buildAsync(scope: cdk.App, id: string) {
-        const MAESTRO_SECRET_NAME = blueprints.utils.valueFromContext(scope, "secretParamName", undefined);
-        await prevalidateSecrets(GmaestroConstruct.name, process.env.CDK_DEFAULT_REGION!, MAESTRO_SECRET_NAME);
+        const clientIdSecretName = process.env.MAESTRO_SECRET_NAME;
+        if (clientIdSecretName === undefined) {
+            throw new Error("secret must be setup for the gMaestro pattern pattern to work");
+        }
+        await prevalidateSecrets(GmaestroConstruct.name, process.env.CDK_DEFAULT_REGION!, clientIdSecretName);
+
+        const clusterName = blueprints.utils.valueFromContext(scope, "clusterName", undefined);
+        const namespace = blueprints.utils.valueFromContext(scope, "namespace", undefined);
+        if (clusterName === undefined || namespace === undefined) {
+            throw new Error("clusterName and namespace must be setup for the gMaestro pattern pattern to work");
+        }
 
         const stackId = `${id}-blueprint`;
 
         let gmaestroAddOnProps = {
-            clientIdSecretName: MAESTRO_SECRET_NAME,
-            clusterName: blueprints.utils.valueFromContext(scope, "clusterName", undefined),
+            clientIdSecretName: clientIdSecretName,
+            clusterName: clusterName,
             createNamespace: true,
-            namespace: blueprints.utils.valueFromContext(scope, "namespace", undefined),
+            namespace: namespace,
         } as gmaestroAddOn.GmaestroAddOnProps;
 
         const addOns: Array<blueprints.ClusterAddOn> = [
