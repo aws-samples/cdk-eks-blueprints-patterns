@@ -68,7 +68,7 @@ export class KonveyorConstruct extends Construct {
             }),
         ];
 
-        const blueprint = blueprints.EksBlueprint.builder()
+        blueprints.EksBlueprint.builder()
             .account(props.account)
             .region(props.region)
             .resourceProvider(

@@ -3,4 +3,4 @@ import { configureApp } from "../lib/common/construct-utils";
 
 const app = configureApp();
 
-new KonveyorConstruct(app, 'konveyor-stack')
+new KonveyorConstruct(app, 'konveyor-stack');
