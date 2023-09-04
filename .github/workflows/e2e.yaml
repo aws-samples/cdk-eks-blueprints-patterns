@@ -1,0 +1,68 @@
+name: "E2E Pipeline for CDK Observability Accelerator"
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  checkPermissions:
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test') # check the comment if it contains the keywords
+    steps:
+    - id: checkUserPermissions
+      uses: actions-cool/check-user-permission@main
+      with:    
+        require: 'admin'
+    outputs:
+      run_test: ${{ steps.checkUserPermissions.outputs.require-result }}
+  e2ePipeline:
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/do-e2e-test') && needs.checkPermissions.outputs.run_test == 'true'
+    needs:
+    - checkPermissions
+    permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read 
+    steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
+    - name: Get PR branch
+      uses: xt0rted/pull-request-comment-branch@v1
+      id: comment-branch 
+    - name: Set latest commit status as pending
+      uses: myrotvorets/set-commit-status-action@master
+      with:
+        sha: ${{ steps.comment-branch.outputs.head_sha }}
+        token: ${{ secrets.CI_TOKEN }}
+        status: pending
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::867286930927:role/BlueprintsCodeBuildRole
+        role-session-name: codebuildsession
+        aws-region: ${{ vars.AWS_REGION }}  
+    - name: Run CodeBuild
+      uses: aws-actions/aws-codebuild-run-build@v1
+      with:
+        project-name: cdk-pattern-test
+        # buildspec-override: path/to/buildspec.yaml or inline buildspec definition
+        # compute-type-override: compute-type
+        # environment-type-override: environment-type
+        # image-override: ecr-image-uri
+        env-vars-for-codebuild: |
+          PR_NUMBER,
+          COMMIT_ID,
+          PATTERN_NAME
+      env:
+        PR_NUMBER: ${{ github.event.issue.number }}
+        COMMIT_ID: ${{ steps.comment-branch.outputs.head_sha }}
+        PATTERN_NAME: ${{ github.event.comment.body }}
+    - name: Set latest commit status as ${{ job.status }}
+      uses: myrotvorets/set-commit-status-action@master
+      if: always()
+      with:
+        sha: ${{ steps.comment-branch.outputs.head_sha }}
+        token: ${{ secrets.CI_TOKEN }}
+        status: ${{ job.status }}
+
