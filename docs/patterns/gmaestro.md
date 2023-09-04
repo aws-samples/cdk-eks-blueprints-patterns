@@ -42,12 +42,13 @@ cd cdk-eks-blueprints-patterns
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
 Update `context` in `cdk.json` file located in the `cdk-eks-blueprints-patterns` directory as follows:
-     ```json
-    "context": {
-        "clusterName": "<MAESTRO_SERVICE_NAME value from the deployment section in the downloaded config file>",
-        "namespace": "<Where gMaestro will be installed>",  
-    }
-    ```
+
+```json
+"context": {
+    "clusterName": "<MAESTRO_SERVICE_NAME value from the deployment section in the downloaded config file>",
+    "namespace": "<Where gMaestro will be installed>",  
+}
+```
 
 Run the following commands:
 
