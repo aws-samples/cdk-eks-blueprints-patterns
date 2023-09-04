@@ -10,7 +10,7 @@ This pattern deploys the following resources:
 - Deploys a single granulate-gmaestro deployment with a single pod on the EKS cluster
 
 
-## Prerequisite 
+## Prerequisites
 Before using gMaestro, you need to:
 1. [Sign up](https://app.granulate.io/gMaestroSignup) to the gMaestro platform
 2. Download a sample YAML file - After signing up to gMaestro, navigate to the [Deploy](https://app.granulate.io/deploy) on the left-hand menu, fill in the required fields and click on "Generate Config File" 
@@ -19,19 +19,18 @@ Before using gMaestro, you need to:
 
 ![GmaestroConfigFile](images/gmaestro-config-file.png)
 
-3. Create a secret (as a plaintext) in AWS Secrets Manager:
-   1. Secret must be defined as plain text (not key/value)
-      ```bash
-      export MAESTRO_CLIENT_ID="<MAESTRO_CLIENT_ID value from the deployment section in the downloaded config file>"
-      export MAESTRO_SECRET_NAME="<MAESTRO_SECRET_NAME your preferred secret name>"
-      aws secretsmanager create-secret --name <MAESTRO_SECRET_NAME> \
-          --description "Encrypted client ID for Granulate gMaestro" \
-          --secret-string "<MAESTRO_CLIENT_ID>"
-      ```
+3. Create a secret (as a plaintext, not key/value) in AWS Secrets Manager:
+    ```bash
+    export MAESTRO_CLIENT_ID="<MAESTRO_CLIENT_ID value from the deployment section in the downloaded config file>"
+    export MAESTRO_SECRET_NAME="<MAESTRO_SECRET_NAME your preferred secret name>"
+    aws secretsmanager create-secret --name <MAESTRO_SECRET_NAME> \
+        --description "Encrypted client ID for Granulate gMaestro" \
+        --secret-string "<MAESTRO_CLIENT_ID>"
+    ```
 
 4. Follow the usage [instructions](../../README.md#usage) to install the dependencies
    
-## Deploy an EKS Cluster using Amazon EKS Blueprints for CDK
+## Deployment
 
 Clone the repository
 
@@ -42,10 +41,7 @@ cd cdk-eks-blueprints-patterns
 
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
-### Using AWS Secret Manager Secrets
-To use AWS Secret Manager Secrets follow these steps:
-
-1. Update the context in `cdk.json` file located in `cdk-eks-blueprints-patterns` directory as follows:
+Update `context` in `cdk.json` file located in the `cdk-eks-blueprints-patterns` directory as follows:
      ```json
     "context": {
         "clusterName": "<MAESTRO_SERVICE_NAME value from the deployment section in the downloaded config file>",
@@ -61,7 +57,7 @@ make build
 make pattern gmaestro deploy
 ```
 
-## Usage
+## Verify the resources
 
 Use the following command to validate that gMaestro installed successfully:
 
@@ -74,7 +70,6 @@ default       granulate-maestro-6947dc87bc-k5nfc   1/1     Running   0          
 
 After a few seconds, you will gain full visibility into your K8s cluster objects.
 The first rightsizing recommendations may take up to 5 minutes to load.
-
 
 ## Cleanup
 
