@@ -246,6 +246,7 @@ Patterns:
         secure-ingress-cognito
         snyk
         starter
+        gmaestro
 ```
 
 - Bootstrap your CDK environment.

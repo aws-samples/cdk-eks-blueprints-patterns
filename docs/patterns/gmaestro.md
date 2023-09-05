@@ -13,7 +13,7 @@ This pattern deploys the following resources:
 ## Prerequisites
 Before using gMaestro, you need to:
 1. [Sign up](https://app.granulate.io/gMaestroSignup) to the gMaestro platform
-2. Download a sample YAML file - After signing up to gMaestro, navigate to the [Deploy](https://app.granulate.io/deploy) on the left-hand menu, fill in the required fields and click on "Generate Config File" 
+2. Download a config YAML file - After signing up to gMaestro, navigate to the [Deploy](https://app.granulate.io/deploy) on the left-hand menu, fill in the required fields and click on "Generate Config File" as shown bellow:
 
 ![GmaestroGenerateConfigFile](images/gmaestro-generate-config-file.png)
 
@@ -23,7 +23,7 @@ Before using gMaestro, you need to:
     ```bash
     export MAESTRO_CLIENT_ID="<MAESTRO_CLIENT_ID value from the deployment section in the downloaded config file>"
     export MAESTRO_SECRET_NAME="<MAESTRO_SECRET_NAME your preferred secret name>"
-    aws secretsmanager create-secret --name <MAESTRO_SECRET_NAME> \
+    aws secretsmanager create-secret --name <MAESTRO_SECRET_NAME> --region $AWS_REGION \
         --description "Encrypted client ID for Granulate gMaestro" \
         --secret-string "<MAESTRO_CLIENT_ID>"
     ```
@@ -69,7 +69,10 @@ NAMESPACE     NAME                                 READY   STATUS    RESTARTS   
 default       granulate-maestro-6947dc87bc-k5nfc   1/1     Running   0          11m
 ```
 
-After a few seconds, you will gain full visibility into your K8s cluster objects.
+After a few seconds, you will gain full visibility into your K8s cluster objects:
+
+![GmaestroRecommendations](images/gmaestro-recommendations.png)
+
 The first rightsizing recommendations may take up to 5 minutes to load.
 
 ## Cleanup
@@ -82,7 +85,7 @@ make pattern gmaestro destroy
 
 ## Support
 
-If you have questions about Gmaestro, catch us [on Slack](https://granulatecommunity.slack.com/archives/C03RK0HN2TU)!
+If you have questions about gMaestro, catch us [on Slack](https://granulatecommunity.slack.com/archives/C03RK0HN2TU)!
 
 ## Disclaimer
 
