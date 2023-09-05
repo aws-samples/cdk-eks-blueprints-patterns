@@ -10,6 +10,7 @@ export default class JupyterHubConstruct {
         blueprints.EksBlueprint.builder()
             .account(props.env!.account!)
             .region(props.env!.region!)
+            .version('auto')
             .addOns(
                 new blueprints.EfsCsiDriverAddOn({replicaCount: 1}),
                 new blueprints.VpcCniAddOn(),

@@ -44,7 +44,6 @@ export default class GpuConstruct {
         GpuBuilder.builder(options)
             .account(account)
             .region(region)
-            .version('auto')
             .enableGpu({values})
             .build(scope, stackID);
     }

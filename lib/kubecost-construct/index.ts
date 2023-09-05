@@ -12,6 +12,7 @@ export default class KubecostConstruct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
             .addOns(new KubecostAddOn())
+            .version('auto')
             .build(scope, stackId);
     }
 }
