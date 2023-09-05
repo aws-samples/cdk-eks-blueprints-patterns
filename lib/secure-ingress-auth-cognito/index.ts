@@ -201,6 +201,7 @@ export class SecureIngressCognito extends cdk.Stack{
                     adminPasswordSecretName: SECRET_ARGO_ADMIN_PWD,
                 }),
             )
+            .version("auto")
             .buildAsync(scope, `${id}-blueprint`);
 
         blueprints.HelmAddOn.validateHelmVersions = false; 

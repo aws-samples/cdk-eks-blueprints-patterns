@@ -1,3 +1,7 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js"
+    "app": "npx ts-node dist/lib/common/default-main.js",
+    "context": {
+        "parent.hostedzone.name": "amazon.com",
+        "dev.subzone.name": "dev.amazon.com"
+      }
 }
