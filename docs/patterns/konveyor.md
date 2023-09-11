@@ -94,7 +94,7 @@ make pattern konveyor deploy
 
 When deployment completes, the output will be similar to the following:
 
-<img src="./addon/src/assets/img.png"/>
+<img src="./images/konveyor-cdk-output.png"/>
 
 ## Example configuration
 
@@ -209,5 +209,5 @@ And enter the default admin credentials:
 To clean up your EKS Blueprints, run the following commands:
 
 ```sh
-make pattern konveyor destroy 
+make pattern konveyor destroy
 ```

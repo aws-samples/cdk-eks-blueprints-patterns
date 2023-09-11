@@ -7,28 +7,29 @@ theme:
   features:
     - tabs
 nav:
-  - Overview: 'index.md'
-  - Patterns: 
-    - Observability Patterns:
-      - AWS Native Observability Pattern: 'https://github.com/aws-observability/cdk-aws-observability-accelerator/blob/main/docs/patterns/single-new-eks-observability-accelerators/single-new-eks-native-observability.md'
-      - Opensource Observability Pattern: 'https://github.com/aws-observability/cdk-aws-observability-accelerator/blob/main/docs/patterns/single-new-eks-observability-accelerators/single-new-eks-opensource-observability.md'
-      - Multi Account Observability Pattern: 'patterns/multi-account-monitoring.md'
-    - Security Patterns:
-      - EKS Config Rules: 'patterns/security/eks-config-rules.md'
-      - Encryption At Rest: 'patterns/security/encryption-at-rest.md'
-      - GuardDuty: 'patterns/security/guardduty.md'
-      - Image Scanning: 'patterns/security/image-scanning.md'
-      - SecurityHub: 'patterns/security/securityhub.md'
-    - AWS Batch Pattern: 'patterns/batch.md'
-    - Customer Network with IPV4 Pattern: 'patterns/custom-networking-with-ipv4.md'
-    - Instana Pattern: 'patterns/instana.md'
-    - Jupyterhub Pattern: 'patterns/jupyterhub.md'
-    - Kubeflow Pattern: 'patterns/kubeflow.md'
-    - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
-    - Nginx Pattern: 'patterns/nginx.md'
-    - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
-    - Graviton Pattern: 'patterns/graviton.md'
-    - Windows Pattern: 'patterns/windows.md'
+  - Overview: "index.md"
+  - Patterns:
+      - Observability Patterns:
+          - AWS Native Observability Pattern: "https://github.com/aws-observability/cdk-aws-observability-accelerator/blob/main/docs/patterns/single-new-eks-observability-accelerators/single-new-eks-native-observability.md"
+          - Opensource Observability Pattern: "https://github.com/aws-observability/cdk-aws-observability-accelerator/blob/main/docs/patterns/single-new-eks-observability-accelerators/single-new-eks-opensource-observability.md"
+          - Multi Account Observability Pattern: "patterns/multi-account-monitoring.md"
+      - Security Patterns:
+          - EKS Config Rules: "patterns/security/eks-config-rules.md"
+          - Encryption At Rest: "patterns/security/encryption-at-rest.md"
+          - GuardDuty: "patterns/security/guardduty.md"
+          - Image Scanning: "patterns/security/image-scanning.md"
+          - SecurityHub: "patterns/security/securityhub.md"
+      - AWS Batch Pattern: "patterns/batch.md"
+      - Customer Network with IPV4 Pattern: "patterns/custom-networking-with-ipv4.md"
+      - Instana Pattern: "patterns/instana.md"
+      - Konveyor Pattern: "patterns/knoveyor.md"
+      - Jupyterhub Pattern: "patterns/jupyterhub.md"
+      - Kubeflow Pattern: "patterns/kubeflow.md"
+      - Multi environment Pipeline GitOps pattern Pattern: "patterns/pipeline-multi-env-gitops.md"
+      - Nginx Pattern: "patterns/nginx.md"
+      - Secure Ingress and Authentication Pattern: "patterns/secureingresscognito.md"
+      - Graviton Pattern: "patterns/graviton.md"
+      - Windows Pattern: "patterns/windows.md"
 markdown_extensions:
   - def_list
   - pymdownx.highlight
