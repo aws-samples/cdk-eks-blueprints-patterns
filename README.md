@@ -252,6 +252,7 @@ Patterns:
         secure-ingress-cognito
         snyk
         starter
+        gmaestro
 ```
 
 - Bootstrap your CDK environment.
@@ -376,6 +377,9 @@ For `kubeflow` please see [Kubeflow documentation](docs/patterns/kubeflow.md).
 
 For `secure-ingress-cognito` please see [Secure Ingress using Cognito Blueprint documentation](docs/patterns/secureingresscognito.md).
 
+For `GmaestroConstruct` the pattern relies on the following secret defined:
+
+- `granulate-client-id` - must contain the client_id Plain Text. The secret is expected to be defined in the target region (either directly or through AWS Secrets Manager Replication).
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
