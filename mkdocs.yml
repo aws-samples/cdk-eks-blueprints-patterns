@@ -20,6 +20,7 @@ nav:
       - Image Scanning: 'patterns/security/image-scanning.md'
       - SecurityHub: 'patterns/security/securityhub.md'
     - AWS Batch Pattern: 'patterns/batch.md'
+    - Backstage Pattern: 'patterns/backstage.md'
     - Customer Network with IPV4 Pattern: 'patterns/custom-networking-with-ipv4.md'
     - Instana Pattern: 'patterns/instana.md'
     - Jupyterhub Pattern: 'patterns/jupyterhub.md'
