@@ -22,6 +22,7 @@ export default class DatadogConstruct {
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION!)
+            .version('auto')
             .addOns(...addOns)
             .build(scope, stackID);
     }

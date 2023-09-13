@@ -9,6 +9,7 @@ export default class KastenK10Construct {
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
+            .version('auto')
             .addOns(new blueprints.ClusterAutoScalerAddOn, new KastenK10AddOn)
             .build(scope, stackId); 
     }

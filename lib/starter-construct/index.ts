@@ -18,6 +18,7 @@ export default class StarterConstruct {
                 new blueprints.ClusterAutoScalerAddOn,
             )
             .teams()
+            .version('auto')
             .build(scope, stackID);
     }
 }

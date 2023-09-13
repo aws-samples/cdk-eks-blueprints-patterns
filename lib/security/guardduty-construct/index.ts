@@ -30,6 +30,7 @@ export default class GuardDutyWorkloadConstruct {
                 })
             )
             .teams()
+            .version('auto')
             .buildAsync(scope, stackID);
     }
 }

@@ -30,6 +30,7 @@ export default class KarpenterConstruct {
         EksBlueprint.builder()
             .account(account)
             .region(region)
+            .version('auto')
             .addOns(
                 new blueprints.addons.AwsLoadBalancerControllerAddOn(),
                 new blueprints.addons.VpcCniAddOn(),

@@ -33,6 +33,7 @@ export default class MultiRegionConstruct {
         
         const blueprint = blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
+            .version('auto')
             .clusterProvider(new blueprints.MngClusterProvider({
                 version: KubernetesVersion.V1_25,
                 desiredSize: 2,

@@ -82,6 +82,7 @@ export default class DataAtRestEncryptionConstruct {
                 })
             )
             .teams()
+            .version('auto')
             .buildAsync(scope, stackId);
     }
 }

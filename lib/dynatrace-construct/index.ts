@@ -18,6 +18,7 @@ export default class DynatraceOperatorConstruct {
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
+            .version('auto')
             .addOns(DynatraceOperator)
             .build(scope, stackId);
     }
