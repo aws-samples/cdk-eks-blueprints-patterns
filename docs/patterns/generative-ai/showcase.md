@@ -100,11 +100,20 @@ kubectl get pod,svc,secrets,ingress -A
 
 A sample output is shown below:
 
-![Showcase kubectl output](./images/showcase-kubectl-output.png)
+```output
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/bedrock-showcase-model-586b558b46-bkwql   1/1     Running   0          60s
+
+NAME                                     TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/bedrock-showcase-model-service   NodePort   172.20.12.47   <none>        80:30451/TCP   10m
+
+NAME                                                       CLASS   HOSTS   ADDRESS                                                                 PORTS   AGE
+ingress.networking.k8s.io/bedrock-showcase-model-ingress   alb     *       k8s-bedrock-bedrocks-63d6186d4e-765982776.us-east-1.elb.amazonaws.com   80      10m
+```
 
 Next, Navigate to the URL show under Ingress to see the below screen to interact with Generative AI showcase application by selecting different promptsand inputs and see the result :
 
-![Showcase application](../images/generativeai-showcase-demo-output.png)
+![Showcase application](../images/generativeai-showcase-demo-output.jpg)
 
 ## Next steps
 

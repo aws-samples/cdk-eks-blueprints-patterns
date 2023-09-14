@@ -48,7 +48,7 @@ const defaultProps: BedrockShowcaseAddonProps = {
     name: 'showcase',
     namespace: 'bedrock',
     createNamespace: true,
-    serviceAccountName: "bedrock-service-account",
+    serviceAccountName: 'bedrock-service-account',
     imageTag: 'default',
     imageName: ""
 };
@@ -93,7 +93,7 @@ export class BedrockShowcaseAddon implements ClusterAddOn {
          };
 
         // Apply manifest
-        const doc = readYamlDocument(__dirname + '/deployment/showcase-deployment.yaml');
+        const doc = readYamlDocument(__dirname + '/deployment/showcase-deployment.ytpl');
         const manifest = doc.split("---").map((e: any) => loadYaml(e));
 
         const manifestDeployment: ManifestDeployment = {

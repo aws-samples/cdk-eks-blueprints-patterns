@@ -18,7 +18,7 @@ spec:
      serviceAccountName: bedrock-service-account
      containers:
      - name: bedrock-showcase-model
-       image: "{{ImageName}}":"{{imageTag}}"
+       image: "{{imageName}}:{{imageTag}}"
        imagePullPolicy: IfNotPresent
        env:
         - name: BWB_ENDPOINT_URL
