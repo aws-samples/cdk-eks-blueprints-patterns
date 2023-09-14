@@ -1,5 +1,4 @@
 import { ClusterAddOn, ClusterInfo, Values } from "@aws-quickstart/eks-blueprints/dist/spi";
-import { KubernetesManifest } from "aws-cdk-lib/aws-eks";
 import { KubectlProvider, ManifestDeployment } from "@aws-quickstart/eks-blueprints/dist/addons/helm-addon/kubectl-provider";
 import { loadYaml, readYamlDocument } from "@aws-quickstart/eks-blueprints/dist/utils";
 import { createNamespace } from "@aws-quickstart/eks-blueprints/dist/utils/namespace-utils";
@@ -90,7 +89,7 @@ export class BedrockShowcaseAddon implements ClusterAddOn {
             namespace: this.props.namespace,
             imageName: this.props.imageName,
             imageTag: this.props.imageTag
-         };
+        };
 
         // Apply manifest
         const doc = readYamlDocument(__dirname + '/deployment/showcase-deployment.ytpl');
