@@ -168,6 +168,7 @@ export class SecureIngressCognito extends cdk.Stack{
         await blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT)
             .region(process.env.CDK_DEFAULT_REGION)
+            .version('auto')
             .resourceProvider(GlobalResources.HostedZone, new LookupHostedZoneProvider(parentDomain))
             .resourceProvider(GlobalResources.Certificate, new blueprints.CreateCertificateProvider('secure-ingress-cert', `${subdomain}`, GlobalResources.HostedZone))
             .addOns(

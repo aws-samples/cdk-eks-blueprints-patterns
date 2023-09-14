@@ -34,6 +34,7 @@ export default class KubeflowConstruct {
                 })
             )
             .teams()// add teams here)
+            .version('auto')
             .build(scope, stackId);
     }
 }

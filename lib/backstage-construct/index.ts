@@ -79,6 +79,7 @@ export class BackstageConstruct extends Construct {
             .resourceProvider(props.databaseSecretResourceName, new DatabaseInstanceCredentialsProvider(databaseInstanceCredentialsProviderProps))
             .resourceProvider(props.databaseResourceName, new databaseInstanceProvider.DatabaseInstanceProvider(databaseInstanceProps))
             .addOns(...addOns)
+            .version('auto')
             .teams()
             .build(scope, props.backstageLabel+"-blueprint");
     }

@@ -20,6 +20,7 @@ export default class SnykConstruct extends Construct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
             .addOns(...addOns)
+            .version('auto')
             .build(scope, stackId);
     }
 }
