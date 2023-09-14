@@ -8,7 +8,7 @@ In this pattern we will demonstrate a prompt showcase with Gen AI using Bedrock 
 
 ## Architecture
 
-<img src="./images/generativeai-showcase.jpg" width="720">
+<img src="../images/generativeai-showcase-architecture.jpg" width="720">
 
 ## Prerequisites
 
@@ -38,17 +38,35 @@ cd cdk-eks-blueprints-patterns/lib/generative-ai/showcase/python
 Create the ECR image repository and push the docker image to ECR for your showcase app:
 
 ```sh
-aws ecr create-repository --repository-name bedrock-showcase
+IMAGE_NAME=bedrock-showcase
+IMAGE_TAG=v2
+aws ecr create-repository --repository-name $IMAGE_NAME
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-docker build -t bedrock-showcase .
-docker tag bedrock-showcase:latest 288947426911.dkr.ecr.us-east-1.amazonaws.com/bedrock-showcase:v2
-docker push 288947426911.dkr.ecr.us-east-1.amazonaws.com/bedrock-showcase:v2
+docker build -t $IMAGE_NAME .
+docker tag bedrock-showcase:latest $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
+docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
 cd ../../../../
 ```
 
 ## Deployment
 
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
+
+Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file:
+
+```sh
+cat << EOF > cdk.json
+{
+    "app": "npx ts-node dist/lib/common/default-main.js",
+    "context": {
+        "bedrock.pattern.name": "showcase",
+        "bedrock.pattern.namespace": "bedrock",
+        "bedrock.pattern.image.name": "${ACCOUNT_ID}.dkr.ecr.$AWS_REGION.amazonaws.com/${IMAGE_NAME}",
+        "bedrock.pattern.image.tag": "${IMAGE_TAG}
+      }
+}
+EOF
+```
 
 Run the following commands:
 
@@ -59,8 +77,20 @@ make pattern generative-ai-showcase deploy
 ```
 When deployment completes, the output will be similar to the following:
 
-![Showcase deployment output](./images/showcase-console-output.png)
+```output
+ ✅  generative-ai-showcase-blueprint
 
+✨  Deployment time: 1287.16s
+
+Outputs:
+generative-ai-showcase-blueprint.generativeaishowcaseblueprintClusterNameA8D25DA0 = generative-ai-showcase-blueprint
+generative-ai-showcase-blueprint.generativeaishowcaseblueprintConfigCommandC6A8442C = aws eks update-kubeconfig --name generative-ai-showcase-blueprint --region us-east-1 --role-arn arn:aws:iam::XXXXXXXXXX:role/generative-ai-showcase-bl-generativeaishowcaseblue-L18IUPGQ8M2I
+generative-ai-showcase-blueprint.generativeaishowcaseblueprintGetTokenCommand5AE22878 = aws eks get-token --cluster-name generative-ai-showcase-blueprint --region us-east-1 --role-arn arn:aws:iam::XXXXXXXXXX:role/generative-ai-showcase-bl-generativeaishowcaseblue-L18IUPGQ8M2I
+Stack ARN:
+arn:aws:cloudformation:us-east-1:XXXXXXXXXX:stack/generative-ai-showcase-blueprint/cd2c4d90-5317-11ee-9c8d-0e69cfd9ba55
+
+✨  Total time: 1290.99s
+```
 
 To see the deployed resources within the cluster, please run:
 
@@ -74,7 +104,7 @@ A sample output is shown below:
 
 Next, Navigate to the URL show under Ingress to see the below screen to interact with Generative AI showcase application by selecting different promptsand inputs and see the result :
 
-![Showcase application](./images/showcase-demo-output.png)
+![Showcase application](../images/generativeai-showcase-demo-output.png)
 
 ## Next steps
 

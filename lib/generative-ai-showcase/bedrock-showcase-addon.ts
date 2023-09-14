@@ -1,5 +1,6 @@
-import { ClusterAddOn, ClusterInfo } from "@aws-quickstart/eks-blueprints/dist/spi";
+import { ClusterAddOn, ClusterInfo, Values } from "@aws-quickstart/eks-blueprints/dist/spi";
 import { KubernetesManifest } from "aws-cdk-lib/aws-eks";
+import { KubectlProvider, ManifestDeployment } from "@aws-quickstart/eks-blueprints/dist/addons/helm-addon/kubectl-provider";
 import { loadYaml, readYamlDocument } from "@aws-quickstart/eks-blueprints/dist/utils";
 import { createNamespace } from "@aws-quickstart/eks-blueprints/dist/utils/namespace-utils";
 import { getBedrockPolicyDocument } from "./iam-policy";
@@ -9,6 +10,12 @@ import * as iam from "aws-cdk-lib/aws-iam";
  * Configuration options for the Bedrock add-on.
  */
 export interface BedrockShowcaseAddonProps {
+    
+    /**
+     * Name of the bedrock usecase.
+     */
+    name?: string;
+
     /**
      * Name of the service account namespace.
      */
@@ -20,19 +27,31 @@ export interface BedrockShowcaseAddonProps {
     createNamespace?: boolean
 
     /**
-     * Name of the service account for fluent bit.
+     * Name of the service account for Bedrock.
      */
     serviceAccountName?: string;
+
+    /**
+     * Application Image
+     */
+    imageName: string;
+
+    /**
+     * Application Image Tag
+     */
+    imageTag: string;
 }
 /**
  * Default props for the add-on.
  */
 const defaultProps: BedrockShowcaseAddonProps = {
+    name: 'showcase',
     namespace: 'bedrock',
     createNamespace: true,
-    serviceAccountName: "bedrock-service-account"
+    serviceAccountName: "bedrock-service-account",
+    imageTag: 'default',
+    imageName: ""
 };
-
 
 /**
  * Implementation of Bedrock add-on for EKS Blueprints. Sets IRSA for 
@@ -67,14 +86,24 @@ export class BedrockShowcaseAddon implements ClusterAddOn {
             sa.addToPrincipalPolicy(iam.PolicyStatement.fromJson(statement));
         });
 
+        const values: Values = {
+            namespace: this.props.namespace,
+            imageName: this.props.imageName,
+            imageTag: this.props.imageTag
+         };
+
         // Apply manifest
-        const doc = readYamlDocument(__dirname + './deployment/showcase-deployment.yaml');
+        const doc = readYamlDocument(__dirname + '/deployment/showcase-deployment.yaml');
         const manifest = doc.split("---").map((e: any) => loadYaml(e));
-        const bedrockDeployment = new KubernetesManifest(cluster.stack, "bedrock-showcase", {
-            cluster,
+
+        const manifestDeployment: ManifestDeployment = {
+            name: this.props.name!,
+            namespace: this.props.namespace!,
             manifest,
-            overwrite: true
-        });
+            values
+        };
+        const kubectlProvider = new KubectlProvider(clusterInfo);
+        const bedrockDeployment = kubectlProvider.addManifest(manifestDeployment);
         bedrockDeployment.node.addDependency(sa);
     }
 }

@@ -3,4 +3,4 @@ import { configureApp } from "../lib/common/construct-utils";
 
 const app = configureApp();
 
-new GenAIShowcase(app, 'genai-showcase');
+new GenAIShowcase(app, 'generative-ai-showcase');
