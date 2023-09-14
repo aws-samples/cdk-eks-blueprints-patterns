@@ -117,7 +117,7 @@ Next, Navigate to the URL show under Ingress to see the below screen to interact
 
 ## Next steps
 
-You can go the [AWS Blog](https://aws.amazon.com/blogs/) to explore how to learn about [New Tools for Building with Generative AI on AWS](https://aws.amazon.com/blogs/machine-learning/announcing-new-tools-for-building-with-generative-ai-on-aws/). Also check on another blog our  on [Enabling Foundation Models to Complete Tasks With Agents for Amazon Bedrock](https://aws.amazon.com/blogs/aws/preview-enable-foundation-models-to-complete-tasks-with-agents-for-amazon-bedrock/). 
+You can go [AWS Blogs](https://aws.amazon.com/blogs/) to learn about [New Tools for Building with Generative AI on AWS](https://aws.amazon.com/blogs/machine-learning/announcing-new-tools-for-building-with-generative-ai-on-aws/). Also check on another blog our on [Enabling Foundation Models to Complete Tasks With Agents for Amazon Bedrock](https://aws.amazon.com/blogs/aws/preview-enable-foundation-models-to-complete-tasks-with-agents-for-amazon-bedrock/). 
 
 ## Cleanup
 
