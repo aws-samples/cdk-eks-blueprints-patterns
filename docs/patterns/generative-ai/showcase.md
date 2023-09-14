@@ -4,7 +4,11 @@
 
 [Amazon Bedrock](https://aws.amazon.com/bedrock/) is a fully managed service for using foundation models. It allows you to access models from Amazon and third parties with a single set of APIs for both text generation and image generation.
 
-In this pattern we will demonstrate a prompt showcase with Gen AI using Bedrock and Amazon EKS. This usecase will demonstrate a prompt showcase which uses different prompt templates such as Summarization, Sentiment and Recommendation with user input to generate a response using Generative AI. In this model we will running a containerized application on Amazon EKS which integrates with Bedrock to provide required user response.
+[LangChain](https://python.langchain.com/) provides convenient functions for interacting with Amazon Bedrock's models and related services like vector databases. LangChain offers Python and JavaScript libraries. For this workshop, we will use the Python version of LangChain.
+
+[Streamlit](https://streamlit.io/) allows us to quickly create web front ends for our Python code, without needing front-end development skills. Streamlit is great for creating proofs-of-concepts that can be presented to a wide audience of both technical and non-technical people.
+
+In this pattern we will demonstrate a prompt showcase use case with Gen AI using Bedrock and Amazon EKS. This usecase will demonstrate a prompt showcase which uses different prompt templates such as Summarization, Sentiment and Recommendation with user input to generate a response using Generative AI. In this model we will running a containerized application on Amazon EKS which integrates with Bedrock to provide required user response.
 
 ## Architecture
 
