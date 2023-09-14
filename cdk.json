@@ -1,9 +1,3 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-        "bedrock.pattern.name": "showcase",
-        "bedrock.pattern.namespace": "bedrock",
-        "bedrock.pattern.image.name": "288947426911.dkr.ecr.us-east-1.amazonaws.com/bedrock-showcase",
-        "bedrock.pattern.image.tag": "v2"
-      }
+    "app": "npx ts-node dist/lib/common/default-main.js"
 }
