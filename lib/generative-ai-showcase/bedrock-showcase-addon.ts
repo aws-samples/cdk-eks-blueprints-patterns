@@ -1,0 +1,80 @@
+import { ClusterAddOn, ClusterInfo } from "@aws-quickstart/eks-blueprints/dist/spi";
+import { KubernetesManifest } from "aws-cdk-lib/aws-eks";
+import { loadYaml, readYamlDocument } from "@aws-quickstart/eks-blueprints/dist/utils";
+import { createNamespace } from "@aws-quickstart/eks-blueprints/dist/utils/namespace-utils";
+import { getBedrockPolicyDocument } from "./iam-policy";
+import * as iam from "aws-cdk-lib/aws-iam";
+
+/**
+ * Configuration options for the Bedrock add-on.
+ */
+export interface BedrockShowcaseAddonProps {
+    /**
+     * Name of the service account namespace.
+     */
+    namespace?: string;
+
+    /**
+     * Create Namespace with the provided one.
+     */
+    createNamespace?: boolean
+
+    /**
+     * Name of the service account for fluent bit.
+     */
+    serviceAccountName?: string;
+}
+/**
+ * Default props for the add-on.
+ */
+const defaultProps: BedrockShowcaseAddonProps = {
+    namespace: 'bedrock',
+    createNamespace: true,
+    serviceAccountName: "bedrock-service-account"
+};
+
+
+/**
+ * Implementation of Bedrock add-on for EKS Blueprints. Sets IRSA for 
+ * bedrock with required IAM policy along with creating a namespace.
+ */
+export class BedrockShowcaseAddon implements ClusterAddOn {
+    readonly props: BedrockShowcaseAddonProps;
+
+    constructor(props?: BedrockShowcaseAddonProps) {
+        this.props = { ...defaultProps, ...props };
+    }
+
+    deploy(clusterInfo: ClusterInfo): void {
+        const cluster = clusterInfo.cluster;
+        const namespace = this.props.namespace!;
+
+        // Create the Bedrock service account.
+        const serviceAccountName = this.props.serviceAccountName!;
+        const sa = cluster.addServiceAccount(serviceAccountName, {
+            name: serviceAccountName,
+            namespace: namespace
+        });
+
+        // Create namespace
+        if (this.props.createNamespace) {
+            const ns = createNamespace(namespace, cluster, true);
+            sa.node.addDependency(ns);
+        }
+
+        // Apply additional IAM policies to the service account.
+        getBedrockPolicyDocument().forEach((statement) => {
+            sa.addToPrincipalPolicy(iam.PolicyStatement.fromJson(statement));
+        });
+
+        // Apply manifest
+        const doc = readYamlDocument(__dirname + './deployment/showcase-deployment.yaml');
+        const manifest = doc.split("---").map((e: any) => loadYaml(e));
+        const bedrockDeployment = new KubernetesManifest(cluster.stack, "bedrock-showcase", {
+            cluster,
+            manifest,
+            overwrite: true
+        });
+        bedrockDeployment.node.addDependency(sa);
+    }
+}
