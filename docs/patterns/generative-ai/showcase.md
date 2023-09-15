@@ -12,7 +12,7 @@ In this pattern we will demonstrate a prompt showcase use case with Gen AI using
 
 ## Architecture
 
-<img src="../images/generativeai-showcase-architecture.jpg" width="720">
+![Showcase Architecture](../images/generativeai-showcase-architecture.jpg)
 
 ## Prerequisites
 
