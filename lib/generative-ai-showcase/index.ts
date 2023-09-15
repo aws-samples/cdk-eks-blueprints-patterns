@@ -44,7 +44,7 @@ export default class GenAIShowcase {
 }
 
 /**
- * Nested stack that is used as tracker for GPU Accelerator
+ * Nested stack
  */
 class UsageTrackingAddOn extends NestedStack {
 
