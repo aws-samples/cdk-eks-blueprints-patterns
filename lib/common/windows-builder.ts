@@ -21,9 +21,11 @@ export interface WindowsOptions {
         [key: string]: string;
     },
     genericNodeGroupTags: {
+        Name: string
         [key: string]: string;
     }
     windowsNodeGroupTags: {
+        Name: string
         [key: string]: string;
     }
 }
