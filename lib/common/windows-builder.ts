@@ -20,14 +20,8 @@ export interface WindowsOptions {
     clusterProviderTags: {
         [key: string]: string;
     },
-    genericNodeGroupTags: {
-        Name: string
-        [key: string]: string;
-    }
-    windowsNodeGroupTags: {
-        Name: string
-        [key: string]: string;
-    }
+    genericNodeGroupOptions: blueprints.ManagedNodeGroup
+    windowsNodeGroupOptions: blueprints.ManagedNodeGroup
 }
 
 export class WindowsBuilder extends blueprints.BlueprintBuilder {
@@ -51,7 +45,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                     }),
                     managedNodeGroups: [
                         addGenericNodeGroup(options),
-                        addWindowsNodeGroup(options)
+                        addWindowsNodeGroup(options),
                     ]
                 })
             )
@@ -87,17 +81,19 @@ export class UsageTrackingAddOn extends NestedStack {
 
 function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
 
+    const instance = [ options.instanceClass && options.instanceSize? new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) : new ec2.InstanceType('m5.4xlarge')];
     return {
-        id: options.genericNodeGroupTags["Name"],
+        id: options.genericNodeGroupOptions.id,
         amiType: NodegroupAmiType.AL2_X86_64,
-        instanceTypes: [new ec2.InstanceType('m5.4xlarge')],
-        desiredSize: options.desiredNodeSize,
-        minSize: options.minNodeSize, 
-        maxSize: options.maxNodeSize,
-        nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
+        instanceTypes: instance,
+        desiredSize: options.genericNodeGroupOptions.desiredSize ?? options.desiredNodeSize,
+        minSize: options.genericNodeGroupOptions.minSize ?? options.minNodeSize,
+        maxSize: options.genericNodeGroupOptions.maxSize ?? options.maxNodeSize,
+        nodeRole: options.genericNodeGroupOptions.nodeRole ?? blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+        tags: options.genericNodeGroupOptions.tags,
         launchTemplate: {
-            tags: options.genericNodeGroupTags,
+            tags: options.genericNodeGroupOptions.tags,
             requireImdsv2: false
         }
     };
@@ -105,17 +101,19 @@ function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGro
 
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
+
+    const instance = [ options.instanceClass && options.instanceSize? new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) : new ec2.InstanceType('m5.4xlarge')];
     const result : blueprints.ManagedNodeGroup = {
-        id: options.windowsNodeGroupTags["Name"],
+        id: options.windowsNodeGroupOptions.id,
         amiType: NodegroupAmiType.WINDOWS_CORE_2022_X86_64,
         instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
-        desiredSize: options.desiredNodeSize,
-        minSize: options.minNodeSize, 
-        maxSize: options.maxNodeSize,
+        desiredSize: options.desiredNodeSize ?? options.windowsNodeGroupOptions.desiredSize,
+        minSize: options.minNodeSize ?? options.windowsNodeGroupOptions.minSize,
+        maxSize: options.maxNodeSize ?? options.windowsNodeGroupOptions.maxSize,
         nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-        diskSize: options.blockDeviceSize,
-        tags: options.windowsNodeGroupTags,
+        diskSize: options.blockDeviceSize ?? options.windowsNodeGroupOptions.diskSize,
+        tags: options.windowsNodeGroupOptions.tags,
     };
 
     if(options.noScheduleForWindowsNodes) {

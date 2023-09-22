@@ -33,17 +33,11 @@ export default class WindowsConstruct {
                 "Name": "blueprints-windows-eks-cluster",
                 "Type": "generic-windows-cluster"
             },
-            genericNodeGroupTags: {
-                "Name": "Mng-linux",
-                "Type": "Managed-linux-Node-Group",
-                "LaunchTemplate": "Linux-Launch-Template",
-                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+            genericNodeGroupOptions: {
+                id: "Mng-linux",
             },
-            windowsNodeGroupTags: {
-                "Name": "Mng-windows",
-                "Type": "Windows-Node-Group",
-                "LaunchTemplate": "WindowsLT",
-                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+            windowsNodeGroupOptions: {
+                id: "Mng-windows",
             }
         };
 
