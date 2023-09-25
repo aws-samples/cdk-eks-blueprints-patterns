@@ -233,6 +233,7 @@ Patterns:
         ecr-image-scanning
         emr
         fargate
+        generative-ai-showcase
         generic-cluster-provider
         guardduty
         jupyterhub
