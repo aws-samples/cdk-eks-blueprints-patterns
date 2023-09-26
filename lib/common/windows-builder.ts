@@ -81,10 +81,10 @@ export class UsageTrackingAddOn extends NestedStack {
 
 function getInstanceType(options: WindowsOptions, nodegroup: blueprints.ManagedNodeGroup): ec2.InstanceType[] {
 
-    if ( nodegroup.instanceTypes ) { return nodegroup.instanceTypes }
+    if ( nodegroup.instanceTypes ) { return nodegroup.instanceTypes; }
 
     if ( options.instanceClass && options.instanceSize )
-        return [ new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) ]
+        return [ new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) ];
 
     return [ new ec2.InstanceType('m5.4xlarge')];
 }
@@ -101,16 +101,13 @@ function addGenericNodeGroup(options: WindowsOptions, overrideOptions: blueprint
         nodeRole: overrideOptions.nodeRole ?? blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
         tags: overrideOptions.tags,
-        launchTemplate: {
-            tags: overrideOptions.tags,
-            requireImdsv2: false
-        }
+        launchTemplate: overrideOptions.launchTemplate
     };
 }
 
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
 
-    if (options.windowsNodeGroupOptions.amiType == null) { options.windowsNodeGroupOptions.amiType = NodegroupAmiType.WINDOWS_CORE_2022_X86_64 }
+    if (options.windowsNodeGroupOptions.amiType == null) { options.windowsNodeGroupOptions.amiType = NodegroupAmiType.WINDOWS_CORE_2022_X86_64; }
     const result = addGenericNodeGroup(options, options.windowsNodeGroupOptions);
 
     if(options.noScheduleForWindowsNodes) {
