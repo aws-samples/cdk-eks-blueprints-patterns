@@ -44,7 +44,7 @@ export class WindowsBuilder extends blueprints.BlueprintBuilder {
                         });
                     }),
                     managedNodeGroups: [
-                        addGenericNodeGroup(options),
+                        addGenericNodeGroup(options, options.genericNodeGroupOptions),
                         addWindowsNodeGroup(options),
                     ]
                 })
@@ -79,42 +79,39 @@ export class UsageTrackingAddOn extends NestedStack {
     }
 }
 
-function addGenericNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
+function getInstanceType(options: WindowsOptions, nodegroup: blueprints.ManagedNodeGroup): ec2.InstanceType[] {
 
-    const instance = [ options.instanceClass && options.instanceSize? new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) : new ec2.InstanceType('m5.4xlarge')];
+    if ( nodegroup.instanceTypes ) { return nodegroup.instanceTypes }
+
+    if ( options.instanceClass && options.instanceSize )
+        return [ new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) ]
+
+    return [ new ec2.InstanceType('m5.4xlarge')];
+}
+
+function addGenericNodeGroup(options: WindowsOptions, overrideOptions: blueprints.ManagedNodeGroup): blueprints.ManagedNodeGroup {
+
     return {
-        id: options.genericNodeGroupOptions.id,
-        amiType: NodegroupAmiType.AL2_X86_64,
-        instanceTypes: instance,
-        desiredSize: options.genericNodeGroupOptions.desiredSize ?? options.desiredNodeSize,
-        minSize: options.genericNodeGroupOptions.minSize ?? options.minNodeSize,
-        maxSize: options.genericNodeGroupOptions.maxSize ?? options.maxNodeSize,
-        nodeRole: options.genericNodeGroupOptions.nodeRole ?? blueprints.getNamedResource("node-role") as iam.Role,
+        id: overrideOptions.id,
+        amiType: overrideOptions.amiType ?? NodegroupAmiType.AL2_X86_64,
+        instanceTypes: getInstanceType(options, overrideOptions),
+        desiredSize: overrideOptions.desiredSize ?? options.desiredNodeSize,
+        minSize: overrideOptions.minSize ?? options.minNodeSize,
+        maxSize: overrideOptions.maxSize ?? options.maxNodeSize,
+        nodeRole: overrideOptions.nodeRole ?? blueprints.getNamedResource("node-role") as iam.Role,
         nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-        tags: options.genericNodeGroupOptions.tags,
+        tags: overrideOptions.tags,
         launchTemplate: {
-            tags: options.genericNodeGroupOptions.tags,
+            tags: overrideOptions.tags,
             requireImdsv2: false
         }
     };
 }
 
-
 function addWindowsNodeGroup(options: WindowsOptions): blueprints.ManagedNodeGroup {
 
-    const instance = [ options.instanceClass && options.instanceSize? new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`) : new ec2.InstanceType('m5.4xlarge')];
-    const result : blueprints.ManagedNodeGroup = {
-        id: options.windowsNodeGroupOptions.id,
-        amiType: NodegroupAmiType.WINDOWS_CORE_2022_X86_64,
-        instanceTypes: [new ec2.InstanceType(`${options.instanceClass}.${options.instanceSize}`)],
-        desiredSize: options.desiredNodeSize ?? options.windowsNodeGroupOptions.desiredSize,
-        minSize: options.minNodeSize ?? options.windowsNodeGroupOptions.minSize,
-        maxSize: options.maxNodeSize ?? options.windowsNodeGroupOptions.maxSize,
-        nodeRole: blueprints.getNamedResource("node-role") as iam.Role,
-        nodeGroupSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-        diskSize: options.blockDeviceSize ?? options.windowsNodeGroupOptions.diskSize,
-        tags: options.windowsNodeGroupOptions.tags,
-    };
+    if (options.windowsNodeGroupOptions.amiType == null) { options.windowsNodeGroupOptions.amiType = NodegroupAmiType.WINDOWS_CORE_2022_X86_64 }
+    const result = addGenericNodeGroup(options, options.windowsNodeGroupOptions);
 
     if(options.noScheduleForWindowsNodes) {
         blueprints.utils.setPath(result, "taints", [

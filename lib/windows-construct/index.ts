@@ -38,6 +38,9 @@ export default class WindowsConstruct {
             },
             windowsNodeGroupOptions: {
                 id: "Mng-windows",
+                tags: {
+                    "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+                }
             }
         };
 
