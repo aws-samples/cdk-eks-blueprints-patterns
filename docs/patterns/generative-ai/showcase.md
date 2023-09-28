@@ -66,7 +66,7 @@ cat << EOF > cdk.json
         "bedrock.pattern.name": "showcase",
         "bedrock.pattern.namespace": "bedrock",
         "bedrock.pattern.image.name": "${ACCOUNT_ID}.dkr.ecr.$AWS_REGION.amazonaws.com/${IMAGE_NAME}",
-        "bedrock.pattern.image.tag": "${IMAGE_TAG}
+        "bedrock.pattern.image.tag": "${IMAGE_TAG}"
       }
 }
 EOF
