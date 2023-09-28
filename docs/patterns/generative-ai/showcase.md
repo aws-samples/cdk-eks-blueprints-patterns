@@ -37,7 +37,7 @@ Clone the repository:
 
 ```sh
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
-cd cdk-eks-blueprints-patterns/lib/generative-ai/showcase/python
+cd cdk-eks-blueprints-patterns/lib/generative-ai-showcase/python
 ```
 Create the ECR image repository and push the docker image to ECR for your showcase app:
 
