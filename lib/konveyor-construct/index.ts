@@ -6,12 +6,31 @@ import {
     OlmAddOn,
 } from "@claranet-ch/konveyor-eks-blueprint-addon";
 
+
 export interface KonveyorConstructProps extends StackProps {
+    /**
+     * The AWS Account ID
+     */
     account: string;
+    /**
+     * Region where AddOn will be deployed
+     */
     region: string;
+    /**
+     * Parent domain name where the subdomain will be assigned
+     */
     parentDomain: string;
+    /**
+     * Subdomain name to be assigned to the loadbalancer
+     */
     konveyorLabel: string;
+    /**
+     * Hosted Zone ID
+     */
     hostedZoneId: string;
+    /**
+     * Name of the SSL certificate to be attached to the load balancer
+     */
     certificateResourceName: string;
 }
 
@@ -19,6 +38,7 @@ export class KonveyorConstruct extends Construct {
     constructor(scope: Construct, id: string) {
         super(scope, id);
 
+        // Definition of the add-on's properties
         const props = {
             account: process.env.CDK_DEFAULT_ACCOUNT,
             region: process.env.CDK_DEFAULT_REGION,
@@ -86,6 +106,7 @@ export class KonveyorConstruct extends Construct {
                     blueprints.GlobalResources.HostedZone
                 )
             )
+            .version('auto')
             .addOns(...addOns)
             .build(scope, props.konveyorLabel + "-cluster");
     }
