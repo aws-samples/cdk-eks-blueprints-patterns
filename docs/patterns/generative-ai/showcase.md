@@ -37,7 +37,7 @@ Clone the repository:
 
 ```sh
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
-cd cdk-eks-blueprints-patterns/lib/generative-ai/showcase/python
+cd cdk-eks-blueprints-patterns/lib/generative-ai-showcase/python
 ```
 Create the ECR image repository and push the docker image to ECR for your showcase app:
 
@@ -66,7 +66,7 @@ cat << EOF > cdk.json
         "bedrock.pattern.name": "showcase",
         "bedrock.pattern.namespace": "bedrock",
         "bedrock.pattern.image.name": "${ACCOUNT_ID}.dkr.ecr.$AWS_REGION.amazonaws.com/${IMAGE_NAME}",
-        "bedrock.pattern.image.tag": "${IMAGE_TAG}
+        "bedrock.pattern.image.tag": "${IMAGE_TAG}"
       }
 }
 EOF
