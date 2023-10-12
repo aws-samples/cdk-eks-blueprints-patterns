@@ -15,7 +15,7 @@ export class GuardDutySetupStack extends Stack {
 
         const environmentName = "main";
         const email = "your-email@example.com";
-        const features: aws_guardduty.CfnDetector.FeatureConfigurationsProperty[] =
+        const features: aws_guardduty.CfnDetector.CFNFeatureConfigurationProperty[] =
       [
           { name: "S3_DATA_EVENTS", status: "ENABLED" },
           { name: "EKS_AUDIT_LOGS", status: "ENABLED" },
