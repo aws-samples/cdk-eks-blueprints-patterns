@@ -1,9 +1,9 @@
 import * as blueprints from "@aws-quickstart/eks-blueprints";
+import { GravitonBuilder } from "@aws-quickstart/eks-blueprints";
 import { CfnWorkspace } from "aws-cdk-lib/aws-aps";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from "constructs";
-import { GravitonBuilder, GravitonOptions } from '../common/graviton-builder';
 
 export default class GravitonConstruct {
     build(scope: Construct, id: string) {
@@ -11,14 +11,16 @@ export default class GravitonConstruct {
         const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
 
-        const ampWorkspaceName = "graviton-amp-workspace";
+        const ampWorkspaceName = "graviton-amp-workspaces";
         const ampWorkspace: CfnWorkspace =
             blueprints.getNamedResource(ampWorkspaceName);
 
-        const options: GravitonOptions = {
-            kubernetesVersion: eks.KubernetesVersion.of("1.27"),
-            instanceClass: ec2.InstanceClass.M7G,
-            instanceSize: ec2.InstanceSize.LARGE
+        const options: Partial<blueprints.MngClusterProviderProps> = {
+            version: eks.KubernetesVersion.of("1.27"),
+            instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)],
+            desiredSize: 3,
+            minSize: 2,
+            maxSize: 5,
         };
 
         GravitonBuilder.builder(options)
@@ -31,7 +33,7 @@ export default class GravitonConstruct {
             .resourceProvider(
                 "efs-file-system",
                 new blueprints.CreateEfsFileSystemProvider({
-                    name: "efs-file-system",
+                    name: "efs-file-systems",
                 })
             )
             .resourceProvider(
@@ -41,26 +43,28 @@ export default class GravitonConstruct {
                     ampWorkspaceName
                 )
             )
-            .addIstioBaseAddOn()
-            .addIstioControlPlaneAddOn()
-            .addMetricsServerAddOn()
-            .addKubeStateMetricsAddOn()
-            .addPrometheusNodeExporterAddOn()
-            .addExternalsSecretsAddOn()
-            .addSecretsStoreAddOn()
-            .addCalicoOperatorAddOn()
-            .addCertManagerAddOn()
-            .addAdotCollectorAddOn()
-            .addAmpAddOn({
-                ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint
-            })
-            .addCloudWatchLogsAddOn({
-                logGroupPrefix: "/aws/eks/graviton-blueprint",
-            })
-            .addEfsCsiDriverAddOn()
-            .addFluxCDAddOn()
-            .addGrafanaOperatorAddOn()
-            .addXrayAdotAddOn()
+            .addOns(
+                new blueprints.addons.IstioBaseAddOn(),
+                new blueprints.addons.IstioControlPlaneAddOn(),
+                new blueprints.addons.KubeStateMetricsAddOn(),
+                new blueprints.addons.MetricsServerAddOn(),
+                new blueprints.addons.PrometheusNodeExporterAddOn(),
+                new blueprints.addons.ExternalsSecretsAddOn(),
+                new blueprints.addons.SecretsStoreAddOn(),
+                new blueprints.addons.CalicoOperatorAddOn(),
+                new blueprints.addons.CertManagerAddOn(),
+                new blueprints.addons.AdotCollectorAddOn(),
+                new blueprints.addons.AmpAddOn({
+                    ampPrometheusEndpoint: ampWorkspace.attrPrometheusEndpoint
+                }),
+                new blueprints.addons.CloudWatchLogsAddon({
+                    logGroupPrefix: "/aws/eks/graviton-blueprint",
+                }),
+                new blueprints.addons.EfsCsiDriverAddOn(),
+                new blueprints.addons.FluxCDAddOn(),
+                new blueprints.addons.GrafanaOperatorAddon(),
+                new blueprints.addons.XrayAdotAddOn()
+            )
             .build(scope, stackID);
     }
 }
