@@ -22,11 +22,11 @@ spec:
        imagePullPolicy: IfNotPresent
        env:
         - name: BWB_ENDPOINT_URL
-          value: "https://bedrock.us-east-1.amazonaws.com/"
+          value: "https://bedrock.{{region}}.amazonaws.com/"
         - name: BWB_PROFILE_NAME
           value: "default"
         - name: BWB_REGION_NAME
-          value: "us-east-1"
+          value: "{{region}}"
        ports:
        - containerPort: 8501
        volumeMounts:
