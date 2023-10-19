@@ -32,7 +32,8 @@ function extensionFunction(team: ApplicationTeam, clusterInfo: ClusterInfo) {
     const values: spi.Values = {
         namespace: team.teamProps.namespace,
         imageName: blueprints.utils.valueFromContext(clusterInfo.cluster, "bedrock.pattern.image.name", undefined),
-        imageTag: blueprints.utils.valueFromContext(clusterInfo.cluster, "bedrock.pattern.image.tag", undefined)
+        imageTag: blueprints.utils.valueFromContext(clusterInfo.cluster, "bedrock.pattern.image.tag", undefined),
+        region: clusterInfo.cluster.stack.region
     };
 
     // Apply manifest
