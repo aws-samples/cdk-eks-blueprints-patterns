@@ -1,4 +1,4 @@
-import * as exampleClusterProvider from "@aws-quickstart/eks-blueprints/dist/cluster-providers";
+import * as defaultKubeVersion from "@aws-quickstart/eks-blueprints/dist/stacks";
 import * as config from "aws-cdk-lib/aws-config";
 import { Construct } from "constructs";
 import { Stack, StackProps } from "aws-cdk-lib";
@@ -10,15 +10,14 @@ export class EksConfigRulesSetup extends Stack {
         super(scope, id, props);
 
         // Get the default kubernetes version used by the CDK EKS Blueprints framework.
-        const defaultKubVerison =
-      exampleClusterProvider.defaultOptions.version.version;
+        const defaultKubeVerison = defaultKubeVersion.DEFAULT_VERSION;
 
         // Checks if an Amazon Elastic Kubernetes Service (EKS) cluster is running a supported Kubernetes version.
         new config.ManagedRule(this, "EksOldestSupportedVersion", {
             identifier:
         config.ManagedRuleIdentifiers.EKS_CLUSTER_OLDEST_SUPPORTED_VERSION,
             inputParameters: {
-                oldestVersionSupported: defaultKubVerison, // Set to the default cluster version used by CDK EKS Blueprints.
+                oldestVersionSupported: defaultKubeVerison, // Set to the default cluster version used by CDK EKS Blueprints.
             },
         });
 
@@ -26,7 +25,7 @@ export class EksConfigRulesSetup extends Stack {
         new config.ManagedRule(this, "EksSupportedVersion", {
             identifier: config.ManagedRuleIdentifiers.EKS_CLUSTER_SUPPORTED_VERSION,
             inputParameters: {
-                oldestVersionSupported: defaultKubVerison, //  Set to the default cluster version used by CDK EKS Blueprints.
+                oldestVersionSupported: defaultKubeVerison, //  Set to the default cluster version used by CDK EKS Blueprints.
             },
         });
 
