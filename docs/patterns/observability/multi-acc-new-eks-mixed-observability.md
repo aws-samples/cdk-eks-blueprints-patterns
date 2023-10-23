@@ -1,0 +1,1 @@
+{{ external_markdown('https://raw.githubusercontent.com/aws-observability/cdk-aws-observability-accelerator/main/docs/patterns/multi-new-eks-observability-accelerators/multi-acc-new-eks-mixed-observability.md', '') }}

@@ -1,0 +1,1 @@
+{{ external_markdown('https://raw.githubusercontent.com/aws-observability/cdk-aws-observability-accelerator/main/docs/patterns/existing-eks-observability-accelerators/existing-eks-apiserver-observability.md', '') }}
