@@ -4,13 +4,13 @@ import 'source-map-support/register';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as backup from 'aws-cdk-lib/aws-backup';
-import { Duration } from 'aws-cdk-lib';
+//import * as backup from 'aws-cdk-lib/aws-backup';
+//import { Duration } from 'aws-cdk-lib';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import * as events from 'aws-cdk-lib/aws-events';
-import * as utils from "@aws-quickstart/eks-blueprints/dist/utils";
-import { drstack, drstackProps } from './drstack';
+//import * as events from 'aws-cdk-lib/aws-events';
+//import * as utils from "@aws-quickstart/eks-blueprints/dist/utils";
+import { drstack } from './drstack';
 
 
 export default class ResilienceBRAWSConstruct {
