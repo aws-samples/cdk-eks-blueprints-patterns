@@ -10,7 +10,7 @@ The objective of this pattern is to illustrate how to deploy a Backstage pre-bui
 
 ## Architecture
 
-<img src="./images/backstage-diagram.png" width="720">
+![Backstage Architecture](./images/backstage-diagram.png)
 
 ## Approach
 
