@@ -3,7 +3,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
-import { WindowsBuilder, WindowsOptions } from '../common/windows-builder';
+import { WindowsBuilder, WindowsOptions } from "@aws-quickstart/eks-blueprints";
 import { WindowsVpcCni } from "./vpc-cni";
 
 export default class WindowsConstruct {
@@ -24,7 +24,7 @@ export default class WindowsConstruct {
             kubernetesVersion: eks.KubernetesVersion.of("1.27"),
             instanceClass: ec2.InstanceClass.T3,
             instanceSize: ec2.InstanceSize.MEDIUM,
-            desiredNodeSize: 1,
+            desiredNodeCount: 1,
             minNodeSize: 1,
             maxNodeSize: 3,
             blockDeviceSize: 50,
@@ -34,16 +34,13 @@ export default class WindowsConstruct {
                 "Type": "generic-windows-cluster"
             },
             genericNodeGroupOptions: {
-                id: "Mng-linux",
+                nodegroupName: "Mng-linux",
                 tags: {
                     "kubernetes.io/cluster/windows-eks-blueprint": "owned"
                 },
-                launchTemplate: {
-                    requireImdsv2 : false
-                }
             },
             windowsNodeGroupOptions: {
-                id: "Mng-windows",
+                nodegroupName: "Mng-windows",
                 tags: {
                     "kubernetes.io/cluster/windows-eks-blueprint": "owned"
                 }
@@ -51,7 +48,7 @@ export default class WindowsConstruct {
         };
 
         const karpenterAddon = new blueprints.addons.KarpenterAddOn({
-            version: "v0.30.0",
+            version: "v0.31.3",
             requirements: [
                 { key: 'kubernetes.io/os', op: 'In', vals: ['windows']},
             ],
