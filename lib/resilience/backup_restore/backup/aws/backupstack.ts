@@ -22,21 +22,21 @@ export interface backupStackProps extends cdk.StackProps {
 
 
 export class backupstack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props: backupStackProps ) {
-    super(scope, id, props );
-    const account = process.env.CDK_DEFAULT_ACCOUNT!;
-    const region = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.primary.region", undefined);
-    //const drregion = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.dr.region", undefined);
-    //const kversion = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.kubernetes.version", undefined);
-    const efsfsname = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.efs.fsname", "efs-file-system");
-    const efsfstag = 'eks-blueprint/' + efsfsname
-    const vaultname = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.backup.vaultname", "EKSBackupVault");
-    const primaryKeyArn = props.primaryKeyArn;
-    const drbackupVault = props.drbackupVault;
+    constructor(scope: Construct, id: string, props: backupStackProps ) {
+        super(scope, id, props );
+        const account = process.env.CDK_DEFAULT_ACCOUNT!;
+        const region = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.primary.region", undefined);
+        //const drregion = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.dr.region", undefined);
+        //const kversion = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.kubernetes.version", undefined);
+        const efsfsname = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.efs.fsname", "efs-file-system");
+        const efsfstag = 'eks-blueprint/' + efsfsname
+        const vaultname = blueprints.utils.valueFromContext(scope, "resilience-backup-restore-aws.backup.vaultname", "EKSBackupVault");
+        const primaryKeyArn = props.primaryKeyArn;
+        const drbackupVault = props.drbackupVault;
     
-    const backupstack = new cdk.Stack(this, 'backupstack', { env: { region: region, account: account }, crossRegionReferences: true } );
-    const primaryKey = kms.Key.fromKeyArn(backupstack, 'PrimaryKey', primaryKeyArn);
-    const backupVault = new backup.BackupVault(backupstack, 'BackupVault', {backupVaultName: vaultname, encryptionKey: primaryKey });
+        const backupstack = new cdk.Stack(this, 'backupstack', { env: { region: region, account: account }, crossRegionReferences: true } );
+        const primaryKey = kms.Key.fromKeyArn(backupstack, 'PrimaryKey', primaryKeyArn);
+        const backupVault = new backup.BackupVault(backupstack, 'BackupVault', {backupVaultName: vaultname, encryptionKey: primaryKey });
 
 
     // Create a AWS Backup Backup plan to backup resources based on Tags
