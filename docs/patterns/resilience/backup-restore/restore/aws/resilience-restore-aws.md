@@ -95,7 +95,6 @@ cat << EOF > cdk.json
         "resilience-backup-restore-aws.pattern.name": "resilience_backup_restore_aws",
         "resilience-backup-restore-aws.primary.region": "us-west-1",
         "resilience-backup-restore-aws.dr.region": "us-east-2",
-        "resilience-backup-restore-aws.kubernetes.version": "eks.KubernetesVersion.V1_27",
         "resilience-backup-restore-aws.efs.fsname": "efs-test",
         "resilience-backup-restore-aws.backup.vaultname": "eks-vault"
       }
