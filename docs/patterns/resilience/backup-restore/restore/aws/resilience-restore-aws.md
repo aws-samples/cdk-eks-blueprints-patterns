@@ -1,4 +1,4 @@
-# Using AWS Native services to setup a Backup/Restore Disaster Recovery pattern for EKS 
+# Using AWS Native services to setup a Backup/Restore Disaster Recovery pattern for EKS
 
 ## Objective
 
@@ -15,7 +15,7 @@ And a non-critical application will have a higher RTO and RPO and will not need 
 
 The Objective of this pattern is to provide a reference design for a Disaster Recovery Architecture for a non-critical application with higher RTO and RPO using AWS native services. 
 
-This page has details of setting up the EKS cluster on the primary region with configuration to backup Dataplane Nodes, EBS Volumes and EFS Filesystems. 
+This page has details of setting up the EKS cluster on the Disaster Recovery region with configuration to create PersistentVolumeClaim's from latest snapshot's of EBS Volumes 
 
 ## Architecture
 
@@ -60,6 +60,15 @@ Ensure that you have installed the following tools on your machine:
 - [make](https://www.gnu.org/software/make/)
 - [Docker](https://docs.docker.com/get-docker/)
 
+
+## Disaster Recovery Procedure
+
+High-level process to recovery your application during a disaster is outlined here
+
+### [Step 1:] 
+
+Setup an EKS cluster on the Disaster Recovery region
+
 Let’s start by setting the account and region environment variables:
 
 ```sh
@@ -74,11 +83,9 @@ git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 
 ```
 
-## Deployment
-
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
-Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file:
+Set the pattern's parameters in the CDK context by overriding the cdk.json_ file:
 
 ```sh
 cat << EOF > cdk.json
@@ -101,7 +108,7 @@ Run the following commands:
 ```sh
 make deps
 make build
-make pattern resilience-br-backup-aws "deploy --all"
+make pattern resilience-br-restore-aws "deploy --all"
 ```
 When deployment completes, the output will be similar to the following:
 
@@ -143,16 +150,73 @@ NAME                   DRIVER            DELETIONPOLICY   AGE
 ebs-volume-snapclass   ebs.csi.aws.com   Delete           3h9m
 ```
 
-Ensure that the Storage classes aws-ebs-sc, efs-sc and Volumesnapshot class ebs-volume-snapclass are configured during bootstrap by ArgoCD. 
+Next, Ensure that the Storage classes aws-ebs-sc, efs-sc and Volumesnapshot class ebs-volume-snapclass are configured during bootstrap by ArgoCD. 
+
+The pattern creates a AWS Backup Vault in both the primary and disaster recovery regions and configures cross region replication for all the backups in the vault. 
+
+High-level process to recovery your application during a disaster is outlined here
+
+### [Step 2:] 
+Download the Manifest files to a Local folder in your Admin Machine which has access to the EKS Cluster. 
+
+_Note:_ PersistentVolumeClaim Manifests are updated inline in the next steps; Ensure that you have a backup of all your Manifest files before proceeding further. 
+
+### [Step 3:] 
+
+#### If your application was using an EBS volume as a persistent volume then follow the below steps 
+
+Run the Script to create VolumeSnapshotContent ; VolumeSnapshot from the latest snapshot of the EBS Volume (Used by Application in Primary Region) and Modify PersistentVolumeClaim to reference the VolumeSnapshot.
+
+```sh
+cdk-eks-blueprints-patterns/lib/resilience/backup_restore/restore/aws/scripts/update_pvc.sh <Local Manifest Folder absolute path> (eg: update_pvc.sh /data/manifest)"
+
+```
+
+#### If your application was using an EFS Volume as a persistent volume then follow the process outlined in the document below to restore the filesystem from the latest EFS snapshot
+``` sh
+https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-efs.html
+```
+
+### [Step 4]: ##Only applicable if your application is using EFS_Filesystems
+  
+Update your PersistentVolume manifest files to reference the new EFS Filesystem id from Step 3 (Sample PersistentVolume Manifest file for reference)
+
+```output
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: efs-sc
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: **fs-e8a95a42**
+
+```
+### [Step 5]: 
+Deploy the Manifest files to the EKS Cluster in Disaster Recovery Region. 
+
+Navigate to the Local folder where the updated Manifest files are stored 
+
+```sh
+cd <Local Manifest Folder absolute path> 
+kubectl apply -f . -R #Recursively apply all the yaml files in the directory. 
+```
 
 ## Cleanup
 
 To clean up your EKS Blueprints, run the following commands:
 
 ```sh
-make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack/backupstack/backupstack";
-make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack/backupstack";
-make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack/drstack";
-make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack";
-make pattern resilience-br-backup-aws "destroy --all"
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack/backupstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/drstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack";
+make pattern resilience-br-restore-aws "destroy --all"
 ```

@@ -37,7 +37,7 @@ export default class ResilienceBRAWSConstruct {
 	    new blueprints.addons.ArgoCDAddOn({
                 bootstrapRepo: {
                     ...bootstrapRepo,
-                    path: './teams/team-rbraws/Primary/manifests/StorageClass',
+                    path: './teams/team-rbraws/DR/manifests/StorageClass',
                      },})
 ];
 

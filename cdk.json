@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node dist/lib/common/default-main.js"
+  "app": "npx ts-node dist/lib/common/default-main.js",
   "context": {
         "resilience-backup-restore-aws.pattern.name": "resilience_backup_restore_aws",
         "resilience-backup-restore-aws.primary.region": "us-west-1",
