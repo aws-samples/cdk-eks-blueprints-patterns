@@ -85,7 +85,7 @@ git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
-Set the pattern's parameters in the CDK context by overriding the cdk.json_ file:
+Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file (Update the values for variables based on your environment): 
 
 ```sh
 cat << EOF > cdk.json

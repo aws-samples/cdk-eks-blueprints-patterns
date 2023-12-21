@@ -78,7 +78,7 @@ git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 
 If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
 
-Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file:
+Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file (Update the values for variables based on your environment):
 
 ```sh
 cat << EOF > cdk.json
@@ -134,16 +134,7 @@ efs-sc          efs.csi.aws.com         Delete          Immediate              f
 gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  100m
 ```
 
-```sh
-kubectl get volumesnapshotclass
-```
-
-```output
-NAME                   DRIVER            DELETIONPOLICY   AGE
-ebs-volume-snapclass   ebs.csi.aws.com   Delete           3h9m
-```
-
-Ensure that the Storage classes aws-ebs-sc, efs-sc and Volumesnapshot class ebs-volume-snapclass are configured during bootstrap by ArgoCD. 
+Ensure that the Storage classes aws-ebs-sc and efs-sc are configured during bootstrap by ArgoCD. 
 
 ## Cleanup
 
