@@ -135,9 +135,156 @@ gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   f
 
 Ensure that the Storage classes aws-ebs-sc and efs-sc are configured during bootstrap by ArgoCD. 
 
+## Disaster Recovery Procedure
+
+High-level process to recovery your application during a disaster is outlined here
+
+### [Step 1:] 
+
+Setup an EKS cluster on the Disaster Recovery region
+
+Let’s start by setting the account and region environment variables:
+
+```sh
+ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+AWS_REGION=$(aws configure get region)
+```
+
+Clone the repository:
+
+```sh
+git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
+
+```
+
+If you haven't done it before, [bootstrap your cdk account and region](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
+
+Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file (Update the values for variables based on your environment): 
+
+```sh
+cat << EOF > cdk.json
+{
+    "app": "npx ts-node dist/lib/common/default-main.js",
+    "context": {
+        "resilience-backup-restore-aws.pattern.name": "resilience_backup_restore_aws",
+        "resilience-backup-restore-aws.primary.region": "us-west-1",
+        "resilience-backup-restore-aws.dr.region": "us-east-2",
+        "resilience-backup-restore-aws.efs.fsname": "efs-test",
+        "resilience-backup-restore-aws.backup.vaultname": "eks-vault"
+      }
+}
+EOF
+```
+
+Run the following commands:
+
+```sh
+make deps
+make build
+make pattern resilience-br-restore-aws "deploy --all"
+```
+When deployment completes, the output will be similar to the following:
+
+```output
+  ✅  eks-blueprint 
+
+✨  Deployment time: 1.55s
+
+Outputs:
+eks-blueprint.EfsFileSystemId = fs-0eb944ebcc8fc4218
+eks-blueprint.ExportsOutputFnGetAttKMSKeyArn3349B39A = arn:aws:kms:us-west-1:XXXXXXXXXXXX:key/mrk-01f5fa48358f41048981abc60e2f7d2e
+eks-blueprint.eksblueprintClusterNameF2A3938C = eks-blueprint
+eks-blueprint.eksblueprintConfigCommandC5F2ABDA = aws eks update-kubeconfig --name eks-blueprint --region us-west-1 --role-arn arn:aws:iam::XXXXXXXXXXXX:role/eks-blueprint-eksblueprintAccessRoleBA6A9CB7-Fu9TnULIf5O6
+eks-blueprint.eksblueprintGetTokenCommandD17B69F1 = aws eks get-token --cluster-name eks-blueprint --region us-west-1 --role-arn arn:aws:iam::XXXXXXXXXXXX:role/eks-blueprint-eksblueprintAccessRoleBA6A9CB7-Fu9TnULIf5O6
+```
+
+To see the deployed resources within the cluster, please run:
+
+```sh
+aws eks update-kubeconfig --name eks-blueprint --region us-west-1 --role-arn arn:aws:iam::XXXXXXXXXXXX:role/eks-blueprint-eksblueprintAccessRoleBA6A9CB7-Fu9TnULIf5O6  # Command Copied from the Stack output
+kubectl get sc 
+```
+
+A sample output is shown below:
+
+```output
+NAME            PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+aws-ebs-sc      ebs.csi.aws.com         Delete          Immediate              false                  50m
+efs-sc          efs.csi.aws.com         Delete          Immediate              false                  50m
+gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  100m
+```
+
+```sh
+kubectl get volumesnapshotclass
+```
+
+```output
+NAME                   DRIVER            DELETIONPOLICY   AGE
+ebs-volume-snapclass   ebs.csi.aws.com   Delete           3h9m
+```
+
+Next, Ensure that the Storage classes aws-ebs-sc, efs-sc and Volumesnapshot class ebs-volume-snapclass are configured during bootstrap by ArgoCD. 
+
+The pattern creates a AWS Backup Vault in both the primary and disaster recovery regions and configures cross region replication for all the backups in the vault. 
+
+High-level process to recovery your application during a disaster is outlined here
+
+### [Step 2:] 
+Download the Manifest files to a Local folder in your Admin Machine which has access to the EKS Cluster. 
+
+_Note:_ PersistentVolumeClaim Manifests are updated inline in the next steps; Ensure that you have a backup of all your Manifest files before proceeding further. 
+
+### [Step 3:] 
+
+#### If your application was using an EBS volume as a persistent volume then follow the below steps 
+
+Run the Script to create VolumeSnapshotContent ; VolumeSnapshot from the latest snapshot of the EBS Volume (Used by Application in Primary Region) and Modify PersistentVolumeClaim to reference the VolumeSnapshot.
+
+```sh
+cdk-eks-blueprints-patterns/lib/resilience/backup_restore/restore/aws/scripts/update_pvc.sh <Local Manifest Folder absolute path> (eg: update_pvc.sh /data/manifest)"
+
+```
+
+#### If your application was using an EFS Volume as a persistent volume then follow the process outlined in the document below to restore the filesystem from the latest EFS snapshot
+``` sh
+https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-efs.html
+```
+
+### [Step 4]: ##Only applicable if your application is using EFS_Filesystems
+  
+Update your PersistentVolume manifest files to reference the new EFS Filesystem id from Step 3 (Sample PersistentVolume Manifest file for reference)
+
+```output
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: efs-sc
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: **fs-e8a95a42**
+
+```
+### [Step 5]: 
+Deploy the Manifest files to the EKS Cluster in Disaster Recovery Region. 
+
+Navigate to the Local folder where the updated Manifest files are stored 
+
+```sh
+cd <Local Manifest Folder absolute path> 
+kubectl apply -f . -R #Recursively apply all the yaml files in the directory. 
+```
+
 ## Cleanup
 
-To clean up your EKS Blueprints, run the following commands:
+To clean up your EKS Blueprints on the Primary Region, run the following commands:
 
 ```sh
 make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack/backupstack/backupstack";
@@ -146,3 +293,14 @@ make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack/drstack";
 make pattern resilience-br-backup-aws "destroy eks-blueprint/drstack";
 make pattern resilience-br-backup-aws "destroy --all"
 ```
+
+To clean up your EKS Blueprints on the Disaster Recovery Region, run the following commands:
+
+```sh
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack/backupstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/drstack";
+make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack";
+make pattern resilience-br-restore-aws "destroy --all"
+```
+
