@@ -21,7 +21,9 @@ export default class ResilienceBRAWSConstruct {
     
     
         const bootstrapRepo: blueprints.ApplicationRepository = {
-            repoUrl: 'https://github.com/aws-samples/eks-blueprints-workloads'
+            //repoUrl: 'https://github.com/aws-samples/eks-blueprints-workloads'
+            repoUrl: 'https://github.com/prabaksa/eks-blueprints-workloads'
+            
         };
     
         const addOns: Array<blueprints.ClusterAddOn> = [

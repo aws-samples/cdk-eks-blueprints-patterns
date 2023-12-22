@@ -19,7 +19,7 @@ This page has details of setting up the EKS cluster on the primary region with c
 
 ## Architecture
 
-![Disaster Recovery Architecture](../../../../images/resilience-backup-restore-aws.png)
+![Disaster Recovery Architecture](../../../images/resilience-backup-restore-aws.png)
 
 The repository provides a CDK(Cloud Development Kit) code that provisions the following components 
 
