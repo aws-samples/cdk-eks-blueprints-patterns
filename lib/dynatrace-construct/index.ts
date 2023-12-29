@@ -10,10 +10,7 @@ export default class DynatraceOperatorConstruct {
         // AddOns for the cluster
         const stackId = `${id}-blueprint`;
 
-        const DynatraceOperator = new DynatraceAddOn({
-            // Setup ssmSecret dynatrace-tokens described here (https://github.com/dynatrace-oss/dynatrace-eks-blueprints-addon#aws-secret-manager-secrets)
-            ssmSecretName: 'dynatrace-tokens'
-        });
+        const DynatraceOperator = new DynatraceAddOn();
 
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
