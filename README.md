@@ -254,6 +254,7 @@ Patterns:
         snyk
         starter
         gmaestro
+        workloads-codecommit
 ```
 
 - Bootstrap your CDK environment.
