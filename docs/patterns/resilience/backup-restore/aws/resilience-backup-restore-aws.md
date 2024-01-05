@@ -296,6 +296,18 @@ make pattern resilience-br-backup-aws "destroy --all"
 
 To clean up your EKS Blueprints on the Disaster Recovery Region, run the following commands:
 
+### [Step 1]:
+Remove the KMS policy attached to the CSI Controller Service Account IAM Role 
+
+```sh
+csi_role=`kubectl get sa ebs-csi-controller-sa -o json -n kube-system|jq '.metadata.annotations."eks.amazonaws.com/role-arn"'|sed -e 's/"//g'|awk -F"/" '{print $NF}'`
+policy_arn=`aws iam list-attached-role-policies --role-name $csi_role|jq .AttachedPolicies[].PolicyArn|grep csi-controller-kmspolicy|sed 's/"//g'`
+aws iam detach-role-policy --role-name ${csi_role} --policy-arn ${policy_arn}
+aws iam delete-policy --policy-arn ${policy_arn}
+```
+### [Step 2]:
+Delete the Deployment on the Disaster Recovery Region
+
 ```sh
 make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack/backupstack";
 make pattern resilience-br-restore-aws "destroy eks-blueprint/drstack/backupstack";
