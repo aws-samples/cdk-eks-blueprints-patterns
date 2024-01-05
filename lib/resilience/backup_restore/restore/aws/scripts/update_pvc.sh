@@ -10,6 +10,7 @@
 PROCNAME=`basename $0`
 MANIFEST_FOLDER=$1
 ARCH=`uname -m`
+declare -A KMSKeys
 
 # Functions
 ##################
@@ -29,6 +30,11 @@ checkManifest() {
         usage
         exit 100
     fi
+}
+
+backupManifest() {
+    mkdir -p ${MANIFEST_FOLDER}.bkup
+    cp -rp ${MANIFEST_FOLDER}/* ${MANIFEST_FOLDER}.bkup/*
 }
 
 InstallTools() {
@@ -79,7 +85,9 @@ UpdateManifest() {
         pvc_namespace="default"
     fi
     echo ${pvc_namespace}
-    snapshot_id=`aws ec2 describe-snapshots --filters Name=tag:kubernetes.io/created-for/pvc/name,Values=${pvc_name} --query "Snapshots[?(StartTime>='$(date --date='-1 day' '+%Y-%m-%d')' && State=='completed')].{ID:SnapshotId,Time:StartTime,State:State}"|jq .[0].ID`
+    snapshot_id=`aws ec2 describe-snapshots --filters Name=tag:kubernetes.io/created-for/pvc/name,Values=${pvc_name} --query "Snapshots[?(StartTime>='$(date --date='-1 day' '+%Y-%m-%d')' && State=='completed')].{ID:SnapshotId,Time:StartTime,State:State,KmsKey:KmsKeyId}"|jq .[0].ID`
+    kms_key=`aws ec2 describe-snapshots --snapshot-id ${snapshot_id}|jq .Snapshots[].KmsKeyId`
+    KMSKeys+=(${kms_key})
     echo "Found Snapshot with ${snapshot_id}"
     if [ ${snapshot_id} != "null" ]; then 
         cat << EOF >> ${file_dir}/${pvc_name}-VolumeSnapshotContent.yaml
@@ -119,12 +127,58 @@ echo "Updated Manifest ${file_path}"
 echo "------------------------------------------------------------------------"
 }
 
+updateCSIRole() {
+    csi_role=`kubectl get sa ebs-csi-controller-sa -o json -n kube-system|jq '.metadata.annotations."eks.amazonaws.com/role-arn"'|sed -e 's/"//g'|awk -F"/" '{print $NF}'`
+    resources=`echo ${KMSKeys[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
+    resources=`echo ${resources}|sed 's/,$//g'`
+    #create Iam_policy File 
+    cat << EOF >> ${MANIFEST_FOLDER}/kms_iam_policy.json
+{
+ "Version": "2012-10-17",
+    "Statement": [
+
+            "Condition": {
+                "Bool": {
+                    "kms:GrantIsForAWSResource": "true"
+                }
+            },
+            "Action": [
+                "kms:CreateGrant",
+                "kms:ListGrants",
+                "kms:RevokeGrant"
+            ],
+            "Resource": [ ${resources} ],
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Resource": [ ${resources} ],
+            "Effect": "Allow"
+        }
+}
+EOF
+    random=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1`
+    aws iam create-policy \
+    --policy-name csi-controller-kmspolicy-${random} \
+    --policy-document file://${MANIFEST_FOLDER}/kms_iam_policy.json
+    
+    aws iam attach-role-policy \
+    --role-name  ${csi_role} \
+    --policy-arn arn:aws:iam:::policy/csi-controller-kmspolicy-${random}
+}
 
 #Main Program 
 if [ $# -ne 1 ]; then 
     usage
 fi
 checkManifest
+backupManifest
 InstallTools
 #Splitting files with multiple manifest files 
 ##############################################
@@ -137,7 +191,6 @@ do
         echo "${file} doesn't needs to be splitted"
     fi 
 done
-
 #Updating only the PersistentVolumeClaim Manifest files to use the latest snapshot taken before a day
 for newfile in `find $MANIFEST_FOLDER -name "*.yaml"`
 do
@@ -147,3 +200,5 @@ do
         UpdateManifest ${newfile}
     fi
 done
+#Updating CSI_Controller IAM role with KMS Permissions 
+updateCSIRole
