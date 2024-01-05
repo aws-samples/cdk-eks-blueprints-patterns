@@ -33,8 +33,10 @@ checkManifest() {
 }
 
 backupManifest() {
-    mkdir -p ${MANIFEST_FOLDER}.bkup
-    cp -rp ${MANIFEST_FOLDER}/* ${MANIFEST_FOLDER}.bkup/*
+    folder_name=`echo ${MANIFEST_FOLDER}|sed 's/\/$//'|awk -F"/" '{print $NF}'`
+    folder_dir=`dirname ${MANIFEST_FOLDER}`
+    mkdir -p ${folder_dir}/${folder_name}.bkup
+    cp -rp ${MANIFEST_FOLDER}/* ${folder_dir}/${folder_name}.bkup/
 }
 
 InstallTools() {
@@ -45,27 +47,48 @@ InstallTools() {
     else
         echo "Hello"
     fi
-    BINARY="yq_linux_$ARCH_yq"
-    wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/local/bin/yq
-    sudo chmod 755 /usr/local/bin/yq
+    if [ ! -f /usr/local/bin/yq ]; then 
+        BINARY="yq_linux_$ARCH_yq"
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz -O - | tar xz && sudo mv ${BINARY} /usr/local/bin/yq
+        sudo chmod 755 /usr/local/bin/yq
+    fi
     
     #Install kubectl-slice
-    BINARY="kubectl-slice_linux_$ARCH"
-    wget https://github.com/patrickdappollonio/kubectl-slice/releases/download/v1.2.7/${BINARY}.tar.gz -O - | tar xz && sudo mv kubectl-slice /usr/local/bin/kubectl-slice
-    sudo chmod 755 /usr/local/bin/kubectl-slice
+    if [ ! -f /usr/local/bin/kubectl-slice ]; then 
+        BINARY="kubectl-slice_linux_$ARCH"
+        wget https://github.com/patrickdappollonio/kubectl-slice/releases/download/v1.2.7/${BINARY}.tar.gz -O - | tar xz && sudo mv kubectl-slice /usr/local/bin/kubectl-slice
+        sudo chmod 755 /usr/local/bin/kubectl-slice
+    fi 
+    
+    #Install jq
+    if [ -f /usr/bin/yum ] && [ ! -f /usr/bin/jq ]; then 
+        sudo yum install jq 
+    elif [ -f /usr/bin/apt-get ] && [ ! -f /usr/bin/jq ]; then 
+        sudo apt-get install jq
+    elif [ ! -f /usr/bin/jq ]; then 
+        echo "unable to install jq . Please install jq and rerun the script"
+        exit 99
+    fi
+    
+    #Install aws-cli 
+    if [ ! -f /usr/local/bin/aws ]; then 
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+    fi 
     
     #Ensure PATH variable is updated 
     PATH=$PATH:/usr/local/bin
 }
 
 SplitFiles() {
-    echo "Splitting File $1 if required"
+    #echo "Splitting File $1 if required"
     file_path=$1
     file_name=`echo ${file_path}|awk -F"/" '{print $NF}'`
     file_dir=`dirname ${file_path}`
     output_dir=`echo ${file_name}|awk -F"." '{print $1}'`
     mkdir -p ${file_dir}/${output_dir}
-    kubectl-slice -f ${file_path} -o ${file_dir}/${output_dir}
+    kubectl-slice -f ${file_path} -o ${file_dir}/${output_dir} >/dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo "Successfully split the manifest file ${file_path}"
         rm -f $file_path
@@ -79,16 +102,17 @@ UpdateManifest() {
     file_dir=`dirname ${file_path}`
     pvc_name=`yq -r '.metadata.name' ${file_path}`
     pvc_snapshot="${pvc_name}-snapshot"
-    echo ${pvc_name}
+    #echo ${pvc_name}
     pvc_namespace=`yq -r '.metadata.namespace' ${file_path}`
     if [ ${pvc_namespace} == "null" ]; then
         pvc_namespace="default"
     fi
-    echo ${pvc_namespace}
+    #echo ${pvc_namespace}
     snapshot_id=`aws ec2 describe-snapshots --filters Name=tag:kubernetes.io/created-for/pvc/name,Values=${pvc_name} --query "Snapshots[?(StartTime>='$(date --date='-1 day' '+%Y-%m-%d')' && State=='completed')].{ID:SnapshotId,Time:StartTime,State:State,KmsKey:KmsKeyId}"|jq .[0].ID`
+    snapshot_id=`echo ${snapshot_id}|sed 's/"//g'`
     kms_key=`aws ec2 describe-snapshots --snapshot-id ${snapshot_id}|jq .Snapshots[].KmsKeyId`
-    KMSKeys+=(${kms_key})
-    echo "Found Snapshot with ${snapshot_id}"
+    KMSKeys[${#KMSKeys[@]}]=${kms_key}
+    echo "Found Snapshot with snapshot id ${snapshot_id} for PVC  ${pvc_name} on namespace ${pvc_namespace}"
     if [ ${snapshot_id} != "null" ]; then 
         cat << EOF >> ${file_dir}/${pvc_name}-VolumeSnapshotContent.yaml
 ---
@@ -123,33 +147,43 @@ EOF
     else
         echo "Unable to find the latest snapshot for PVC ${pvc_name}"
     fi   
-echo "Updated Manifest ${file_path}"
-echo "------------------------------------------------------------------------"
+#echo "Updated Manifest ${file_path}"
+#echo "------------------------------------------------------------------------"
 }
 
 updateCSIRole() {
+    echo "------------------------------------------------------------------------"
+    echo "Updating the IAM policy attached to CSI Controller to access KMS Keys required for decrypting snapshots"
     csi_role=`kubectl get sa ebs-csi-controller-sa -o json -n kube-system|jq '.metadata.annotations."eks.amazonaws.com/role-arn"'|sed -e 's/"//g'|awk -F"/" '{print $NF}'`
     resources=`echo ${KMSKeys[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
-    resources=`echo ${resources}|sed 's/,$//g'`
+    export resources=`echo ${resources}|sed 's/,$//g'`
+    echo "******************************"
+    echo ${resources}
+    echo "******************************"
     #create Iam_policy File 
-    cat << EOF >> ${MANIFEST_FOLDER}/kms_iam_policy.json
+    folder_dir=`dirname ${MANIFEST_FOLDER}`
+    cat << EOF >> ${folder_dir}/kms_iam_policy.json
 {
  "Version": "2012-10-17",
     "Statement": [
 
-            "Condition": {
-                "Bool": {
-                    "kms:GrantIsForAWSResource": "true"
-                }
-            },
-            "Action": [
-                "kms:CreateGrant",
-                "kms:ListGrants",
-                "kms:RevokeGrant"
-            ],
-            "Resource": [ ${resources} ],
-            "Effect": "Allow"
-        },
+            {
+			"Sid": "GrantAccess",
+			"Effect": "Allow",
+			"Action": [
+				"kms:RevokeGrant",
+				"kms:CreateGrant",
+				"kms:ListGrants"
+			],
+			"Resource": [
+				${resources}
+			],
+			"Condition": {
+				"Bool": {
+					"kms:GrantIsForAWSResource": "true"
+				}
+			}
+		},
         {
             "Action": [
                 "kms:Encrypt",
@@ -158,19 +192,23 @@ updateCSIRole() {
                 "kms:GenerateDataKey*",
                 "kms:DescribeKey"
             ],
-            "Resource": [ ${resources} ],
+            "Resource": [ ${resources} 
+            ],
             "Effect": "Allow"
         }
+        ]
 }
 EOF
     random=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1`
     aws iam create-policy \
     --policy-name csi-controller-kmspolicy-${random} \
-    --policy-document file://${MANIFEST_FOLDER}/kms_iam_policy.json
+    --policy-document file://${folder_dir}/kms_iam_policy.json
+    
+    ACCOUNT_ID=`aws sts get-caller-identity|jq .Account|sed 's/"//g'`
     
     aws iam attach-role-policy \
     --role-name  ${csi_role} \
-    --policy-arn arn:aws:iam:::policy/csi-controller-kmspolicy-${random}
+    --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/csi-controller-kmspolicy-${random}
 }
 
 #Main Program 
@@ -194,7 +232,7 @@ done
 #Updating only the PersistentVolumeClaim Manifest files to use the latest snapshot taken before a day
 for newfile in `find $MANIFEST_FOLDER -name "*.yaml"`
 do
-    echo "Checking if file ${newfile} is a PVC definition"
+    #echo "Checking if file ${newfile} is a PVC definition"
     manifest_kind=`yq -r '.kind' ${newfile}`
     if [ ${manifest_kind} == "PersistentVolumeClaim" ]; then 
         UpdateManifest ${newfile}
