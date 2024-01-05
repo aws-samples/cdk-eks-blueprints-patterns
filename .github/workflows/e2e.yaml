@@ -37,7 +37,7 @@ jobs:
         token: ${{ secrets.CI_TOKEN }}
         status: pending
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::867286930927:role/BlueprintsCodeBuildRole
         role-session-name: codebuildsession
