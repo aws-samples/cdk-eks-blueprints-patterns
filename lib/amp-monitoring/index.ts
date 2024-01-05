@@ -31,6 +31,7 @@ export default class AmpMonitoringConstruct {
         return blueprints.EksBlueprint.builder()
             .account(accountID)
             .region(awsRegion)
+            .version('auto')
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn,

@@ -4,7 +4,7 @@
 
 The following figure illustrates the architecture of the pattern we will be deploying for Multi Account Observability pattern using open source tooling such as AWS Distro for Open Telemetry (ADOT), Amazon Managed Service for Prometheus (AMP), Amazon Managed Grafana :
 
-![Architecture](./images/setup_amg-cross-account.png)
+![Architecture](../images/setup_amg-cross-account.png)
 
 ## Objective
 
@@ -236,9 +236,9 @@ You can find the team-geordie configuration for this pattern in the workload rep
     2. Query metrics in Monitoring account from Amazon Managed Prometheus workspace in Prod 1 Account
     3. Query metrics in the Monitoring account from Amazon CloudWatch in Prod 1 Account
 
-![Metrics from AMP](./images/AMG%20-%20Metrics%20from%20AMP.png)
+![Metrics from AMP](../images/AMG%20-%20Metrics%20from%20AMP.png)
 
-![Metrics from CloudWatch](./images/AMG%20-%20Metrics%20from%20CloudWatch.png)
+![Metrics from CloudWatch](../images/AMG%20-%20Metrics%20from%20CloudWatch.png)
 
 ### Validating Custom Metrics and Traces from ho11y App
 
@@ -256,17 +256,17 @@ You can find the team-geordie configuration for this pattern in the workload rep
     ```
 ### Traces and Service Map screenshots from X-Ray Console
 
-![Traces of ho11y App on X-Ray Console](./images/XRAY%20-%20Traces.png)
+![Traces of ho11y App on X-Ray Console](../images/XRAY%20-%20Traces.png)
 
-![Service Map of ho11y App on X-Ray Console](./images/XRAY%20-%20Service%20Map.png)
+![Service Map of ho11y App on X-Ray Console](../images/XRAY%20-%20Service%20Map.png)
 
 ### Custom Metrics from ho11y App on Amazon Managed Grafana Console using AMP as data source
 
-![Exploring Metrics from ho11y with AMP as Data source in AMG Console](./images/Explore%20AMG.png)
+![Exploring Metrics from ho11y with AMP as Data source in AMG Console](../images/Explore%20AMG.png)
 
 ### Custom Metrics from ho11y App on Amazon Managed Grafana Console using CloudWatch as data source
 
-![Exploring Metrics from ho11y with CloudWatch as Data source in AMG Console](./images/Explore%20AMG.png)
+![Exploring Metrics from ho11y with CloudWatch as Data source in AMG Console](../images/Explore%20AMG.png)
 
 ### Notes
 

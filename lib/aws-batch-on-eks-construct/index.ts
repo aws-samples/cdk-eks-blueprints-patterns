@@ -41,6 +41,7 @@ export default class BatchOnEKSConstruct {
                 })
             )
             .teams(...teams)
+            .version('auto')
             .build(scope, stackID);
     }
 }

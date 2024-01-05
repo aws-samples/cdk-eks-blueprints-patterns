@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: bedrock-showcase-model
+ namespace: "{{namespace}}"
+ labels:
+   app: bedrock-showcase-model
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     app: bedrock-showcase-model
+ template:
+   metadata:
+     labels:
+       app: bedrock-showcase-model
+   spec:
+     serviceAccountName: bedrock-service-account
+     containers:
+     - name: bedrock-showcase-model
+       image: "{{imageName}}:{{imageTag}}"
+       imagePullPolicy: IfNotPresent
+       env:
+        - name: BWB_ENDPOINT_URL
+          value: "https://bedrock.{{region}}.amazonaws.com/"
+        - name: BWB_PROFILE_NAME
+          value: "default"
+        - name: BWB_REGION_NAME
+          value: "{{region}}"
+       ports:
+       - containerPort: 8501
+       volumeMounts:
+         - mountPath: /dev/shm
+           name: dshm
+     volumes:
+     - emptyDir:
+         sizeLimit: 1Gi
+         medium: Memory
+       name: dshm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bedrock-showcase-model-service
+  namespace: "{{namespace}}"
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8501
+  type: NodePort
+  selector:
+    app: bedrock-showcase-model
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bedrock-showcase-model-ingress
+  namespace: "{{namespace}}"
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: bedrock-showcase-model-service
+              port:
+                number: 80
