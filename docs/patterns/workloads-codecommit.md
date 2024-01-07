@@ -76,46 +76,19 @@ blueprints-addon-argocd-repo-server-66df7f448f-kvwmw              1/1     Runnin
 blueprints-addon-argocd-server-584db5f545-8xp48                   1/1     Running   0          1h
 ```
 
-## Give ArgoCD access to AWS CodeCommit
+## Get ArgoCD Url and credentials
 
 ```bash
 until kubectl get svc blueprints-addon-argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname' | grep -m 1 "elb.amazonaws.com"; do sleep 5 ; done;
 export ARGOCD_SERVER=`kubectl get svc blueprints-addon-argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname'`
-
-export ARGOCD_USER=argocd-cc
 export CC_REPO_NAME=eks-blueprints-workloads-cc
 
-aws iam create-service-specific-credential --user-name $ARGOCD_USER --service-name codecommit.amazonaws.com --no-cli-pager
-export CC_REPO_URL=$(aws codecommit get-repository --repository-name $CC_REPO_NAME --query 'repositoryMetadata.cloneUrlHttp' --output text)
-export SSC_ID=$(aws iam list-service-specific-credentials --user-name $ARGOCD_USER --query 'ServiceSpecificCredentials[0].ServiceSpecificCredentialId' --output text)
-export SSC_USER=$(aws iam list-service-specific-credentials --user-name $ARGOCD_USER --query 'ServiceSpecificCredentials[0].ServiceUserName' --output text)
-export SSC_PWD=$(aws iam reset-service-specific-credential --user-name $ARGOCD_USER --service-specific-credential-id $SSC_ID --query 'ServiceSpecificCredential.ServicePassword' --output text)
-
-cat > argocd-workloads-repos-creds.yaml <<EOF
-apiVersion: v1
-kind: Secret
-metadata:
-  name: repo-creds-platform-https
-  namespace: argocd
-  labels:
-    argocd.argoproj.io/secret-type: repo-creds
-stringData:
-  url: ${CC_REPO_URL}
-  password: ${SSC_PWD}
-  username: ${SSC_USER}
-EOF
-
-kubectl apply -f argocd-workloads-repos-creds.yaml
-rm argocd-workloads-repos-creds.yaml
-
-echo Deployment finished.
-echo "AWS CodeCommit Blueprint workloads repository URL: $CC_REPO_URL"
 echo "ArgoCD URL: https://$ARGOCD_SERVER"
 echo "ArgoCD server user: admin"
 echo "ArgoCD admin password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)"
 ```
 
-## Create notification trigger
+## Create notification trigger from AWS CodeCommit push to ArgoCD Sync
 
 ```bash
 export LAMBDA_ARN=$(aws lambda get-function --function-name eks-blueprints-workloads-cc-webhook | jq -r .Configuration.FunctionArn)
@@ -136,6 +109,13 @@ EOF
 
 aws codecommit put-repository-triggers --repository-name $CC_REPO_NAME --triggers file://trigger.json --no-cli-pager
 rm trigger.json
+```
+
+## Set AWS_REGION
+
+```bash
+export AWS_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
+echo $AWS_REGION
 ```
 
 ## Populate AWS CodeCommit with Blueprint workloads Sample repository
@@ -163,23 +143,14 @@ To teardown and remove the resources created in this example:
 
 1. Delete "bootstrap-apps" project in ArgoCD UI and wait until ArgoCD delete workloads
 
-2. Delete AWS CodeCommit credentials
-
-```sh
-export SSC_ID=$(aws iam list-service-specific-credentials --user-name $ARGOCD_USER --query 'ServiceSpecificCredentials[1].ServiceSpecificCredentialId' --output text)
-aws iam delete-service-specific-credential --user-name $ARGOCD_USER --service-specific-credential-id $SSC_ID
-export SSC_ID=$(aws iam list-service-specific-credentials --user-name $ARGOCD_USER --query 'ServiceSpecificCredentials[0].ServiceSpecificCredentialId' --output text)
-aws iam delete-service-specific-credential --user-name $ARGOCD_USER --service-specific-credential-id $SSC_ID
-```
-
-3. Delete deployed resources
+2. Delete deployed resources
 
 ```sh
 cd cdk-eks-blueprints-patterns
 make pattern workloads-codecommit destroy
 ```
 
-4. Delete cloned repositories (`if necessary`)
+3. Delete cloned repositories (`if necessary`)
 
 ```sh
 pushd ..

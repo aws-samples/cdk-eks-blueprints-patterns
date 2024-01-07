@@ -1,6 +1,6 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
-import WorkloadsCodeCommitRepoStack from './WorkloadsCodeCommitRepo';
+import WorkloadsCodeCommitRepoStack from './workloads-codecommit-repo-stack';
 
 /**
  * Demonstrates how to use AWS CodeCommmit as a repository for ArgoCD workloads.
@@ -22,6 +22,8 @@ export default class WorkloadsCodeCommitConstruct extends Construct {
         const bootstrapRepo : blueprints.ApplicationRepository = {
             repoUrl,
             targetRevision: 'main',
+            credentialsSecretName: repoName + '-codecommit-secret',
+            credentialsType: 'TOKEN'
         };
 
         const addOns: Array<blueprints.ClusterAddOn> = [
@@ -33,7 +35,7 @@ export default class WorkloadsCodeCommitConstruct extends Construct {
             new blueprints.ArgoCDAddOn({
                 bootstrapRepo: {
                     ...bootstrapRepo,
-                    path: 'envs/dev',
+                    path: 'envs/dev'
                 },
                 values: {
                     server: {
