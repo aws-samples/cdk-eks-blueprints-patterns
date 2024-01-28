@@ -11,6 +11,8 @@ PROCNAME=`basename $0`
 MANIFEST_FOLDER=$1
 ARCH=`uname -m`
 declare -A KMSKeys
+declare -A PolicyResources
+declare -A NewResources
 
 # Functions
 ##################
@@ -108,10 +110,14 @@ UpdateManifest() {
         pvc_namespace="default"
     fi
     #echo ${pvc_namespace}
-    snapshot_id=`aws ec2 describe-snapshots --filters Name=tag:kubernetes.io/created-for/pvc/name,Values=${pvc_name} --query "Snapshots[?(StartTime>='$(date --date='-1 day' '+%Y-%m-%d')' && State=='completed')].{ID:SnapshotId,Time:StartTime,State:State,KmsKey:KmsKeyId}"|jq .[0].ID`
+    snapshot_id=`aws ec2 describe-snapshots --filters Name=tag:kubernetes.io/created-for/pvc/name,Values=${pvc_name} --query "Snapshots[?(StartTime>='$(date --date='-1 day' '+%Y-%m-%d')' && State=='completed')].{ID:SnapshotId,Time:StartTime,State:State,KmsKey:KmsKeyId}" --output text|sort -k4 -r|awk -F" " '{print $1}'|head -1`
     snapshot_id=`echo ${snapshot_id}|sed 's/"//g'`
     kms_key=`aws ec2 describe-snapshots --snapshot-id ${snapshot_id}|jq .Snapshots[].KmsKeyId`
-    KMSKeys[${#KMSKeys[@]}]=${kms_key}
+    if [[ ${KMSKeys[*]} =~ $kms_key ]]; then 
+        echo 
+    else
+        KMSKeys[${#KMSKeys[@]}]=${kms_key}
+    fi
     echo "Found Snapshot with snapshot id ${snapshot_id} for PVC  ${pvc_name} on namespace ${pvc_namespace}"
     if [ ${snapshot_id} != "null" ]; then 
         cat << EOF >> ${file_dir}/${pvc_name}-VolumeSnapshotContent.yaml
@@ -155,14 +161,52 @@ updateCSIRole() {
     echo "------------------------------------------------------------------------"
     echo "Updating the IAM policy attached to CSI Controller to access KMS Keys required for decrypting snapshots"
     csi_role=`kubectl get sa ebs-csi-controller-sa -o json -n kube-system|jq '.metadata.annotations."eks.amazonaws.com/role-arn"'|sed -e 's/"//g'|awk -F"/" '{print $NF}'`
-    resources=`echo ${KMSKeys[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
-    export resources=`echo ${resources}|sed 's/,$//g'`
-    echo "******************************"
-    echo ${resources}
-    echo "******************************"
-    #create Iam_policy File 
-    folder_dir=`dirname ${MANIFEST_FOLDER}`
-    cat << EOF >> ${folder_dir}/kms_iam_policy.json
+    #resources=`echo ${KMSKeys[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
+    #export resources=`echo ${resources}|sed 's/,$//g'`
+    #echo "******************************"
+    #echo ${resources}
+    #echo "******************************"
+    #Checking if the resource is already part of an existing KMS policy 
+    c_custompolicy=`aws iam list-attached-role-policies --role-name eks-blueprint-eksblueprintebscsicontrollersasaRole5-ML9ppOO45dPG --output text|awk -F" " '{print $NF}'|grep csi-controller-kmspolicy|wc -l`
+    if [ ${c_custompolicy} -gt 0 ]; then 
+        for policy_arn in `aws iam list-attached-role-policies --role-name eks-blueprint-eksblueprintebscsicontrollersasaRole5-ML9ppOO45dPG --output text|awk -F" " '{print $2}'|grep csi-controller-kmspolicy`
+        do
+            versionId=`aws iam get-policy --policy-arn ${policy_arn}|jq .Policy.DefaultVersionId|sed 's/"//g'`
+            c_resource=`aws iam get-policy-version --version-id ${versionId} --policy-arn ${policy_arn}|jq .PolicyVersion.Document.Statement[0].Resource[]|wc -l`
+            if [ ${c_resource} -gt 0 ]; then 
+                for res in `aws iam get-policy-version --version-id ${versionId} --policy-arn ${policy_arn}|jq .PolicyVersion.Document.Statement[0].Resource[]`
+                do 
+                    PolicyResources[${#PolicyResources[@]}]=${res}
+                done
+            else [ ${c_resource} -eq 0 ]
+                    PolicyResources[${#PolicyResources[@]}]=${res}
+            fi
+        done
+        for n_res in ${KMSKeys[*]}
+        do
+            if [[ ${PolicyResources[*]} =~ ${n_res} ]]; then 
+                echo "Resource ${n_res} already in policy skipping"
+            else
+                NewResources[${#NewResources[@]}]=${n_res}
+            fi
+        done
+        resources=`echo ${NewResources[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
+        export resources=`echo ${resources}|sed 's/,$//g'`
+        echo "******************************"
+        echo ${resources}
+        echo "******************************"
+    else
+        resources=`echo ${KMSKeys[@]}|sed 's/ /\n/g'|sort -u|sed 's/$/,/g'`
+        export resources=`echo ${resources}|sed 's/,$//g'`
+        echo "******************************"
+        echo ${resources}
+        echo "******************************"
+    fi    
+    a_res=`echo ${resources}|awk -F"," '{print NF}'`
+    if [ ${a_res} -gt 0 ]; then 
+        #create Iam_policy File 
+        folder_dir=`dirname ${MANIFEST_FOLDER}`
+        cat << EOF >> ${folder_dir}/kms_iam_policy.json
 {
  "Version": "2012-10-17",
     "Statement": [
@@ -192,23 +236,27 @@ updateCSIRole() {
                 "kms:GenerateDataKey*",
                 "kms:DescribeKey"
             ],
-            "Resource": [ ${resources} 
-            ],
+            "Resource": [ ${resources} ],
             "Effect": "Allow"
         }
         ]
 }
 EOF
-    random=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1`
-    aws iam create-policy \
-    --policy-name csi-controller-kmspolicy-${random} \
-    --policy-document file://${folder_dir}/kms_iam_policy.json
+        random=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1`
+        aws iam create-policy \
+        --policy-name csi-controller-kmspolicy-${random} \
+        --policy-document file://${folder_dir}/kms_iam_policy.json
     
-    ACCOUNT_ID=`aws sts get-caller-identity|jq .Account|sed 's/"//g'`
+        if [ $? -eq 0 ]; then 
+            rm -f ${folder_dir}/kms_iam_policy.json
+        fi
     
-    aws iam attach-role-policy \
-    --role-name  ${csi_role} \
-    --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/csi-controller-kmspolicy-${random}
+        ACCOUNT_ID=`aws sts get-caller-identity|jq .Account|sed 's/"//g'`
+    
+        aws iam attach-role-policy \
+        --role-name  ${csi_role} \
+        --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/csi-controller-kmspolicy-${random}
+    fi
 }
 
 #Main Program 
