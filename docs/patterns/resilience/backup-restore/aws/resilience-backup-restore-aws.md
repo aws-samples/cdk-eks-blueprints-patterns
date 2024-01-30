@@ -19,7 +19,7 @@ This page has details of setting up the EKS cluster on the primary region with c
 
 ## Architecture
 
-![Disaster Recovery Architecture](../../../images/resilience-backup-restore-aws.png)
+![Primary Region Architecture](../../../images/resilience-backup-restore-aws-primary.png)
 
 The repository provides a CDK(Cloud Development Kit) code that provisions the following components 
 
@@ -137,7 +137,12 @@ Ensure that the Storage classes aws-ebs-sc and efs-sc are configured during boot
 
 ## Disaster Recovery Procedure
 
+
+
 High-level process to recovery your application during a disaster is outlined here
+
+![DR Region Architecture](../../../images/resilience-backup-restore-aws-dr.png)
+
 
 ### [Step 1:] 
 
