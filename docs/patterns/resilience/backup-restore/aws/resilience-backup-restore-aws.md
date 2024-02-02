@@ -135,9 +135,9 @@ gp2 (default)   kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   f
 
 Ensure that the Storage classes aws-ebs-sc and efs-sc are configured during bootstrap by ArgoCD. 
 
+Sample Application Defintion : https://github.com/aws-samples/eks-blueprints-workloads/tree/main/teams/team-rbraws/SampleApp
+
 ## Disaster Recovery Procedure
-
-
 
 High-level process to recovery your application during a disaster is outlined here
 
@@ -236,6 +236,8 @@ High-level process to recovery your application during a disaster is outlined he
 
 ### [Step 2:] 
 Download the Manifest files to a Local folder in your Admin Machine which has access to the EKS Cluster. 
+
+Sample Application Defintion : https://github.com/aws-samples/eks-blueprints-workloads/tree/main/teams/team-rbraws/SampleApp
 
 _Note:_ PersistentVolumeClaim Manifests are updated inline in the next steps; Ensure that you have a backup of all your Manifest files before proceeding further. 
 
