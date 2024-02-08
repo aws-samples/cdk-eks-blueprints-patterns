@@ -103,25 +103,6 @@ export class PipelineMultiCluster {
         .addOns(...addons));
 
         blueprints.CodePipelineStack.builder()
-            .name("multi-cluster-pipeline")
-            .owner("Howlla")
-            .codeBuildPolicies([ 
-                new iam.PolicyStatement({
-                    resources: ["*"],
-                    actions: [    
-                        "sts:AssumeRole",
-                        "secretsmanager:GetSecretValue",
-                        "secretsmanager:DescribeSecret",
-                        "cloudformation:*"
-                    ]
-                })
-            ])
-            .repository({
-                repoUrl: "https://github.com/Howlla/eks-anywhere-addons",
-                credentialsSecretName: 'github-token',
-                targetRevision: 'main',
-            })
-            // .enableCrossAccountKeys()
             .wave({
                 id: "prod-test",
                 stages: [
