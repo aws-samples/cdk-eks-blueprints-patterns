@@ -82,14 +82,14 @@ export class PipelineMultiCluster {
       const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
-        .application('npx ts-node bin/pipeline-multienv-gitops.ts')
+        .application('npx ts-node bin/multi-cluster-conformitron.ts')
         .name('multi-cluster-central-pipeline')
         .owner('Howlla')
         .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
         .repository({
             repoUrl: gitRepositoryName,
             credentialsSecretName: 'github-token',
-            targetRevision: 'main',
+            targetRevision: 'conformitronInitiative',
         })
         .wave({
                 id: "prod-test",
