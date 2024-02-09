@@ -27,7 +27,7 @@ export class PipelineMultiCluster {
             // eks.KubernetesVersion.V1_27,
         ]
 
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/howlla/eks-blueprints-workloads.git');
 
         const addons: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.ExternalsSecretsAddOn(),
@@ -40,7 +40,6 @@ export class PipelineMultiCluster {
                        targetRevision: "main",
                    },
                    values: {
-                       "region": "us-west-2"
                    },
                    kustomizations: [
                        {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
@@ -50,8 +49,8 @@ export class PipelineMultiCluster {
                    ],
               }],
             }),
-            new EksAnywhereSecretsAddon(),
-            prodArgoAddonConfig
+            // new EksAnywhereSecretsAddon(),
+            // prodArgoAddonConfig
           ]; 
           
             const blueprint = blueprints.EksBlueprint.builder()
@@ -98,6 +97,7 @@ export class PipelineMultiCluster {
                         id: X86_ENV_ID + `-1`,
                         stackBuilder:  blueprintBuildersX86[0]
                             .clone(region, account)
+                            .addOns(prodArgoAddonConfig)
                     },
                     // {
                     //     id: X86_ENV_ID + `-2`,
@@ -118,6 +118,8 @@ export class PipelineMultiCluster {
                         id: ARM_ENV_ID + `-1`,
                         stackBuilder:  blueprintBuildersArm[0]
                             .clone(region, account)
+                            .addOns(prodArgoAddonConfig)
+
                     },
                     // {
                     //     id: ARM_ENV_ID + `-2`,
