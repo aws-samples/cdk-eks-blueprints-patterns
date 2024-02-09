@@ -1,72 +1,33 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import * as cdk from 'aws-cdk-lib';
-import * as iam from 'aws-cdk-lib/aws-iam';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 
-const logger = blueprints.utils.logger;
 
 /**
- * Function relies on a secret called "cdk-context" defined in the target region (pipeline account must have it)
- * @returns 
- */
-export async function populateAccountWithContextDefaults(): Promise<PipelineMultiClusterProps> {
-    // Populate Context Defaults for all the accounts
-    const cdkContext = JSON.parse(await blueprints.utils.getSecretValue('cdk-context', 'us-east-1'))['context'] as PipelineMultiClusterProps;
-    logger.debug(`Retrieved CDK context ${JSON.stringify(cdkContext)}`);
-    return cdkContext;
-}
-
-export interface PipelineMultiClusterProps {
-    /**
-     * Production workload environment (account/region) #1 x86
-     */
-    prodEnv1: cdk.Environment;
-
-    /**
-     * Production workload environment (account/region) #2 AMD
-     */
-    prodEnv2: cdk.Environment;
-
-    /**
-     * Environment (account/region) where pipeline will be running (generally referred to as CICD account)
-     */
-    pipelineEnv: cdk.Environment;
-
-}
-/**
- * Main multi-account monitoring pipeline.
+ * Main multi-cluster deployment pipeline.
  */
 export class PipelineMultiCluster {
 
     async buildAsync(scope: Construct) {
-        const context = await populateAccountWithContextDefaults();
+        // const context = await populateAccountWithContextDefaults();
+        const account = "810198167072";
+        const region = "us-east-2";
 
+        console.log(account,region)
         // environments IDs consts
-        const X86_ENV_ID = `eks-x86-${context.prodEnv1.region}`;
-        const ARM_ENV_ID = `eks-arm-${context.prodEnv2.region}`;
+        const X86_ENV_ID = `eks-x86-${region}`;
+        const ARM_ENV_ID = `eks-arm-${region}`;
 
         const CLUSTER_VERSIONS = [
             eks.KubernetesVersion.V1_24,
-            eks.KubernetesVersion.V1_25,
-            eks.KubernetesVersion.V1_26,
-            eks.KubernetesVersion.V1_27,
+            // eks.KubernetesVersion.V1_25,
+            // eks.KubernetesVersion.V1_26,
+            // eks.KubernetesVersion.V1_27,
         ]
-        const x86ClusterProvider = new blueprints.MngClusterProvider({
-            instanceTypes: [new ec2.InstanceType("m5.xlarge")],
-            amiType: eks.NodegroupAmiType.AL2_X86_64,
-            desiredSize: 2,
-            maxSize: 3,
-        })
 
-        const armClusterProvider = new blueprints.MngClusterProvider({
-            instanceTypes: [new ec2.InstanceType("m5.xlarge")],
-            amiType: eks.NodegroupAmiType.AL2_ARM_64,
-            desiredSize: 2,
-            maxSize: 3,
-        })
+        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/eks-blueprints-workloads.git');
 
         const addons: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.ExternalsSecretsAddOn(),
@@ -89,68 +50,117 @@ export class PipelineMultiCluster {
                    ],
               }],
             }),
-            new EksAnywhereSecretsAddon()
+            new EksAnywhereSecretsAddon(),
+            prodArgoAddonConfig
           ]; 
           
-        const blueprintBuildersX86 = CLUSTER_VERSIONS.map((version) => blueprints.EksBlueprint.builder()
-        .version(version)
-        .clusterProvider(x86ClusterProvider)
-        .addOns(...addons));
-
-        const blueprintBuildersArm = CLUSTER_VERSIONS.map((version) => blueprints.EksBlueprint.builder()
-        .version(version)
-        .clusterProvider(armClusterProvider)
-        .addOns(...addons));
+            const blueprint = blueprints.EksBlueprint.builder()
+            .account(account)
+            .region(region)
+            .addOns(...addons)
+            
+            const blueprintBuildersX86 = CLUSTER_VERSIONS.map((version) => 
+            blueprint
+            .clusterProvider(new blueprints.MngClusterProvider({
+                instanceTypes: [new ec2.InstanceType("m5.xlarge")],
+                amiType: eks.NodegroupAmiType.AL2_X86_64,
+                desiredSize: 2,
+                maxSize: 3,
+            }))
+            .version(version)
+        )
+  
+          const blueprintBuildersArm = CLUSTER_VERSIONS.map((version) =>  blueprint
+          .clusterProvider(new blueprints.MngClusterProvider({
+              instanceTypes: [new ec2.InstanceType("m7g.xlarge")],
+              amiType: eks.NodegroupAmiType.AL2_ARM_64,
+              desiredSize: 2,
+              maxSize: 3,
+          }))
+          .version(version)
+      )
+      const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
-            .wave({
+        .application('npx ts-node bin/pipeline-multienv-gitops.ts')
+        .name('multi-cluster-central-pipeline')
+        .owner('Howlla')
+        .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
+        .repository({
+            repoUrl: gitRepositoryName,
+            credentialsSecretName: 'github-token',
+            targetRevision: 'main',
+        })
+        .wave({
                 id: "prod-test",
                 stages: [
                     {
-                        id: X86_ENV_ID + `_1`,
+                        id: X86_ENV_ID + `-1`,
                         stackBuilder:  blueprintBuildersX86[0]
-                            .clone(context.prodEnv1.region, context.prodEnv1.account)
+                            .clone(region, account)
                     },
+                    // {
+                    //     id: X86_ENV_ID + `-2`,
+                    //     stackBuilder:  blueprintBuildersX86[1]
+                    //         .clone(region, account)
+                    // },
+                    // {
+                    //     id: X86_ENV_ID + `-3`,
+                    //     stackBuilder:  blueprintBuildersX86[2]
+                    //         .clone(region, account)
+                    // },
+                    // {
+                    //     id: X86_ENV_ID + `-4`,
+                    //     stackBuilder:  blueprintBuildersX86[3]
+                    //         .clone(region, account)
+                    // },
                     {
-                        id: X86_ENV_ID + `_2`,
-                        stackBuilder:  blueprintBuildersX86[1]
-                            .clone(context.prodEnv1.region, context.prodEnv1.account)
-                    },
-                    {
-                        id: X86_ENV_ID + `_3`,
-                        stackBuilder:  blueprintBuildersX86[2]
-                            .clone(context.prodEnv1.region, context.prodEnv1.account)
-                    },
-                    {
-                        id: X86_ENV_ID + `_4`,
-                        stackBuilder:  blueprintBuildersX86[3]
-                            .clone(context.prodEnv1.region, context.prodEnv1.account)
-                    },
-                    {
-                        id: ARM_ENV_ID + `_1`,
+                        id: ARM_ENV_ID + `-1`,
                         stackBuilder:  blueprintBuildersArm[0]
-                            .clone(context.prodEnv2.region, context.prodEnv2.account)
+                            .clone(region, account)
                     },
-                    {
-                        id: ARM_ENV_ID + `_2`,
-                        stackBuilder:  blueprintBuildersArm[1]
-                            .clone(context.prodEnv2.region, context.prodEnv2.account)
-                    },
-                    {
-                        id: ARM_ENV_ID + `_3`,
-                        stackBuilder:  blueprintBuildersArm[2]
-                            .clone(context.prodEnv2.region, context.prodEnv2.account)
-                    },
-                    {
-                        id: ARM_ENV_ID + `_4`,
-                        stackBuilder:  blueprintBuildersArm[3]
-                            .clone(context.prodEnv2.region, context.prodEnv2.account)
-                    },
+                    // {
+                    //     id: ARM_ENV_ID + `-2`,
+                    //     stackBuilder:  blueprintBuildersArm[1]
+                    //         .clone(region, account)
+                    // },
+                    // {
+                    //     id: ARM_ENV_ID + `-3`,
+                    //     stackBuilder:  blueprintBuildersArm[2]
+                    //         .clone(region, account)
+                    // },
+                    // {
+                    //     id: ARM_ENV_ID + `-4`,
+                    //     stackBuilder:  blueprintBuildersArm[3]
+                    //         .clone(region, account)
+                    // },
                 ],
             })
             .build(scope, "multi-cluster-central-pipeline", {
-                env: context.pipelineEnv
+                env: {
+                    account: process.env.CDK_DEFAULT_ACCOUNT,
+                    region: process.env.CDK_DEFAULT_REGION,
+                }
             });
     }
 }
 
+
+function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
+    return new blueprints.ArgoCDAddOn(
+        {
+            bootstrapRepo: {
+                repoUrl: repoUrl,
+                path: `envs/${environment}`,
+                targetRevision: 'main',
+            },
+            bootstrapValues: {
+                spec: {
+                    ingress: {
+                        host: 'teamblueprints.com',
+                    }
+                },
+            },
+        }
+    );
+}

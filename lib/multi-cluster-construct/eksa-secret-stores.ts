@@ -36,7 +36,7 @@ export class EksAnywhereSecretsAddon implements blueprints.ClusterAddOn {
             ],
         });
         
-        const clusterConfigMapStore = new eks.KubernetesManifest(clusterInfo.cluster, "ClusterSecretStore", {
+        const clusterConfigMapStore = new eks.KubernetesManifest(clusterInfo.cluster, "ClusterConfigMap", {
             cluster: cluster,
             manifest: [
                 {
