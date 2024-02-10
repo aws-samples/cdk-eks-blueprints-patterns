@@ -29,9 +29,47 @@ export class PipelineMultiCluster {
 
         const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/howlla/eks-blueprints-workloads.git');
 
-        const addons: Array<blueprints.ClusterAddOn> = [
-            new blueprints.addons.ExternalsSecretsAddOn(),
-            new blueprints.addons.FluxCDAddOn({
+        // const addons: Array<blueprints.ClusterAddOn> = [
+        //     new blueprints.addons.ExternalsSecretsAddOn(),
+        //     new blueprints.addons.FluxCDAddOn({
+        //       repositories:[{
+        //            name: "eks-cloud-addons-conformance",
+        //            namespace: "flux-system",
+        //            repository: {
+        //                repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+        //                targetRevision: "main",
+        //            },
+        //            values: {
+        //            },
+        //            kustomizations: [
+        //                {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+        //                {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+        //                {kustomizationPath: "./eks-cloud/Addons/Core"}, 
+        //                {kustomizationPath: "./eks-cloud/Addons/Partner"}
+        //            ],
+        //       }],
+        //     }),
+        //     // new EksAnywhereSecretsAddon(),
+        //     // prodArgoAddonConfig
+        //   ]; 
+          
+            const blueprint = blueprints.EksBlueprint.builder()
+            .account(account)
+            .region(region)
+            // .addOns(...addons)
+            
+            const blueprintBuildersX86 = CLUSTER_VERSIONS.map((version) => 
+            blueprint
+            .clusterProvider(new blueprints.MngClusterProvider({
+                instanceTypes: [new ec2.InstanceType("m5.xlarge")],
+                amiType: eks.NodegroupAmiType.AL2_X86_64,
+                desiredSize: 2,
+                maxSize: 3,
+            }))
+            .version(version)
+            .addOns(
+                new blueprints.addons.ExternalsSecretsAddOn(),
+                new blueprints.addons.FluxCDAddOn({
               repositories:[{
                    name: "eks-cloud-addons-conformance",
                    namespace: "flux-system",
@@ -49,24 +87,8 @@ export class PipelineMultiCluster {
                    ],
               }],
             }),
-            // new EksAnywhereSecretsAddon(),
-            // prodArgoAddonConfig
-          ]; 
-          
-            const blueprint = blueprints.EksBlueprint.builder()
-            .account(account)
-            .region(region)
-            .addOns(...addons)
-            
-            const blueprintBuildersX86 = CLUSTER_VERSIONS.map((version) => 
-            blueprint
-            .clusterProvider(new blueprints.MngClusterProvider({
-                instanceTypes: [new ec2.InstanceType("m5.xlarge")],
-                amiType: eks.NodegroupAmiType.AL2_X86_64,
-                desiredSize: 2,
-                maxSize: 3,
-            }))
-            .version(version)
+            new EksAnywhereSecretsAddon(),
+            prodArgoAddonConfig)
         )
   
           const blueprintBuildersArm = CLUSTER_VERSIONS.map((version) =>  blueprint
@@ -77,7 +99,30 @@ export class PipelineMultiCluster {
               maxSize: 3,
           }))
           .version(version)
-      )
+          .addOns(
+            new blueprints.addons.ExternalsSecretsAddOn(),
+            new blueprints.addons.FluxCDAddOn({
+            repositories:[{
+                 name: "eks-cloud-addons-conformance",
+                 namespace: "flux-system",
+                 repository: {
+                     repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+                     targetRevision: "main",
+                 },
+                 values: {
+                 },
+                 kustomizations: [
+                     {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+                     {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+                     {kustomizationPath: "./eks-cloud/Addons/Core"}, 
+                     {kustomizationPath: "./eks-cloud/Addons/Partner"}
+                 ],
+            }],
+          }),
+          // new EksAnywhereSecretsAddon(),
+          // prodArgoAddonConfig)
+      ))
+      
       const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
