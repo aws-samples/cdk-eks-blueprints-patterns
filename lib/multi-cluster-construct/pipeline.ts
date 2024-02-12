@@ -199,7 +199,7 @@ function createArgoAddonConfig(environment: string, repoUrl: string): blueprints
             bootstrapRepo: {
                 repoUrl: repoUrl,
                 path: `envs/${environment}`,
-                targetRevision: 'main',
+                targetRevision: 'conformitronInitiative',
             },
             bootstrapValues: {
                 spec: {
