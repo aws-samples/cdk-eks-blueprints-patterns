@@ -22,9 +22,9 @@ export class PipelineMultiCluster {
 
         const CLUSTER_VERSIONS = [
             eks.KubernetesVersion.V1_24,
-            // eks.KubernetesVersion.V1_25,
-            // eks.KubernetesVersion.V1_26,
-            // eks.KubernetesVersion.V1_27,
+            eks.KubernetesVersion.V1_25,
+            eks.KubernetesVersion.V1_26,
+            eks.KubernetesVersion.V1_27,
         ]
 
         const addons: Array<blueprints.ClusterAddOn> = [
