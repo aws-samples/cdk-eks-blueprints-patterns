@@ -27,27 +27,27 @@ export class PipelineMultiCluster {
             eks.KubernetesVersion.V1_27,
         ]
 
-        const addons: Array<blueprints.ClusterAddOn> = [
-            new blueprints.addons.ExternalsSecretsAddOn(),
-            new blueprints.addons.FluxCDAddOn({
-              repositories:[{
-                   name: "eks-cloud-addons-conformance",
-                   namespace: "flux-system",
-                   repository: {
-                       repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-                       targetRevision: "main",
-                   },
-                   values: {
-                   },
-                   kustomizations: [
-                       {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
-                       {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
-                       {kustomizationPath: "./eks-cloud/Addons/Core"}, 
-                       {kustomizationPath: "./eks-cloud/Addons/Partner"}
-                   ],
-              }],
-            }),
-          ]; 
+        // const addons: Array<blueprints.ClusterAddOn> = [
+        //     new blueprints.addons.ExternalsSecretsAddOn(),
+        //     new blueprints.addons.FluxCDAddOn({
+        //       repositories:[{
+        //            name: "eks-cloud-addons-conformance",
+        //            namespace: "flux-system",
+        //            repository: {
+        //                repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+        //                targetRevision: "main",
+        //            },
+        //            values: {
+        //            },
+        //            kustomizations: [
+        //                {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+        //                {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+        //                {kustomizationPath: "./eks-cloud/Addons/Core"}, 
+        //                {kustomizationPath: "./eks-cloud/Addons/Partner"}
+        //            ],
+        //       }],
+        //     }),
+        //   ]; 
             
             let clusterProps : blueprints.MngClusterProviderProps = {
                 maxSize : 3,
@@ -65,7 +65,27 @@ export class PipelineMultiCluster {
                     .version(version)
                     .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
                     .useDefaultSecretEncryption(true)
-                    .addOns(...addons);
+                    .addOns( 
+                    new blueprints.addons.ExternalsSecretsAddOn(),
+                    new blueprints.addons.FluxCDAddOn({
+                      repositories:[{
+                           name: "eks-cloud-addons-conformance",
+                           namespace: "flux-system",
+                           repository: {
+                               repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+                               targetRevision: "main",
+                           },
+                           values: {
+                           },
+                           kustomizations: [
+                               {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+                               {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+                               {kustomizationPath: "./eks-cloud/Addons/Core"}, 
+                               {kustomizationPath: "./eks-cloud/Addons/Partner"}
+                           ],
+                      }],
+                    })
+                    );
     
                 stages.push({
                     id: `${X86_ENV_ID}-` + version.version.replace(".", "-"),
@@ -80,7 +100,25 @@ export class PipelineMultiCluster {
                     .version(version)
                     .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
                     .useDefaultSecretEncryption(true)
-                    .addOns(...addons);
+                    .addOns( new blueprints.addons.ExternalsSecretsAddOn(),
+                    new blueprints.addons.FluxCDAddOn({
+                      repositories:[{
+                           name: "eks-cloud-addons-conformance",
+                           namespace: "flux-system",
+                           repository: {
+                               repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+                               targetRevision: "main",
+                           },
+                           values: {
+                           },
+                           kustomizations: [
+                               {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+                               {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+                               {kustomizationPath: "./eks-cloud/Addons/Core"}, 
+                               {kustomizationPath: "./eks-cloud/Addons/Partner"}
+                           ],
+                      }],
+                    }));
                         
                 stages.push({
                     id: `${ARM_ENV_ID}-` + version.version.replace(".", "-"),
