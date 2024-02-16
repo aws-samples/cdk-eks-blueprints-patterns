@@ -36,25 +36,24 @@ export default class MultiClusterBuilderConstruct {
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
-                  version:"2.2.3",
-                  repositories:[{
-                       name: "eks-cloud-addons-conformance",
-                       namespace: "flux-system",
-                       repository: {
-                           repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-                           targetRevision: "main",
-                       },
-                       values: {
-                       },
-                       kustomizations: [
-                           {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
-                           {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
-                           {kustomizationPath: "./eks-cloud/Partner"}, 
-                       ],
-                  }],
+                    repositories:[{
+                        name: "eks-cloud-addons-conformance",
+                        namespace: "flux-system",
+                        repository: {
+                            repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+                            targetRevision: "main",
+                        },
+                        values: {
+                        },
+                        kustomizations: [
+                            {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+                            {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
+                            {kustomizationPath: "./eks-cloud/Partner"}, 
+                        ],
+                    }],
                 }),
                 new EksAnywhereSecretsAddon()
-            )
+            );
     }
 }
 
