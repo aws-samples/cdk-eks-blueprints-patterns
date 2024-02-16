@@ -35,7 +35,6 @@ export default class MultiClusterBuilderConstruct {
             })
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
-                new blueprints.addons.ExternalsSecretsAddOn(),
                 new blueprints.addons.FluxCDAddOn({
                   version:"2.2.3",
                   repositories:[{
