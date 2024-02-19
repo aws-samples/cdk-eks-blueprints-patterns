@@ -2,7 +2,8 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
+import MultiClusterBuilderConstruct from './multi-cluster-builder';
+import GrafanaMonitoringConstruct from './grafana-monitor-builder';
 
 
 /**
@@ -11,177 +12,110 @@ import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 export class PipelineMultiCluster {
 
     async buildAsync(scope: Construct) {
-        // const context = await populateAccountWithContextDefaults();
-        const account = "810198167072";
-        const region = "us-east-2";
+        const accountID = process.env.CDK_DEFAULT_ACCOUNT! ;
+        const region = process.env.CDK_DEFAULT_REGION! ;
 
-        console.log(account,region)
         // environments IDs consts
         const X86_ENV_ID = `eks-x86-${region}`;
         const ARM_ENV_ID = `eks-arm-${region}`;
+        const BR_ENV_ID = `eks-bottlerocket-${region}`;
 
         const CLUSTER_VERSIONS = [
-            eks.KubernetesVersion.V1_24,
-            // eks.KubernetesVersion.V1_25,
-            // eks.KubernetesVersion.V1_26,
-            // eks.KubernetesVersion.V1_27,
-        ]
+            eks.KubernetesVersion.V1_26,
+            eks.KubernetesVersion.V1_27,
+            eks.KubernetesVersion.V1_28
+        ];
 
-        const prodArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/howlla/eks-blueprints-workloads.git');
+        let clusterProps : blueprints.MngClusterProviderProps = {
+            maxSize : 3,
+            minSize : 1,
+            desiredSize: 1
+        };
 
-        // const addons: Array<blueprints.ClusterAddOn> = [
-        //     new blueprints.addons.ExternalsSecretsAddOn(),
-        //     new blueprints.addons.FluxCDAddOn({
-        //       repositories:[{
-        //            name: "eks-cloud-addons-conformance",
-        //            namespace: "flux-system",
-        //            repository: {
-        //                repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-        //                targetRevision: "main",
-        //            },
-        //            values: {
-        //            },
-        //            kustomizations: [
-        //                {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
-        //                {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
-        //                {kustomizationPath: "./eks-cloud/Addons/Core"}, 
-        //                {kustomizationPath: "./eks-cloud/Addons/Partner"}
-        //            ],
-        //       }],
-        //     }),
-        //     // new EksAnywhereSecretsAddon(),
-        //     // prodArgoAddonConfig
-        //   ]; 
-          
-            const blueprint = blueprints.EksBlueprint.builder()
-            .account(account)
-            .region(region)
-            // .addOns(...addons)
-            
-            const blueprintBuildersX86 = CLUSTER_VERSIONS.map((version) => 
-            blueprint
-            .clusterProvider(new blueprints.MngClusterProvider({
-                instanceTypes: [new ec2.InstanceType("m5.xlarge")],
-                amiType: eks.NodegroupAmiType.AL2_X86_64,
-                desiredSize: 2,
-                maxSize: 3,
-            }))
-            .version(version)
-            .addOns(
-                new blueprints.addons.ExternalsSecretsAddOn(),
-                new blueprints.addons.FluxCDAddOn({
-              repositories:[{
-                   name: "eks-cloud-addons-conformance",
-                   namespace: "flux-system",
-                   repository: {
-                       repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-                       targetRevision: "main",
-                   },
-                   values: {
-                   },
-                   kustomizations: [
-                       {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
-                       {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
-                       {kustomizationPath: "./eks-cloud/Addons/Core"}, 
-                       {kustomizationPath: "./eks-cloud/Addons/Partner"}
-                   ],
-              }],
-            }),
-            new EksAnywhereSecretsAddon(),
-            prodArgoAddonConfig)
-        )
-  
-          const blueprintBuildersArm = CLUSTER_VERSIONS.map((version) =>  blueprint
-          .clusterProvider(new blueprints.MngClusterProvider({
-              instanceTypes: [new ec2.InstanceType("m7g.xlarge")],
-              amiType: eks.NodegroupAmiType.AL2_ARM_64,
-              desiredSize: 2,
-              maxSize: 3,
-          }))
-          .version(version)
-          .addOns(
-            new blueprints.addons.ExternalsSecretsAddOn(),
-            new blueprints.addons.FluxCDAddOn({
-            repositories:[{
-                 name: "eks-cloud-addons-conformance",
-                 namespace: "flux-system",
-                 repository: {
-                     repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-                     targetRevision: "main",
-                 },
-                 values: {
-                 },
-                 kustomizations: [
-                     {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
-                     {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
-                     {kustomizationPath: "./eks-cloud/Addons/Core"}, 
-                     {kustomizationPath: "./eks-cloud/Addons/Partner"}
-                 ],
-            }],
-          }),
-          // new EksAnywhereSecretsAddon(),
-          // prodArgoAddonConfig)
-      ))
-      
-      const gitRepositoryName = 'cdk-eks-blueprints-patterns';
+        const stages : blueprints.StackStage[] = [];
+
+        for(const version of CLUSTER_VERSIONS) {
+            const blueprint1 = new MultiClusterBuilderConstruct().create(scope,`X86-` + version.version.replace(".", "-"), accountID, region);
+
+            clusterProps.amiType = eks.NodegroupAmiType.AL2_X86_64;
+            clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)];
+            const blueprintX86 = blueprint1
+                .version(version)
+                .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
+                .useDefaultSecretEncryption(true);
+    
+            stages.push({
+                id: `${X86_ENV_ID}-` + version.version.replace(".", "-"),
+                stackBuilder : blueprintX86.clone(region)
+            });
+
+            const blueprint2 = new MultiClusterBuilderConstruct().create(scope,`ARM-` + version.version.replace(".", "-"), accountID, region);
+    
+            clusterProps.amiType = eks.NodegroupAmiType.AL2_ARM_64;
+            clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)];
+            const blueprintARM = blueprint2
+                .version(version)
+                .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
+                .useDefaultSecretEncryption(true);
+                        
+            stages.push({
+                id: `${ARM_ENV_ID}-` + version.version.replace(".", "-"),
+                stackBuilder : blueprintARM.clone(region)
+            });
+        }
+
+        const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
+    
+        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BottleRocket-` + latestVersion.version.replace(".", "-"), accountID, region);
+        
+        clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
+        clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)];
+        const blueprintBottleRocketX86 = blueprint3
+            .version(latestVersion)
+            .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
+            .useDefaultSecretEncryption(true);
+    
+        stages.push({
+            id: `${BR_ENV_ID}-X86` + latestVersion.version.replace(".", "-"),
+            stackBuilder : blueprintBottleRocketX86.clone(region)
+        });
+
+        clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_ARM_64;
+        clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)];
+        const blueprintBottleRocketArm = blueprint3
+            .version(latestVersion)
+            .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
+            .useDefaultSecretEncryption(true);
+    
+        stages.push({
+            id: `${BR_ENV_ID}-ARM` + latestVersion.version.replace(".", "-"),
+            stackBuilder : blueprintBottleRocketArm.clone(region)
+        });
+
+        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope, accountID, region);
+
+        stages.push({
+            id: 'Grafana-Monitoring',
+            stackBuilder: blueprintGrafana
+                .clone(region, accountID)
+        });
+
+        const gitOwner = 'aws-samples';
+        const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
-        .application('npx ts-node bin/multi-cluster-conformitron.ts')
-        .name('multi-cluster-central-pipeline')
-        .owner('Howlla')
-        .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
-        .repository({
-            repoUrl: gitRepositoryName,
-            credentialsSecretName: 'github-token',
-            targetRevision: 'conformitronInitiative',
-        })
-        .wave({
+            .application('npx ts-node bin/multi-cluster-conformitron.ts')
+            .name('multi-cluster-central-pipeline')
+            .owner(gitOwner)
+            .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
+            .repository({
+                repoUrl: gitRepositoryName,
+                credentialsSecretName: 'github-token',
+                targetRevision: 'main',
+            })
+            .wave({
                 id: "prod-test",
-                stages: [
-                    {
-                        id: X86_ENV_ID + `-1`,
-                        stackBuilder:  blueprintBuildersX86[0]
-                            .clone(region, account)
-                            .addOns(prodArgoAddonConfig)
-                    },
-                    // {
-                    //     id: X86_ENV_ID + `-2`,
-                    //     stackBuilder:  blueprintBuildersX86[1]
-                    //         .clone(region, account)
-                    // },
-                    // {
-                    //     id: X86_ENV_ID + `-3`,
-                    //     stackBuilder:  blueprintBuildersX86[2]
-                    //         .clone(region, account)
-                    // },
-                    // {
-                    //     id: X86_ENV_ID + `-4`,
-                    //     stackBuilder:  blueprintBuildersX86[3]
-                    //         .clone(region, account)
-                    // },
-                    {
-                        id: ARM_ENV_ID + `-1`,
-                        stackBuilder:  blueprintBuildersArm[0]
-                            .clone(region, account)
-                            .addOns(prodArgoAddonConfig)
-
-                    },
-                    // {
-                    //     id: ARM_ENV_ID + `-2`,
-                    //     stackBuilder:  blueprintBuildersArm[1]
-                    //         .clone(region, account)
-                    // },
-                    // {
-                    //     id: ARM_ENV_ID + `-3`,
-                    //     stackBuilder:  blueprintBuildersArm[2]
-                    //         .clone(region, account)
-                    // },
-                    // {
-                    //     id: ARM_ENV_ID + `-4`,
-                    //     stackBuilder:  blueprintBuildersArm[3]
-                    //         .clone(region, account)
-                    // },
-                ],
+                stages
             })
             .build(scope, "multi-cluster-central-pipeline", {
                 env: {
@@ -190,24 +124,4 @@ export class PipelineMultiCluster {
                 }
             });
     }
-}
-
-
-function createArgoAddonConfig(environment: string, repoUrl: string): blueprints.ArgoCDAddOn {
-    return new blueprints.ArgoCDAddOn(
-        {
-            bootstrapRepo: {
-                repoUrl: repoUrl,
-                path: `envs/${environment}`,
-                targetRevision: 'conformitronInitiative',
-            },
-            bootstrapValues: {
-                spec: {
-                    ingress: {
-                        host: 'teamblueprints.com',
-                    }
-                },
-            },
-        }
-    );
 }
