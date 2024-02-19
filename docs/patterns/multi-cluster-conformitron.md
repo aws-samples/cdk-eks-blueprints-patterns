@@ -8,7 +8,7 @@
 
 ### GitOps confguration
 
-For GitOps, the FluxCD repository points to the [EKS Anywhere Addons](https://github.com/aws-samples/eks-anywhere-addon) repository.
+For GitOps, the FluxCD repository points to the [EKS Anywhere Addons](https://github.com/aws-samples/eks-anywhere-addons) repository.
 The addons may require some additional secrets to be created for the addons to function properly
 
 1. Application team - it defines 3 application teams that corresponds with the 3 sample applications used
