@@ -20,6 +20,7 @@ export class PipelineMultiCluster {
         const ARM_ENV_ID = `eks-arm-${region}`;
         const BR_ENV_ID = `eks-bottlerocket-${region}`;
 
+
         const CLUSTER_VERSIONS = [
             eks.KubernetesVersion.V1_26,
             eks.KubernetesVersion.V1_27,
@@ -67,6 +68,7 @@ export class PipelineMultiCluster {
         const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
         const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BottleRocket-` + latestVersion.version.replace(".", "-"), accountID, region);
+
         
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
         clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)];
@@ -112,6 +114,7 @@ export class PipelineMultiCluster {
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
                 targetRevision: 'main',
+
             })
             .wave({
                 id: "prod-test",
