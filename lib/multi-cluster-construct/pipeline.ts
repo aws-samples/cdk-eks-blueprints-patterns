@@ -3,6 +3,7 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
+import GrafanaMonitoringConstruct from './grafana-monitor-builder';
 
 
 /**
@@ -17,7 +18,8 @@ export class PipelineMultiCluster {
         // environments IDs consts
         const X86_ENV_ID = `eks-x86-${region}`;
         const ARM_ENV_ID = `eks-arm-${region}`;
-        const BR_ENV_ID = `eks-br-${region}`;
+        const BR_ENV_ID = `eks-bottlerocket-${region}`;
+
 
         const CLUSTER_VERSIONS = [
             eks.KubernetesVersion.V1_26,
@@ -65,7 +67,8 @@ export class PipelineMultiCluster {
 
         const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
-        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BR-` + latestVersion.version.replace(".", "-"), accountID, region);
+        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BottleRocket-` + latestVersion.version.replace(".", "-"), accountID, region);
+
         
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
         clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)];
@@ -91,16 +94,27 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketArm.clone(region)
         });
 
+        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope, accountID, region);
+
+        stages.push({
+            id: 'Grafana-Monitoring',
+            stackBuilder: blueprintGrafana
+                .clone(region, accountID)
+        });
+
+        const gitOwner = 'aws-samples';
+        const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
             .application('npx ts-node bin/multi-cluster-conformitron.ts')
             .name('multi-cluster-central-pipeline')
-            .owner('Howlla')
+            .owner(gitOwner)
             .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
             .repository({
-                repoUrl: "cdk-eks-blueprints-patterns",
+                repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
-                targetRevision: 'conformitronInitiative',
+                targetRevision: 'main',
+
             })
             .wave({
                 id: "prod-test",

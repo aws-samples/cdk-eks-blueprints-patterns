@@ -1,5 +1,5 @@
 import { configureApp, errorHandler } from '../lib/common/construct-utils';
-import { PipelineMultiCluster } from '../lib/multi-cluster-construct';
+import { PipelineMultiCluster } from '../lib/multi-cluster-construct/pipeline';
 
 
 const app = configureApp();
