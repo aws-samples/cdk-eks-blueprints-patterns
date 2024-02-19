@@ -34,12 +34,12 @@ You can find the App of Apps configuration for this pattern in the workload repo
    1. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
 1. Increase service quota for required resources
-
+```
    SERVICE                                   | QUOTA NAME                         | REQUESTED QUOTA
    Amazon Virtual Private Cloud (Amazon VPC) | NAT gateways per Availability Zone | 30 
    Amazon Virtual Private Cloud (Amazon VPC) | VPCs per region                    | 30
    Amazon Elastic Compute Cloud (Amazon EC2) | EC2-VPC Elastic IPs                | 30
-
+```
 
 1. Amazon Managed Grafana workspace: To visualize metrics collected, you need an Amazon Managed Grafana workspace. If you have an existing workspace, create an environment variable as described below. To create a new workspace, visit [our supporting example for Grafana](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/)
 
