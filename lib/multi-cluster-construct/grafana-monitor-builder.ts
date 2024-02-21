@@ -30,8 +30,8 @@ export default class GrafanaMonitoringConstruct {
 
         const fluxRepository: blueprints.FluxGitRepo = blueprints.utils.valueFromContext(scope, "fluxRepository", undefined);
         fluxRepository.values!.AMG_AWS_REGION = region;
-        fluxRepository.values!.AMP_ENDPOINT_URL = ampPrometheusEndpoint;
-        fluxRepository.values!.AMG_ENDPOINT_URL = amgEndpointUrl;
+        fluxRepository.values!.AMP_ENDPOINT_URL = 'https://aps-workspaces.us-east-2.amazonaws.com/workspaces/ws-d0a9753e-7bec-492b-9ef9-21f26f9a9469/';
+        fluxRepository.values!.AMG_ENDPOINT_URL = 'g-3030e8b08a.grafana-workspace.us-east-2.amazonaws.com';
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.ExternalsSecretsAddOn(),
