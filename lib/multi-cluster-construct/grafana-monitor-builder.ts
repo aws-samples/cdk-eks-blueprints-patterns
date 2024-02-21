@@ -39,6 +39,7 @@ export default class GrafanaMonitoringConstruct {
             }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
             new GrafanaOperatorSecretAddon(),
+            new blueprints.addons.UpboundUniversalCrossplaneAddOn()
         ];
 
         return blueprints.ObservabilityBuilder.builder()
