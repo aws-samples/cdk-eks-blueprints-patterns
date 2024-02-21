@@ -1,6 +1,7 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as amp from 'aws-cdk-lib/aws-aps';
+import * as eks from 'aws-cdk-lib/aws-eks';
 import { GrafanaOperatorSecretAddon } from './grafana-operator-secret-addon';
 
 export default class GrafanaMonitoringConstruct {
@@ -23,7 +24,7 @@ export default class GrafanaMonitoringConstruct {
 
         const ampWorkspaceName = "multi-cluster-monitoring";
         const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
-        const amgEndpointUrl = 'g-3030e8b08a.grafana-workspace.us-east-2.amazonaws.com';
+        const amgEndpointUrl = process.env.AMG_ENDPOINT_URL;
 
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
 
@@ -38,14 +39,13 @@ export default class GrafanaMonitoringConstruct {
                 createNamespace: true,
             }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
-            new GrafanaOperatorSecretAddon(),
-            new blueprints.addons.UpboundUniversalCrossplaneAddOn()
+            new GrafanaOperatorSecretAddon()
         ];
 
         return blueprints.ObservabilityBuilder.builder()
             .account(account)
             .region(region)
-            .version('auto')
+            .version(eks.KubernetesVersion.V1_27)
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 ...addOns
