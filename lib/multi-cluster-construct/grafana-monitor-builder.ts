@@ -23,7 +23,7 @@ export default class GrafanaMonitoringConstruct {
 
         const ampWorkspaceName = "multi-cluster-monitoring";
         const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
-        const amgEndpointUrl = process.env.AMG_ENDPOINT_URL;
+        const amgEndpointUrl = 'g-3030e8b08a.grafana-workspace.us-east-2.amazonaws.com';
 
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
 
