@@ -39,7 +39,8 @@ export default class GrafanaMonitoringConstruct {
                 createNamespace: true,
             }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
-            new GrafanaOperatorSecretAddon()
+            new GrafanaOperatorSecretAddon(),
+            new blueprints.addons.SSMAgentAddOn()
         ];
 
         return blueprints.ObservabilityBuilder.builder()
