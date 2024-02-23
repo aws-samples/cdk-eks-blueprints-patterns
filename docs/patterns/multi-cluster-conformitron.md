@@ -11,11 +11,10 @@
 For GitOps, the FluxCD repository points to the [EKS Anywhere Addons](https://github.com/aws-samples/eks-anywhere-addons) repository.
 The addons may require some additional secrets to be created for the addons to function properly
 
-1. Application team - it defines 3 application teams that corresponds with the 3 sample applications used
-1. ArgoCD bootstrap - the pattern configure the ArgoCD addon to point to the [workload repository](https://github.com/aws-samples/eks-blueprints-workloads) of the EKS Blueprints samples
-3. ArgoCD projects - as part of the ArgoCD addon bootstrap, the pattern generate an ArgoCD project for each application team. The ArgoCD are used in order to restrict the deployment of an application to a specific target namespace
+1. FluxCD Bootstrap - the pattern configure the FluxCD addon to point to the [workload repository](https://github.com/aws-samples/eks-anywhere-addons) of the EKS-A Addons.
+1. Kustomize - as part of the FluxCD addon, the pattern uses Kustomize to apply all the addons that are in the repository.
 
-You can find the App of Apps configuration for this pattern in the workload repository under the folder [`multi-repo`](https://github.com/aws-samples/eks-blueprints-workloads/tree/main/multi-repo).
+You can find the App of Apps configuration for this pattern in the workload repository under the folder [`multi-cluster-construct`](https://github.com/aws-samples/cdk-eks-blueprints-patterns/lib/multi-cluster-construct).
 
 ## Prerequisites
 
@@ -27,9 +26,7 @@ You can find the App of Apps configuration for this pattern in the workload repo
     npm install -g aws-cdk
     ```
 
-1. `github-ssh-key` - must contain GitHub SSH private key as a JSON structure containing fields `sshPrivateKey` and `url`. This will be used by ArgoCD addon to authenticate against ay GitHub repository (private or public). The secret is expected to be defined in the region where the pipeline will be deployed to. For more information on SSH credentials setup see [ArgoCD Secrets Support](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/argo-cd/#secrets-support).
-
-1. `github-token` secret must be stored in AWS Secrets Manager for the GitHub pipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
+1. `github-token` secret must be stored in AWS Secrets Manager for the CodePipeline. For more information on how to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read the repository
    1. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
