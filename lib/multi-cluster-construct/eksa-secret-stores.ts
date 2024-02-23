@@ -15,7 +15,7 @@ export class EksAnywhereSecretsAddon implements blueprints.ClusterAddOn {
                 {
                     apiVersion: "external-secrets.io/v1beta1",
                     kind: "ClusterSecretStore",
-                    metadata: {name: "eks-cloud-secret-store"},
+                    metadata: {name: "eksa-secret-store"},
                     spec: {
                         provider: {
                             aws: {
@@ -42,7 +42,7 @@ export class EksAnywhereSecretsAddon implements blueprints.ClusterAddOn {
                 {
                     apiVersion: "external-secrets.io/v1beta1",
                     kind: "ClusterSecretStore",
-                    metadata: {name: "eks-cloud-configmap-store"},
+                    metadata: {name: "eksa-configmap-store"},
                     spec: {
                         provider: {
                             aws: {
