@@ -50,7 +50,8 @@ export default class MultiClusterBuilderConstruct {
                         values: {
                         },
                         kustomizations: [
-                            {kustomizationPath: "./eks-anywhere-common/Addons/Core"},
+                            {kustomizationPath: "./eks-anywhere-common/Addons/Core/Botkube"},
+                            {kustomizationPath: "./eks-anywhere-common/Addons/Core/Kube-Observer"},
                             {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
                             {kustomizationPath: "./eks-cloud/Partner"}, 
                         ],
