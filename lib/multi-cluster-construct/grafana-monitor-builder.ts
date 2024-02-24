@@ -13,7 +13,7 @@ export default class GrafanaMonitoringConstruct {
 
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
-
+        
         const amgInfo = JSON.parse(await getSSMSecureString('/cdk-accelerator/amg-context',region))['context'];
         const amgWorkspaceId = amgInfo.AMG_WS_ID;
 
