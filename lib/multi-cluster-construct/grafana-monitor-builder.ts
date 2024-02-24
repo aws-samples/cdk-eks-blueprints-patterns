@@ -7,7 +7,7 @@ import { getSSMSecureString } from './get-ssm-securestring';
 
 export default class GrafanaMonitoringConstruct {
 
-    async buildAsync(scope: Construct, id: string, contextAccount?: string, contextRegion?: string ) {
+    async build(scope: Construct, id: string, contextAccount?: string, contextRegion?: string ) {
 
         const stackId = `${id}-grafana-monitor`;
 

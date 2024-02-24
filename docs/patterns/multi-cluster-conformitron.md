@@ -82,7 +82,7 @@ export AMG_API_KEY=$(aws grafana create-workspace-api-key \
 aws ssm put-parameter --name "/cdk-accelerator/grafana-api-key" \
     --type "SecureString" \
     --value $AMG_API_KEY \
-    --region $AWS_REGION
+    --region $REGION
 ```
 
 
