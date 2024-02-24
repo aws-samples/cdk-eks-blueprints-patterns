@@ -47,7 +47,7 @@ You can find the App of Apps configuration for this pattern in the workload repo
 1. Once you have created a grafana workspace create SSM SecureString Parameter `/cdk-accelerator/amg-context` in the region where you deployed grafana workspace. This parameter contains grafana workspace ID and region for our grafana monitoring cluster.
 
 ```bash
-export REGION=us-east-1
+export REGION=<region>
 export AMG_ENDPOINT_URL=https://g-xyz.grafana-workspace.us-east-1.amazonaws.com
 export AMG_WS_ID=g-xyz
 

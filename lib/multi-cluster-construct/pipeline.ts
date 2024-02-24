@@ -4,6 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
 import GrafanaMonitoringConstruct from './grafana-monitor-builder';
+import { getSSMSecureString } from './get-ssm-securestring';
 
 
 /**
@@ -94,7 +95,10 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketArm.clone(region)
         });
 
-        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope, accountID, region);
+        const amgInfo = JSON.parse(await getSSMSecureString('/cdk-accelerator/amg-context',region))['context'];
+        const amgWorkspaceId = amgInfo.AMG_WS_ID;
+        
+        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope,amgWorkspaceId, accountID, region);
 
         stages.push({
             id: 'Grafana-Monitoring',
