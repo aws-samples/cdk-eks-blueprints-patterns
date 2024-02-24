@@ -102,7 +102,7 @@ export class PipelineMultiCluster {
                 .clone(region, accountID)
         });
 
-        const gitOwner = 'Howlla';
+        const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
@@ -113,8 +113,7 @@ export class PipelineMultiCluster {
             .repository({
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
-                targetRevision: 'test123',
-
+                targetRevision: 'main',
             })
             .wave({
                 id: "prod-test",
