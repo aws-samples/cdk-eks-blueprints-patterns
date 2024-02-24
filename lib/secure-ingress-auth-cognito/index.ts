@@ -37,7 +37,7 @@ class CognitoIdpStack extends cdk.Stack {
         lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));     
         
         const authChallengeFn = new lambda.Function(this, 'authChallengeFn', {
-            runtime: lambda.Runtime.PYTHON_3_7,
+            runtime: lambda.Runtime.PYTHON_3_12,
             code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
             handler: 'lambda_function.lambda_handler',
             role: lambdaExecutionRole,
