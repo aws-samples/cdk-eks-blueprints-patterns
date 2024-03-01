@@ -18,7 +18,7 @@ export class PipelineMultiCluster {
         // environments IDs consts
         const X86_ENV_ID = `eks-x86-${region}`;
         const ARM_ENV_ID = `eks-arm-${region}`;
-        const BR_ENV_ID = `eks-bottlerocket-${region}`;
+        const BR_ENV_ID = `eks-br-${region}`;
 
 
         const CLUSTER_VERSIONS = [
@@ -67,7 +67,7 @@ export class PipelineMultiCluster {
 
         const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
-        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BottleRocket-` + latestVersion.version.replace(".", "-"), accountID, region);
+        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BR-` + latestVersion.version.replace(".", "-"), accountID, region);
 
         
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
