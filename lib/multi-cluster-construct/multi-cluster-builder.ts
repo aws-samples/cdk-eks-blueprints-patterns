@@ -129,6 +129,7 @@ export default class MultiClusterBuilderConstruct {
                 }),
                 new EksAnywhereSecretsAddon(),
                 new blueprints.addons.SSMAgentAddOn(),
+                new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.addons.ClusterAutoScalerAddOn()
             );
     }
