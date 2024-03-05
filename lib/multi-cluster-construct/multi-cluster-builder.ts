@@ -4,6 +4,7 @@ import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as amp from 'aws-cdk-lib/aws-aps';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
+import * as fs from 'fs';
 
 
 export default class MultiClusterBuilderConstruct {
@@ -24,7 +25,78 @@ export default class MultiClusterBuilderConstruct {
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
 
         const ampWorkspaceName = workspaceName;
-        const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
+        const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
+        const ampEndpoint = ampPrometheusWorkspace.attrPrometheusEndpoint;
+        const ampWorkspaceArn = ampPrometheusWorkspace.attrArn;
+
+        const ampAddOnProps: blueprints.AmpAddOnProps = {
+            ampPrometheusEndpoint: ampEndpoint,
+            ampRules: {
+                ampWorkspaceArn: ampWorkspaceArn,
+                ruleFilePaths: [
+                    __dirname + '/../common/resources/amp-config/alerting-rules.yml',
+                    __dirname + '/../common/resources/amp-config/recording-rules.yml'
+                ]
+            }
+        };
+
+        let doc = blueprints.utils.readYamlDocument(__dirname + '/../common/resources/otel-collector-config.yml');
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableJavaMonJob }}",
+            "{{ stop enableJavaMonJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableNginxMonJob }}",
+            "{{ stop enableNginxMonJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableIstioMonJob }}",
+            "{{ stop enableIstioMonJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAPIserverJob }}",
+            "{{ stop enableAPIserverJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotMetricsCollectionJob}}",
+            "{{ stop enableAdotMetricsCollectionJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotMetricsCollectionTelemetry }}",
+            "{{ stop enableAdotMetricsCollectionTelemetry }}",
+            true
+        );
+
+        fs.writeFileSync(__dirname + '/../common/resources/otel-collector-config-new.yml', doc);
+
+        ampAddOnProps.openTelemetryCollector = {
+            manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
+            manifestParameterMap: {
+                javaScrapeSampleLimit: 1000,
+                javaPrometheusMetricsEndpoint: "/metrics"
+            }
+        };
+        ampAddOnProps.enableAPIServerJob = true,
+        ampAddOnProps.ampRules?.ruleFilePaths.push(
+            __dirname + '/../common/resources/amp-config/java/alerting-rules.yml',
+            __dirname + '/../common/resources/amp-config/java/recording-rules.yml',
+            __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml',
+            __dirname + '/../common/resources/amp-config/nginx/alerting-rules.yml',
+            __dirname + '/../common/resources/amp-config/istio/alerting-rules.yml',
+            __dirname + '/../common/resources/amp-config/istio/recording-rules.yml'
+        );
+        
 
         return blueprints.ObservabilityBuilder.builder()
             .account(accountID)
@@ -33,9 +105,7 @@ export default class MultiClusterBuilderConstruct {
             .withCoreDnsProps({
                 version:"v1.9.3-eksbuild.11"
             })
-            .withAmpProps({
-                ampPrometheusEndpoint: ampPrometheusEndpoint,
-            })
+            .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
@@ -58,9 +128,7 @@ export default class MultiClusterBuilderConstruct {
                     }],
                 }),
                 new EksAnywhereSecretsAddon(),
-                new blueprints.addons.SSMAgentAddOn(),
-                new blueprints.addons.EbsCsiDriverAddOn(),
-                new blueprints.addons.ClusterAutoScalerAddOn()
+                new blueprints.addons.SSMAgentAddOn()
             );
     }
 }
