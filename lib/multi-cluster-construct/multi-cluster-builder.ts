@@ -7,7 +7,6 @@ import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 import * as fs from 'fs';
 
 
-
 export default class MultiClusterBuilderConstruct {
     build(scope: Construct, id: string, workspaceName: string, account?: string, region?: string ) {
         // Setup platform team
@@ -28,11 +27,88 @@ export default class MultiClusterBuilderConstruct {
         const ampWorkspaceName = workspaceName;
         const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
         const ampEndpoint = ampPrometheusWorkspace.attrPrometheusEndpoint;
+        const ampWorkspaceArn = ampPrometheusWorkspace.attrArn;
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,
+            ampRules: {
+                ampWorkspaceArn: ampWorkspaceArn,
+                ruleFilePaths: [
+                    __dirname + '/../common/resources/amp-config/alerting-rules.yml',
+                    __dirname + '/../common/resources/amp-config/recording-rules.yml'
+                ]
+            }
         };
+
+        let doc = blueprints.utils.readYamlDocument(__dirname + '/../common/resources/otel-collector-config.yml');
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableJavaMonJob }}",
+            "{{ stop enableJavaMonJob }}",
+            false
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableNginxMonJob }}",
+            "{{ stop enableNginxMonJob }}",
+            false
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableIstioMonJob }}",
+            "{{ stop enableIstioMonJob }}",
+            false
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAPIserverJob }}",
+            "{{ stop enableAPIserverJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotMetricsCollectionJob}}",
+            "{{ stop enableAdotMetricsCollectionJob }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotMetricsCollectionTelemetry }}",
+            "{{ stop enableAdotMetricsCollectionTelemetry }}",
+            true
+        );
+
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotContainerLogsReceiver }}",
+            "{{ stop enableAdotContainerLogsReceiver }}",
+            true
+        );
+        doc = blueprints.utils.changeTextBetweenTokens(
+            doc,
+            "{{ start enableAdotContainerLogsExporter }}",
+            "{{ stop enableAdotContainerLogsExporter }}",
+            true
+        );
+
+        fs.writeFileSync(__dirname + '/../common/resources/otel-collector-config-new.yml', doc);
+
+        ampAddOnProps.openTelemetryCollector = {
+            manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
+            manifestParameterMap: {
+                logGroupName: `/aws/eks/conformitron/${ampWorkspaceName}`,
+                logStreamName: `$NODE_NAME`,
+                logRetentionDays: 30,
+                awsRegion: region 
+            }
+        };
+        ampAddOnProps.enableAPIServerJob = true,
+
+        ampAddOnProps.ampRules?.ruleFilePaths.push(
+            __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml'
+        );
         
+
         return blueprints.ObservabilityBuilder.builder()
             .account(accountID)
             .region(awsRegion)
