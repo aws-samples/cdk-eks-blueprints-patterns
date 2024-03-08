@@ -67,7 +67,7 @@ export class PipelineMultiCluster {
 
         const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
-        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BR-` + latestVersion.version.replace(".", "-"), accountID, region);
+        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BR-X86-` + latestVersion.version.replace(".", "-"), accountID, region);
 
         
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
@@ -82,9 +82,11 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketX86.clone(region)
         });
 
+        const blueprint4 = new MultiClusterBuilderConstruct().create(scope,`BR-ARM-` + latestVersion.version.replace(".", "-"), accountID, region);
+
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_ARM_64;
         clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)];
-        const blueprintBottleRocketArm = blueprint3
+        const blueprintBottleRocketArm = blueprint4
             .version(latestVersion)
             .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
             .useDefaultSecretEncryption(true);
