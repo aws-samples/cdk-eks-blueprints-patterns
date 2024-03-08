@@ -22,15 +22,11 @@ export default class GrafanaMonitoringConstruct {
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
-        const ampWorkspaceName = "multi-cluster-monitoring";
-        const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
-        const amgEndpointUrl = process.env.AMG_ENDPOINT_URL;
 
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
 
         const fluxRepository: blueprints.FluxGitRepo = blueprints.utils.valueFromContext(scope, "fluxRepository", undefined);
         fluxRepository.values!.AMG_AWS_REGION = region;
-        fluxRepository.values!.AMP_ENDPOINT_URL = ampPrometheusEndpoint.attrPrometheusEndpoint;
         fluxRepository.values!.AMG_ENDPOINT_URL = 'https://g-76edcf29d5.grafana-workspace.us-west-2.amazonaws.com';
 
         const addOns: Array<blueprints.ClusterAddOn> = [
@@ -47,7 +43,6 @@ export default class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
-            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 ...addOns
             );
