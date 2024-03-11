@@ -63,7 +63,7 @@ export default class MultiClusterBuilderConstruct {
             doc,
             "{{ start enableAPIserverJob }}",
             "{{ stop enableAPIserverJob }}",
-            true
+            false
         );
         doc = blueprints.utils.changeTextBetweenTokens(
             doc,
@@ -102,11 +102,11 @@ export default class MultiClusterBuilderConstruct {
                 awsRegion: region 
             }
         };
-        ampAddOnProps.enableAPIServerJob = true,
+        // ampAddOnProps.enableAPIServerJob = true,
 
-        ampAddOnProps.ampRules?.ruleFilePaths.push(
-            __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml'
-        );
+        // ampAddOnProps.ampRules?.ruleFilePaths.push(
+        //     __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml'
+        // );
         
 
         return blueprints.ObservabilityBuilder.builder()
