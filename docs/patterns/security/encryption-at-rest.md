@@ -4,9 +4,9 @@
 
 The objective of this pattern is to demonstrate how to enable encryption at rest for EKS cluster using EBS/EFS storage.
 
-To achieve this objective, the pattern utilizes [EBS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/ebs-csi-driver/) to enable encryption-at-rest for EBS volumes. The pattern also leverages [EFS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/efs-csi-driver/) to enable encryption-at-rest for EFS volumes.
+To achieve this objective, the pattern utilizes [EBS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/ebs-csi-driver/) to enable encryption-at-rest for EBS volumes and [EFS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/efs-csi-driver/) to enable encryption-at-rest for EFS volumes.
 
-The pattern also leverages KMS resource provider to create KMS keys for EBS/EFS encryption-at-rest and EFS File System resource provider to create an encrypted EFS file system.
+The pattern also leverages [KMS resource provider](https://aws-quickstart.github.io/cdk-eks-blueprints/resource-providers/kms-key-providers/) to create KMS keys for EBS/EFS encryption-at-rest and [EFS File System resource provider](https://aws-quickstart.github.io/cdk-eks-blueprints/resource-providers/efs-providers/) to create an encrypted EFS file system.
 
 ## GitOps confguration
 
