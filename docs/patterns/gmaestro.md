@@ -1,7 +1,7 @@
 # gMaestro on EKS pattern
 
 gMaestro is a Kubernetes cost optimization solution that helps companies reduce spending on un-utilized resources.
-For additional information, visit [gMaestro documentation](https://gmaestro.gitbook.io/gmaestro-docs/).
+For additional information, visit [gMaestro documentation](https://docs.gomaestro.org/).
 
 
 This pattern deploys the following resources:
