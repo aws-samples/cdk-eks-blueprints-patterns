@@ -25,7 +25,7 @@ cdk bootstrap
 make list
 ```
 
-### Deploy AWS Config configuration recorder
+### Deploy AWS Config Configuration Recorder
 
 Use the AWS Config setup blueprints pattern to enable AWS Config in your account and region by running the following command:
 
