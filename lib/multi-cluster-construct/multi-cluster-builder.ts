@@ -126,7 +126,7 @@ export default class MultiClusterBuilderConstruct {
                         namespace: "flux-system",
                         repository: {
                             repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
-                            targetRevision: "main",
+                            targetRevision: "multi-arch",
                         },
                         values: {
                         },
