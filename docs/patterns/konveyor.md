@@ -82,7 +82,7 @@ You can assign values to the above keys according to the following criteria (val
 
 - "konveyor.namespace.name": Konveyor's namespace, the default is "konveyor"
 - "konveyor.parent.domain.name": the parent domain in your Hosted Zone
-- "konveyor.subdomain.label": to be used as _{"subdomain.label"}.{"parent.domain.name"}_, the default is "backstage"
+- "konveyor.subdomain.label": to be used as _{"subdomain.label"}.{"parent.domain.name"}_, the default is "konveyor"
 - "konveyor.hosted.zone.id": the Hosted zone ID (format: 20x chars/numbers)
 - "konveyor.certificate.resource.name": resource name of the certificate, registered by the resource provider, the default is "konveyor-certificate"
 
