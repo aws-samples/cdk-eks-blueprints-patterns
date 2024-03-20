@@ -125,8 +125,8 @@ export default class MultiClusterBuilderConstruct {
                         name: "eks-cloud-addons-conformance",
                         namespace: "flux-system",
                         repository: {
-                            repoUrl: 'https://github.com/Howlla/eks-anywhere-addons',
-                            targetRevision: "multi-arch",
+                            repoUrl: 'https://github.com/aws-samples/eks-anywhere-addons',
+                            targetRevision: "main",
                         },
                         values: {
                         },
