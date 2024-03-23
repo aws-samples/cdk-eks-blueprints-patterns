@@ -4,6 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
 import GrafanaMonitoringConstruct from './grafana-monitor-builder';
+import cluster from 'cluster';
 
 
 /**
@@ -31,7 +32,7 @@ export class PipelineMultiCluster {
         const stages : blueprints.StackStage[] = [];
 
         for(const version of CLUSTER_VERSIONS) {
-            const clusterProps = this.getClusterProps()
+            let clusterProps = this.getClusterProps()
             const blueprint1 = new MultiClusterBuilderConstruct().create(scope,`X86-` + version.version.replace(".", "-"), accountID, region);
 
             clusterProps.amiType = eks.NodegroupAmiType.AL2_X86_64;
@@ -46,6 +47,7 @@ export class PipelineMultiCluster {
                 stackBuilder : blueprintX86.clone(region)
             });
 
+            clusterProps = this.getClusterProps()
             const blueprint2 = new MultiClusterBuilderConstruct().create(scope,`ARM-` + version.version.replace(".", "-"), accountID, region);
             clusterProps.amiType = eks.NodegroupAmiType.AL2_ARM_64;
             clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)];
@@ -128,7 +130,7 @@ export class PipelineMultiCluster {
 
     getClusterProps() {
         const clusterProps : blueprints.MngClusterProviderProps = {
-            maxSize : 1,
+            maxSize : 2,
             minSize : 1,
             desiredSize: 1
         };
