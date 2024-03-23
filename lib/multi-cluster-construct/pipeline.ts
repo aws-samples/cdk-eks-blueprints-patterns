@@ -27,15 +27,11 @@ export class PipelineMultiCluster {
             eks.KubernetesVersion.V1_28
         ];
 
-        const clusterProps : blueprints.MngClusterProviderProps = {
-            maxSize : 2,
-            minSize : 1,
-            desiredSize: 1
-        };
 
         const stages : blueprints.StackStage[] = [];
 
         for(const version of CLUSTER_VERSIONS) {
+            const clusterProps = this.getClusterProps()
             const blueprint1 = new MultiClusterBuilderConstruct().create(scope,`X86-` + version.version.replace(".", "-"), accountID, region);
 
             clusterProps.amiType = eks.NodegroupAmiType.AL2_X86_64;
@@ -68,7 +64,7 @@ export class PipelineMultiCluster {
     
         const blueprint3 = new MultiClusterBuilderConstruct().create(scope,`BR-X86-` + latestVersion.version.replace(".", "-"), accountID, region);
 
-        
+        let clusterProps = this.getClusterProps()
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
         clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)];
         const blueprintBottleRocketX86 = blueprint3
@@ -82,7 +78,8 @@ export class PipelineMultiCluster {
         });
 
         const blueprint4 = new MultiClusterBuilderConstruct().create(scope,`BR-ARM-` + latestVersion.version.replace(".", "-"), accountID, region);
-
+        
+        clusterProps = this.getClusterProps()
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_ARM_64;
         clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)];
         const blueprintBottleRocketArm = blueprint4
@@ -128,4 +125,13 @@ export class PipelineMultiCluster {
                 }
             });
     }
+
+    getClusterProps() {
+        const clusterProps : blueprints.MngClusterProviderProps = {
+            maxSize : 1,
+            minSize : 1,
+            desiredSize: 1
+        };
+        return clusterProps
+      }
 }
