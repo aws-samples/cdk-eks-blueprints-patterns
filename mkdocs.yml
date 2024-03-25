@@ -44,6 +44,7 @@ nav:
     - Konveyor Pattern: 'patterns/knoveyor.md'
     - Kubeflow Pattern: 'patterns/kubeflow.md'
     - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
+    - Multi cluster conformitron pattern : 'patterns/multi-cluster-conformitron.md'
     - Nginx Pattern: 'patterns/nginx.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
     - Graviton Pattern: 'patterns/graviton.md'
