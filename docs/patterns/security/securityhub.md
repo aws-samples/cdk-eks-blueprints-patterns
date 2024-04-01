@@ -8,20 +8,13 @@ The pattern will enable AWS Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_D
 
 ## Prerequisites
 
-1. Clone the repository
-2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
-3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
-4. Complete the steps to [enable AWS Config and deploy the Security Best Practices for Amazon EKS AWS Config managed rules](eks-config-rules.md).
+1. Follow the usage [instructions](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/README.md#usage) to install the dependencies and perform the repository setup.
+2. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+3. Complete the steps to [enable AWS Config and deploy the Security Best Practices for Amazon EKS AWS Config managed rules](eks-config-rules.md).
 
 **Optional (but recommended):**  If you have not done so already, follow the steps to deploy the [Amazon GuardDuty stack and blueprint](guardduty.md). Since Amazon GuardDuty automatically sends its findings to AWS Security Hub, the sample EKS finding will appear in AWS Security Hub about five minutes after it has been enabled in the same region.
 
 ## Deploy
-
-To update npm, run the following command:
-
-```bash
-npm install -g npm@latest
-```
 
 To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
 
