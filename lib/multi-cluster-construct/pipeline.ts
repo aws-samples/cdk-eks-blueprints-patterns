@@ -132,7 +132,8 @@ export class PipelineMultiCluster {
         const clusterProps : blueprints.MngClusterProviderProps = {
             maxSize : 2,
             minSize : 1,
-            desiredSize: 1
+            desiredSize: 1,
+            diskSize: 50
         };
         return clusterProps
       }
