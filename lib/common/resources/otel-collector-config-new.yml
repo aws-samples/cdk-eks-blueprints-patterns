@@ -9,7 +9,7 @@ metadata:
   namespace: "{{namespace}}"
 spec:
   mode: "{{deploymentMode}}"
-  image: public.ecr.aws/aws-observability/aws-otel-collector:v0.33.1
+  image: public.ecr.aws/aws-observability/aws-otel-collector:v0.37.0
   resources:
     limits:
       cpu: "1"
@@ -18,6 +18,22 @@ spec:
       cpu: "1"
       memory: "2Gi"
   serviceAccount: adot-collector
+  podSecurityContext:
+    runAsGroup: 0
+    runAsUser: 0
+  volumeMounts:
+    - name: varlogpods
+      mountPath: /var/log/pods
+      readOnly: true
+  volumes:
+    - name: varlogpods
+      hostPath:
+        path: /var/log/pods
+  env:
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
   config: |
     receivers:
       prometheus:
@@ -1588,65 +1604,85 @@ spec:
 
             
 
-         {{ start enableIstioMonJob }}
-            - honor_labels: true
-              job_name: kubernetes-istio
-              kubernetes_sd_configs:
-              - role: pod
-              relabel_configs:
-              - action: keep
-                regex: true
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-              - action: drop
-                regex: true
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_scrape_slow
-              - action: replace
-                regex: (https?)
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_scheme
-                target_label: __scheme__
-              - action: replace
-                regex: (.+)
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_path
-                target_label: __metrics_path__
-              - action: replace
-                regex: (\d+);(([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})
-                replacement: '[$$2]:$$1'
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_port
-                - __meta_kubernetes_pod_ip
-                target_label: __address__
-              - action: replace
-                regex: (\d+);((([0-9]+?)(\.|$)){4})
-                replacement: $$2:$$1
-                source_labels:
-                - __meta_kubernetes_pod_annotation_prometheus_io_port
-                - __meta_kubernetes_pod_ip
-                target_label: __address__
-              - action: labelmap
-                regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
-                replacement: __param_$1
-              - action: labelmap
-                regex: __meta_kubernetes_pod_label_(.+)
-              - action: replace
-                source_labels:
-                - __meta_kubernetes_namespace
-                target_label: namespace
-              - action: replace
-                source_labels:
-                - __meta_kubernetes_pod_name
-                target_label: pod
-              - action: keep
-                source_labels: [ __address__ ]
-                regex: '.*:15020$$'
-              - action: drop
-                regex: Pending|Succeeded|Failed|Completed
-                source_labels:
-                - __meta_kubernetes_pod_phase
-            {{ stop enableIstioMonJob }}
+         
+      filelog:
+        include: [ /var/log/pods/*/*/*.log ]
+        include_file_name: false
+        include_file_path: true
+        start_at: end
+        operators:
+          # Find out which format is used by kubernetes
+          - type: router
+            id: get-format
+            routes:
+              - output: parser-docker
+                expr: 'body matches "^\\{"'
+              - output: parser-crio
+                expr: 'body matches "^[^ Z]+ "'
+              - output: parser-containerd
+                expr: 'body matches "^[^ Z]+Z"'
+          # Parse CRI-O format
+          - type: regex_parser
+            id: parser-crio
+            regex:
+              '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)
+              ?(?P<log>.*)$'
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout_type: gotime
+              layout: '2006-01-02T15:04:05.999999999Z07:00'
+          # Parse CRI-Containerd format
+          - type: regex_parser
+            id: parser-containerd
+            regex:
+              '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*)
+              ?(?P<log>.*)$'
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          # Parse Docker format
+          - type: json_parser
+            id: parser-docker
+            output: extract_metadata_from_filepath
+            timestamp:
+              parse_from: attributes.time
+              layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          - type: move
+            from: attributes.log
+            to: body
+          # Extract metadata from file path
+          - type: regex_parser
+            id: extract_metadata_from_filepath
+            regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$'
+            parse_from: attributes["log.file.path"]
+            cache:
+              size: 128 # default maximum amount of Pods per Node is 110
+          # Rename attributes
+          - type: move
+            from: attributes.stream
+            to: attributes["log.iostream"]
+          - type: move
+            from: attributes.container_name
+            to: resource["k8s.container.name"]
+          - type: move
+            from: attributes.namespace
+            to: resource["k8s.namespace.name"]
+          - type: move
+            from: attributes.pod_name
+            to: resource["k8s.pod.name"]
+          - type: move
+            from: attributes.restart_count
+            to: resource["k8s.container.restart_count"]
+          - type: move
+            from: attributes.uid
+            to: resource["k8s.pod.uid"]
+
+    processors:
+      k8sattributes:
+      batch:
+
     exporters:
       prometheusremotewrite:
         endpoint: "{{remoteWriteEndpoint}}"
@@ -1654,6 +1690,12 @@ spec:
           authenticator: sigv4auth
       logging:
         loglevel: info
+      awscloudwatchlogs:
+        log_group_name: "{{logGroupName}}"
+        log_stream_name: "{{logStreamName}}"
+        region: "{{awsRegion}}"
+        log_retention: {{logRetentionDays}}
+        raw_log: false
     extensions:
       sigv4auth:
         region: "{{awsRegion}}"
@@ -1669,4 +1711,11 @@ spec:
         metrics:
           receivers: [prometheus]
           exporters: [logging, prometheusremotewrite]
-      
+        logs:
+          receivers: [filelog]
+          processors: [batch,k8sattributes]
+          exporters: [awscloudwatchlogs]
+      telemetry:
+        metrics:
+          address: 0.0.0.0:8888
+          level: basic
