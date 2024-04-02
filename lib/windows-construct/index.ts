@@ -3,7 +3,8 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
-import { WindowsBuilder, WindowsOptions, WindowsVpcCni } from "@aws-quickstart/eks-blueprints";
+import { WindowsBuilder, WindowsOptions, KarpenterAddOnProps } from "@aws-quickstart/eks-blueprints";
+import { WindowsVpcCni } from "./vpc-cni";
 
 export default class WindowsConstruct {
     build(scope: Construct, id: string) {
@@ -23,7 +24,7 @@ export default class WindowsConstruct {
             kubernetesVersion: eks.KubernetesVersion.of("1.27"),
             instanceClass: ec2.InstanceClass.T3,
             instanceSize: ec2.InstanceSize.MEDIUM,
-            desiredNodeSize: 1,
+            desiredNodeCount: 1,
             minNodeSize: 1,
             maxNodeSize: 3,
             blockDeviceSize: 50,
@@ -32,50 +33,63 @@ export default class WindowsConstruct {
                 "Name": "blueprints-windows-eks-cluster",
                 "Type": "generic-windows-cluster"
             },
-            genericNodeGroupTags: {
-                "Name": "Mng-linux",
-                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+            genericNodeGroupOptions: {
+                nodegroupName: "Mng-linux",
+                tags: {
+                    "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+                }
             },
-            windowsNodeGroupTags: {
-                "Name" : "Mng-windows",
-                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+            windowsNodeGroupOptions: {
+                nodegroupName: "Mng-windows",
+                tags: {
+                    "kubernetes.io/cluster/windows-eks-blueprint": "owned"
+                }
             }
         };
 
-        const karpenterAddon = new blueprints.addons.KarpenterAddOn({
-            version: "v0.31.3",
-            requirements: [
-                { key: 'kubernetes.io/os', op: 'In', vals: ['windows']},
-            ],
-            subnetTags: {
-                "Name": `${stackID}/${stackID}-vpc/Private*`,
-            },
-            securityGroupTags: {
-                [`kubernetes.io/cluster/${stackID}`]: "owned",
-            },
-            consolidation: { enabled: true },
-            ttlSecondsUntilExpired: 2592000,
-            weight: 20,
-            interruptionHandling: true,
-            taints: [
-                {
-                    key: "os",
-                    value: "windows",
-                    effect: "NoSchedule"
-                }
-            ],
-            amiFamily: "Windows2022"
-        });
-
         const addOns: Array<blueprints.ClusterAddOn> = [
             new WindowsVpcCni(),
-            karpenterAddon
         ];
+
+        const karpenterProps :KarpenterAddOnProps = {
+            nodePoolSpec: {
+                requirements: [
+                    { key: 'kubernetes.io/os', operator: 'In', values: ['windows']},
+                ],
+                taints: [
+                    {
+                        key: "os",
+                        value: "windows",
+                        effect: "NoSchedule"
+                    }
+                ],
+                consolidation: {
+                    enabled: true
+                },
+                ttlSecondsUntilExpired: 2592000,
+                disruption: {
+                    consolidationPolicy: "WhenEmpty",
+                    expireAfter: "2592000s"
+                },
+                weight: 20
+            },
+            ec2NodeClassSpec : {
+                subnetSelectorTerms: [
+                    { tags:  { "Name": `${stackID}/${stackID}-vpc/Private*` }}
+                ],
+                securityGroupSelectorTerms: [
+                    {tags: { [`kubernetes.io/cluster/${stackID}`]: "owned",}}
+                ],
+                amiFamily: "Windows2022"
+            },
+        };
 
         WindowsBuilder.builder(options)
             .addOns(...addOns)
             .account(account)
             .region(region)
+            .withKarpenterProps(karpenterProps)
+            .enableKarpenter()
             .resourceProvider("node-role", nodeRole)
             .resourceProvider(
                 blueprints.GlobalResources.Vpc,
