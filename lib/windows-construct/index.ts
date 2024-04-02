@@ -21,7 +21,7 @@ export default class WindowsConstruct {
             ]);
 
         const options: WindowsOptions = {
-            kubernetesVersion: eks.KubernetesVersion.of("1.27"),
+            kubernetesVersion: eks.KubernetesVersion.V1_29,
             instanceClass: ec2.InstanceClass.T3,
             instanceSize: ec2.InstanceSize.MEDIUM,
             desiredNodeCount: 1,
@@ -63,12 +63,9 @@ export default class WindowsConstruct {
                         effect: "NoSchedule"
                     }
                 ],
-                consolidation: {
-                    enabled: true
-                },
-                ttlSecondsUntilExpired: 2592000,
                 disruption: {
                     consolidationPolicy: "WhenEmpty",
+                    consolidateAfter: "300s",
                     expireAfter: "2592000s"
                 },
                 weight: 20

@@ -16,9 +16,9 @@ const targetRevision = "main";
 
 export default class DataAtRestEncryptionConstruct {
     async buildAsync(scope: Construct, id: string) {
-    
+
         await prevalidateSecrets(DataAtRestEncryptionConstruct.name, process.env.CDK_DEFAULT_REGION!, SECRET_ARGO_ADMIN_PWD);
-    
+
         const stackId = `${id}-blueprint`;
 
         const ebsKmsKeyName = "ebs-kms-encryption-key";
