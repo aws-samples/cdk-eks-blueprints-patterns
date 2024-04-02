@@ -23,7 +23,7 @@ export default class WindowsConstruct {
             kubernetesVersion: eks.KubernetesVersion.of("1.27"),
             instanceClass: ec2.InstanceClass.T3,
             instanceSize: ec2.InstanceSize.MEDIUM,
-            desiredNodeCount: 1,
+            desiredNodeSize: 1,
             minNodeSize: 1,
             maxNodeSize: 3,
             blockDeviceSize: 50,
@@ -32,17 +32,13 @@ export default class WindowsConstruct {
                 "Name": "blueprints-windows-eks-cluster",
                 "Type": "generic-windows-cluster"
             },
-            genericNodeGroupOptions: {
-                nodegroupName: "Mng-linux",
-                tags: {
-                    "kubernetes.io/cluster/windows-eks-blueprint": "owned"
-                },
+            genericNodeGroupTags: {
+                "Name": "Mng-linux",
+                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
             },
-            windowsNodeGroupOptions: {
-                nodegroupName: "Mng-windows",
-                tags: {
-                    "kubernetes.io/cluster/windows-eks-blueprint": "owned"
-                }
+            windowsNodeGroupTags: {
+                "Name" : "Mng-windows",
+                "kubernetes.io/cluster/windows-eks-blueprint": "owned"
             }
         };
 
