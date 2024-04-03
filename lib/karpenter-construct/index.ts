@@ -26,13 +26,7 @@ export default class KarpenterConstruct {
                     { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
                     { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
                     { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
-                ],
-                disruption: {
-                    consolidationPolicy: "WhenEmpty",
-                    consolidateAfter: "30s",
-                    expireAfter: "20m",
-                    budgets: [{nodes: "10%"}]
-                }
+                ]
             },
             ec2NodeClassSpec: {
                 amiFamily: "AL2",
