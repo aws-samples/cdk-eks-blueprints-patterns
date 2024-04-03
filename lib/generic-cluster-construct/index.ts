@@ -64,6 +64,7 @@ export default class GenericClusterConstruct {
                 new blueprints.SecretsStoreAddOn
             )
             .teams(platformTeam)
+            .version('auto')
             .build(scope, stackID);
     }
 }
