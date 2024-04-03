@@ -10,34 +10,34 @@ export default class KarpenterConstruct {
         const karpenterAddOn = new blueprints.addons.KarpenterAddOn({
             version: 'v0.33.1',
             nodePoolSpec: {
-              labels: {
-                  type: "karpenter-test"
-              },
-              annotations: {
-                  "eks-blueprints/owner": "eks-blueprints"
-              },
-              taints: [{
-                  key: "workload",
-                  value: "test",
-                  effect: "NoSchedule",
-              }],
-              requirements: [
-                  { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.2xlarge'] },
-                  { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
-                  { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
-                  { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
-              ],
-              disruption: {
-                  consolidationPolicy: "WhenEmpty",
-                  consolidateAfter: "30s",
-                  expireAfter: "20m",
-                  budgets: [{nodes: "10%"}]
-              }
+                labels: {
+                    type: "karpenter-test"
+                },
+                annotations: {
+                    "eks-blueprints/owner": "eks-blueprints"
+                },
+                taints: [{
+                    key: "workload",
+                    value: "test",
+                    effect: "NoSchedule",
+                }],
+                requirements: [
+                    { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.2xlarge'] },
+                    { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
+                    { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
+                    { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
+                ],
+                disruption: {
+                    consolidationPolicy: "WhenEmpty",
+                    consolidateAfter: "30s",
+                    expireAfter: "20m",
+                    budgets: [{nodes: "10%"}]
+                }
             },
             ec2NodeClassSpec: {
-              amiFamily: "AL2",
-              subnetSelectorTerms: [{ tags: { "Name": "my-stack-name/my-stack-name-vpc/PrivateSubnet*" }}],
-              securityGroupSelectorTerms: [{ tags: { "aws:eks:cluster-name": "karpenter" }}],
+                amiFamily: "AL2",
+                subnetSelectorTerms: [{ tags: { "Name": "my-stack-name/my-stack-name-vpc/PrivateSubnet*" }}],
+                securityGroupSelectorTerms: [{ tags: { "aws:eks:cluster-name": "karpenter" }}],
             },
             interruptionHandling: true,
         });
