@@ -8,22 +8,22 @@ export default class KarpenterConstruct {
         const stackID = `${id}-blueprint`;
 
         const karpenterAddon = new blueprints.addons.KarpenterAddOn({
-            requirements: [
-                { key: 'node.kubernetes.io/instance-type', op: 'In', vals: ['m5.large'] },
-                { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: ['us-west-2c']},
-                { key: 'kubernetes.io/arch', op: 'In', vals: ['amd64','arm64']},
-                { key: 'karpenter.sh/capacity-type', op: 'In', vals: ['on-demand']},
-            ],
-            subnetTags: {
-                "Name": `${stackID}/${stackID}-vpc/*`,
-            },
-            securityGroupTags: {
-                [`kubernetes.io/cluster/${stackID}`]: "owned",
-            },
-            consolidation: { enabled: true },
-            ttlSecondsUntilExpired: 2592000,
-            weight: 20,
-            interruptionHandling: true,
+            // requirements: [
+            //     { key: 'node.kubernetes.io/instance-type', op: 'In', vals: ['m5.large'] },
+            //     { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: ['us-west-2c']},
+            //     { key: 'kubernetes.io/arch', op: 'In', vals: ['amd64','arm64']},
+            //     { key: 'karpenter.sh/capacity-type', op: 'In', vals: ['on-demand']},
+            // ],
+            // subnetTags: {
+            //     "Name": `${stackID}/${stackID}-vpc/*`,
+            // },
+            // securityGroupTags: {
+            //     [`kubernetes.io/cluster/${stackID}`]: "owned",
+            // },
+            // consolidation: { enabled: true },
+            // ttlSecondsUntilExpired: 2592000,
+            // weight: 20,
+            // interruptionHandling: true,
         });
 
 
