@@ -31,6 +31,15 @@ export class PipelineMultiCluster {
 
         const stages : blueprints.StackStage[] = [];
 
+        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope, accountID, region);
+
+        stages.push({
+            id: 'Grafana-Monitoring',
+            stackBuilder: blueprintGrafana
+                .clone(region, accountID)
+        });
+
+
         for(const version of CLUSTER_VERSIONS) {
             let clusterProps = this.getClusterProps()
             const blueprint1 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
@@ -92,14 +101,6 @@ export class PipelineMultiCluster {
         stages.push({
             id: `${BR_ENV_ID}-ARM` + latestVersion.version.replace(".", "-"),
             stackBuilder : blueprintBottleRocketArm.clone(region)
-        });
-
-        const blueprintGrafana = new GrafanaMonitoringConstruct().create(scope, accountID, region);
-
-        stages.push({
-            id: 'Grafana-Monitoring',
-            stackBuilder: blueprintGrafana
-                .clone(region, accountID)
         });
 
         const gitOwner = 'Howlla';
