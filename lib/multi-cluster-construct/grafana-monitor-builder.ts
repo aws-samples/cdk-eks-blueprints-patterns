@@ -43,6 +43,7 @@ export default class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
+            .resourceProvider("conformitronWorkspace", new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace"))
             .addOns(
                 ...addOns
             );

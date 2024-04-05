@@ -118,7 +118,7 @@ export default class MultiClusterBuilderConstruct {
             })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
-            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
+            // .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
                     repositories:[{
