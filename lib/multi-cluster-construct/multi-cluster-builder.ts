@@ -8,23 +8,23 @@ import * as fs from 'fs';
 
 
 export default class MultiClusterBuilderConstruct {
-    build(scope: Construct, id: string, workspaceName: string, account?: string, region?: string ) {
+    build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
  
         const stackID = `${id}-blueprint`;
-        this.create(scope, workspaceName, accountID, awsRegion)
+        this.create(scope, accountID, awsRegion)
             .build(scope, stackID);
     }
     
 
-    create(scope: Construct, workspaceName: string, account?: string, region?: string ) {
+    create(scope: Construct, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
 
-        const ampWorkspaceName = workspaceName;
+        const ampWorkspaceName = "conformitronWorkspace";
         const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
         const ampEndpoint = ampPrometheusWorkspace.attrPrometheusEndpoint;
         const ampWorkspaceArn = ampPrometheusWorkspace.attrArn;
