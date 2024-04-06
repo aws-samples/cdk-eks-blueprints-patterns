@@ -4,7 +4,9 @@ import * as amp from 'aws-cdk-lib/aws-aps';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { GrafanaOperatorSecretAddon } from './grafana-operator-secret-addon';
 
-export default class GrafanaMonitoringConstruct {
+export const ampProvider = new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace")
+
+export class GrafanaMonitoringConstruct {
 
     build(scope: Construct, id: string, contextAccount?: string, contextRegion?: string ) {
 
@@ -21,8 +23,7 @@ export default class GrafanaMonitoringConstruct {
 
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
-
-
+        
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
 
         const fluxRepository: blueprints.FluxGitRepo = blueprints.utils.valueFromContext(scope, "fluxRepository", undefined);
@@ -43,7 +44,7 @@ export default class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
-            .resourceProvider("conformitronWorkspace", new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace"))
+            .resourceProvider("conformitronWorkspace", ampProvider)
             .addOns(
                 ...addOns
             );

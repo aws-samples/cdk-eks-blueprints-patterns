@@ -3,8 +3,7 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
-import GrafanaMonitoringConstruct from './grafana-monitor-builder';
-import cluster from 'cluster';
+import {GrafanaMonitoringConstruct} from './grafana-monitor-builder';
 
 
 /**

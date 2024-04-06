@@ -5,6 +5,7 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as amp from 'aws-cdk-lib/aws-aps';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 import * as fs from 'fs';
+import { ampProvider } from './grafana-monitor-builder';
 
 
 export default class MultiClusterBuilderConstruct {
@@ -118,7 +119,7 @@ export default class MultiClusterBuilderConstruct {
             })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
-            // .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
+            .resourceProvider(ampWorkspaceName, ampProvider)
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
                     repositories:[{
