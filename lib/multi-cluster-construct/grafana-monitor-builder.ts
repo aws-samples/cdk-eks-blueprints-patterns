@@ -6,18 +6,18 @@ import { GrafanaOperatorSecretAddon } from './grafana-operator-secret-addon';
 
 export default class GrafanaMonitoringConstruct {
 
-    build(scope: Construct, id: string, contextAccount?: string, contextRegion?: string ) {
+    build(scope: Construct, id: string, resourceProvider: blueprints.CreateAmpProvider, contextAccount?: string, contextRegion?: string ) {
 
         const stackId = `${id}-grafana-monitor`;
 
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
-        this.create(scope, account, region)
+        this.create(scope, resourceProvider, account, region)
             .build(scope, stackId);
     }
 
-    create(scope: Construct, contextAccount?: string, contextRegion?: string ) {
+    create(scope: Construct, resourceProvider: blueprints.CreateAmpProvider, contextAccount?: string, contextRegion?: string ) {
 
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
@@ -43,7 +43,7 @@ export default class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
-            .resourceProvider("conformitronWorkspace", new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace"))
+            .resourceProvider("conformitronWorkspace", resourceProvider)
             .addOns(
                 ...addOns
             );
