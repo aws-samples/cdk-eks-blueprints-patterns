@@ -8,18 +8,18 @@ import * as fs from 'fs';
 
 
 export default class MultiClusterBuilderConstruct {
-    build(scope: Construct, id: string,resourceProvider: blueprints.CreateAmpProvider, account?: string, region?: string ) {
+    build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
  
         const stackID = `${id}-blueprint`;
-        this.create(scope,resourceProvider, accountID, awsRegion)
+        this.create(scope, accountID, awsRegion)
             .build(scope, stackID);
     }
     
 
-    create(scope: Construct,resourceProvider: blueprints.CreateAmpProvider, account?: string, region?: string ) {
+    create(scope: Construct, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
@@ -116,8 +116,6 @@ export default class MultiClusterBuilderConstruct {
             .withCoreDnsProps({
                 version:"v1.9.3-eksbuild.11"
             })
-            // use existing amp resourceProvider
-            .resourceProvider("conformitronWorkspace", resourceProvider)
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
             // .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
