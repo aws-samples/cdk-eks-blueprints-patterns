@@ -1,12 +1,11 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import * as amp from 'aws-cdk-lib/aws-aps';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { GrafanaOperatorSecretAddon } from './grafana-operator-secret-addon';
 
-export const ampProvider = new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace")
-
 export class GrafanaMonitoringConstruct {
+
+    ampProvider = new blueprints.CreateAmpProvider("conformitronWorkspace", "conformitronWorkspace")
 
     build(scope: Construct, id: string, contextAccount?: string, contextRegion?: string ) {
 
@@ -44,7 +43,7 @@ export class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
-            .resourceProvider("conformitronWorkspace", ampProvider)
+            .resourceProvider("conformitronWorkspace", this.ampProvider)
             .addOns(
                 ...addOns
             );

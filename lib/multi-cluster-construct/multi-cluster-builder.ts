@@ -5,22 +5,21 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as amp from 'aws-cdk-lib/aws-aps';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 import * as fs from 'fs';
-import { ampProvider } from './grafana-monitor-builder';
-
+import { GrafanaMonitoringConstruct } from './grafana-monitor-builder';
 
 export default class MultiClusterBuilderConstruct {
-    build(scope: Construct, id: string, account?: string, region?: string ) {
+    build(scope: Construct, ampProvider: blueprints.CreateAmpProvider, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
  
         const stackID = `${id}-blueprint`;
-        this.create(scope, accountID, awsRegion)
+        this.create(scope, ampProvider, accountID, awsRegion)
             .build(scope, stackID);
     }
     
 
-    create(scope: Construct, account?: string, region?: string ) {
+    create(scope: Construct,ampProvider:blueprints.CreateAmpProvider, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
