@@ -7,25 +7,34 @@ export default class KarpenterConstruct {
         const region = process.env.CDK_DEFAULT_REGION!;
         const stackID = `${id}-blueprint`;
 
-        const karpenterAddon = new blueprints.addons.KarpenterAddOn({
-            requirements: [
-                { key: 'node.kubernetes.io/instance-type', op: 'In', vals: ['m5.large'] },
-                { key: 'topology.kubernetes.io/zone', op: 'NotIn', vals: ['us-west-2c']},
-                { key: 'kubernetes.io/arch', op: 'In', vals: ['amd64','arm64']},
-                { key: 'karpenter.sh/capacity-type', op: 'In', vals: ['on-demand']},
-            ],
-            subnetTags: {
-                "Name": `${stackID}/${stackID}-vpc/*`,
+        const karpenterAddOn = new blueprints.addons.KarpenterAddOn({
+            version: 'v0.33.1',
+            nodePoolSpec: {
+                labels: {
+                    type: "karpenter-test"
+                },
+                annotations: {
+                    "eks-blueprints/owner": "eks-blueprints"
+                },
+                taints: [{
+                    key: "workload",
+                    value: "test",
+                    effect: "NoSchedule",
+                }],
+                requirements: [
+                    { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.2xlarge'] },
+                    { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
+                    { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
+                    { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
+                ]
             },
-            securityGroupTags: {
-                [`kubernetes.io/cluster/${stackID}`]: "owned",
+            ec2NodeClassSpec: {
+                amiFamily: "AL2",
+                subnetSelectorTerms: [{ tags: { "Name": "my-stack-name/my-stack-name-vpc/PrivateSubnet*" }}],
+                securityGroupSelectorTerms: [{ tags: { "aws:eks:cluster-name": "karpenter" }}],
             },
-            consolidation: { enabled: true },
-            ttlSecondsUntilExpired: 2592000,
-            weight: 20,
             interruptionHandling: true,
         });
-
 
         EksBlueprint.builder()
             .account(account)
@@ -40,7 +49,7 @@ export default class KarpenterConstruct {
                 new blueprints.addons.KubeStateMetricsAddOn(),
                 new blueprints.addons.SSMAgentAddOn(),
                 new blueprints.addons.MetricsServerAddOn(),
-                karpenterAddon,
+                karpenterAddOn,
             )
             .build(scope, stackID);
 

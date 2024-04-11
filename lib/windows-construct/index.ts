@@ -4,7 +4,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { WindowsBuilder, WindowsOptions } from '../common/windows-builder';
-import { WindowsVpcCni } from "./vpc-cni";
+// import { WindowsVpcCni } from "./vpc-cni";
 
 export default class WindowsConstruct {
     build(scope: Construct, id: string) {
@@ -47,7 +47,7 @@ export default class WindowsConstruct {
         };
 
         const addOns: Array<blueprints.ClusterAddOn> = [
-            new WindowsVpcCni()
+            // new WindowsVpcCni()
         ];
 
         WindowsBuilder.builder(options)
