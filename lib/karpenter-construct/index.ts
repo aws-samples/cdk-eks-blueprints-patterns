@@ -12,7 +12,7 @@ export default class KarpenterConstruct {
             nodePoolSpec: {
                 requirements: [
                     { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.large'] },
-                    { key: 'topology.kubernetes.io/zone', operator: 'NotIn', values: ['us-west-2c']},
+                    { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
                     { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
                     { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['on-demand']},
                 ],
