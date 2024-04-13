@@ -10,28 +10,32 @@ export default class KarpenterConstruct {
         const karpenterAddOn = new blueprints.addons.KarpenterAddOn({
             version: 'v0.33.1',
             nodePoolSpec: {
-                labels: {
-                    type: "karpenter-test"
-                },
-                annotations: {
-                    "eks-blueprints/owner": "eks-blueprints"
-                },
-                taints: [{
-                    key: "workload",
-                    value: "test",
-                    effect: "NoSchedule",
-                }],
                 requirements: [
-                    { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.2xlarge'] },
+                    { key: 'node.kubernetes.io/instance-type', operator: 'In', values: ['m5.large'] },
                     { key: 'topology.kubernetes.io/zone', operator: 'In', values: [`${region}a`,`${region}b`, `${region}c`]},
                     { key: 'kubernetes.io/arch', operator: 'In', values: ['amd64','arm64']},
-                    { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['spot']},
-                ]
+                    { key: 'karpenter.sh/capacity-type', operator: 'In', values: ['on-demand']},
+                ],
+                disruption: {
+                    consolidationPolicy: "WhenUnderutilized",
+                    expireAfter: "259200s"
+                },
+                weight: 20,
+
             },
-            ec2NodeClassSpec: {
-                amiFamily: "AL2",
-                subnetSelectorTerms: [{ tags: { "Name": "my-stack-name/my-stack-name-vpc/PrivateSubnet*" }}],
-                securityGroupSelectorTerms: [{ tags: { "aws:eks:cluster-name": "karpenter" }}],
+            ec2NodeClassSpec:{
+                subnetSelectorTerms: [
+                    {
+                        tags: { "Name": `${stackID}/${stackID}-vpc/*` }
+                    }
+                ],
+                securityGroupSelectorTerms: [
+                    {
+                        tags: { [`kubernetes.io/cluster/${stackID}`]: "owned" }
+                    }
+                ],
+
+                amiFamily: "AL2"
             },
             interruptionHandling: true,
         });
