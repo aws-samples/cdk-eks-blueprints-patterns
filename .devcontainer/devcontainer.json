@@ -8,12 +8,12 @@
     }
   },
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
-  "workspaceFolder": "/home/vscode/cdk-eks-blueprints",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/cdk-eks-blueprints,type=bind",
+  "workspaceFolder": "/home/vscode/cdk-eks-blueprints-patterns",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/cdk-eks-blueprints-patterns,type=bind",
   "hostRequirements": {
     "cpus": 2
   },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/vscode/cdk-eks-blueprints"
+    "PATH": "${containerEnv:PATH}:/home/vscode/cdk-eks-blueprints-patterns"
   }
 }
