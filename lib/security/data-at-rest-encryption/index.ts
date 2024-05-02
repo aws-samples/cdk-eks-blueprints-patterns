@@ -60,8 +60,8 @@ export default class DataAtRestEncryptionConstruct {
             )
             .addOns(
                 new EbsCsiDriverAddOn({
-                    version: "auto",
                     kmsKeys: [ebsKmsKey],
+                    version: "auto",
                 }),
                 new blueprints.EfsCsiDriverAddOn({
                     kmsKeys: [efsKmsKey],
