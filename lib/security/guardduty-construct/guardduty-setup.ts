@@ -21,14 +21,14 @@ export class GuardDutySetupStack extends Stack {
           { name: "EKS_AUDIT_LOGS", status: "ENABLED" },
           { name: "EBS_MALWARE_PROTECTION", status: "ENABLED" },
           { name: "RDS_LOGIN_EVENTS", status: "ENABLED" },
-          {
-              name: "EKS_RUNTIME_MONITORING",
+          { name: "LAMBDA_NETWORK_LOGS", status: "ENABLED" },
+          { 
+              name: "RUNTIME_MONITORING",
               status: "ENABLED",
               additionalConfiguration: [
-                  {
-                      name: "EKS_ADDON_MANAGEMENT",
-                      status: "ENABLED",
-                  },
+                  { name: "EKS_ADDON_MANAGEMENT", status: "ENABLED" },
+                  { name: "ECS_FARGATE_AGENT_MANAGEMENT", status: "ENABLED" },
+                  { name: "EC2_AGENT_MANAGEMENT", status: "ENABLED" },
               ],
           },
       ];
