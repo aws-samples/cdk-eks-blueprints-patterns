@@ -7,9 +7,6 @@ import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 import * as fs from 'fs';
 
 
-const ampWorkspaceName = "conformitronWorkspace";
-const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
-
 export default class MultiClusterBuilderConstruct {
     build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
@@ -27,7 +24,8 @@ export default class MultiClusterBuilderConstruct {
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
 
-        const ampEndpoint = 'https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/';
+        const ampWorkspaceName = "conformitronWorkspace";
+        const ampEndpoint = 'ampPrometheusWorkspace.attrPrometheusEndpoint';
         const ampWorkspaceArn = 'arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e';
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
@@ -113,7 +111,6 @@ export default class MultiClusterBuilderConstruct {
             })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
-            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName,ampWorkspaceName))
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
                     repositories:[{
