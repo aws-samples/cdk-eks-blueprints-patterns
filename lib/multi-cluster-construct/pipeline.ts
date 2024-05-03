@@ -30,9 +30,7 @@ export class PipelineMultiCluster {
 
         const stages : blueprints.StackStage[] = [];
 
-
         const blueprintGrafanaConstruct = new GrafanaMonitoringConstruct();
-        const ampProvider = blueprintGrafanaConstruct.ampProvider;
         const blueprintGrafana = blueprintGrafanaConstruct.create(scope, accountID, region);
 
         stages.push({
@@ -42,7 +40,7 @@ export class PipelineMultiCluster {
         });
         for(const version of CLUSTER_VERSIONS) {
             let clusterProps = this.getClusterProps()
-            const blueprint1 = new MultiClusterBuilderConstruct().create(scope,ampProvider, accountID, region);
+            const blueprint1 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
 
             clusterProps.amiType = eks.NodegroupAmiType.AL2_X86_64;
             clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)];
@@ -57,7 +55,7 @@ export class PipelineMultiCluster {
             });
 
             clusterProps = this.getClusterProps()
-            const blueprint2 = new MultiClusterBuilderConstruct().create(scope,ampProvider, accountID, region);
+            const blueprint2 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
             clusterProps.amiType = eks.NodegroupAmiType.AL2_ARM_64;
             clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)];
             const blueprintARM = blueprint2
@@ -73,7 +71,7 @@ export class PipelineMultiCluster {
 
         const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
-        const blueprint3 = new MultiClusterBuilderConstruct().create(scope,ampProvider, accountID, region);
+        const blueprint3 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
 
         let clusterProps = this.getClusterProps()
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
@@ -88,7 +86,7 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketX86.clone(region)
         });
 
-        const blueprint4 = new MultiClusterBuilderConstruct().create(scope,ampProvider, accountID, region);
+        const blueprint4 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
         
         clusterProps = this.getClusterProps()
         clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_ARM_64;
@@ -130,11 +128,11 @@ export class PipelineMultiCluster {
     }
 
     getClusterProps() {
-        const clusterProps : blueprints.MngClusterProviderProps = {
+        let clusterProps : blueprints.MngClusterProviderProps = {
             maxSize : 2,
             minSize : 1,
             desiredSize: 1,
-            diskSize: 50
+            diskSize: 100
         };
         return clusterProps
       }

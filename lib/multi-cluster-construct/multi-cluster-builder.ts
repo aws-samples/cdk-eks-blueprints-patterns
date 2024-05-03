@@ -5,21 +5,21 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as amp from 'aws-cdk-lib/aws-aps';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
 import * as fs from 'fs';
-import { GrafanaMonitoringConstruct } from './grafana-monitor-builder';
+
 
 export default class MultiClusterBuilderConstruct {
-    build(scope: Construct, ampProvider: blueprints.CreateAmpProvider, id: string, account?: string, region?: string ) {
+    build(scope: Construct, id: string, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
  
         const stackID = `${id}-blueprint`;
-        this.create(scope, ampProvider, accountID, awsRegion)
+        this.create(scope, accountID, awsRegion)
             .build(scope, stackID);
     }
     
 
-    create(scope: Construct,ampProvider:blueprints.CreateAmpProvider, account?: string, region?: string ) {
+    create(scope: Construct, account?: string, region?: string ) {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
@@ -102,12 +102,6 @@ export default class MultiClusterBuilderConstruct {
                 awsRegion: region 
             }
         };
-        // ampAddOnProps.enableAPIServerJob = true,
-
-        // ampAddOnProps.ampRules?.ruleFilePaths.push(
-        //     __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml'
-        // );
-        
 
         return blueprints.ObservabilityBuilder.builder()
             .account(accountID)
@@ -118,7 +112,7 @@ export default class MultiClusterBuilderConstruct {
             })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
-            .resourceProvider(ampWorkspaceName, ampProvider)
+            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName,ampWorkspaceName))
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
                     repositories:[{
@@ -133,8 +127,8 @@ export default class MultiClusterBuilderConstruct {
                         kustomizations: [
                             {kustomizationPath: "./eks-anywhere-common/Addons/Core/Botkube"},
                             {kustomizationPath: "./eks-anywhere-common/Addons/Core/Kube-Observer"},
-                            // {kustomizationPath: "./eks-anywhere-common/Testers/"},
-                            // {kustomizationPath: "./eks-cloud/Testers"},
+                            {kustomizationPath: "./eks-anywhere-common/Testers/"},
+                            {kustomizationPath: "./eks-cloud/Testers"},
                             {kustomizationPath: "./eks-anywhere-common/Addons/Partner"}, 
                             {kustomizationPath: "./eks-cloud/Partner"}, 
                         ],
