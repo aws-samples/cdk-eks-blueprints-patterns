@@ -45,11 +45,7 @@ make list
 
 ### Deploying the `GuardDutySetupStack` stack
 
-The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the features of your choice enabled. For the purposes of the Security seciton of this workshop only the GuardDuty EKS Protection features are required.
-
-![Amazon GuardDuty console](../images/2023-guardduty-2-configure.jpg)
-
-**Note:** You can only deploy this stack if you have not already enabled GuardDuty in the target account and region. If GuardDuty has been enabled already, do not attempt to deploy the stack as GuardDuty can only be enabled once per account and region. Instead, check that the [EKS Protection](https://docs.aws.amazon.com/guardduty/latest/ug/kubernetes-protection.html) features have been enabled either in the AWS GuardDuty console as shown in the image above, or using the AWS CLI, then proceed to **Deploying the blueprint workload** step.
+The `GuardDutySetupStack` stack enables GuardDuty Detector for the account with all the features of your choice enabled.
 
 To deploy the stack, run the following command:
 
