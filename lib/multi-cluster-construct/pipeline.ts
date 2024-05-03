@@ -16,9 +16,9 @@ export class PipelineMultiCluster {
         const region = "us-west-2" ;
 
         // environments IDs consts
-        const X86_ENV_ID = `eks-x86`;
-        const ARM_ENV_ID = `eks-arm`;
-        const BR_ENV_ID = `eks-br`;
+        const X86_ENV_ID = `eks-x86--`;
+        const ARM_ENV_ID = `eks-arm--`;
+        const BR_ENV_ID = `eks-br--`;
 
 
         const CLUSTER_VERSIONS = [
