@@ -23,3 +23,6 @@ yarn.lock
 site
 # macOS extraneous file
 .DS_STORE
+
+# Python virtual env directory
+*.venv*
