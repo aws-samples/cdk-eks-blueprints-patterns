@@ -23,84 +23,90 @@ export default class MultiClusterBuilderConstruct {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
-
+        
         const ampWorkspaceName = "conformitronWorkspace";
-        const ampEndpoint = 'ampPrometheusWorkspace.attrPrometheusEndpoint';
-        const ampWorkspaceArn = 'arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e';
+        const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
+        const ampWorkspaceArn = `arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e`;
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,
-            ampRules: {
-                ampWorkspaceArn: ampWorkspaceArn,
-                ruleFilePaths: [
-                    __dirname + '/../common/resources/amp-config/alerting-rules.yml',
-                    __dirname + '/../common/resources/amp-config/recording-rules.yml'
-                ]
-            }
+            // ampRules: {
+            //     ampWorkspaceArn: ampWorkspaceArn,
+            //     ruleFilePaths: [
+            //         __dirname + '/../common/resources/amp-config/alerting-rules.yml',
+            //         __dirname + '/../common/resources/amp-config/recording-rules.yml'
+            //     ]
+            // }
         };
 
-        let doc = blueprints.utils.readYamlDocument(__dirname + '/../common/resources/otel-collector-config.yml');
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableJavaMonJob }}",
-            "{{ stop enableJavaMonJob }}",
-            false
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableNginxMonJob }}",
-            "{{ stop enableNginxMonJob }}",
-            false
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableIstioMonJob }}",
-            "{{ stop enableIstioMonJob }}",
-            false
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableAPIserverJob }}",
-            "{{ stop enableAPIserverJob }}",
-            false
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableAdotMetricsCollectionJob}}",
-            "{{ stop enableAdotMetricsCollectionJob }}",
-            false
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableAdotMetricsCollectionTelemetry }}",
-            "{{ stop enableAdotMetricsCollectionTelemetry }}",
-            true
-        );
+        // let doc = blueprints.utils.readYamlDocument(__dirname + '/../common/resources/otel-collector-config.yml');
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableJavaMonJob }}",
+        //     "{{ stop enableJavaMonJob }}",
+        //     false
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableNginxMonJob }}",
+        //     "{{ stop enableNginxMonJob }}",
+        //     false
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableIstioMonJob }}",
+        //     "{{ stop enableIstioMonJob }}",
+        //     false
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableAPIserverJob }}",
+        //     "{{ stop enableAPIserverJob }}",
+        //     false
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableAdotMetricsCollectionJob}}",
+        //     "{{ stop enableAdotMetricsCollectionJob }}",
+        //     false
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableAdotMetricsCollectionTelemetry }}",
+        //     "{{ stop enableAdotMetricsCollectionTelemetry }}",
+        //     true
+        // );
 
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableAdotContainerLogsReceiver }}",
-            "{{ stop enableAdotContainerLogsReceiver }}",
-            true
-        );
-        doc = blueprints.utils.changeTextBetweenTokens(
-            doc,
-            "{{ start enableAdotContainerLogsExporter }}",
-            "{{ stop enableAdotContainerLogsExporter }}",
-            true
-        );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableAdotContainerLogsReceiver }}",
+        //     "{{ stop enableAdotContainerLogsReceiver }}",
+        //     true
+        // );
+        // doc = blueprints.utils.changeTextBetweenTokens(
+        //     doc,
+        //     "{{ start enableAdotContainerLogsExporter }}",
+        //     "{{ stop enableAdotContainerLogsExporter }}",
+        //     true
+        // );
 
-        fs.writeFileSync(__dirname + '/../common/resources/otel-collector-config-new.yml', doc);
+        // fs.writeFileSync(__dirname + '/../common/resources/otel-collector-config-new.yml', doc);
 
         ampAddOnProps.openTelemetryCollector = {
             manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
             manifestParameterMap: {
-                logGroupName: `/aws/eks/conformitron/${ampWorkspaceName}`,
+                logGroupName: `/aws/eks/conformitron/myWorkspace`,
                 logStreamName: `$NODE_NAME`,
                 logRetentionDays: 30,
                 awsRegion: region 
             }
         };
+        // ampAddOnProps.enableAPIServerJob = true,
+
+        // ampAddOnProps.ampRules?.ruleFilePaths.push(
+        //     __dirname + '/../common/resources/amp-config/apiserver/recording-rules.yml'
+        // );
+        
 
         return blueprints.ObservabilityBuilder.builder()
             .account(accountID)
