@@ -43,6 +43,8 @@ export class EksConfigSetup extends Stack {
                         } else {
                             if (data.DeliveryChannels?.length === 0) {
                                 console.log("AWS Config delivery channel is not enabled in this region.");
+                                console.log("Configuring AWS Config delivery channel...");
+
                                 // Setup an s3 bucket for the config recorder delivery channel
                                 const awsConfigBucket = new s3.Bucket(this, "BucketAwsConfig", {
                                     versioned: true, enforceSSL: true,
@@ -55,31 +57,6 @@ export class EksConfigSetup extends Stack {
                                     resources: [`${awsConfigBucket.bucketArn}/*`],
                                     conditions: { Bool: { "aws:SecureTransport": false } },
                                 });
-
-                                // Create an SNS topic for AWS Config notifications
-                                const configTopic = new sns.Topic(this, "ConfigNotificationTopic");
-                                configTopic.addSubscription(new subs.EmailSubscription(email));
-                                const eventRule = new events.Rule(this, "ConfigEventRule", {
-                                    eventPattern: {
-                                        source: ["aws.config"],
-                                        detailType: ["Config Rules Compliance Change"],
-                                    },
-                                });
-
-                                // Format the Config notifications
-                                eventRule.addTarget(
-                                    new eventTargets.SnsTopic(configTopic, {
-                                        message: events.RuleTargetInput.fromText(
-                                            `WARNING: AWS Config has detected a ${events.EventField.fromPath(
-                                                "$.detail.newEvaluationResult.complianceType"
-                                            )} for the rule ${events.EventField.fromPath(
-                                                "$.detail.configRuleName"
-                                            )}. The compliance status is ${events.EventField.fromPath(
-                                                "$.detail.newEvaluationResult.evaluationResult"
-                                            )}.`
-                                        ),
-                                    })
-                                );
 
                                 policyStatement1.effect = iam.Effect.DENY;
                                 awsConfigBucket.addToResourcePolicy(policyStatement1);
@@ -105,6 +82,31 @@ export class EksConfigSetup extends Stack {
 
                                 policyStatement3.effect = iam.Effect.ALLOW;
                                 awsConfigBucket.addToResourcePolicy(policyStatement3);
+
+                                // Create an SNS topic for AWS Config notifications
+                                const configTopic = new sns.Topic(this, "ConfigNotificationTopic");
+                                configTopic.addSubscription(new subs.EmailSubscription(email));
+                                const eventRule = new events.Rule(this, "ConfigEventRule", {
+                                    eventPattern: {
+                                        source: ["aws.config"],
+                                        detailType: ["Config Rules Compliance Change"],
+                                    },
+                                });
+
+                                // Format the Config notifications
+                                eventRule.addTarget(
+                                    new eventTargets.SnsTopic(configTopic, {
+                                        message: events.RuleTargetInput.fromText(
+                                            `WARNING: AWS Config has detected a ${events.EventField.fromPath(
+                                                "$.detail.newEvaluationResult.complianceType"
+                                            )} for the rule ${events.EventField.fromPath(
+                                                "$.detail.configRuleName"
+                                            )}. The compliance status is ${events.EventField.fromPath(
+                                                "$.detail.newEvaluationResult.evaluationResult"
+                                            )}.`
+                                        ),
+                                    })
+                                );
 
                                 // Create the AWS Config delivery channel with the s3 bucket and sns topic
                                 new config.CfnDeliveryChannel(this, "DeliveryChannel", {
