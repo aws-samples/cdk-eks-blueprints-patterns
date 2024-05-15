@@ -26,115 +26,124 @@ export class EksConfigSetup extends Stack {
 
         (async () => {
             const currentRegion = process.env.CDK_DEFAULT_REGION!;
-            const client = new ConfigServiceClient();
-            const command = new DescribeConfigurationRecordersCommand();
-            const response = await client.send(command);
+            const configclient = new ConfigServiceClient();
 
-            if (response.ConfigurationRecorders.length > 0) {
-                logger.info(`AWS Config is already enabled in ${currentRegion} region.`);
-            } else {
-                logger.info(`AWS Config is not enabled in ${currentRegion} region.`);
-                logger.info("Enabling AWS Config...");
+            try {
+                const command = new DescribeConfigurationRecordersCommand();
+                const response = await configclient.send(command);
 
-                // Create an AWS Config service role
-                const awsConfigRole = new iam.Role(this, "RoleAwsConfig", {
-                    assumedBy: new iam.ServicePrincipal("config.amazonaws.com"),
-                });
-
-                // Attach the service role policy
-                awsConfigRole.addManagedPolicy(
-                    iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWS_ConfigRole")
-                );
-
-                // Check if delivery channel is already enabled
-                const command = new DescribeDeliveryChannelsCommand();
-                const response = await client.send(command);
-
-                if (response.DeliveryChannels.length > 0) {
-                    logger.info(`AWS Config delivery channel is already enabled in ${currentRegion} region.`);
+                if (response.ConfigurationRecorders && response.ConfigurationRecorders.length > 0) {
+                    logger.info(`AWS Config is already enabled in ${currentRegion} region.`);
                 } else {
-                    logger.info(`AWS Config delivery channel is not enabled in ${currentRegion} region.`);
-                    logger.info("Configuring AWS Config delivery channel...");
-                    
-                    // Create an AWS Config delivery channel
-                    // Setup an s3 bucket for the config recorder delivery channel
-                    const awsConfigBucket = new s3.Bucket(this, "BucketAwsConfig", {
-                        versioned: true, enforceSSL: true,
+                    logger.info(`AWS Config is not enabled in ${currentRegion} region.`);
+                    logger.info("Enabling AWS Config...");
+
+                    // Create an AWS Config service role
+                    const awsConfigRole = new iam.Role(this, "RoleAwsConfig", {
+                        assumedBy: new iam.ServicePrincipal("config.amazonaws.com"),
                     });
 
-                    // Configure bucket policy statements and attach them to the s3 bucket
-                    const policyStatement1 = new iam.PolicyStatement({
-                        actions: ["s3:*"],
-                        principals: [new iam.AnyPrincipal()],
-                        resources: [`${awsConfigBucket.bucketArn}/*`],
-                        conditions: { Bool: { "aws:SecureTransport": false } },
-                    });
-
-                    policyStatement1.effect = iam.Effect.DENY;
-                    awsConfigBucket.addToResourcePolicy(policyStatement1);
-
-                    const policyStatement2 = new iam.PolicyStatement({
-                        actions: ["s3:PutObject"],//
-                    
-                        principals: [new iam.ServicePrincipal("config.amazonaws.com")],
-                        resources: [`${awsConfigBucket.bucketArn}/*`],
-                        conditions: {
-                            StringEquals: { "s3:x-amz-acl": "bucket-owner-full-control" },
-                        },
-                    });
-
-                    policyStatement2.effect = iam.Effect.ALLOW;
-                    awsConfigBucket.addToResourcePolicy(policyStatement2);
-
-                    const policyStatement3 = new iam.PolicyStatement({
-                        actions: ["s3:GetBucketAcl"],
-                        principals: [new iam.ServicePrincipal("config.amazonaws.com")],
-                        resources: [awsConfigBucket.bucketArn],
-                    });
-
-                    policyStatement3.effect = iam.Effect.ALLOW;
-                    awsConfigBucket.addToResourcePolicy(policyStatement3);
-
-                    // Create an SNS topic for AWS Config notifications
-                    const configTopic = new sns.Topic(this, "ConfigNotificationTopic");
-                    configTopic.addSubscription(new subs.EmailSubscription(email));
-                    const eventRule = new events.Rule(this, "ConfigEventRule", {
-                        eventPattern: {
-                            source: ["aws.config"],
-                            detailType: ["Config Rules Compliance Change"],
-                        },
-                    });
-
-                    // Format the Config notifications
-                    eventRule.addTarget(
-                        new eventTargets.SnsTopic(configTopic, {
-                            message: events.RuleTargetInput.fromText(
-                                `WARNING: AWS Config has detected a ${events.EventField.fromPath(
-                                    "$.detail.newEvaluationResult.complianceType"
-                                )} for the rule ${events.EventField.fromPath(
-                                    "$.detail.configRuleName"
-                                )}. The compliance status is ${events.EventField.fromPath(
-                                    "$.detail.newEvaluationResult.evaluationResult"
-                                )}.`
-                            ),
-                        })
+                    // Attach the service role policy
+                    awsConfigRole.addManagedPolicy(
+                        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWS_ConfigRole")
                     );
 
-                    // Create the AWS Config delivery channel with the s3 bucket and sns topic
-                    new config.CfnDeliveryChannel(this, "DeliveryChannel", {
+                    // Check if delivery channel is already enabled
+                    try {
+                        const command = new DescribeDeliveryChannelsCommand();
+                        const response = await configclient.send(command);
+
+                        if (response.DeliveryChannels && response.DeliveryChannels.length > 0) {
+                            logger.info(`AWS Config delivery channel is already enabled in ${currentRegion} region.`);
+                        } else {
+                            logger.info(`AWS Config delivery channel is not enabled in ${currentRegion} region.`);
+                            logger.info("Configuring AWS Config delivery channel...");
+                            
+                            // Create an AWS Config delivery channel
+                            // Setup an s3 bucket for the config recorder delivery channel
+                            const awsConfigBucket = new s3.Bucket(this, "BucketAwsConfig", {
+                                versioned: true, enforceSSL: true,
+                            });
+
+                            // Configure bucket policy statements and attach them to the s3 bucket
+                            const policyStatement1 = new iam.PolicyStatement({
+                                actions: ["s3:*"],
+                                principals: [new iam.AnyPrincipal()],
+                                resources: [`${awsConfigBucket.bucketArn}/*`],
+                                conditions: { Bool: { "aws:SecureTransport": false } },
+                            });
+
+                            policyStatement1.effect = iam.Effect.DENY;
+                            awsConfigBucket.addToResourcePolicy(policyStatement1);
+
+                            const policyStatement2 = new iam.PolicyStatement({
+                                actions: ["s3:PutObject"],//
+                            
+                                principals: [new iam.ServicePrincipal("config.amazonaws.com")],
+                                resources: [`${awsConfigBucket.bucketArn}/*`],
+                                conditions: {
+                                    StringEquals: { "s3:x-amz-acl": "bucket-owner-full-control" },
+                                },
+                            });
+
+                            policyStatement2.effect = iam.Effect.ALLOW;
+                            awsConfigBucket.addToResourcePolicy(policyStatement2);
+
+                            const policyStatement3 = new iam.PolicyStatement({
+                                actions: ["s3:GetBucketAcl"],
+                                principals: [new iam.ServicePrincipal("config.amazonaws.com")],
+                                resources: [awsConfigBucket.bucketArn],
+                            });
+
+                            policyStatement3.effect = iam.Effect.ALLOW;
+                            awsConfigBucket.addToResourcePolicy(policyStatement3);
+
+                            // Create an SNS topic for AWS Config notifications
+                            const configTopic = new sns.Topic(this, "ConfigNotificationTopic");
+                            configTopic.addSubscription(new subs.EmailSubscription(email));
+                            const eventRule = new events.Rule(this, "ConfigEventRule", {
+                                eventPattern: {
+                                    source: ["aws.config"],
+                                    detailType: ["Config Rules Compliance Change"],
+                                },
+                            });
+
+                            // Format the Config notifications
+                            eventRule.addTarget(
+                                new eventTargets.SnsTopic(configTopic, {
+                                    message: events.RuleTargetInput.fromText(
+                                        `WARNING: AWS Config has detected a ${events.EventField.fromPath(
+                                            "$.detail.newEvaluationResult.complianceType"
+                                        )} for the rule ${events.EventField.fromPath(
+                                            "$.detail.configRuleName"
+                                        )}. The compliance status is ${events.EventField.fromPath(
+                                            "$.detail.newEvaluationResult.evaluationResult"
+                                        )}.`
+                                    ),
+                                })
+                            );
+
+                            // Create the AWS Config delivery channel with the s3 bucket and sns topic
+                            new config.CfnDeliveryChannel(this, "DeliveryChannel", {
+                                name: "default",
+                                s3BucketName: awsConfigBucket.bucketName,
+                                snsTopicArn: configTopic.topicArn,
+                            });
+                        }
+                    } catch (error) {
+                        logger.error(error);
+                    }
+
+                    logger.info("Configuring AWS Config recorder...");
+
+                    // Create the AWS Config recorder
+                    new config.CfnConfigurationRecorder(this, "Recorder", {
                         name: "default",
-                        s3BucketName: awsConfigBucket.bucketName,
-                        snsTopicArn: configTopic.topicArn,
+                        roleArn: awsConfigRole.roleArn,
                     });
                 }
-
-                logger.info("Configuring AWS Config recorder...");
-
-                // Create the AWS Config recorder
-                new config.CfnConfigurationRecorder(this, "Recorder", {
-                    name: "default",
-                    roleArn: awsConfigRole.roleArn,
-                });
+            } catch (error) {
+                logger.error(error);
             }
         })();
     }
