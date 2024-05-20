@@ -118,12 +118,12 @@ export class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
+            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .withCoreDnsProps({
                 version:"v1.9.3-eksbuild.11"
             })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
-            .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 ...addOns
             );
