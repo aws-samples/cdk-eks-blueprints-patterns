@@ -115,6 +115,7 @@ export class GrafanaMonitoringConstruct {
             }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
             new GrafanaOperatorSecretAddon(),
+            new blueprints.addons.AmpAddOn(ampAddOnProps),
             new blueprints.addons.SSMAgentAddOn()
         ];
 
