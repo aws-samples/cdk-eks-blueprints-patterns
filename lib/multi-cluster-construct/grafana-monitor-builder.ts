@@ -115,7 +115,6 @@ export class GrafanaMonitoringConstruct {
             }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
             new GrafanaOperatorSecretAddon(),
-            new blueprints.addons.AmpAddOn(ampAddOnProps),
             new blueprints.addons.SSMAgentAddOn()
         ];
 
@@ -123,6 +122,11 @@ export class GrafanaMonitoringConstruct {
             .account(account)
             .region(region)
             .version(eks.KubernetesVersion.V1_27)
+            .withCoreDnsProps({
+                version:"v1.9.3-eksbuild.11"
+            })
+            .withAmpProps(ampAddOnProps)
+            .enableOpenSourcePatternAddOns()
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .addOns(
                 ...addOns
