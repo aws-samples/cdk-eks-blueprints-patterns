@@ -109,10 +109,6 @@ export class GrafanaMonitoringConstruct {
 
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
         const addOns: Array<blueprints.ClusterAddOn> = [
-            new blueprints.addons.ExternalsSecretsAddOn(),
-            new blueprints.addons.GrafanaOperatorAddon({
-                createNamespace: true,
-            }),
             new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
             new GrafanaOperatorSecretAddon(),
             new blueprints.addons.SSMAgentAddOn()
