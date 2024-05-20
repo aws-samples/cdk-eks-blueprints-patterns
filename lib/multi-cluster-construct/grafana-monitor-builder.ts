@@ -25,9 +25,9 @@ export class GrafanaMonitoringConstruct {
         
 
         const ampWorkspaceName = "conformitronWorkspace";
-        const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
-        const ampEndpoint = ampPrometheusWorkspace.attrPrometheusEndpoint;
-        const ampWorkspaceArn = ampPrometheusWorkspace.attrArn;
+        // const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
+        const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
+        const ampWorkspaceArn = `arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e`;
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,
