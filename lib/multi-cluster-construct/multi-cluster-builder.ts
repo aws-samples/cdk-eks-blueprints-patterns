@@ -24,7 +24,6 @@ export default class MultiClusterBuilderConstruct {
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
         
-        const ampWorkspaceName = "conformitronWorkspace";
         const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
         const ampWorkspaceArn = `arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e`;
 
@@ -95,7 +94,7 @@ export default class MultiClusterBuilderConstruct {
         ampAddOnProps.openTelemetryCollector = {
             manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
             manifestParameterMap: {
-                logGroupName: `/aws/eks/conformitron/myWorkspace`,
+                logGroupName: `/aws/eks/conformitron/cluster`,
                 logStreamName: `$NODE_NAME`,
                 logRetentionDays: 30,
                 awsRegion: region 
