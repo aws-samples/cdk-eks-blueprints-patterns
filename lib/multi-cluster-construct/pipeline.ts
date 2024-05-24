@@ -22,8 +22,8 @@ export class PipelineMultiCluster {
 
 
         const CLUSTER_VERSIONS = [
-            // eks.KubernetesVersion.V1_26,
-            // eks.KubernetesVersion.V1_27,
+            eks.KubernetesVersion.V1_26,
+            eks.KubernetesVersion.V1_27,
             eks.KubernetesVersion.V1_28
         ];
 
