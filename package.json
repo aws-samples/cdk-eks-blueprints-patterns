@@ -36,6 +36,7 @@
     "@keptn/keptn-controlplane-eks-blueprints-addon": "^0.5.0",
     "@komodor/komodor-eks-blueprints-addon": "^1.2.0",
     "@kubecost/kubecost-eks-blueprints-addon": "^0.1.8",
+    "kubeshark":"^0.0.9",
     "@newrelic/newrelic-eks-blueprints-addon": "^1.0.9",
     "@paralus/paralus-eks-blueprints-addon": "^0.1.5",
     "@rafaysystems/rafay-eks-blueprints-addon": "^0.0.2",
