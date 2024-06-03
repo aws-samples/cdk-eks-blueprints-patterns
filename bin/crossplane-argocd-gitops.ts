@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import {K8S_VERSIONS_DEV, MultiClusterOptions} from "./multi-cluster-options";
+import {K8S_VERSIONS_DEV, MultiClusterOptions} from "../lib/crossplane-argocd-gitops/multi-cluster-options";
 import {CapacityType, KubernetesVersion} from "aws-cdk-lib/aws-eks";
-import MultiClusterPipelineConstruct from "./multi-cluster-pipeline";
+import MultiClusterPipelineConstruct from "../lib/crossplane-argocd-gitops/multi-cluster-pipeline";
 import * as blueprints from "@aws-quickstart/eks-blueprints";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
@@ -25,7 +25,7 @@ const env : MultiClusterOptions = {
     gitHubSecret,
     nodeGroupCapacityType: CapacityType.ON_DEMAND,
     k8sVersions: K8S_VERSIONS_DEV // K8S_VERSIONS_PROD for full deploy
-}
+};
 
 
 const mngProps: blueprints.MngClusterProviderProps = {
@@ -36,10 +36,10 @@ const mngProps: blueprints.MngClusterProviderProps = {
     maxSize: 3,
 };
 
-console.info("Running CDK with id: addon-tester" );
+console.info("Running CDK with id: crossplane-argocd-gitops" );
 console.info("Running CDK with: " + JSON.stringify(env));
 
-new MultiClusterPipelineConstruct().buildAsync(app,  "addon-tester", env , mngProps).catch(
+new MultiClusterPipelineConstruct().buildAsync(app,  "crossplane-argocd-gitops", env , mngProps).catch(
     (e) => console.log("Pipeline construct failed because of error ", e)
 );
 

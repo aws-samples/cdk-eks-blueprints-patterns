@@ -3,8 +3,8 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import {K8S_VERSIONS_DEV, MultiClusterOptions} from "./multi-cluster-options";
 import {NodegroupAmiType} from "aws-cdk-lib/aws-eks";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import ManagementClusterBuilder from "../lib/crossplane-argocd-gitops/management-cluster-builder";
-import {ProviderMgmtRoleTeam} from "../lib/crossplane-argocd-gitops/custom-addons/mgmt-role-teams";
+import ManagementClusterBuilder from "./management-cluster-builder";
+import {ProviderMgmtRoleTeam} from "./custom-addons/mgmt-role-teams";
 import {GenericClusterProvider, LookupRoleProvider} from "@aws-quickstart/eks-blueprints";
 import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -31,14 +31,14 @@ export default class MultiClusterPipelineConstruct {
                 namespace: "external-secrets",
                 values: { webhook: { port: 9443 } }
             })
-        ]
+        ];
 
         const clusterProps: blueprints.MngClusterProviderProps = {
             minSize: props.minSize,
             maxSize: props.maxSize,
             desiredSize: props.desiredSize,
             nodeGroupCapacityType: props.nodeGroupCapacityType,
-        }
+        };
 
         const stages : blueprints.StackStage[] = [];
         const vpcProvider= new blueprints.VpcProvider();
@@ -112,10 +112,10 @@ export default class MultiClusterPipelineConstruct {
                 ])
             )
             .repository({
-                    targetRevision : gitProps.revision,
-                    credentialsSecretName: gitProps.secretName,
-                    repoUrl: gitProps.repoName
-              }
+                targetRevision : gitProps.revision,
+                credentialsSecretName: gitProps.secretName,
+                repoUrl: gitProps.repoName
+            }
             )
             .wave({ id: `mgmt-cluster-stage`, stages: mgmtStage })
             .wave({ id: `${id}-wave`, stages })

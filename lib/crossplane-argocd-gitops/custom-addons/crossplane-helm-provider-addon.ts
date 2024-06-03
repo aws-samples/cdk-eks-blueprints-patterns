@@ -10,7 +10,6 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
     @dependable(UpboundCrossplaneAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
-        const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
 
         const role_binding = {
             apiVersion: "rbac.authorization.k8s.io/v1",
@@ -39,16 +38,16 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
                 name: "helm-runtime-config"               
             },
             spec: {
-              deploymentTemplate: {
-                spec: { 
-                    replicas: 1,
-                    selector: {},
-                    template: {}
+                deploymentTemplate: {
+                    spec: { 
+                        replicas: 1,
+                        selector: {},
+                        template: {}
+                    }
+                },
+                serviceAccountTemplate: { 
+                    metadata: { name: "helm-provider" } 
                 }
-              },
-               serviceAccountTemplate: { 
-                metadata: { name: "helm-provider" } 
-               }
             }
         };
 

@@ -1,10 +1,8 @@
 import { Construct } from 'constructs';
-import { utils } from '@aws-quickstart/eks-blueprints';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import { ObservabilityBuilder } from '@aws-quickstart/eks-blueprints';
 import { UpboundCrossplaneAddOn } from './custom-addons/upbound-crossplane-addon';
-import  { CrossplaneAwsProviderAddon } from './custom-addons/crossplane-aws-provider-addon';
 import  { CrossplaneK8sProviderAddon } from './custom-addons/crossplane-k8s-provider-addon';
 import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-provider-addon';
 
@@ -24,7 +22,6 @@ export default class ManagementClusterBuilder {
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.ExternalsSecretsAddOn,
             new UpboundCrossplaneAddOn,
-            new CrossplaneAwsProviderAddon,
             new CrossplaneK8sProviderAddon,
             new CrossplaneHelmProviderAddon,
             new blueprints.SecretsStoreAddOn,

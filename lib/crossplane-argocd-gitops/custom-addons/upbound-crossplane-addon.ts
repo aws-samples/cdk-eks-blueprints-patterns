@@ -2,9 +2,9 @@ import 'source-map-support/register';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
 import { Values } from "@aws-quickstart/eks-blueprints/dist/spi";
-import merge from "ts-deepmerge";
+import { merge } from "ts-deepmerge";
 import { createNamespace } from '@aws-quickstart/eks-blueprints/dist/utils';
-import {ManagedPolicy, Policy, PolicyDocument} from 'aws-cdk-lib/aws-iam';
+import { Policy, PolicyDocument} from 'aws-cdk-lib/aws-iam';
 import * as cdk from 'aws-cdk-lib';
 
 /**
@@ -32,9 +32,9 @@ export class UpboundCrossplaneAddOn extends blueprints.HelmAddOn {
     readonly options: UpboundCrossplaneAddOnProps;
 
     constructor( props?: UpboundCrossplaneAddOnProps) {
-      super({...defaultProps, ...props});
+        super({...defaultProps, ...props});
 
-      this.options = this.props as UpboundCrossplaneAddOnProps;
+        this.options = this.props as UpboundCrossplaneAddOnProps;
     }
 
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
@@ -56,9 +56,9 @@ export class UpboundCrossplaneAddOn extends blueprints.HelmAddOn {
                 "Version": "2012-10-17",
                 "Statement": [
                     {
-                    "Effect": "Allow",
-                    "Action": ["sts:AssumeRole"],
-                    "Resource": `arn:aws:iam::${cluster.stack.account}:role/eks-connector-role`
+                        "Effect": "Allow",
+                        "Action": ["sts:AssumeRole"],
+                        "Resource": `arn:aws:iam::${cluster.stack.account}:role/eks-connector-role`
                     },
                     {
                         "Effect": "Allow",
