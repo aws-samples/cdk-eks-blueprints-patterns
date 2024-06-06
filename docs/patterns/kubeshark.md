@@ -83,10 +83,38 @@ Then you should be able to see view like this
 
 ## Example
 
-In the below example, i'm writing a query to identify the traffic flow from the pod "nginx" in the "default" namespace to "aws.com" and "coredns". The query is writen by [Kubeshark Filter Language (KFL)](https://docs.kubeshark.co/en/filtering#kfl-syntax-reference) is the language implemented inside kubeshark/worker that enables the user to filter the traffic efficiently and precisely.
+1.) deploy nginx pod using the below command.
+```
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+EOF
+```
+
+
+2.) Try to access "aws.com" to generate traffic flow using the below command.
+```
+kubectl exec nginx curl https://aws.com
+```
+
+
+3.) Access kubeshark using the below command.
+```
+kubectl -n kube-system port-forward svc/kubeshark-front 3000:80
+```
+
+
+4.) Run Kubeshark query to identify the traffic flow.
+
+As shown below, the Kubeshark query used to identify the traffic flowing from the pod "nginx" in the "default" namespace to "aws.com" and "coredns". The query is writen by [Kubeshark Filter Language (KFL)](https://docs.kubeshark.co/en/filtering#kfl-syntax-reference) is the language implemented inside kubeshark/worker that enables the user to filter the traffic efficiently and precisely.
 
 ![query](https://github.com/zghanem0/kubeshark/blob/main/api.png?raw=true)
 
 Also you can visualize the traffic flow and bandwidth using service map feature as shown below.
 ![Service Map](https://github.com/zghanem0/kubeshark/blob/main/map.png?raw=true)
-
