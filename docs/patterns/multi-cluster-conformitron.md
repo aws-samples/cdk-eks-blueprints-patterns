@@ -14,7 +14,7 @@ The addons may require some additional secrets to be created for the addons to f
 1. FluxCD Bootstrap - the pattern configure the FluxCD addon to point to the [workload repository](https://github.com/aws-samples/eks-anywhere-addons) of the EKS-A Addons.
 1. Kustomize - as part of the FluxCD addon, the pattern uses Kustomize to apply all the addons that are in the repository.
 
-You can find the App of Apps configuration for this pattern in the workload repository under the folder [`multi-cluster-construct`](https://github.com/aws-samples/cdk-eks-blueprints-patterns/lib/multi-cluster-construct).
+You can find the App of Apps configuration for this pattern in the workload repository under the folder `multi-cluster-construct`.
 
 ## Prerequisites
 

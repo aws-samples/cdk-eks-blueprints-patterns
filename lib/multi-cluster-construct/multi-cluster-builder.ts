@@ -2,9 +2,7 @@ import { Construct } from 'constructs';
 
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import * as amp from 'aws-cdk-lib/aws-aps';
 import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
-import * as fs from 'fs';
 
 
 export default class MultiClusterBuilderConstruct {
@@ -24,7 +22,7 @@ export default class MultiClusterBuilderConstruct {
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
         
-        const ampEndpoint = blueprints.utils.valueFromContext(scope, "conformitron.amp.endpoint", "`https://aps-workspaces.<region>.amazonaws.com/workspaces/<Workspace-id>/");
+        const ampEndpoint = blueprints.utils.valueFromContext(scope, "conformitron.amp.endpoint", "https://aps-workspaces.<region>.amazonaws.com/workspaces/<workspace-id>/");
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,

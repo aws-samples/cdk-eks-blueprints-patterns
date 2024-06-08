@@ -1,6 +1,5 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
 import { GrafanaMonitoringConstruct } from './grafana-monitor-builder';
@@ -37,7 +36,7 @@ export class PipelineMultiCluster {
            Similar to approach in multi-region-construct pattern
         */
 
-        const clusterProps = this.getClusterProps()
+        const clusterProps = this.getClusterProps();
 
         for(const version of CLUSTER_VERSIONS) {
             const blueprintBuilderX86 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
@@ -136,6 +135,6 @@ export class PipelineMultiCluster {
             desiredSize: 1,
             diskSize: 100
         };
-        return clusterProps
-      }
+        return clusterProps;
+    }
 }

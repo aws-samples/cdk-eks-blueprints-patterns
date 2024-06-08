@@ -22,23 +22,23 @@ export enum ClusterName {
 
 export const clusterMappings : {[key in ClusterName]?: InstanceMapping } = {
     [ClusterName.ARM]: {
-      amiType: eks.NodegroupAmiType.AL2_ARM_64,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)
+        amiType: eks.NodegroupAmiType.AL2_ARM_64,
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.X86]: {
-      amiType: eks.NodegroupAmiType.AL2_X86_64,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
+        amiType: eks.NodegroupAmiType.AL2_X86_64,
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.BR_ARM]: {
-      amiType: eks.NodegroupAmiType.BOTTLEROCKET_ARM_64,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)
+        amiType: eks.NodegroupAmiType.BOTTLEROCKET_ARM_64,
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.BR_X86]: {
-      amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
+        amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64,
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.MONITORING]: {
-      amiType: eks.NodegroupAmiType.AL2_X86_64,
-      instanceType:  ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE)
+        amiType: eks.NodegroupAmiType.AL2_X86_64,
+        instanceType:  ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE)
     }
 };
