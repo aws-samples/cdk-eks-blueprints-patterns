@@ -1,6 +1,16 @@
 {
   "app": "npx ts-node dist/lib/common/default-main.js",
   "context":{
+    "conformitron":{
+      "amp" : {
+        "endpoint":"https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/",
+        "arn":"arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e"
+      },
+      "amg:": {
+        "endpoint":"https://g-76edcf29d5.grafana-workspace.us-west-2.amazonaws.com"
+      },
+      "versions":["1.28","1.29","1.30"]
+    },
     "fluxRepository": {
       "name": "grafana-dashboards",
       "namespace": "grafana-operator",

@@ -3,8 +3,8 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
-import {GrafanaMonitoringConstruct} from './grafana-monitor-builder';
-
+import { GrafanaMonitoringConstruct } from './grafana-monitor-builder';
+import { ClusterName, clusterMappings } from './clusterMapping';
 
 /**
  * Main multi-cluster deployment pipeline.
@@ -13,95 +13,97 @@ export class PipelineMultiCluster {
 
     async buildAsync(scope: Construct) {
         const accountID = process.env.CDK_DEFAULT_ACCOUNT! ;
-        const region = "us-west-2" ;
+        const region = process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
-        // environments IDs consts
-        const X86_ENV_ID = `eks-x86--`;
-        const ARM_ENV_ID = `eks-arm--`;
-        const BR_ENV_ID = `eks-br--`;
+        const versions = blueprints.utils.valueFromContext(scope, "conformitron.versions", ["1.28","1.29","1.30"]);
 
+        const CLUSTER_VERSIONS = versions.map((v: string) => eks.KubernetesVersion.of(v));
 
-        const CLUSTER_VERSIONS = [
-            eks.KubernetesVersion.V1_26,
-            eks.KubernetesVersion.V1_27,
-            eks.KubernetesVersion.V1_28
-        ];
-
-
+        // Stages in codepipeline
         const stages : blueprints.StackStage[] = [];
 
         const blueprintGrafanaConstruct = new GrafanaMonitoringConstruct();
         const blueprintGrafana = blueprintGrafanaConstruct.create(scope, accountID, region);
 
         stages.push({
-            id: 'Grafana-Monitoring',
+            id: ClusterName.MONITORING,
             stackBuilder: blueprintGrafana
                 .clone(region, accountID)
         });
-        for(const version of CLUSTER_VERSIONS) {
-            let clusterProps = this.getClusterProps()
-            const blueprint1 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
 
-            clusterProps.amiType = eks.NodegroupAmiType.AL2_X86_64;
-            clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)];
-            const blueprintX86 = blueprint1
+        /* TODO: Seperate region for clusters than infra account region, 
+           trust policy is created when pipeline is bootstrapped.
+           It will be helpful for enterprise customers.
+           Similar to approach in multi-region-construct pattern
+        */
+
+        const clusterProps = this.getClusterProps()
+
+        for(const version of CLUSTER_VERSIONS) {
+            const blueprintBuilderX86 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
+            
+            // let clusterProps = this.getClusterProps()
+            clusterProps.amiType = clusterMappings[ClusterName.X86]!.amiType;
+            clusterProps.instanceTypes  = [clusterMappings[ClusterName.X86]!.instanceType];
+            const blueprintX86 = blueprintBuilderX86
                 .version(version)
                 .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
                 .useDefaultSecretEncryption(true);
     
             stages.push({
-                id: `${X86_ENV_ID}-` + version.version.replace(".", "-"),
+                id: ClusterName.X86 + "-" + version.version.replace(".", "-"),
                 stackBuilder : blueprintX86.clone(region)
             });
 
-            clusterProps = this.getClusterProps()
-            const blueprint2 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
-            clusterProps.amiType = eks.NodegroupAmiType.AL2_ARM_64;
-            clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)];
-            const blueprintARM = blueprint2
+            // clusterProps = this.getClusterProps()
+            const blueprintBuilderArm = new MultiClusterBuilderConstruct().create(scope, accountID, region);
+            clusterProps.amiType = clusterMappings[ClusterName.ARM]!.amiType;
+            clusterProps.instanceTypes  = [clusterMappings[ClusterName.ARM]!.instanceType];
+            const blueprintARM = blueprintBuilderArm
                 .version(version)
                 .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
                 .useDefaultSecretEncryption(true);
                         
             stages.push({
-                id: `${ARM_ENV_ID}-` + version.version.replace(".", "-"),
+                id: ClusterName.ARM  + "-" + version.version.replace(".", "-"),
                 stackBuilder : blueprintARM.clone(region)
             });
         }
 
-        const latestVersion = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
+        // Only deploy lates kube version on BR Clusters
+        const LATEST_VERSION = CLUSTER_VERSIONS.at(CLUSTER_VERSIONS.length-1)!;
     
-        const blueprint3 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
+        const blueprintBuilderBrX86= new MultiClusterBuilderConstruct().create(scope, accountID, region);
 
-        let clusterProps = this.getClusterProps()
-        clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_X86_64;
-        clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)];
-        const blueprintBottleRocketX86 = blueprint3
-            .version(latestVersion)
+        // let clusterProps = this.getClusterProps()
+        clusterProps.amiType = clusterMappings[ClusterName.BR_X86]!.amiType;
+        clusterProps.instanceTypes  = [clusterMappings[ClusterName.BR_X86]!.instanceType];
+        const blueprintBrX86 = blueprintBuilderBrX86
+            .version(LATEST_VERSION)
             .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
             .useDefaultSecretEncryption(true);
     
         stages.push({
-            id: `${BR_ENV_ID}-X86` + latestVersion.version.replace(".", "-"),
-            stackBuilder : blueprintBottleRocketX86.clone(region)
+            id: ClusterName.BR_X86 + "-" + LATEST_VERSION.version.replace(".", "-"),
+            stackBuilder : blueprintBrX86.clone(region)
         });
 
-        const blueprint4 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
+        const blueprintBuilderBrArm = new MultiClusterBuilderConstruct().create(scope, accountID, region);
         
-        clusterProps = this.getClusterProps()
-        clusterProps.amiType = eks.NodegroupAmiType.BOTTLEROCKET_ARM_64;
-        clusterProps.instanceTypes  =  [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)];
-        const blueprintBottleRocketArm = blueprint4
-            .version(latestVersion)
+        // clusterProps = this.getClusterProps()
+        clusterProps.amiType = clusterMappings[ClusterName.BR_ARM]!.amiType;
+        clusterProps.instanceTypes  = [clusterMappings[ClusterName.BR_ARM]!.instanceType];
+        const blueprintBottleRocketArm = blueprintBuilderBrArm
+            .version(LATEST_VERSION)
             .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
             .useDefaultSecretEncryption(true);
     
         stages.push({
-            id: `${BR_ENV_ID}-ARM` + latestVersion.version.replace(".", "-"),
+            id: ClusterName.BR_ARM + "-" + LATEST_VERSION.version.replace(".", "-"),
             stackBuilder : blueprintBottleRocketArm.clone(region)
         });
 
-        const gitOwner = 'Howlla';
+        const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
@@ -111,8 +113,8 @@ export class PipelineMultiCluster {
             .codeBuildPolicies(blueprints.DEFAULT_BUILD_POLICIES)
             .repository({
                 repoUrl: gitRepositoryName,
-                credentialsSecretName: 'github-token1',
-                targetRevision: 'test4',
+                credentialsSecretName: 'github-token',
+                targetRevision: 'main',
 
             })
             .wave({

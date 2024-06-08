@@ -24,7 +24,7 @@ export default class MultiClusterBuilderConstruct {
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
         
-        const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
+        const ampEndpoint = blueprints.utils.valueFromContext(scope, "conformitron.amp.endpoint", "`https://aps-workspaces.<region>.amazonaws.com/workspaces/<Workspace-id>/");
 
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,

@@ -23,12 +23,11 @@ export class GrafanaMonitoringConstruct {
         const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
         
-
+        // TODO: CFN import https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Fn.html#static-importwbrvaluesharedvaluetoimport
         const ampWorkspaceName = "conformitronWorkspace";
-        // const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
-        const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
-        const ampWorkspaceArn = `arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e`;
-
+        const ampEndpoint = blueprints.utils.valueFromContext(scope, "conformitron.amp.endpoint", "https://aps-workspaces.<region>.amazonaws.com/workspaces/<workspace-id>/");
+        const ampWorkspaceArn = blueprints.utils.valueFromContext(scope, "conformitron.amp.arn", "arn:aws:aps:<region>:<accountid>:workspace/<workspace-id>");
+        
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,
             ampRules: {
@@ -96,7 +95,7 @@ export class GrafanaMonitoringConstruct {
         ampAddOnProps.openTelemetryCollector = {
             manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
             manifestParameterMap: {
-                logGroupName: `/aws/eks/conformitron/myWorkspace`,
+                logGroupName: `/aws/eks/conformitron/workspace`,
                 logStreamName: `$NODE_NAME`,
                 logRetentionDays: 30,
                 awsRegion: region 
@@ -105,7 +104,7 @@ export class GrafanaMonitoringConstruct {
 
         const fluxRepository: blueprints.FluxGitRepo = blueprints.utils.valueFromContext(scope, "fluxRepository", undefined);
         fluxRepository.values!.AMG_AWS_REGION = region;
-        fluxRepository.values!.AMG_ENDPOINT_URL = 'https://g-76edcf29d5.grafana-workspace.us-west-2.amazonaws.com'; // update this to blueprints.utils.valueFromContext(scope, "fluxRepository", undefined)
+        fluxRepository.values!.AMG_ENDPOINT_URL = blueprints.utils.valueFromContext(scope, "conformitron.amg.endpoint","https://<grafana-id>.grafana-workspace.<region>.amazonaws.com"); 
 
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
         const addOns: Array<blueprints.ClusterAddOn> = [
