@@ -6,6 +6,7 @@ import { UpboundCrossplaneAddOn } from './custom-addons/upbound-crossplane-addon
 import  { CrossplaneK8sProviderAddon } from './custom-addons/crossplane-k8s-provider-addon';
 import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-provider-addon';
 
+const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
 
 export default class ManagementClusterBuilder {
     readonly account: string;
@@ -27,8 +28,8 @@ export default class ManagementClusterBuilder {
             new blueprints.SecretsStoreAddOn,
             new blueprints.ArgoCDAddOn({
                 bootstrapRepo: {
-                    repoUrl: "https://github.com/aws-samples/eks-blueprints-workloads",
-                    path: `./crossplane-arocd-gitops/bootstrap`,
+                    repoUrl: gitUrl,
+                    path: `./crossplane-arocd-gitops/envs/dev`,
                     targetRevision: 'main',
                     credentialsSecretName: 'github-token',
                     credentialsType: 'TOKEN'
