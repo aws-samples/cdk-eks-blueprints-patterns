@@ -43,6 +43,7 @@ nav:
     - Jupyterhub Pattern: 'patterns/jupyterhub.md'
     - Konveyor Pattern: 'patterns/knoveyor.md'
     - Kubeflow Pattern: 'patterns/kubeflow.md'
+    - Kubeshark Pattern: 'patterns/kubeshark.md'
     - Multi environment Pipeline GitOps pattern Pattern: 'patterns/pipeline-multi-env-gitops.md'
     - Nginx Pattern: 'patterns/nginx.md'
     - Secure Ingress and Authentication Pattern: 'patterns/secureingresscognito.md'
