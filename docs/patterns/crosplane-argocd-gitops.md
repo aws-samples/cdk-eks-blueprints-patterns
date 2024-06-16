@@ -7,6 +7,7 @@ The objective of this pattern is to provide GitOps based lifecycle management of
 
 ## Architecture
 
+![crossplane-argocd-gitops](./images/crossplane-argocd-gitops.png)
 
 ## Approach
 
