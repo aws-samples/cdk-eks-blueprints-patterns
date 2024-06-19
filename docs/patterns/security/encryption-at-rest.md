@@ -1,12 +1,12 @@
-# EKS Encryption-at-Rest pattern
+# Data at Rest Encryption
 
 ## Objective
 
 The objective of this pattern is to demonstrate how to enable encryption at rest for EKS cluster using EBS/EFS storage.
 
-To achieve this objective, the pattern utilizes [EBS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/ebs-csi-driver/) to enable encryption-at-rest for EBS volumes. The pattern also leverages [EFS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/efs-csi-driver/) to enable encryption-at-rest for EFS volumes.
+To achieve this objective, the pattern utilizes [EBS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/ebs-csi-driver/) to enable encryption-at-rest for EBS volumes and [EFS CSI Driver Amazon EKS Add-on](https://aws-quickstart.github.io/cdk-eks-blueprints/addons/efs-csi-driver/) to enable encryption-at-rest for EFS volumes.
 
-The pattern also leverages KMS resource provider to create KMS keys for EBS/EFS encryption-at-rest and EFS File System resource provider to create an encrypted EFS file system.
+The pattern also leverages [KMS resource provider](https://aws-quickstart.github.io/cdk-eks-blueprints/resource-providers/kms-key-providers/) to create KMS keys for EBS/EFS encryption-at-rest and [EFS File System resource provider](https://aws-quickstart.github.io/cdk-eks-blueprints/resource-providers/efs-providers/) to create an encrypted EFS file system.
 
 ## GitOps confguration
 
@@ -19,17 +19,10 @@ The sample repository contains the following workloads:
 
 ## Prerequisites
 
-1. Clone the repository.
-2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies.
-3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+1. Follow the usage [instructions](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/README.md#usage) to install the dependencies and perform the repository setup.
+2. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
-
-To update npm, run the following command:
-
-```bash
-npm install -g npm@latest
-```
 
 To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
 

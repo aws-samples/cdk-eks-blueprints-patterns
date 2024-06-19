@@ -242,6 +242,7 @@ Patterns:
         konveyor
         kubecost
         kubeflow
+        kubeshark
         multi-region
         multi-team
         newrelic

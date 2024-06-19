@@ -6,8 +6,8 @@ The objective of this pattern is to demonstrate how to enable and configure Amaz
 
 The following scanning types are offered:
 
-- Enhanced scanning—Amazon ECR integrates with Amazon Inspector to provide automated, continuous scanning of your repositories. Your container images are scanned for both operating systems and programing language package vulnerabilities. As new vulnerabilities appear, the scan results are updated and Amazon Inspector emits an event to EventBridge to notify you.
-- Basic scanning—Amazon ECR uses the Common Vulnerabilities and Exposures (CVEs) database from the open-source Clair project. With basic scanning, you configure your repositories to scan on push or you can perform manual scans and Amazon ECR provides a list of scan findings.
+- **Enhanced scanning** — Amazon ECR integrates with Amazon Inspector to provide automated, continuous scanning of your repositories. Your container images are scanned for both operating systems and programing language package vulnerabilities. As new vulnerabilities appear, the scan results are updated and Amazon Inspector emits an event to EventBridge to notify you.
+- **Basic scanning** — Amazon ECR uses the Common Vulnerabilities and Exposures (CVEs) database from the open-source Clair project. With basic scanning, you configure your repositories to scan on push or you can perform manual scans and Amazon ECR provides a list of scan findings.
 
 The pattern consists of two components:
 
@@ -37,17 +37,10 @@ The sample repository contains the following workloads:
 
 ## Prerequisites
 
-1. Clone the repository
-2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies
-3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+1. Follow the usage [instructions](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/README.md#usage) to install the dependencies and perform the repository setup.
+2. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
-
-To update npm, run the following command:
-
-```bash
-npm install -g npm@latest
-```
 
 To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
 

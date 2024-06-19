@@ -13,6 +13,10 @@ formatted_pattern_names := $(patsubst %.ts,%,$(pattern_files))
 # Dependecies
 HOMEBREW_LIBS :=  nvm typescript argocd
 
+list:
+	@$ echo "To work with patterns use: \n\t$$ make pattern <pattern-name> <list | deploy | synth | destroy>"
+	@$ echo "Example:\n\t$$ make pattern fargate deploy \n\nPatterns: \n"
+	@$ $(foreach pattern, $(formatted_pattern_names),  echo "\t$(pattern)";)
 
 deps: bootstrap
 	npm install
@@ -28,11 +32,6 @@ build:
 
 compile:
 	$(TSC) --build --incremental 
-
-list: 
-	@$ echo "To work with patterns use: \n\t$$ make pattern <pattern-name> <list | deploy | synth | destroy>" 
-	@$ echo "Example:\n\t$$ make pattern fargate deploy \n\nPatterns: \n" 
-	@$ $(foreach pattern, $(formatted_pattern_names),  echo "\t$(pattern)";)
 
 mkdocs:
 	mkdocs serve 

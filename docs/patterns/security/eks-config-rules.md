@@ -2,23 +2,14 @@
 
 ## Objective
 
-The objective of this pattern is to demonstrate how to enable AWS Config Managed Rules for EKS Security Best Practices to your AWS account, verify that it is enabled, and get findings from Security Hub.
-
-The pattern will enable Security Hub in the `CDK_DEFAULT_ACCOUNT` and `CDK_DEFAULT_REGION`, but only if it is not already enabled. If Security Hub is already enabled in the target AWS account and region the stack will fail and be rolled back.
+The objective of this pattern is to demonstrate how to enable AWS Config configuration recorder and AWS Config managed rules for EKS security best practices in your AWS account `CDK_DEFAULT_ACCOUNT` and region `CDK_DEFAULT_REGION` and verify the status of the rules.
 
 ## Prerequisites
 
-1. Clone the repository.
-2. Follow the usage [instructions](../../../README.md#usage) to install the dependencies.
-3. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
+1. Follow the usage [instructions](https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/README.md#usage) to install the dependencies and perform the repository setup.
+2. `argo-admin-password` secret must be defined in Secrets Manager in the same region as the EKS cluster.
 
 ## Deploy
-
-To update npm, run the following command:
-
-```bash
-npm install -g npm@latest
-```
 
 To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:
 
@@ -27,9 +18,9 @@ cdk bootstrap
 make list
 ```
 
-### Deploy AWS Config
+### Deploy AWS Config Configuration Recorder
 
-Use the AWS Config setup blueprints pattern enable AWS Config in your account and region by running the following command.
+Use the AWS Config setup blueprints pattern to enable AWS Config in your account and region by running the following command:
 
 ```bash
 make pattern eks-config-rules deploy eks-config-setup
@@ -37,7 +28,7 @@ make pattern eks-config-rules deploy eks-config-setup
 
 ### Deploy Config Rules for EKS Security Best Practices
 
-Now enable the AWS Config managed rules for EKS security best practices by running the following command.
+Now enable the AWS Config managed rules for EKS security best practices by running the following command:
 
 ```bash
 make pattern eks-config-rules deploy eks-config-rules-setup
@@ -47,7 +38,7 @@ make pattern eks-config-rules deploy eks-config-rules-setup
 
 ### Verify the status of the AWS Config managed rules for EKS security best practices
 
-Using the following AWS CLI command, get a list Config rules with their evaluation status.
+Using the following AWS CLI command, get a list of the AWS Config rules with their evaluation status.
 
 ```bash
 aws configservice describe-config-rule-evaluation-status
@@ -100,9 +91,9 @@ The output will look something like the following.
 }
 ```
 
-You can search for the EKS specific rules. Make a note of the unique `ConfigRuleName` of each of the Config rules for EKS security best practices.
+You can search for the EKS specific rules. Make a note of the unique `ConfigRuleName` of each of the AWS Config rules for EKS security best practices.
 
-Using the unique names of the EKS Config rules from **your account and region** shown after running the previous AWS CLI command, you can verify each EKS Config rule configuration and state using the following AWS CLI command (Remember to replace the rule names below with your rule names).
+Using the unique names of the EKS Config rules from **your account and region** shown after running the previous AWS CLI command, you can verify each EKS Config rule configuration and state using the following AWS CLI command (remember to replace the rule names below with your rule names).
 
 ```bash
 aws configservice describe-config-rules --config-rule-names "eks-config-rules-setup-EksEndpointNoPublicAccess<your rule id>" "eks-config-rules-setup-EksOldestSupportedVersion<your rule id>" "eks-config-rules-setup-EksSecretsEncrypted<your rule id>" "eks-config-rules-set

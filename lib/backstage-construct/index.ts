@@ -66,6 +66,7 @@ export class BackstageConstruct extends Construct {
                 hostedZoneResources: [blueprints.GlobalResources.HostedZone]
             }),
             new blueprints.addons.ExternalsSecretsAddOn({}),
+            new blueprints.addons.SSMAgentAddOn(),
             new BackstageSecretAddOn(backstageSecretAddOnProps),
             new blueprints.BackstageAddOn(backstageAddOnProps)
         ];
