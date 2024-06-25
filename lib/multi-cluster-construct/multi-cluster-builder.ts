@@ -43,10 +43,6 @@ export default class MultiClusterBuilderConstruct {
         return blueprints.ObservabilityBuilder.builder()
             .account(accountID)
             .region(awsRegion)
-            // run "eksctl utils describe-addon-versions --kubernetes-version <1.26/1.27/1.28> --name coredns | grep AddonVersion" to find best option
-            .withCoreDnsProps({
-                version:"v1.9.3-eksbuild.11"
-            })
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
             .addOns(
