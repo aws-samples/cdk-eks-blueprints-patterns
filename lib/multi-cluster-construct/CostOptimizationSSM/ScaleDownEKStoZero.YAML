@@ -1,0 +1,109 @@
+schemaVersion: '0.3'
+description: |-
+  ---
+  # Scale down all conformitron EKS cluster to 0
+assumeRole: arn:aws:iam::867286930927:role/SsmEksRole
+mainSteps:
+  - name: scaleEKSClusterToZero
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_1
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: arm-1-26-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_1
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_2
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: arm-1-27-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_2
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_3
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: arm-1-28-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_3
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_4
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: br-ARM1-28-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_4
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_5
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: br-X861-28-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_5
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_6
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: x86-1-26-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_6
+    action: aws:executeAwsApi
+    nextStep: scaleEKSClusterToZero_7
+    isEnd: false
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: x86-1-27-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
+  - name: scaleEKSClusterToZero_7
+    action: aws:executeAwsApi
+    isEnd: true
+    inputs:
+      Service: eks
+      Api: UpdateNodegroupConfig
+      clusterName: x86-1-28-blueprint
+      nodegroupName: eks-blueprints-mng
+      scalingConfig:
+        minSize: 0
+        maxSize: 1
+        desiredSize: 0
