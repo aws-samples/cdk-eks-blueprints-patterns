@@ -34,7 +34,22 @@ export default class ManagementClusterBuilder {
                     targetRevision: 'main',
                     credentialsSecretName: 'github-token',
                     credentialsType: 'TOKEN'
-                }
+                },
+                bootstrapValues: {
+                    clusterA: {
+                        clusterName: 'amd-1-29-blueprint'
+                    },
+                    clusterB: {
+                        clusterName: 'arm-1-29-blueprint'
+                    },
+                    common: {
+                        providerConfigAWSName: 'common-provider-config-aws',
+                        eksConnectorRoleName: 'eks-connector-role',
+                        accountId: process.env.CDK_DEFAULT_ACCOUNT,
+                        region: process.env.CDK_DEFAULT_REGION,
+                        crossplaneNamespace: 'upbound-system'                     
+                    }                
+                },                
             }),
         ];
 
