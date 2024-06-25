@@ -7,6 +7,11 @@ import { UpboundCrossplaneAddOn } from './upbound-crossplane-addon';
 
 export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
     id?: string | undefined;
+    readonly k8sProviderVersion: string;
+    constructor(k8sProviderVersion: string) {
+        this.k8sProviderVersion = k8sProviderVersion;
+    }
+
     @dependable(UpboundCrossplaneAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
@@ -54,7 +59,9 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             kind: "Provider",
             metadata: { name: "kubernetes-provider" },
             spec: {
-                package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
+                // package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
+                package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:${this.k8sProviderVersion}",
+            
                 runtimeConfigRef: {
                     name: "kubernetes-runtime-config"
                 }

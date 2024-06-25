@@ -11,6 +11,7 @@ import {GenericClusterProvider, LookupRoleProvider} from "@aws-quickstart/eks-bl
 import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
 import {ManagedNodeGroup} from "@aws-quickstart/eks-blueprints/dist/cluster-providers/types";
+import { prevalidateSecrets } from "../common/construct-utils";
 
 const account = process.env.CDK_DEFAULT_ACCOUNT ?? "";
 //const region = process.env.CDK_DEFAULT_REGION ?? "us-east-1";
@@ -50,14 +51,14 @@ export default class MultiClusterPipelineConstruct {
         const account : string = props.account;
 
         const gitProps = {
-            owner :'jalawala',
+            owner :'aws-samples',
             secretName : props.gitHubSecret ?? 'github-access-eks-addon',
-            repoName : 'aws-addon-clusters-main',
+            repoName : 'cdk-eks-blueprints-patterns',
             revision : 'main' // use this to target a certain branch for deployment
         };
 
 
-        await this.prevalidateSecrets(gitProps.secretName, region);
+        await prevalidateSecrets(gitProps.secretName, region);
 
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.ExternalsSecretsAddOn({
@@ -153,16 +154,6 @@ export default class MultiClusterPipelineConstruct {
             .wave({ id: `mgmt-cluster-stage`, stages: mgmtStage })
             .wave({ id: `${id}-wave`, stages })
             .build(scope, id, { env: { account, region } });
-    }
-
-    async prevalidateSecrets(secretName: string, region: string) {
-        try {
-            await blueprints.utils.validateSecret(secretName, region);
-        }
-        catch(error) {
-            throw new Error(`${secretName} secret must be setup in AWS Secrets Manager in ${region} for the GitHub pipeline.
-            * @see https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html`);
-        }
     }
 }
 

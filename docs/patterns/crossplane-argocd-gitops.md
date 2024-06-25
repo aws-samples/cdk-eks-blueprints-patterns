@@ -1,9 +1,10 @@
-# GitOps based Multi Cluster Addon and Apps Managament using Crossplane and ArgoCD
+# GitOps based Multi-cluster Addon and Apps Management using Crossplane and ArgoCD
 
 ## Objective
 
-The objective of this pattern is to provide GitOps based lifecycle management of Amazon EKS Addons, Kubernetes Applications and Helm charts across various workload clusters using ArgoCD and Crossplane deployed in a Management Cluster. This helps platform and application teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
+The objective of this pattern is to provide centralized management of Amazon EKS Addons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane Addons. The platform team creates Crossplane Manifest files for Amazon EKS Addons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconcils these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS Addons/Kubernetes Applications/Helm charts into the Workload Clusters.
 
+This helps platform teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
 
 ## Architecture
 

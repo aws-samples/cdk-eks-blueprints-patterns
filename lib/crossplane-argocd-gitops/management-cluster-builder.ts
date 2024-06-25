@@ -7,6 +7,7 @@ import  { CrossplaneK8sProviderAddon } from './custom-addons/crossplane-k8s-prov
 import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-provider-addon';
 
 const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
+const k8sProviderVersion = 'v0.13.0';
 
 export default class ManagementClusterBuilder {
     readonly account: string;
@@ -23,7 +24,7 @@ export default class ManagementClusterBuilder {
         const addOns: Array<blueprints.ClusterAddOn> = [
             new blueprints.addons.ExternalsSecretsAddOn,
             new UpboundCrossplaneAddOn,
-            new CrossplaneK8sProviderAddon,
+            new CrossplaneK8sProviderAddon(k8sProviderVersion),
             new CrossplaneHelmProviderAddon,
             new blueprints.SecretsStoreAddOn,
             new blueprints.ArgoCDAddOn({
@@ -38,7 +39,6 @@ export default class ManagementClusterBuilder {
         ];
 
         const clusterProvider = new blueprints.MngClusterProvider({...mngProps,
-            tags: {"scope": "addon"},
             clusterName:id
         });
 
