@@ -2,7 +2,7 @@
 
 ## Objective
 
-The objective of this pattern is to provide centralized management of Amazon EKS Addons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane Addons. The platform team creates Crossplane Manifest files for Amazon EKS Addons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconcils these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS Addons/Kubernetes Applications/Helm charts into the Workload Clusters.
+The objective of this pattern is to provide centralized management of Amazon EKS Addons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane Addons. The platform team creates Crossplane Manifest files for Amazon EKS Addons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconciles these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS Addons/Kubernetes Applications/Helm charts into the Workload Clusters.
 
 This helps platform teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
 
@@ -25,11 +25,11 @@ This blueprint will include the following:
       * Helm Crossplane Provider
       * Secrets Store AddOn
       * ArgoCD Addon
-* The ArgoCD Addon is bootstrapped with [git-ops](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS Addons, Kubernetes Manifests and also Helm Charts.
+* The ArgoCD Addon is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS Addons, Kubernetes Manifests and also Helm Charts.
 
-## GitOps confguration
+## GitOps Configuration
 
-For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
+For GitOps, the blueprint bootstrap the ArgoCD Addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
 
 
 ## Prerequisites
@@ -188,9 +188,9 @@ blueprints-addon-argocd-server-84c8b597c9-98c95                   1/1     Runnin
 ```
 
 
-### Create Kube context to access the `amd-1-29-blueprint` 
+### Create kubecontext to access the `amd-1-29-blueprint` 
 
-Go to the CloudFormation Stack `amd-1-29-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `amd-1-29-blueprint`
+Go to the CloudFormation Stack `amd-1-29-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an AWS command to create a the kubecontext for the `amd-1-29-blueprint`
 
 The example command looks like below.
 
@@ -353,9 +353,9 @@ aws iam attach-role-policy \
 ```
 
 
-### GitHub Access Token for the `git-ops` repo
+### GitHub Access Token for the `GitOps` repo
 
-In the [git-ops](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS addons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `git-ops` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `git-ops` repo in and then create `blueprints-secret` of type `SecretProviderClass` in the Management Kubernetes Cluster.
+In the [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS addons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `GitOps` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `GitOps` repo in and then create `blueprints-secret` of type `SecretProviderClass` in the Management Kubernetes Cluster.
 
 ```shell
 export GIT_OPS_GITHUB_PAT_TOKEN=<set_token_here>
@@ -440,7 +440,7 @@ argocd/cluster2        https://kubernetes.default.svc  argocd     default  Synce
 
 ### Validate EKS Addons deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane AWS Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane AWS Provider Config Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.aws.upbound.io
@@ -454,7 +454,7 @@ provider-config-aws-amd-1-29-blueprint   4h52m
 provider-config-aws-arm-1-29-blueprint   4h52m
 ```
 
-Run the below command to get the list of Crossplane AWS EKS Provder Addon Objects deployed in the Management Cluster.
+Run the below command to get the list of EKS Addon Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get addons.eks.aws.upbound.io
@@ -478,7 +478,7 @@ Go to the Workload EKS Clusters and Ensure that EKS Addon is deployed successful
 
 ### Validate Kubernetes Manifests deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane Kubernetes Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane Kubernetes Provider Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.kubernetes.crossplane.io
@@ -531,7 +531,7 @@ test-namespace-arm-1-29-blueprint   Active   4h9m
 
 ### Validate Helm Chart deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane Kubernetes Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane Helm Provider Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.helm.crossplane.io
