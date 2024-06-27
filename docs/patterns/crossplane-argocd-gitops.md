@@ -1,12 +1,14 @@
-# GitOps based Multi Cluster Addon and Apps Managament using Crossplane and ArgoCD
+# GitOps based Multi-cluster Addon and Apps Management using Crossplane and ArgoCD
 
 ## Objective
 
-The objective of this pattern is to provide GitOps based lifecycle management of Amazon EKS Addons, Kubernetes Applications and Helm charts across various workload clusters using ArgoCD and Crossplane deployed in a Management Cluster. This helps platform and application teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
+The objective of this pattern is to provide centralized management of Amazon EKS Addons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane Addons. The platform team creates Crossplane Manifest files for Amazon EKS Addons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconciles these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS Addons/Kubernetes Applications/Helm charts into the Workload Clusters.
 
+This helps platform teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
 
 ## Architecture
 
+![crossplane-argocd-gitops](./images/crossplane-argocd-gitops.png)
 
 ## Approach
 
@@ -23,11 +25,11 @@ This blueprint will include the following:
       * Helm Crossplane Provider
       * Secrets Store AddOn
       * ArgoCD Addon
-* The ArgoCD Addon is bootstrapped with [git-ops](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS Addons, Kubernetes Manifests and also Helm Charts.
+* The ArgoCD Addon is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS Addons, Kubernetes Manifests and also Helm Charts.
 
-## GitOps confguration
+## GitOps Configuration
 
-For GitOps, the blueprint bootstrap the ArgoCD addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
+For GitOps, the blueprint bootstrap the ArgoCD Addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
 
 
 ## Prerequisites
@@ -100,13 +102,13 @@ Go to the CloudFormation Stack `mgmt-cluster-stage-mgmt-cluster-stage-blueprint`
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name management-cluster --region us-west-2 --role-arn arn:aws:iam::ACCOUNT_ID:role/mgmt-cluster-stage-mgmt-c-managementclusterAccessRo-XYSC5PKL8WnA
+aws eks update-kubeconfig --name management-cluster --region us-east-1 --role-arn arn:aws:iam::ACCOUNT_ID:role/mgmt-cluster-stage-mgmt-c-managementclusterAccessRo-XYSC5PKL8WnA
 ```
 
 The output will look like below.
 
 ```shell
-Updated context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/management-cluster in /Users/<user_name>/.kube/config
+Updated context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/management-cluster in /Users/<user_name>/.kube/config
 ```
 
 Set below environment variable to the above context
@@ -186,20 +188,20 @@ blueprints-addon-argocd-server-84c8b597c9-98c95                   1/1     Runnin
 ```
 
 
-### Create Kube context to access the `amd-1-29-blueprint` 
+### Create kubecontext to access the `amd-1-29-blueprint` 
 
-Go to the CloudFormation Stack `amd-1-29-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `amd-1-29-blueprint`
+Go to the CloudFormation Stack `amd-1-29-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an AWS command to create a the kubecontext for the `amd-1-29-blueprint`
 
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name amd-1-29-blueprint --region us-west-2 --role-arn arn:aws:iam::ACCOUNT_ID:role/eks-connector-role
+aws eks update-kubeconfig --name amd-1-29-blueprint --region us-east-1 --role-arn arn:aws:iam::ACCOUNT_ID:role/eks-connector-role
 ```
 
 The output will look like below.
 
 ```shell
-Added new context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/amd-1-29-blueprint to /Users/jalawala/.kube/config
+Added new context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/amd-1-29-blueprint to /Users/jalawala/.kube/config
 ```
 
 Set below environment variable to the above context
@@ -227,13 +229,13 @@ Go to the CloudFormation Stack `arm-1-29-arm-1-29-blueprint` outputs and search 
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name arm-1-29-blueprint --region us-west-2 --role-arn arn:aws:iam::$ACCOUNT_ID:role/eks-connector-role
+aws eks update-kubeconfig --name arm-1-29-blueprint --region us-east-1 --role-arn arn:aws:iam::$ACCOUNT_ID:role/eks-connector-role
 ```
 
 The output will look like below.
 
 ```shell
-Added new context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/arm-1-29-blueprint to /Users/jalawala/.kube/config
+Added new context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/arm-1-29-blueprint to /Users/jalawala/.kube/config
 ```
 
 Set below environment variable to the above context
@@ -351,9 +353,9 @@ aws iam attach-role-policy \
 ```
 
 
-### GitHub Access Token for the `git-ops` repo
+### GitHub Access Token for the `GitOps` repo
 
-In the [git-ops](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS addons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `git-ops` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `git-ops` repo in and then create `blueprints-secret` of type `SecretProviderClass` in the Management Kubernetes Cluster.
+In the [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS addons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `GitOps` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `GitOps` repo in and then create `blueprints-secret` of type `SecretProviderClass` in the Management Kubernetes Cluster.
 
 ```shell
 export GIT_OPS_GITHUB_PAT_TOKEN=<set_token_here>
@@ -413,11 +415,11 @@ argocd cluster add $MANAGEMENT_CLUSTER_CONTEXT
 The output will look like below.
 
 ```shell
-WARNING: This will create a service account `argocd-manager` on the cluster referenced by context `arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/management-cluster` with full cluster level privileges. Do you want to continue [y/N]? y
+WARNING: This will create a service account `argocd-manager` on the cluster referenced by context `arn:aws:eks:us-east-1:000474600478:cluster/management-cluster` with full cluster level privileges. Do you want to continue [y/N]? y
 INFO[0004] ServiceAccount "argocd-manager" already exists in namespace "kube-system" 
 INFO[0004] ClusterRole "argocd-manager-role" updated    
 INFO[0005] ClusterRoleBinding "argocd-manager-role-binding" updated 
-Cluster 'https://0F745A41ECA76297CBF070C032932033.sk1.us-west-2.eks.amazonaws.com' added
+Cluster 'https://0F745A41ECA76297CBF070C032932033.sk1.us-east-1.eks.amazonaws.com' added
 ```
 
 Run the below command to get the list of ArgoCD Applications.
@@ -438,7 +440,7 @@ argocd/cluster2        https://kubernetes.default.svc  argocd     default  Synce
 
 ### Validate EKS Addons deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane AWS Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane AWS Provider Config Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.aws.upbound.io
@@ -452,7 +454,7 @@ provider-config-aws-amd-1-29-blueprint   4h52m
 provider-config-aws-arm-1-29-blueprint   4h52m
 ```
 
-Run the below command to get the list of Crossplane AWS EKS Provder Addon Objects deployed in the Management Cluster.
+Run the below command to get the list of EKS Addon Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get addons.eks.aws.upbound.io
@@ -476,7 +478,7 @@ Go to the Workload EKS Clusters and Ensure that EKS Addon is deployed successful
 
 ### Validate Kubernetes Manifests deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane Kubernetes Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane Kubernetes Provider Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.kubernetes.crossplane.io
@@ -529,7 +531,7 @@ test-namespace-arm-1-29-blueprint   Active   4h9m
 
 ### Validate Helm Chart deployment in Workload Clusters
 
-Run the below command to get the list of Crossplane Kubernetes Provder Objects deployed in the Management Cluster.
+Run the below command to get the list of Crossplane Helm Provider Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.helm.crossplane.io
