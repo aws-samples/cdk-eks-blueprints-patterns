@@ -14,7 +14,7 @@ import {ManagedNodeGroup} from "@aws-quickstart/eks-blueprints/dist/cluster-prov
 import { prevalidateSecrets } from "../common/construct-utils";
 
 // const account = process.env.CDK_DEFAULT_ACCOUNT ?? "";
-const account = process.env.CDK_DEFAULT_ACCOUNT;
+const account = process.env.CDK_DEFAULT_ACCOUNT!;
 //const region = process.env.CDK_DEFAULT_REGION ?? "us-east-1";
 const region = process.env.CDK_DEFAULT_REGION!;
 const minSize  =  parseInt(process.env.NODEGROUP_MIN ?? "1");
