@@ -12,7 +12,7 @@ export class PipelineMultiCluster {
 
     async buildAsync(scope: Construct) {
         const accountID = process.env.CDK_DEFAULT_ACCOUNT! ;
-        const region = process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
+        const region = process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         const versions = blueprints.utils.valueFromContext(scope, "conformitron.versions", ["1.28","1.29","1.30"]);
 

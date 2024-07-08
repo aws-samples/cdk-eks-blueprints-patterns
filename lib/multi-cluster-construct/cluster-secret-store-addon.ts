@@ -3,7 +3,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from 'constructs';
 import { dependable } from '@aws-quickstart/eks-blueprints/dist/utils';
 
-export class EksAnywhereSecretsAddon implements blueprints.ClusterAddOn {
+export class ClusterSecretStoreAddon implements blueprints.ClusterAddOn {
     id?: string | undefined;
     @dependable(blueprints.addons.ExternalsSecretsAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {

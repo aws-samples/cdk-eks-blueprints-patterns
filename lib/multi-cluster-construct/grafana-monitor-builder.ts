@@ -10,8 +10,8 @@ export class GrafanaMonitoringConstruct {
 
         const stackId = `${id}-grafana-monitor`;
 
-        const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
-        const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
+        const account = contextAccount! || process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
+        const region = contextRegion! || process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         this.create(scope, account, region)
             .build(scope, stackId);
@@ -19,8 +19,8 @@ export class GrafanaMonitoringConstruct {
 
     create(scope: Construct, contextAccount?: string, contextRegion?: string ) {
 
-        const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
-        const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
+        const account = contextAccount! || process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
+        const region = contextRegion! || process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
         
         // TODO: CFN import https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Fn.html#static-importwbrvaluesharedvaluetoimport
         const ampWorkspaceName = "conformitronWorkspace";

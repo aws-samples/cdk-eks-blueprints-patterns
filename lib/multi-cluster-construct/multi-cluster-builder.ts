@@ -2,7 +2,7 @@ import { Construct } from 'constructs';
 
 // Blueprints Lib
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { EksAnywhereSecretsAddon } from './eksa-secret-stores';
+import { ClusterSecretStoreAddon } from './cluster-secret-store-addon';
 
 
 export default class MultiClusterBuilderConstruct {
@@ -66,7 +66,7 @@ export default class MultiClusterBuilderConstruct {
                         ],
                     }],
                 }),
-                new EksAnywhereSecretsAddon(),
+                new ClusterSecretStoreAddon(),
                 new blueprints.addons.EbsCsiDriverAddOn(),
                 new blueprints.addons.ClusterAutoScalerAddOn()
             );
