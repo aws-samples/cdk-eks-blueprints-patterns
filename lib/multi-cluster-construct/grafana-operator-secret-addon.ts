@@ -61,7 +61,7 @@ export class GrafanaOperatorSecretAddon implements blueprints.ClusterAddOn {
                             {
                                 secretKey: "GF_SECURITY_ADMIN_APIKEY",
                                 remoteRef: {
-                                    key: "/cdk-accelerator/grafana-api-key"
+                                    key: "/grafana-api-key"
                                 },
                             },
                         ],

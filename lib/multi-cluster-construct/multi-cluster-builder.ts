@@ -29,7 +29,7 @@ export default class MultiClusterBuilderConstruct {
         };
 
         ampAddOnProps.openTelemetryCollector = {
-            manifestPath: __dirname + '/../common/resources/otel-collector-config-new.yml',
+            manifestPath: __dirname + '/resources/otel-collector-config-new.yml',
             manifestParameterMap: {
                 logGroupName: `/aws/eks/conformitron/cluster`,
                 logStreamName: `$NODE_NAME`,

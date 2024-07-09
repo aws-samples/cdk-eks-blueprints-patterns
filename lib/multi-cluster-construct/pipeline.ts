@@ -1,5 +1,6 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import MultiClusterBuilderConstruct from './multi-cluster-builder';
 import { GrafanaMonitoringConstruct } from './grafana-monitor-builder';
@@ -36,14 +37,16 @@ export class PipelineMultiCluster {
            Similar to approach in multi-region-construct pattern
         */
 
-        const clusterProps = this.getClusterProps();
+        let clusterProps;
 
         for(const version of CLUSTER_VERSIONS) {
             const blueprintBuilderX86 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
             
-            // let clusterProps = this.getClusterProps()
-            clusterProps.amiType = clusterMappings[ClusterName.X86]!.amiType;
-            clusterProps.instanceTypes  = [clusterMappings[ClusterName.X86]!.instanceType];
+            clusterProps = this.buildClusterProps(
+                clusterMappings[ClusterName.X86]!.amiType,
+                clusterMappings[ClusterName.X86]!.instanceType
+            );
+            
             const blueprintX86 = blueprintBuilderX86
                 .version(version)
                 .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
@@ -54,10 +57,11 @@ export class PipelineMultiCluster {
                 stackBuilder : blueprintX86.clone(region)
             });
 
-            // clusterProps = this.getClusterProps()
             const blueprintBuilderArm = new MultiClusterBuilderConstruct().create(scope, accountID, region);
-            clusterProps.amiType = clusterMappings[ClusterName.ARM]!.amiType;
-            clusterProps.instanceTypes  = [clusterMappings[ClusterName.ARM]!.instanceType];
+            clusterProps = this.buildClusterProps(
+                clusterMappings[ClusterName.ARM]!.amiType,
+                clusterMappings[ClusterName.ARM]!.instanceType
+            );
             const blueprintARM = blueprintBuilderArm
                 .version(version)
                 .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
@@ -74,9 +78,11 @@ export class PipelineMultiCluster {
     
         const blueprintBuilderBrX86= new MultiClusterBuilderConstruct().create(scope, accountID, region);
 
-        // let clusterProps = this.getClusterProps()
-        clusterProps.amiType = clusterMappings[ClusterName.BR_X86]!.amiType;
-        clusterProps.instanceTypes  = [clusterMappings[ClusterName.BR_X86]!.instanceType];
+        clusterProps = this.buildClusterProps(
+            clusterMappings[ClusterName.BR_X86]!.amiType,
+            clusterMappings[ClusterName.BR_X86]!.instanceType
+        );
+
         const blueprintBrX86 = blueprintBuilderBrX86
             .version(LATEST_VERSION)
             .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
@@ -89,9 +95,11 @@ export class PipelineMultiCluster {
 
         const blueprintBuilderBrArm = new MultiClusterBuilderConstruct().create(scope, accountID, region);
         
-        // clusterProps = this.getClusterProps()
-        clusterProps.amiType = clusterMappings[ClusterName.BR_ARM]!.amiType;
-        clusterProps.instanceTypes  = [clusterMappings[ClusterName.BR_ARM]!.instanceType];
+        clusterProps = this.buildClusterProps(
+            clusterMappings[ClusterName.BR_ARM]!.amiType,
+            clusterMappings[ClusterName.BR_ARM]!.instanceType
+        );
+
         const blueprintBottleRocketArm = blueprintBuilderBrArm
             .version(LATEST_VERSION)
             .clusterProvider(new blueprints.MngClusterProvider(clusterProps))
@@ -127,13 +135,14 @@ export class PipelineMultiCluster {
                 }
             });
     }
-
-    getClusterProps() {
+    buildClusterProps(amiType:eks.NodegroupAmiType,instanceType:ec2.InstanceType) : blueprints.MngClusterProviderProps{
         let clusterProps : blueprints.MngClusterProviderProps = {
             maxSize : 2,
             minSize : 1,
             desiredSize: 1,
-            diskSize: 100
+            diskSize: 100,
+            amiType: amiType,
+            instanceTypes:[instanceType]
         };
         return clusterProps;
     }

@@ -8,6 +8,8 @@
 
 1. Enable all the available [EKS Anywhere Addons](https://github.com/aws-samples/eks-anywhere-addons), on each of the clusters, essentially testing their compatibility across all the potential architecture/version available today on AWS. 
 
+To learn more about our EKS Addon validation checkout our [blog](https://aws.amazon.com/blogs/containers/conformitron-validate-third-party-software-with-amazon-eks-and-amazon-eks-anywhere/)
+
 ### GitOps confguration
 
 GitOps is a branch of DevOps that focuses on using Git code repositories to manage infrastructure and application code deployments.
@@ -56,10 +58,56 @@ AWS_REGION=$(aws configure get region)
    Amazon Elastic Compute Cloud (Amazon EC2) | EC2-VPC Elastic IPs                | 30
 ```
 
-1. Amazon Managed Grafana Workspace: To visualize metrics collected, you need an Amazon Managed Grafana workspace. If you have an existing workspace, create an environment variable `AMG_ENDPOINT_URL` as described below. To create a new workspace, visit [our supporting example for Grafana](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/)
+1. Amazon Managed Grafana Workspace: To visualize metrics collected, you need an Amazon Managed Grafana workspace. If you have an existing workspace, create environment variables `AMG_ENDPOINT_URL` as described below. To create a new workspace, visit [our supporting example for Grafana](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/)
 
 ```bash
 export AMG_ENDPOINT_URL=https://g-xxx.grafana-workspace.region.amazonaws.com
+export AMG_WORKSPACE_ID=g-xxx
+
+```
+
+1. Grafana API Key: Amazon Managed Grafana provides a control plane API for generating Grafana API keys or Service Account Tokens. This allows programatic provisioning of Grafana dashboards using the EKS grafana operator.
+
+=== "v10.4 & v9.4 workspaces"
+
+    ```bash
+    # IMPORTANT NOTE: skip this command if you already have a service token
+    GRAFANA_SA_ID=$(aws grafana create-workspace-service-account \
+      --workspace-id $AMG_WORKSPACE_ID \
+      --grafana-role ADMIN \
+      --name cdk-accelerator-eks \
+      --query 'id' \
+      --output text)
+
+    # creates a new token
+    export AMG_API_KEY=$(aws grafana create-workspace-service-account-token \
+      --workspace-id $AMG_WORKSPACE_ID \
+      -name "grafana-operator-key" \
+      --seconds-to-live 432000 \
+      --service-account-id $GRAFANA_SA_ID \
+      --query 'serviceAccountToken.key' \
+      --output text)
+    ```
+
+=== "v8.4 workspaces"
+
+    ```bash
+    export AMG_API_KEY=$(aws grafana create-workspace-api-key \
+      --key-name "grafana-operator-key" \
+      --key-role "ADMIN" \
+      --seconds-to-live 432000 \
+      --workspace-id $AMG_WORKSPACE_ID \
+      --query key \
+      --output text)
+    ```
+
+1. AWS SSM Parameter Store for GRAFANA API KEY: Update the Grafana API key secret in AWS SSM Parameter Store using the above new Grafana API key. This will be referenced by Grafana Operator deployment of our solution to access Amazon Managed Grafana from Amazon EKS Cluster
+
+```bash
+aws ssm put-parameter --name "/grafana-api-key" \
+    --type "SecureString" \
+    --value $AMG_API_KEY \
+    --region $AWS_REGION
 ```
 
 1. Amazon Managed Prometheus Workspace: To store observability metrics from all clusters we will use Amazon Managed Prometheus due to it's ease of setup and easy integration with other AWS services. We recommend setting up a new seperate Prometheus workspace using the commands below.
@@ -97,7 +145,30 @@ cat << EOF > cdk.json
         "conformitron.amp.arn":"arn:aws:aps:${AWS_REGION}:${ACCOUNT_ID}:workspace/${AMP_WS_ID}",
         "conformitron.amg.endpoint": "${AMG_ENDPOINT_URL}",
         "conformitron.version": ["1.28","1.29","1.30"]
-      }
+      },
+      "fluxRepository": {
+      "name": "grafana-dashboards",
+      "namespace": "grafana-operator",
+      "repository": {
+        "repoUrl": "https://github.com/aws-observability/aws-observability-accelerator",
+        "name": "grafana-dashboards",
+        "targetRevision": "main",
+        "path": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+      },
+      "values": {
+        "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
+        "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
+        "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
+        "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
+        "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
+        "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
+      },
+      "kustomizations": [
+        {
+          "kustomizationPath": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+        }
+      ]
+    }
 }
 EOF
 ```
@@ -114,7 +185,7 @@ Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazo
 
 # SSM Cost Optimizations for conformitron clusters
 
-Running all the clusters for 24 hours results in a daily spend of $300+
+Running all the clusters by default for 24 hours results in a daily spend of $300+
 
 To minimize these costs we have written a systems manager automation which automatically scales down autoscaling group to 0 desired nodes during off-business hours.
 
@@ -124,4 +195,4 @@ On weekends clusters stay scaled to 0.
 
 These optimizations bring down the weekly cost to less than 1000$ essentially for a more than 60% cost savings.
 
-Please find the SSM Automation documents `lib/multi-cluster-construct/CostOptimizationSSM/ScaleDownEKStoZero.yml` and `lib/multi-cluster-construct/CostOptimizationSSM/ScaleUpEKStoOne.yml`in this directory. They are triggered by event bridge on the con schedule specified above.
+Please find the SSM Automation documents `lib/multi-cluster-construct/resources/cost-optimization/scaleDownEksToZero.yml` and `lib/multi-cluster-construct/resources/cost-optimization/scaleUpEksToOne.yml`. They are triggered by event bridge on the cron schedule specified above.
