@@ -2,7 +2,7 @@ schemaVersion: '0.3'
 description: |-
   ---
   # Scale down all conformitron EKS cluster to1
-assumeRole: arn:aws:iam::867286930927:role/SsmEksRole
+assumeRole: arn:aws:iam::ACCOUNT_ID:role/SsmEksRole
 mainSteps:
   - name: scaleEKSClusterToOne
     action: aws:executeAwsApi
