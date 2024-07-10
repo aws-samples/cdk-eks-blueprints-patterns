@@ -193,6 +193,12 @@ make pattern multi-cluster-conformitron deploy multi-cluster-central-pipeline
 
 Now you can go to [AWS CodePipeline console](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines), and see how it was automatically created to deploy multiple Amazon EKS clusters to different environments.
 
+## Grafana Dashboards
+![Dashboard 1](images/ConformitronDashboard1.png)
+
+![Dashboard 2](images/ConformitronDashboard2.png)
+
+![Dashboard 3](images/ConformitronDashboard3.png)
 
 
 # SSM Cost Optimizations for conformitron clusters
