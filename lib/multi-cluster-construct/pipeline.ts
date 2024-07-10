@@ -12,7 +12,7 @@ import { ClusterName, clusterMappings } from './clusterMapping';
 export class PipelineMultiCluster {
 
     async buildAsync(scope: Construct) {
-        const accountID = process.env.CDK_DEFAULT_ACCOUNT! ;
+        const accountID = process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT! ;
         const region = process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         const versions = blueprints.utils.valueFromContext(scope, "conformitron.versions", ["1.28","1.29","1.30"]);
@@ -37,7 +37,7 @@ export class PipelineMultiCluster {
            Similar to approach in multi-region-construct pattern
         */
 
-        let clusterProps;
+        let clusterProps: blueprints.MngClusterProviderProps;
 
         for(const version of CLUSTER_VERSIONS) {
             const blueprintBuilderX86 = new MultiClusterBuilderConstruct().create(scope, accountID, region);
