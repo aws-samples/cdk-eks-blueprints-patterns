@@ -30,7 +30,7 @@ We require some additional secrets to be created in Secrets Manager for the patt
 
 1. AWS CodePipeline Bootstrap - The AWS CodePipeline points to the GitHub fork of this repository i.e [cdk-eks-blueprint-patterns] (https://github.com/aws-samples/cdk-eks-blueprints-patterns). 
 
-A `github-token` secret must be stored in AWS Secrets Manager for the CodePipeline to access the webhooks on GitHub. For more information on how/why to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
+A `github-token` secret must be stored as plaintext in AWS Secrets Manager for the CodePipeline to access the webhooks on GitHub. For more information on how/why to set it up, please refer to the [docs](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-create-personal-token-CLI.html). The GitHub Personal Access Token should have these scopes:
    1. *repo* - to read your forked cdk-blueprint-patterns repostiory
    1. *admin:repo_hook* - if you plan to use webhooks (enabled by default)
 
@@ -43,8 +43,8 @@ A `github-token` secret must be stored in AWS Secrets Manager for the CodePipeli
 Start by setting the account and region environment variables:
 
 ```sh
-ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
-AWS_REGION=$(aws configure get region)
+export ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+export AWS_REGION=$(aws configure get region)
 ```
 1. In case you haven't done this before, bootstrap your AWS Account for AWS CDK use using:
 
@@ -79,29 +79,6 @@ export AMG_WORKSPACE_ID=g-xxx
 ```
 
 1. Grafana API Key: Amazon Managed Grafana provides a control plane API for generating Grafana API keys or Service Account Tokens. This allows programatic provisioning of Grafana dashboards using the EKS grafana operator.
-
-=== "v9.4 and greater workspaces "
-
-    ```bash
-    # IMPORTANT NOTE: skip this command if you already have a service token
-    GRAFANA_SA_ID=$(aws grafana create-workspace-service-account \
-      --workspace-id $AMG_WORKSPACE_ID \
-      --grafana-role ADMIN \
-      --name cdk-accelerator-eks \
-      --query 'id' \
-      --output text)
-
-    # creates a new token
-    export AMG_API_KEY=$(aws grafana create-workspace-service-account-token \
-      --workspace-id $AMG_WORKSPACE_ID \
-      -name "grafana-operator-key" \
-      --seconds-to-live 432000 \
-      --service-account-id $GRAFANA_SA_ID \
-      --query 'serviceAccountToken.key' \
-      --output text)
-    ```
-
-=== "v8.4 workspaces"
 
     ```bash
     export AMG_API_KEY=$(aws grafana create-workspace-api-key \
@@ -156,32 +133,33 @@ cat << EOF > cdk.json
         "conformitron.amp.endpoint": "https://aps-workspaces.${AWS_REGION}.amazonaws.com/workspaces/${AMP_WS_ID}/",
         "conformitron.amp.arn":"arn:aws:aps:${AWS_REGION}:${ACCOUNT_ID}:workspace/${AMP_WS_ID}",
         "conformitron.amg.endpoint": "${AMG_ENDPOINT_URL}",
-        "conformitron.version": ["1.28","1.29","1.30"]
-      },
-      "fluxRepository": {
-      "name": "grafana-dashboards",
-      "namespace": "grafana-operator",
-      "repository": {
-        "repoUrl": "https://github.com/aws-observability/aws-observability-accelerator",
+        "conformitron.version": ["1.28","1.29","1.30"],
+        "fluxRepository": {
         "name": "grafana-dashboards",
-        "targetRevision": "main",
-        "path": "./artifacts/grafana-operator-manifests/eks/infrastructure"
-      },
-      "values": {
-        "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
-        "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
-        "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
-        "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
-        "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
-        "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
-      },
-      "kustomizations": [
-        {
-          "kustomizationPath": "./artifacts/grafana-operator-manifests/eks/infrastructure"
-        }
-      ]
+        "namespace": "grafana-operator",
+        "repository": {
+          "repoUrl": "https://github.com/aws-observability/aws-observability-accelerator",
+          "name": "grafana-dashboards",
+          "targetRevision": "main",
+          "path": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+        },
+        "values": {
+          "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
+          "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
+          "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
+          "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
+          "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
+          "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
+        },
+        "kustomizations": [
+          {
+            "kustomizationPath": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+          }
+        ]
     }
+  }
 }
+
 EOF
 ```
 
