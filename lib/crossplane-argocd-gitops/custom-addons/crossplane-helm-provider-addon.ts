@@ -11,7 +11,7 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
 
-        const role_binding = {
+        const roleBinding = {
             apiVersion: "rbac.authorization.k8s.io/v1",
             kind: "ClusterRoleBinding",
             metadata: { 
@@ -31,7 +31,7 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
             }
         };
 
-        const runtime_config = {
+        const runtimeConfig = {
             apiVersion: "pkg.crossplane.io/v1beta1",
             kind: "DeploymentRuntimeConfig",
             metadata: { 
@@ -65,7 +65,7 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
 
         const runtimeHelmConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeHelmConfig", {
             cluster: cluster,
-            manifest: [role_binding, runtime_config]
+            manifest: [roleBinding, runtimeConfig]
         });
 
         const awsHelmProvider = new eks.KubernetesManifest(clusterInfo.cluster.stack, "providerHelmResource", {

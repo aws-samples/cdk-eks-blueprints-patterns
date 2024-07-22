@@ -16,7 +16,7 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
         
-        const role_binding1 = {
+        const roleBinding = {
             apiVersion: "rbac.authorization.k8s.io/v1",
             kind: "ClusterRoleBinding",
             metadata: { name: "kubernetes-provider" },
@@ -34,7 +34,7 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             }
         };
 
-        const runtime_config1 = {
+        const runtimeConfig = {
             apiVersion: "pkg.crossplane.io/v1beta1",
             kind: "DeploymentRuntimeConfig",
             metadata: { 
@@ -54,7 +54,7 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             }
         };
 
-        const providerK8sResource1 = {
+        const providerK8sResource = {
             apiVersion: "pkg.crossplane.io/v1",
             kind: "Provider",
             metadata: { name: "kubernetes-provider" },
@@ -68,18 +68,18 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             }
         };
 
-        const runtimeK8sConfig1 = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeK8sConfig1", {
+        const runtimeK8sConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeK8sConfig", {
             cluster: cluster,
-            manifest: [role_binding1, runtime_config1]
+            manifest: [roleBinding, runtimeConfig]
         });
 
         const awsK8sProvider1 = new eks.KubernetesManifest(clusterInfo.cluster.stack, "awsK8sProvider1", {
             cluster: cluster,
-            manifest: [providerK8sResource1]
+            manifest: [providerK8sResource]
         });
 
-        awsK8sProvider1.node.addDependency(runtimeK8sConfig1);
+        awsK8sProvider1.node.addDependency(runtimeK8sConfig);
 
-        return Promise.resolve(runtimeK8sConfig1);
+        return Promise.resolve(runtimeK8sConfig);
     }
 }

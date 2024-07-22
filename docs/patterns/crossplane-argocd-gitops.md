@@ -2,9 +2,9 @@
 
 ## Objective
 
-The objective of this pattern is to provide centralized management of Amazon EKS Addons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane Addons. The platform team creates Crossplane Manifest files for Amazon EKS Addons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconciles these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS Addons/Kubernetes Applications/Helm charts into the Workload Clusters.
+The objective of this pattern is to provide centralized management of Amazon EKS add-ons, Kubernetes Applications and Helm charts in workload clusters. This approach consists of a Management Cluster and multiple workload clusters. The Management Cluster is created with ArgoCD and Crossplane add-ons. The platform team creates Crossplane Manifest files for Amazon EKS add-ons/Kubernetes Applications/Helm charts and pushes them to the GitOps Repo. The ArgoCD Application Controller in the Management Cluster reconciles these Crossplane Manifests and deploy them into Management Cluster.  The Crossplane Controller in the Management Cluster deploys the Amazon EKS add-ons/Kubernetes Applications/Helm charts into the Workload Clusters.
 
-This helps platform teams to simplify the process of deploying Addos and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
+This helps platform teams to simplify the process of deploying add-ons and Apps from a central Management Cluster. In this Solution, we use CDK to deploy AWS CodePipeline which monitors this platform repo and deploy the Management and Workload Clusters using CDK EKS Blueprints.
 
 ## Architecture
 
@@ -14,10 +14,10 @@ This helps platform teams to simplify the process of deploying Addos and Apps fr
 
 This blueprint will include the following:
 
-* AWS CodePipeline which deploy the Management and Workload Clusters
+* AWS CodePipeline which deploys the Management and Workload Clusters
 * A new Well-Architected EKS cluster `management-cluster` and two workload EKS Clusters `amd-1-29-blueprint` and `arm-1-29-blueprint` in the region and account you specify.
 * [Amazon VPC CNI add-on (VpcCni)](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html) into your cluster to support native VPC networking for Amazon EKS.
-*  The Management Cluster is deployed with the following Addons.
+*  The Management Cluster is deployed with the following add-ons.
       * Upbound Universal Crossplane Provider
       * Upbound AWS Family Crossplane Provider
       * Upbound AWS EKS Crossplane Provider
@@ -25,7 +25,7 @@ This blueprint will include the following:
       * Helm Crossplane Provider
       * Secrets Store AddOn
       * ArgoCD Addon
-* The ArgoCD Addon is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS Addons, Kubernetes Manifests and also Helm Charts.
+* The ArgoCD Addon is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS add-ons, Kubernetes Manifests and also Helm Charts.
 
 ## GitOps Configuration
 
@@ -317,11 +317,25 @@ aws iam update-assume-role-policy --role-name $providerawssaiamrole --policy-doc
 
 ### Add IAM permissions to `eks-connector-role` AWS Role
 
-Both of the Workload EKS Clusters i.e. `amd-1-29-blueprint` and `arm-1-29-blueprint` are added a platform team IAM Role `eks-connector-role` with `system:masters` access using the AWS Auth Config Map.
+Both of the Workload EKS Clusters i.e. `amd-1-29-blueprint` and `arm-1-29-blueprint` are added a platform team IAM Role `eks-connector-role` with `system:masters` access using the AWS Auth Config Map. This is achieved through below configuration in the file `lib/crossplane-argocd-gitops/custom-addons/mgmt-role-teams.ts`
+
+```bash
+import {PlatformTeam} from "@aws-quickstart/eks-blueprints";
+export class ProviderMgmtRoleTeam extends PlatformTeam {
+    constructor(accountID :string) {
+        const computedProviderRoleArn = `arn:aws:iam::${accountID}:role/eks-connector-role`;
+        super( {
+            name: computedProviderRoleArn,
+            userRoleArn: computedProviderRoleArn
+        });
+    }
+}
+```
+
 
 The Upbound AWS EKS Provider Pod will use its IRSA IAM Role `mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA` to assume the `eks-connector-role` AWS Role to gain access to the Workload Clusters. The `sts:AssumeRole` IAM permission is already being added to the IRSA Role during the Management Cluster creation process.
 
-Since the IRSA Role will use `eks-connector-role` to create a Kubecontext object and deploy EKS Addons into the Workload clusters, the `eks-connector-role` Role needs `eks:*` IAM permissions. Note this IAM permissions can be made very granualar to provide least privileged access to Workload Clusters.
+Since the IRSA Role will use `eks-connector-role` to create a Kubecontext object and deploy EKS add-ons into the Workload clusters, the `eks-connector-role` Role needs `eks:*` IAM permissions. Note this IAM permissions can be made very granualar to provide least privileged access to Workload Clusters.
 
 
 ```shell
@@ -438,7 +452,7 @@ argocd/cluster2        https://kubernetes.default.svc  argocd     default  Synce
 ```
 
 
-### Validate EKS Addons deployment in Workload Clusters
+### Validate EKS add-ons deployment in Workload Clusters
 
 Run the below command to get the list of Crossplane AWS Provider Config Objects deployed in the Management Cluster.
 
