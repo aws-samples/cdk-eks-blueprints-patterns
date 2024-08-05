@@ -7,7 +7,7 @@ import  { UpboundCrossplaneEKSProviderAddOn } from './custom-addons/upbound-cros
 import  { CrossplaneK8sProviderAddon } from './custom-addons/crossplane-k8s-provider-addon';
 import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-provider-addon';
 
-const gitUrl = 'https://github.com/aws-samples/eks-blueprints-workloads.git';
+const gitUrl = 'https://github.com/ajpaws/eks-blueprints-workloads.git';
 const k8sProviderVersion = 'v0.13.0';
 const UpboundEKSProviderVersion = 'v1.1.0';
 
@@ -40,10 +40,10 @@ export default class ManagementClusterBuilder {
                 },
                 bootstrapValues: {
                     clusterA: {
-                        clusterName: 'amd-1-29-blueprint'
+                        clusterName: 'workload-amd-1-29-blueprint'
                     },
                     clusterB: {
-                        clusterName: 'arm-1-29-blueprint'
+                        clusterName: 'workload-arm-1-29-blueprint'
                     },
                     common: {
                         providerConfigAWSName: 'common-provider-config-aws',
