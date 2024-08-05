@@ -333,9 +333,9 @@ export class ProviderMgmtRoleTeam extends PlatformTeam {
 ```
 
 
-The Upbound AWS EKS Provider Pod will use its IRSA IAM Role `mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA` to assume the `eks-connector-role` AWS Role to gain access to the Workload Clusters. The `sts:AssumeRole` IAM permission is already being added to the IRSA Role during the Management Cluster creation process.
+The Upbound AWS EKS Provider Pod will use its IRSA IAM Role `mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA` to assume the `eks-connector-role` IAM role to gain access to the Workload Clusters. The `sts:AssumeRole` IAM permission is already being added to the IRSA Role during the Management Cluster creation process.
 
-Since the IRSA Role will use `eks-connector-role` to create a Kubecontext object and deploy EKS add-ons into the Workload clusters, the `eks-connector-role` Role needs `eks:*` IAM permissions. Note this IAM permissions can be made very granualar to provide least privileged access to Workload Clusters.
+Since the IRSA Role will use `eks-connector-role` to create a Kubecontext object and deploy EKS add-ons into the Workload clusters, the `eks-connector-role` role needs `eks:*` IAM permissions. Note this IAM permissions can be made very granualar to provide least privileged access to Workload clusters.
 
 
 ```shell

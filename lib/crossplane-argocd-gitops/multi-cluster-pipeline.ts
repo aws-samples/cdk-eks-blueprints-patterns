@@ -35,7 +35,7 @@ const props : MultiClusterOptions = {
 
 
 const mngProps: blueprints.MngClusterProviderProps = {
-    version: KubernetesVersion.V1_28,
+    version: KubernetesVersion.V1_29,
     instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)],
     amiType: eks.NodegroupAmiType.AL2_X86_64,
     desiredSize: 2,
@@ -52,8 +52,8 @@ export default class MultiClusterPipelineConstruct {
         const account : string = props.account;
 
         const gitProps = {
-            owner :'aws-samples',
-            secretName : props.gitHubSecret ?? 'github-access-eks-addon',
+            owner :'ajpaws',
+            secretName : props.gitHubSecret ?? 'cdk_blueprints_github_secret-new',
             repoName : 'cdk-eks-blueprints-patterns',
             revision : 'main' // use this to target a certain branch for deployment
         };
@@ -80,14 +80,19 @@ export default class MultiClusterPipelineConstruct {
 
         const baseBlueprint = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
-            .resourceProvider('eks-connector-role',  new LookupRoleProvider('eks-connector-role'))
+            .resourceProvider('eks-connector-role',
+            new blueprints.CreateRoleProvider(
+              'eks-connector-role', 
+              new iam.AnyPrincipal(), 
+              [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
+            )                  
             .account(account)
             .addOns(...addOns)
             .teams(new ProviderMgmtRoleTeam(account))
             .useDefaultSecretEncryption(true);
 
         const mgmtCluster = new ManagementClusterBuilder(account, region)
-            .create(scope, 'management-cluster', mngProps)
+            .create(scope, 'mgmt-cluster', mngProps)
             .account(account)
             .region(region)
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider);
@@ -108,7 +113,7 @@ export default class MultiClusterPipelineConstruct {
                     })
                 );
             stages.push({
-                id: `amd-` + k8sVersion.version.replace(".", "-"),
+                id: `workload-amd-` + k8sVersion.version.replace(".", "-"),
                 stackBuilder : blueprintAMD.clone(props.region).id(`amd-` + k8sVersion.version.replace(".", "-"))
             });
 
@@ -123,7 +128,7 @@ export default class MultiClusterPipelineConstruct {
                     })
                 );
             stages.push({
-                id: `arm-` + k8sVersion.version.replace(".", "-"),
+                id: `workload-arm-` + k8sVersion.version.replace(".", "-"),
                 stackBuilder : blueprintARM.clone(props.region).id(`arm-` + k8sVersion.version.replace(".", "-"))
             });
         }
