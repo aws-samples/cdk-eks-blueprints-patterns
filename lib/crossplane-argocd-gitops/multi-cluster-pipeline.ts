@@ -7,7 +7,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import ManagementClusterBuilder from "./management-cluster-builder";
 import {ProviderMgmtRoleTeam} from "./custom-addons/mgmt-role-teams";
-import {GenericClusterProvider, LookupRoleProvider} from "@aws-quickstart/eks-blueprints";
+import {GenericClusterProvider} from "@aws-quickstart/eks-blueprints";
 import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
 import {ManagedNodeGroup} from "@aws-quickstart/eks-blueprints/dist/cluster-providers/types";
@@ -81,10 +81,10 @@ export default class MultiClusterPipelineConstruct {
         const baseBlueprint = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
             .resourceProvider('eks-connector-role',
-            new blueprints.CreateRoleProvider(
-              'eks-connector-role', 
-              new iam.AnyPrincipal(), 
-              [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
+                new blueprints.CreateRoleProvider(
+                    'eks-connector-role', 
+                    new iam.AnyPrincipal(), 
+                    [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
             )                  
             .account(account)
             .addOns(...addOns)
@@ -134,6 +134,7 @@ export default class MultiClusterPipelineConstruct {
         }
 
         blueprints.CodePipelineStack.builder()
+            .application('npx ts-node bin/crossplane-argocd-gitops.ts')
             .name(id)
             .owner(gitProps.owner)
             .codeBuildPolicies(
