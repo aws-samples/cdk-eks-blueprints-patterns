@@ -60,7 +60,7 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             metadata: { name: "kubernetes-provider" },
             spec: {
                 // package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
-                package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:${this.k8sProviderVersion}",
+                package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
             
                 runtimeConfigRef: {
                     name: "kubernetes-runtime-config"
