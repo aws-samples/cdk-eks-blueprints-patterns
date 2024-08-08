@@ -42,7 +42,8 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                         name: "provider-aws-eks",
                     },
                     spec: {
-                        package: "xpkg.upbound.io/upbound/provider-aws-eks:v1.1.0",
+                        // package: "xpkg.upbound.io/upbound/provider-aws-eks:v1.1.0",
+                        package: 'xpkg.upbound.io/upbound/provider-aws-eks:'+this.UpboundEKSProviderVersion,
                         controllerConfigRef: {
                             name: "aws-config"
                         }

@@ -7,6 +7,11 @@ import { UpboundCrossplaneAddOn } from './upbound-crossplane-addon';
 
 export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
     id?: string | undefined;
+    readonly helmProviderVersion: string;
+    constructor(helmProviderVersion: string) {
+        this.helmProviderVersion = helmProviderVersion;
+    }
+
     @dependable(UpboundCrossplaneAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
@@ -56,7 +61,9 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
             kind: "Provider",
             metadata: { name: "helm-provider" },
             spec: {
-                package: "xpkg.upbound.io/crossplane-contrib/provider-helm:v0.18.1",
+                // package: "xpkg.upbound.io/crossplane-contrib/provider-helm:v0.18.1",
+                package: 'xpkg.upbound.io/crossplane-contrib/provider-helm:'+this.helmProviderVersion,
+                
                 runtimeConfigRef: {
                     name: "helm-runtime-config"
                 }

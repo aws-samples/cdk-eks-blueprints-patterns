@@ -83,7 +83,7 @@ export default class MultiClusterPipelineConstruct {
             .resourceProvider('eks-connector-role',
                 new blueprints.CreateRoleProvider(
                     'eks-connector-role', 
-                    new iam.AnyPrincipal(), 
+                    new iam.AccountPrincipal(account), 
                     [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
             )                  
             .account(account)

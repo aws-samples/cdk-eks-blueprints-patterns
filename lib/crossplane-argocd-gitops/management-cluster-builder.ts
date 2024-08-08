@@ -10,6 +10,9 @@ import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-pr
 const gitUrl = 'https://github.com/ajpaws/eks-blueprints-workloads.git';
 const k8sProviderVersion = 'v0.13.0';
 const UpboundEKSProviderVersion = 'v1.1.0';
+// const helmProviderVersion = 'v0.18.1';
+const helmProviderVersion = 'v0.19.10';
+
 
 export default class ManagementClusterBuilder {
     readonly account: string;
@@ -28,12 +31,12 @@ export default class ManagementClusterBuilder {
             new UpboundCrossplaneAddOn,
             new UpboundCrossplaneEKSProviderAddOn(UpboundEKSProviderVersion),
             new CrossplaneK8sProviderAddon(k8sProviderVersion),
-            new CrossplaneHelmProviderAddon,
+            new CrossplaneHelmProviderAddon(helmProviderVersion),
             new blueprints.SecretsStoreAddOn,
             new blueprints.ArgoCDAddOn({
                 bootstrapRepo: {
                     repoUrl: gitUrl,
-                    path: `./crossplane-arocd-gitops/envs/dev`,
+                    path: `./crossplane-argocd-gitops/envs/dev`,
                     targetRevision: 'main',
                     credentialsSecretName: 'github-token',
                     credentialsType: 'TOKEN'
@@ -62,7 +65,7 @@ export default class ManagementClusterBuilder {
 
         return ObservabilityBuilder.builder()
             .clusterProvider(clusterProvider)
-            .version(eks.KubernetesVersion.V1_28)
+            .version(eks.KubernetesVersion.V1_29)
             .enableNativePatternAddOns()
             .enableControlPlaneLogging()
             .addOns(...addOns);
