@@ -81,9 +81,9 @@ export default class MultiClusterPipelineConstruct {
 
         const baseBlueprint = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
-            .resourceProvider('eks-connector-role',
+            .resourceProvider('workload-eks-connector-role',
                 new CreateNamedRoleProvider(
-                    'eks-connector-role', 'eks-connector-role',
+                    'workload-eks-connector-role', 'workload-eks-connector-role',
                     new iam.AccountPrincipal(account), 
                     [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
             )                  
@@ -108,7 +108,7 @@ export default class MultiClusterPipelineConstruct {
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
-                        mastersRole: blueprints.getNamedResource('eks-connector-role') as IRole,
+                        mastersRole: blueprints.getNamedResource('workload-eks-connector-role') as IRole,
                         managedNodeGroups : [addManagedNodeGroup( 'amd-tst-ng',{...clusterProps,
                             amiType : NodegroupAmiType.AL2_X86_64,
                             instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)]})]
@@ -123,7 +123,7 @@ export default class MultiClusterPipelineConstruct {
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
-                        mastersRole: blueprints.getNamedResource('eks-connector-role') as IRole,
+                        mastersRole: blueprints.getNamedResource('workload-eks-connector-role') as IRole,
                         managedNodeGroups : [addManagedNodeGroup('arm-tst-ng',{...clusterProps,
                             amiType : NodegroupAmiType.AL2_ARM_64,
                             instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)]})]
