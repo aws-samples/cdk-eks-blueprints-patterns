@@ -12,6 +12,7 @@ import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
 import {ManagedNodeGroup} from "@aws-quickstart/eks-blueprints/dist/cluster-providers/types";
 import { prevalidateSecrets } from "../common/construct-utils";
+import {CreateNamedRoleProvider} from "./custom-addons/custom-iam-role-creator";
 
 // const account = process.env.CDK_DEFAULT_ACCOUNT ?? "";
 const account = process.env.CDK_DEFAULT_ACCOUNT!;
@@ -81,8 +82,8 @@ export default class MultiClusterPipelineConstruct {
         const baseBlueprint = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
             .resourceProvider('eks-connector-role',
-                new blueprints.CreateRoleProvider(
-                    'eks-connector-role', 
+                new CreateNamedRoleProvider(
+                    'eks-connector-role', 'eks-connector-role',
                     new iam.AccountPrincipal(account), 
                     [iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")])
             )                  
@@ -91,6 +92,7 @@ export default class MultiClusterPipelineConstruct {
             .teams(new ProviderMgmtRoleTeam(account))
             .useDefaultSecretEncryption(true);
 
+            
         const mgmtCluster = new ManagementClusterBuilder(account, region)
             .create(scope, 'mgmt-cluster', mngProps)
             .account(account)
