@@ -79,14 +79,14 @@ export default class MultiClusterPipelineConstruct {
         const stages : blueprints.StackStage[] = [];
         const vpcProvider= new blueprints.VpcProvider();
 
-        const eksConnectorRole = new CreateNamedRoleProvider("eks-connector-role", "eks-connector-role", new iam.AccountPrincipal(account),
+        const eksConnectorRole = new CreateNamedRoleProvider("eks-workload-connector-role", "eks-workload-connector-role", new iam.AccountPrincipal(account),
             [
                 iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")
             ]);
 
         const baseBlueprint = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
-            .resourceProvider('eks-connector-role',  eksConnectorRole)                  
+            .resourceProvider('eks-workload-connector-role',  eksConnectorRole)                  
             .account(account)
             .addOns(...addOns)
             .teams(new ProviderMgmtRoleTeam(account))
@@ -108,7 +108,7 @@ export default class MultiClusterPipelineConstruct {
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
-                        mastersRole: blueprints.getNamedResource('eks-connector-role') as IRole,
+                        mastersRole: blueprints.getNamedResource('eks-workload-connector-role') as IRole,
                         managedNodeGroups : [addManagedNodeGroup( 'amd-tst-ng',{...clusterProps,
                             amiType : NodegroupAmiType.AL2_X86_64,
                             instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)]})]
@@ -123,7 +123,7 @@ export default class MultiClusterPipelineConstruct {
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
-                        mastersRole: blueprints.getNamedResource('eks-connector-role') as IRole,
+                        mastersRole: blueprints.getNamedResource('eks-workload-connector-role') as IRole,
                         managedNodeGroups : [addManagedNodeGroup('arm-tst-ng',{...clusterProps,
                             amiType : NodegroupAmiType.AL2_ARM_64,
                             instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE)]})]
