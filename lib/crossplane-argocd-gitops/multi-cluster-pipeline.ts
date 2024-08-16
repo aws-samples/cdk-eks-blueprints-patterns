@@ -7,7 +7,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import ManagementClusterBuilder from "./management-cluster-builder";
 import {ProviderMgmtRoleTeam} from "./custom-addons/mgmt-role-teams";
-import {GenericClusterProvider} from "@aws-quickstart/eks-blueprints";
+import {GenericClusterProvider, LookupRoleProvider} from "@aws-quickstart/eks-blueprints";
 import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
 import {ManagedNodeGroup} from "@aws-quickstart/eks-blueprints/dist/cluster-providers/types";
@@ -84,9 +84,17 @@ export default class MultiClusterPipelineConstruct {
                 iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess")
             ]);
 
-        const baseBlueprint = blueprints.EksBlueprint.builder()
+        const baseBlueprintARM = blueprints.EksBlueprint.builder()
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
             .resourceProvider('eks-workload-connector-role',  eksConnectorRole)                  
+            .account(account)
+            .addOns(...addOns)
+            .teams(new ProviderMgmtRoleTeam(account))
+            .useDefaultSecretEncryption(true);
+
+        const baseBlueprintAMD = blueprints.EksBlueprint.builder()
+            .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider)
+            .resourceProvider('eks-workload-connector-role',  new LookupRoleProvider('eks-workload-connector-role'))              
             .account(account)
             .addOns(...addOns)
             .teams(new ProviderMgmtRoleTeam(account))
@@ -102,13 +110,13 @@ export default class MultiClusterPipelineConstruct {
         const mgmtStage = [{id: `mgmt-cluster-stage` , stackBuilder: mgmtCluster}];
 
         for(const k8sVersion of k8sVersions) {
-            baseBlueprint.version(k8sVersion);
+            baseBlueprintARM.version(k8sVersion);
 
-            const blueprintAMD = baseBlueprint
+            const blueprintAMD = baseBlueprintAMD
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
-                        mastersRole: blueprints.getNamedResource('eks-workload-connector-role') as IRole,
+                        mastersRole: blueprints.getNamedResource('eks-workload-connector-role') as IRole,                      
                         managedNodeGroups : [addManagedNodeGroup( 'amd-tst-ng',{...clusterProps,
                             amiType : NodegroupAmiType.AL2_X86_64,
                             instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE)]})]
@@ -119,7 +127,7 @@ export default class MultiClusterPipelineConstruct {
                 stackBuilder : blueprintAMD.clone(props.region).id(`amd-` + k8sVersion.version.replace(".", "-"))
             });
 
-            const blueprintARM = baseBlueprint
+            const blueprintARM = baseBlueprintARM
                 .clusterProvider(
                     new GenericClusterProvider( {
                         version: k8sVersion,
