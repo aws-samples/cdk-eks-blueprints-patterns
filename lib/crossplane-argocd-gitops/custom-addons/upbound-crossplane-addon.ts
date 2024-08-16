@@ -58,7 +58,7 @@ export class UpboundCrossplaneAddOn extends blueprints.HelmAddOn {
                     {
                         "Effect": "Allow",
                         "Action": ["sts:AssumeRole"],
-                        "Resource": `arn:aws:iam::${cluster.stack.account}:role/eks-connector-role`
+                        "Resource": `arn:aws:iam::${cluster.stack.account}:role/eks-workload-connector-role`
                     },
                     {
                         "Effect": "Allow",

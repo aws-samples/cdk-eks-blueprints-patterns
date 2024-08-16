@@ -6,7 +6,6 @@ import {NodegroupAmiType} from "aws-cdk-lib/aws-eks";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import ManagementClusterBuilder from "./management-cluster-builder";
-import {ProviderMgmtRoleTeam} from "./custom-addons/mgmt-role-teams";
 import {GenericClusterProvider, LookupRoleProvider} from "@aws-quickstart/eks-blueprints";
 import {IRole} from "aws-cdk-lib/aws-iam";
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -89,7 +88,6 @@ export default class MultiClusterPipelineConstruct {
             .resourceProvider('eks-workload-connector-role',  eksConnectorRole)                  
             .account(account)
             .addOns(...addOns)
-            .teams(new ProviderMgmtRoleTeam(account))
             .useDefaultSecretEncryption(true);
 
         const baseBlueprintAMD = blueprints.EksBlueprint.builder()
@@ -97,7 +95,6 @@ export default class MultiClusterPipelineConstruct {
             .resourceProvider('eks-workload-connector-role',  new LookupRoleProvider('eks-workload-connector-role'))              
             .account(account)
             .addOns(...addOns)
-            .teams(new ProviderMgmtRoleTeam(account))
             .useDefaultSecretEncryption(true);
 
             
