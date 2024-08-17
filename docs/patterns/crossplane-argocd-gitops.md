@@ -1,4 +1,4 @@
-# GitOps based Multi-cluster Addon and Apps Management using Crossplane and ArgoCD
+# GitOps based Multi-cluster add-on and Apps Management using Crossplane and ArgoCD
 
 ## Objective
 
@@ -15,7 +15,7 @@ This helps platform teams to simplify the process of deploying add-ons and Apps 
 This blueprint will include the following:
 
 * AWS CodePipeline which deploys the Management and Workload Clusters
-* A new Well-Architected EKS cluster `management-cluster` and two workload EKS Clusters `amd-1-29-blueprint` and `arm-1-29-blueprint` in the region and account you specify.
+* A new Well-Architected EKS cluster `mgmt-cluster` and two workload EKS Clusters `workload-amd-1-29-blueprint` and `workload-arm-1-29-blueprint` in the region and account you specify.
 * [Amazon VPC CNI add-on (VpcCni)](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html) into your cluster to support native VPC networking for Amazon EKS.
 *  The Management Cluster is deployed with the following add-ons.
       * Upbound Universal Crossplane Provider
@@ -24,12 +24,12 @@ This blueprint will include the following:
       * Kubernetes Crossplane Provider
       * Helm Crossplane Provider
       * Secrets Store AddOn
-      * ArgoCD Addon
-* The ArgoCD Addon is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS add-ons, Kubernetes Manifests and also Helm Charts.
+      * ArgoCD add-on
+* The ArgoCD add-on is bootstrapped with [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) which contains Crossplane Manifest files to deploy EKS add-ons, Kubernetes Manifests and also Helm Charts.
 
 ## GitOps Configuration
 
-For GitOps, the blueprint bootstrap the ArgoCD Addon and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
+For GitOps, the blueprint bootstrap the ArgoCD add-on and points to the [EKS Blueprints Workload](https://github.com/aws-samples/eks-blueprints-workloads) sample repository.
 
 
 ## Prerequisites
@@ -95,29 +95,29 @@ make pattern aws-addon-clusters deploy
 
 ![codepipeline2](./images/codepipeline2.png)
 
-### Create Kube context to access the `management-cluster`
+### Create Kube context to access the `mgmt-cluster`
 
-Go to the CloudFormation Stack `mgmt-cluster-stage-mgmt-cluster-stage-blueprint` outputs and search for a key starting with `mgmtclusterstageblueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `management-cluster`
+Go to the CloudFormation Stack `mgmt-cluster-stage-mgmt-cluster-stage-blueprint` outputs and search for a key starting with `mgmtclusterstageblueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `mgmt-cluster`
 
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name management-cluster --region us-east-1 --role-arn arn:aws:iam::ACCOUNT_ID:role/mgmt-cluster-stage-mgmt-c-managementclusterAccessRo-XYSC5PKL8WnA
+aws eks update-kubeconfig --name mgmt-cluster --region us-west-2 --role-arn arn:aws:iam::ACCOUNT_ID:role/mgmt-cluster-stage-mgmt-c-managementclusterAccessRo-XYSC5PKL8WnA
 ```
 
 The output will look like below.
 
 ```shell
-Updated context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/management-cluster in /Users/<user_name>/.kube/config
+Updated context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/mgmt-cluster in /Users/<user_name>/.kube/config
 ```
 
 Set below environment variable to the above context
 
 ```shell
-export MANAGEMENT_CLUSTER_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/management-cluster"
+export MANAGEMENT_CLUSTER_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/mgmt-cluster"
 echo "export  MANAGEMENT_CLUSTER_CONTEXT=${MANAGEMENT_CLUSTER_CONTEXT}" >> ~/.bash_profile
 ```
-Run below command to validate the access to the `management-cluster`
+Run below command to validate the access to the `mgmt-cluster`
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get node
@@ -132,7 +132,7 @@ ip-10-0-175-104.ec2.internal   Ready    <none>   6d8h   v1.28.8-eks-ae9a62a
 ```
 
 
-Run below command to get list of Crossplane Providers deployed into the `management-cluster`
+Run below command to get list of Crossplane Providers deployed into the `mgmt-cluster`
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providers.pkg.crossplane.io
@@ -149,7 +149,7 @@ upbound-provider-family-aws   True        True      xpkg.upbound.io/upbound/prov
 ```
 
 
-Run below command to get the Crossplane Providers pods to the `management-cluster`
+Run below command to get the Crossplane Providers pods to the `mgmt-cluster`
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get pod -n upbound-system
@@ -168,7 +168,7 @@ upbound-provider-family-aws-bac5d48bd353-64845bdcbc-4vpn6   1/1     Running   0 
 ```
 
 
-Run below command to get the ArgoCD pods deployed into the `management-cluster`
+Run below command to get the ArgoCD pods deployed into the `mgmt-cluster`
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get pod -n argocd
@@ -188,29 +188,29 @@ blueprints-addon-argocd-server-84c8b597c9-98c95                   1/1     Runnin
 ```
 
 
-### Create kubecontext to access the `amd-1-29-blueprint` 
+### Create kubecontext to access the `workload-amd-1-29-blueprint` 
 
-Go to the CloudFormation Stack `amd-1-29-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an AWS command to create a the kubecontext for the `amd-1-29-blueprint`
+Go to the CloudFormation Stack `amd-1-29-workload-amd-1-29-blueprint` outputs and search for a key starting with `amd129blueprintConfigCommand` and copy it's value which an AWS command to create a the kubecontext for the `workload-amd-1-29-blueprint`
 
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name amd-1-29-blueprint --region us-east-1 --role-arn arn:aws:iam::ACCOUNT_ID:role/eks-connector-role
+aws eks update-kubeconfig --name workload-amd-1-29-blueprint --region us-west-2 --role-arn arn:aws:iam::ACCOUNT_ID:role/eks-workload-connector-role
 ```
 
 The output will look like below.
 
 ```shell
-Added new context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/amd-1-29-blueprint to /Users/jalawala/.kube/config
+Added new context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/workload-amd-1-29-blueprint to /Users/jalawala/.kube/config
 ```
 
 Set below environment variable to the above context
 
 ```shell
-export WORKLOAD_CLUSTER1_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/amd-1-29-blueprint"
+export WORKLOAD_CLUSTER1_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/workload-amd-1-29-blueprint"
 echo "export  WORKLOAD_CLUSTER1_CONTEXT=${WORKLOAD_CLUSTER1_CONTEXT}" >> ~/.bash_profile
 ```
-Run below commands to validate the access to the `amd-1-29-blueprint`
+Run below commands to validate the access to the `workload-amd-1-29-blueprint`
 
 ```shell
 kubectl --context $WORKLOAD_CLUSTER1_CONTEXT get node
@@ -222,29 +222,29 @@ NAME                          STATUS   ROLES    AGE    VERSION
 ip-10-0-96-158.ec2.internal   Ready    <none>   6d9h   v1.29.3-eks-ae9a62a
 ```
 
-### Create Kube context to access the `arm-1-29-blueprint` 
+### Create Kube context to access the `workload-arm-1-29-blueprint` 
 
-Go to the CloudFormation Stack `arm-1-29-arm-1-29-blueprint` outputs and search for a key starting with `arm129blueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `arm-1-29-blueprint`
+Go to the CloudFormation Stack `arm-1-29-workload-arm-1-29-blueprint` outputs and search for a key starting with `arm129blueprintConfigCommand` and copy it's value which an aws command to create a the kubecontext for the `workload-arm-1-29-blueprint`
 
 The example command looks like below.
 
 ```shell
-aws eks update-kubeconfig --name arm-1-29-blueprint --region us-east-1 --role-arn arn:aws:iam::$ACCOUNT_ID:role/eks-connector-role
+aws eks update-kubeconfig --name workload-arm-1-29-blueprint --region us-west-2 --role-arn arn:aws:iam::$ACCOUNT_ID:role/eks-workload-connector-role
 ```
 
 The output will look like below.
 
 ```shell
-Added new context arn:aws:eks:us-east-1:ACCOUNT_ID:cluster/arm-1-29-blueprint to /Users/jalawala/.kube/config
+Added new context arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/workload-arm-1-29-blueprint to /Users/jalawala/.kube/config
 ```
 
 Set below environment variable to the above context
 
 ```shell
-export WORKLOAD_CLUSTER2_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/arm-1-29-blueprint"
+export WORKLOAD_CLUSTER2_CONTEXT="arn:aws:eks:${AWS_REGION}:${ACCOUNT_ID}:cluster/workload-arm-1-29-blueprint"
 echo "export  WORKLOAD_CLUSTER2_CONTEXT=${WORKLOAD_CLUSTER2_CONTEXT}" >> ~/.bash_profile
 ```
-Run below commands to validate the access to the `arm-1-29-blueprint`
+Run below commands to validate the access to the `workload-arm-1-29-blueprint`
 
 ```shell
 kubectl --context $WORKLOAD_CLUSTER2_CONTEXT get node
@@ -276,10 +276,10 @@ The output will look like below.
 mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA
 ```
 
-Get the OIDC for the `management-cluster` value by running:
+Get the OIDC for the `mgmt-cluster` value by running:
 
 ```shell
-export OIDC_VAL=$(aws eks describe-cluster --name "management-cluster" --region "${AWS_REGION}"  --query "cluster.identity.oidc.issuer" --output text | awk -F'/' '{print $5}')
+export OIDC_VAL=$(aws eks describe-cluster --name "mgmt-cluster" --region "${AWS_REGION}"  --query "cluster.identity.oidc.issuer" --output text | awk -F'/' '{print $5}')
 echo $OIDC_VAL
 ```
 
@@ -292,7 +292,7 @@ The output will like below.
 Create the Updated Trust policy. Notice the `*` in `provider-aws-*` in the Conditions Section.
 
 ```shell
-export IAM_ROLE_TRUST_POLICY="provider-aws-management-cluster-trust-policy.json"
+export IAM_ROLE_TRUST_POLICY="provider-aws-mgmt-cluster-trust-policy.json"
 cat > $IAM_ROLE_TRUST_POLICY <<EOF
 {
   "Version": "2012-10-17",
@@ -315,56 +315,16 @@ EOF
 aws iam update-assume-role-policy --role-name $providerawssaiamrole --policy-document file://$IAM_ROLE_TRUST_POLICY
 ```
 
-### Add IAM permissions to `eks-connector-role` AWS Role
 
-Both of the Workload EKS Clusters i.e. `amd-1-29-blueprint` and `arm-1-29-blueprint` are added a platform team IAM Role `eks-connector-role` with `system:masters` access using the AWS Auth Config Map. This is achieved through below configuration in the file `lib/crossplane-argocd-gitops/custom-addons/mgmt-role-teams.ts`
+### Access to Workload clusters using IAM role `eks-workload-connector-role`
 
-```bash
-import {PlatformTeam} from "@aws-quickstart/eks-blueprints";
-export class ProviderMgmtRoleTeam extends PlatformTeam {
-    constructor(accountID :string) {
-        const computedProviderRoleArn = `arn:aws:iam::${accountID}:role/eks-connector-role`;
-        super( {
-            name: computedProviderRoleArn,
-            userRoleArn: computedProviderRoleArn
-        });
-    }
-}
-```
+Note that we create and add an IAM role `eks-workload-connector-role` with `system:masters` RBAC access to both of the workload clusters i.e. `workload-amd-1-29-blueprint` and `workload-arm-1-29-blueprint` as part of the Stack creation.
 
+The Upbound AWS EKS Provider Pod will use its IRSA IAM role `mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA` to assume the `eks-workload-connector-role` IAM role to gain access to the workload clusters. The `sts:AssumeRole` IAM permission is already added to the IRSA role during the Management cluster creation.
 
-The Upbound AWS EKS Provider Pod will use its IRSA IAM Role `mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA` to assume the `eks-connector-role` IAM role to gain access to the Workload Clusters. The `sts:AssumeRole` IAM permission is already being added to the IRSA Role during the Management Cluster creation process.
+Since the IRSA role will use `eks-workload-connector-role` to create a kubecontext object and also to deploy EKS add-ons into the workload clusters, the `eks-workload-connector-role `role needs eks:* IAM permissions. 
 
-Since the IRSA Role will use `eks-connector-role` to create a Kubecontext object and deploy EKS add-ons into the Workload clusters, the `eks-connector-role` role needs `eks:*` IAM permissions. Note this IAM permissions can be made very granualar to provide least privileged access to Workload clusters.
-
-
-```shell
-
-export EKS_ACCESS_IAM_POLICY="eks-access-iam.json"
-export EKS_ACCESS_IAM_POLICY_FILE="eks-access-iam.json"
-export IAM_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/eks-connector-role"
-cat > $EKS_ACCESS_IAM_POLICY_FILE <<EOF
-{
-	"Version": "2012-10-17",
-	"Statement": [
-		{
-			"Effect": "Allow",
-			"Action": [
-				"eks:*"
-			],
-			"Resource": "*"
-		}
-	]
-}
-EOF
-
-aws iam create-policy \
-        --policy-name $EKS_ACCESS_IAM_POLICY \
-        --policy-document file://$EKS_ACCESS_IAM_POLICY_FILE
-aws iam attach-role-policy \
-        --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/$EKS_ACCESS_IAM_POLICY \
-        --role-name ${IAM_ROLE_ARN}
-```
+Note this IAM permissions can be made very granular to provide least privileged access to workload clusters.
 
 
 ### GitHub Access Token for the `GitOps` repo
@@ -429,11 +389,11 @@ argocd cluster add $MANAGEMENT_CLUSTER_CONTEXT
 The output will look like below.
 
 ```shell
-WARNING: This will create a service account `argocd-manager` on the cluster referenced by context `arn:aws:eks:us-east-1:000474600478:cluster/management-cluster` with full cluster level privileges. Do you want to continue [y/N]? y
+WARNING: This will create a service account `argocd-manager` on the cluster referenced by context `arn:aws:eks:us-west-2:ACCOUNT_ID:cluster/mgmt-cluster` with full cluster level privileges. Do you want to continue [y/N]? y
 INFO[0004] ServiceAccount "argocd-manager" already exists in namespace "kube-system" 
 INFO[0004] ClusterRole "argocd-manager-role" updated    
 INFO[0005] ClusterRoleBinding "argocd-manager-role-binding" updated 
-Cluster 'https://0F745A41ECA76297CBF070C032932033.sk1.us-east-1.eks.amazonaws.com' added
+Cluster 'https://0F745A41ECA76297CBF070C032932033.sk1.us-west-2.eks.amazonaws.com' added
 ```
 
 Run the below command to get the list of ArgoCD Applications.
@@ -463,12 +423,11 @@ kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get providerconfigs.aws.upbound.i
 The output will look like below.
 
 ```shell
-NAME                                     AGE
-provider-config-aws-amd-1-29-blueprint   4h52m
-provider-config-aws-arm-1-29-blueprint   4h52m
+NAME                         AGE
+common-provider-config-aws   23h
 ```
 
-Run the below command to get the list of EKS Addon Objects deployed in the Management Cluster.
+Run the below command to get the list of EKS add-on Objects deployed in the Management Cluster.
 
 ```shell
 kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get addons.eks.aws.upbound.io
@@ -478,16 +437,16 @@ The output will look like below.
 
 ```shell
 NAME                                    READY   SYNCED   EXTERNAL-NAME                               AGE
-addon-eks-pod-identity-agent-amd-1-29   True    True     amd-1-29-blueprint:eks-pod-identity-agent   4h15m
-addon-eks-pod-identity-agent-arm-1-29   True    True     arm-1-29-blueprint:eks-pod-identity-agent   4h15m
+addon-eks-pod-identity-agent-amd-1-29   True    True     workload-amd-1-29-blueprint:eks-pod-identity-agent   4h15m
+addon-eks-pod-identity-agent-arm-1-29   True    True     workload-arm-1-29-blueprint:eks-pod-identity-agent   4h15m
 ```
 
-Go to the Workload EKS Clusters and Ensure that EKS Addon is deployed successfully.
+Go to the Workload EKS Clusters and Ensure that EKS add-on is deployed successfully.
 
-![amd-1-29-blueprint EKS Addon](./images/amd-1.29-addon.png)
+![workload-amd-1-29-blueprint EKS add-on](./images/amd-add-on.png)
 
 
-![arm-1-29-blueprint EKS Addon](./images/arm-1.29-addon.png)
+![workload-arm-1-29-blueprint EKS add-on](./images/arm-add-on.png)
 
 
 ### Validate Kubernetes Manifests deployment in Workload Clusters
@@ -502,11 +461,11 @@ The output will look like below.
 
 ```shell
 NAME                                     AGE
-provider-config-k8s-amd-1-29-blueprint   4h31m
-provider-config-k8s-arm-1-29-blueprint   4h40m
+provider-config-k8s-workload-amd-1-29-blueprint   4h31m
+provider-config-k8s-workload-arm-1-29-blueprint   4h40m
 ```
 
-Run the below command to get the list of Namespaces in the Workload Cluster  `amd-1-29-blueprint`
+Run the below command to get the list of Namespaces in the Workload Cluster  `workload-amd-1-29-blueprint`
 
 ```shell
 kubectl  --context $WORKLOAD_CLUSTER1_CONTEXT get ns
@@ -521,11 +480,11 @@ external-secrets                    Active   8d
 kube-node-lease                     Active   8d
 kube-public                         Active   8d
 kube-system                         Active   8d
-test-namespace-amd-1-29-blueprint   Active   4h9m
+test-namespace-workload-amd-1-29-blueprint   Active   4h9m
 ```
 
 
-Run the below command to get the list of Namespaces in the Workload Cluster  `arm-1-29-blueprint`
+Run the below command to get the list of Namespaces in the Workload Cluster  `workload-arm-1-29-blueprint`
 
 ```shell
 kubectl  --context $WORKLOAD_CLUSTER2_CONTEXT get ns
@@ -540,7 +499,7 @@ external-secrets                    Active   8d
 kube-node-lease                     Active   8d
 kube-public                         Active   8d
 kube-system                         Active   8d
-test-namespace-arm-1-29-blueprint   Active   4h9m
+test-namespace-workload-arm-1-29-blueprint   Active   4h9m
 ```
 
 ### Validate Helm Chart deployment in Workload Clusters
@@ -555,11 +514,11 @@ The output will look like below.
 
 ```shell
 NAME                                      AGE
-provider-config-helm-amd-1-29-blueprint   4h37m
-provider-config-helm-arm-1-29-blueprint   4h46m
+provider-config-helm-workload-amd-1-29-blueprint   4h37m
+provider-config-helm-workload-arm-1-29-blueprint   4h46m
 ```
 
-Run the below command to get the list of helm charts in the Workload Cluster  `amd-1-29-blueprint`
+Run the below command to get the list of helm charts in the Workload Cluster  `workload-amd-1-29-blueprint`
 
 ```shell
 helm  --kube-context $WORKLOAD_CLUSTER1_CONTEXT list -A
@@ -570,11 +529,11 @@ The output will look like below.
 ```shell
 NAME                                    NAMESPACE               REVISION        UPDATED                                  STATUS          CHART                   APP VERSION
 blueprints-addon-external-secrets       external-secrets        1               2024-05-07 05:25:31.465715836 +0000 UTC  deployed        external-secrets-0.9.9  v0.9.9     
-test-helm-amd-1-29-blueprint            default                 1               2024-05-15 06:39:17.325950143 +0000 UTC  deployed        nginx-17.0.1            1.26.0  
+test-helm-workload-amd-1-29-blueprint            default                 1               2024-05-15 06:39:17.325950143 +0000 UTC  deployed        nginx-17.0.1            1.26.0  
 ```
 
 
-Run the below command to get the list of Helm Charts in the Workload Cluster  `arm-1-29-blueprint`
+Run the below command to get the list of Helm Charts in the Workload Cluster  `workload-arm-1-29-blueprint`
 
 ```shell
 helm  --kube-context $WORKLOAD_CLUSTER2_CONTEXT list -A
@@ -585,7 +544,7 @@ The output will look like below.
 ```shell
 NAME                                    NAMESPACE               REVISION        UPDATED                                  STATUS          CHART                   APP VERSION
 blueprints-addon-external-secrets       external-secrets        1               2024-05-07 05:26:52.028907405 +0000 UTC  deployed        external-secrets-0.9.9  v0.9.9     
-test-helm-arm-1-29-blueprint            default                 1               2024-05-15 06:39:17.222351682 +0000 UTC  deployed        nginx-17.0.1            1.26.0   
+test-helm-workload-arm-1-29-blueprint            default                 1               2024-05-15 06:39:17.222351682 +0000 UTC  deployed        nginx-17.0.1            1.26.0   
 ```
 
 

@@ -15,7 +15,6 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
     @dependable(UpboundCrossplaneAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
-        // const packageUrl = 'xpkg.upbound.io/crossplane-contrib/provider-kubernetes:'+this.k8sProviderVersion;
 
         const roleBinding = {
             apiVersion: "rbac.authorization.k8s.io/v1",
@@ -60,8 +59,6 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             kind: "Provider",
             metadata: { name: "kubernetes-provider" },
             spec: {
-                // package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
-                // package: "xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v0.13.0",
                 package: 'xpkg.upbound.io/crossplane-contrib/provider-kubernetes:'+this.k8sProviderVersion,
                 runtimeConfigRef: {
                     name: "kubernetes-runtime-config"
