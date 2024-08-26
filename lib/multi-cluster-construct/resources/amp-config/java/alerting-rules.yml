@@ -1,0 +1,11 @@
+groups:
+  - name: default-alert
+    rules:
+      - alert: metric:alerting_rule
+        expr: jvm_memory_bytes_used{job="java", area="heap"} / jvm_memory_bytes_max * 100 > 80
+        for: 1m
+        labels:
+            severity: warning
+        annotations:
+            summary: "JVM heap warning"
+            description: "JVM heap of instance `{{$labels.instance}}` from application `{{$labels.application}}` is above 80% for one minute. (current=`{{$value}}%`)"

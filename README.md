@@ -20,6 +20,12 @@ Before proceeding, make sure [AWS CLI](https://docs.aws.amazon.com/cli/latest/us
 
 To use the eks-blueprints and patterns module, you must have [Node.js](https://nodejs.org/en/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. You will also use `make` and `brew` to simplify build and other common actions.
 
+## Workstation Setup Options
+
+### DevContainer Setup
+
+Users can choose this option, if you dont want to run this solution on a mac or ubuntu machine. Please use the dev container configuration in the `.devcontainer` folder with [devpod](devpod.sh) or any other dev container environment to create a development environment with dependencies such as Node, NPM, aws-cli, aws-cdk, kubectl, helm dependencies for your local development with `cdk-eks-blueprints-patterns` solution. 
+
 ### RHEL Setup
 
 Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprints-patterns` in your Amazon Linux/CentOS/RHEL Linux machine.
@@ -242,6 +248,7 @@ Patterns:
         konveyor
         kubecost
         kubeflow
+        kubeshark
         multi-region
         multi-team
         newrelic
