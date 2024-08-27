@@ -4,6 +4,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import { Construct } from 'constructs';
 import { dependable } from '@aws-quickstart/eks-blueprints/dist/utils';
 import { UpboundCrossplaneAddOn } from './upbound-crossplane-addon';
+import { Policy, PolicyDocument} from 'aws-cdk-lib/aws-iam';
 
 export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddOn {
     id?: string | undefined;
@@ -14,7 +15,33 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
     @dependable(UpboundCrossplaneAddOn.name)
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
-        const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
+
+        // Create the CrossPlane AWS Provider IRSA.
+        const serviceAccountName = "provider-aws-eks";
+        const upboundNamespace = "upbound-system";
+        const sa = cluster.addServiceAccount(serviceAccountName, {
+            name: serviceAccountName,
+            namespace: upboundNamespace,
+
+        });
+        sa.role.attachInlinePolicy(new Policy(cluster.stack, 'eks-workload-connector-policy',  {
+            document: PolicyDocument.fromJson({
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": ["sts:AssumeRole"],
+                        "Resource": `arn:aws:iam::${cluster.stack.account}:role/eks-workload-connector-role`
+                    },
+                    {
+                        "Effect": "Allow",
+                        "Action": ["eks:*"],
+                        "Resource": `*`
+                    }                
+                ]
+            })}));
+            
+        // const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
         const controllerConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "ControllerConfig", {
             cluster: cluster,
             manifest: [
@@ -24,7 +51,7 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                     metadata: {
                         name: "aws-config",
                         annotations: {
-                            "eks.amazonaws.com/role-arn": crossplaneIRSARole
+                            "eks.amazonaws.com/role-arn": sa.role.roleArn
                         }
                     },
                     spec: {},
