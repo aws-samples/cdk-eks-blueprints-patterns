@@ -40,7 +40,7 @@ make deps
 
 
 ## Instana Agent Configuration
-Go to your Instana Backend application (Instana User Interface), click ... More > Agents > Installing Instana Agents and select 'Kubernetes' platform to get the Instana Agent Key, Instana Service Endpoint, Instana Service port. These steps are also described [here](https://www.ibm.com/docs/en/instana-observability/218?topic=instana-endpoints-keys) or in the screenshot below.
+Go to your Instana Backend application (Instana User Interface), click ... More > Agents > Installing Instana Agents and select 'Kubernetes' platform to get the Instana Agent Key, Instana Service Endpoint, Instana Service port. These steps are also described on the screenshot below.
 
 [Instana Agent Configuration](./images/instana-agent.png)
 
