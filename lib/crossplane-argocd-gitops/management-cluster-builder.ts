@@ -6,6 +6,7 @@ import { UpboundCrossplaneAddOn } from './custom-addons/upbound-crossplane-addon
 import  { UpboundCrossplaneEKSProviderAddOn } from './custom-addons/upbound-crossplane-eks-provider-addon';
 import  { CrossplaneK8sProviderAddon } from './custom-addons/crossplane-k8s-provider-addon';
 import  { CrossplaneHelmProviderAddon } from './custom-addons/crossplane-helm-provider-addon';
+import { TeamSpoc } from './custom-addons/secret-provider-secret';
 
 
 const gitUrl = 'https://github.com/ajpaws/eks-blueprints-workloads.git';
@@ -69,6 +70,9 @@ export default class ManagementClusterBuilder {
             .version(eks.KubernetesVersion.V1_29)
             .enableNativePatternAddOns()
             .enableControlPlaneLogging()
-            .addOns(...addOns);
+            .addOns(...addOns)
+            .teams(new TeamSpoc());
     }
 }
+
+
