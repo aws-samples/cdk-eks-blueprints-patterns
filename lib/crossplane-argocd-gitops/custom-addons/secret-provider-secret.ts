@@ -14,7 +14,7 @@ export class TeamSpoc extends ApplicationTeam {
             // users: getUserArns(scope, "team-burnham.users"),
             teamSecrets: [
                 {
-                    secretProvider: new blueprints.GenerateSecretManagerProvider('github-token', 'github-token')
+                    secretProvider: new blueprints.LookupSecretsManagerSecretByName('github-token', 'github-token')
                 }
             ]
         });
