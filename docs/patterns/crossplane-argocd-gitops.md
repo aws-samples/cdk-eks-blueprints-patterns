@@ -43,6 +43,8 @@ Ensure that you have installed the following tools on your machine.
 5. [helm](https://helm.sh/docs/intro/install/)
 6. GitHub Access Token for this repo and AWS secret
 
+### Create AWS Secret Manager Secret
+
 Create a plain-text Amazon secret to hold a fine-grained GitHub access token for this repo in the desired region, and
 set its name as a value to the GITHUB_SECRET environment variable. Default value is `cdk_blueprints_github_secret`.
 
@@ -62,6 +64,25 @@ aws secretsmanager create-secret --region $AWS_REGION \
 The Secret will look like this in the AWS Console.
 
 ![AWS Secret for CodePipeline](./images/aws_secret_codepipeline.png)
+
+
+### GitHub Access Token for the `GitOps` repo
+
+In the [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS add-ons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `GitOps` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `GitOps` repo.
+
+```shell
+export GIT_OPS_GITHUB_PAT_TOKEN=<set_token_here>
+export GIT_OPS_AWS_SECRET_NAME="github-token"
+aws secretsmanager create-secret --region $AWS_REGION \
+    --name $GIT_OPS_AWS_SECRET_NAME \
+    --description "GitHub Personal Access Token for ArgoCD to access Grossplane Manifests" \
+    --secret-string $GIT_OPS_GITHUB_PAT_TOKEN
+```
+
+#### SecretProviderClass object in Management Cluster
+
+We will create SecretProviderClass  object in  `team-argocd`  Namespace as part of the Management cluster creation. This will be used by the ArgoCD Controller to reconcile the ArgoCD Application Manifest file in the GitOps repository.
+
 
 ## Deploy
 
@@ -256,66 +277,6 @@ NAME                          STATUS   ROLES    AGE    VERSION
 ip-10-0-96-158.ec2.internal   Ready    <none>   6d9h   v1.29.3-eks-ae9a62a
 ```
 
-### Update the Trust policy for the Upbound AWS EKS Provider IAM Role.
-
-The IAM Role used for IRSA for the Upbound AWS EKS Provider Pod needs to be updated as below to allow Service Accounts for all Upbound AWS Service specific providers to assume the Role.
-
-Go to the `mgmt-cluster-stage-mgmt-cluster-stage-blueprint` stack output tab and extract the role name from the  `providerawssaiamrole` output. 
-
-```shell
-export providerawssaiamrole=$(aws cloudformation describe-stacks \
-    --stack-name mgmt-cluster-stage-mgmt-cluster-stage-blueprint \
-    --query 'Stacks[].Outputs[?OutputKey==`providerawssaiamrole`].OutputValue' \
-    --output text | awk -F'/' '{print $2}')
-echo $providerawssaiamrole
-```
-
-The output will look like below.
-
-```shell
-mgmt-cluster-stage-mgmt-c-mgmtclusterstageblueprint-I8cnZsnO37rA
-```
-
-Get the OIDC for the `mgmt-cluster` value by running:
-
-```shell
-export OIDC_VAL=$(aws eks describe-cluster --name "mgmt-cluster" --region "${AWS_REGION}"  --query "cluster.identity.oidc.issuer" --output text | awk -F'/' '{print $5}')
-echo $OIDC_VAL
-```
-
-The output will like below.
-
-```shell
-0F745A41ECA76297CBF070C032932033
-```
-
-Create the Updated Trust policy. Notice the `*` in `provider-aws-*` in the Conditions Section.
-
-```shell
-export IAM_ROLE_TRUST_POLICY="provider-aws-mgmt-cluster-trust-policy.json"
-cat > $IAM_ROLE_TRUST_POLICY <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/oidc.eks.${AWS_REGION}.amazonaws.com/id/${OIDC_VAL}"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringLike": {
-          "oidc.eks.${AWS_REGION}.amazonaws.com/id/${OIDC_VAL}:sub": "system:serviceaccount:upbound-system:provider-aws-*"
-        }
-      }
-    }
-  ]
-}
-EOF
-aws iam update-assume-role-policy --role-name $providerawssaiamrole --policy-document file://$IAM_ROLE_TRUST_POLICY
-```
-
-
 ### Access to Workload clusters using IAM role `eks-workload-connector-role`
 
 Note that we create and add an IAM role `eks-workload-connector-role` with `system:masters` RBAC access to both of the workload clusters i.e. `workload-amd-1-29-blueprint` and `workload-arm-1-29-blueprint` as part of the Stack creation.
@@ -325,37 +286,6 @@ The Upbound AWS EKS Provider Pod will use its IRSA IAM role `mgmt-cluster-stage-
 Since the IRSA role will use `eks-workload-connector-role` to create a kubecontext object and also to deploy EKS add-ons into the workload clusters, the `eks-workload-connector-role `role needs eks:* IAM permissions. 
 
 Note this IAM permissions can be made very granular to provide least privileged access to workload clusters.
-
-
-### GitHub Access Token for the `GitOps` repo
-
-In the [GitOps](https://github.com/aws-samples/eks-blueprints-workloads) repository, there are some ArgoCD Application configuration files,  which in turn points to Crossplane Manifest files. These Crossplane Manifest files will be applied by ArgoCD in the Management Cluster to deploy EKS addons, Kubernetes Manifests and Helm charts into the workload clusters. To configure access to this repo for ArgoCD Repo Server, you need to create a GitHub token to access the `GitOps` repo. First create a plain-text Amazon secret `github-token` AWS Secret Manager, to hold a fine-grained GitHub access token for `GitOps` repo in and then create `blueprints-secret` of type `SecretProviderClass` in the Management Kubernetes Cluster.
-
-```shell
-export GIT_OPS_GITHUB_PAT_TOKEN=<set_token_here>
-export GIT_OPS_AWS_SECRET_NAME="github-token"
-aws secretsmanager create-secret --region $AWS_REGION \
-    --name $GIT_OPS_AWS_SECRET_NAME \
-    --description "GitHub Personal Access Token for ArgoCD to access Grossplane Manifests" \
-    --secret-string $GIT_OPS_GITHUB_PAT_TOKEN
-
-
-cat > secret-store-argocd.yaml <<EOF
----
-apiVersion: secrets-store.csi.x-k8s.io/v1
-kind: SecretProviderClass
-metadata:
-  name: blueprints-secret
-  namespace: argocd
-spec:
-  provider: aws
-  parameters:
-    objects: |
-        - objectName: "github-token"
-          objectType: "secretsmanager"
-EOF
-kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT apply -f secret-store-argocd.yaml
-```
 
 
 ## Test 
@@ -430,7 +360,7 @@ common-provider-config-aws   23h
 Run the below command to get the list of EKS add-on Objects deployed in the Management Cluster.
 
 ```shell
-kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get addons.eks.aws.upbound.io
+kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get add-ons.eks.aws.upbound.io
 ```
 
 The output will look like below.

@@ -40,24 +40,6 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                 ]
             })}));
             
-        // // const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
-        // const controllerConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "ControllerConfig", {
-        //     cluster: cluster,
-        //     manifest: [
-        //         {
-        //             apiVersion: "pkg.crossplane.io/v1alpha1",
-        //             kind: "ControllerConfig",
-        //             metadata: {
-        //                 name: "aws-config",
-        //                 annotations: {
-        //                     "eks.amazonaws.com/role-arn": sa.role.roleArn
-        //                 }
-        //             },
-        //             spec: {},
-        //         },
-        //     ],
-        // });
-
         const runtimeConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeConfig", {
             cluster: cluster,
             manifest: [
@@ -81,26 +63,7 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                     }
                 },
             ],
-        });        
-        // const runtimeConfig = {
-        //     apiVersion: "pkg.crossplane.io/v1beta1",
-        //     kind: "DeploymentRuntimeConfig",
-        //     metadata: { 
-        //         name: "aws-eks-runtime-config"               
-        //     },
-        //     spec: {
-        //         deploymentTemplate: {
-        //             spec: { 
-        //                 replicas: 1,
-        //                 selector: {},
-        //                 template: {}
-        //             }
-        //         },
-        //         serviceAccountTemplate: { 
-        //             metadata: { name: "provider-aws-eks" } 
-        //         }
-        //     }
-        // };
+        });
 
         const awsEksProvider = new eks.KubernetesManifest(clusterInfo.cluster.stack, "EKSProvider", {
             cluster: cluster,
