@@ -22,7 +22,6 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
         const sa = cluster.addServiceAccount(serviceAccountName, {
             name: serviceAccountName,
             namespace: upboundNamespace,
-
         });
         sa.role.attachInlinePolicy(new Policy(cluster.stack, 'eks-workload-connector-policy',  {
             document: PolicyDocument.fromJson({
@@ -41,23 +40,67 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                 ]
             })}));
             
-        // const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
-        const controllerConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "ControllerConfig", {
+        // // const crossplaneIRSARole = clusterInfo.getAddOnContexts().get("UpboundCrossplaneAddOn")!["arn"];
+        // const controllerConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "ControllerConfig", {
+        //     cluster: cluster,
+        //     manifest: [
+        //         {
+        //             apiVersion: "pkg.crossplane.io/v1alpha1",
+        //             kind: "ControllerConfig",
+        //             metadata: {
+        //                 name: "aws-config",
+        //                 annotations: {
+        //                     "eks.amazonaws.com/role-arn": sa.role.roleArn
+        //                 }
+        //             },
+        //             spec: {},
+        //         },
+        //     ],
+        // });
+
+        const runtimeConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeConfig", {
             cluster: cluster,
             manifest: [
                 {
-                    apiVersion: "pkg.crossplane.io/v1alpha1",
-                    kind: "ControllerConfig",
-                    metadata: {
-                        name: "aws-config",
-                        annotations: {
-                            "eks.amazonaws.com/role-arn": sa.role.roleArn
-                        }
+                    apiVersion: "pkg.crossplane.io/v1beta1",
+                    kind: "DeploymentRuntimeConfig",
+                    metadata: { 
+                        name: "aws-eks-runtime-config"               
                     },
-                    spec: {},
+                    spec: {
+                        deploymentTemplate: {
+                            spec: { 
+                                replicas: 1,
+                                selector: {},
+                                template: {}
+                            }
+                        },
+                        serviceAccountTemplate: { 
+                            metadata: { name: "provider-aws-eks" } 
+                        }
+                    }
                 },
             ],
-        });
+        });        
+        // const runtimeConfig = {
+        //     apiVersion: "pkg.crossplane.io/v1beta1",
+        //     kind: "DeploymentRuntimeConfig",
+        //     metadata: { 
+        //         name: "aws-eks-runtime-config"               
+        //     },
+        //     spec: {
+        //         deploymentTemplate: {
+        //             spec: { 
+        //                 replicas: 1,
+        //                 selector: {},
+        //                 template: {}
+        //             }
+        //         },
+        //         serviceAccountTemplate: { 
+        //             metadata: { name: "provider-aws-eks" } 
+        //         }
+        //     }
+        // };
 
         const awsEksProvider = new eks.KubernetesManifest(clusterInfo.cluster.stack, "EKSProvider", {
             cluster: cluster,
@@ -69,17 +112,16 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                         name: "provider-aws-eks",
                     },
                     spec: {
-                        // package: "xpkg.upbound.io/upbound/provider-aws-eks:v1.1.0",
                         package: 'xpkg.upbound.io/upbound/provider-aws-eks:'+this.UpboundEKSProviderVersion,
-                        controllerConfigRef: {
-                            name: "aws-config"
-                        }
+                        runtimeConfigRef: {
+                            name: "aws-eks-runtime-config"
+                        }                        
                     },
                 },
             ],
         });
         
-        awsEksProvider.node.addDependency(controllerConfig);
-        return Promise.resolve(controllerConfig);
+        awsEksProvider.node.addDependency(runtimeConfig);
+        return Promise.resolve(runtimeConfig);
     }
 }
