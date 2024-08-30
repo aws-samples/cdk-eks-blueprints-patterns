@@ -166,7 +166,7 @@ Follow the below steps to setup and leverage `eks-blueprints` and `eks-blueprint
 
 ### Verify `Node.js` and `npm` Installation
 
-1. Check the installed version of Node.js
+1. Check the installed version of Node.js:
 
    ```bash
    node -v
