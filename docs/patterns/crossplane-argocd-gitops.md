@@ -105,7 +105,7 @@ cdk bootstrap aws://$ACCOUNT_ID/$AWS_REGION
 ```
 make build
 make list
-make pattern aws-addon-clusters deploy
+make pattern crossplane-argocd-gitops deploy
 ```
 
 ## Cluster Access
