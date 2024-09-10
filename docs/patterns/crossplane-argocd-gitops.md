@@ -52,9 +52,9 @@ set its name as a value to the GITHUB_SECRET environment variable. Default value
 
 ```shell
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
-export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+export AWS_REGION="us-west-2"
 export CDK_REPO_GITHUB_PAT_TOKEN=<set_token_here>
-export CDK_REPO_AWS_SECRET_NAME="cdk_blueprints_github_secret"
+export CDK_REPO_AWS_SECRET_NAME="cdk_blueprints_gitops_github_secret"
 aws secretsmanager create-secret --region $AWS_REGION \
     --name $CDK_REPO_AWS_SECRET_NAME \
     --description "GitHub Personal Access Token for CodePipeline to access GitHub account" \
