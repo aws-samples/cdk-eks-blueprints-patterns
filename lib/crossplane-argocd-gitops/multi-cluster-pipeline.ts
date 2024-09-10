@@ -162,7 +162,8 @@ export default class MultiClusterPipelineConstruct {
             .repository({
                 targetRevision : gitProps.revision,
                 credentialsSecretName: gitProps.secretName,
-                repoUrl: gitProps.repoName
+                repoUrl: gitProps.repoName,
+                trigger: blueprints.GitHubTrigger.POLL
             }
             )
             .wave({ id: `mgmt-cluster-stage`, stages: mgmtStage })
