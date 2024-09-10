@@ -20,7 +20,7 @@ const region = process.env.CDK_DEFAULT_REGION!;
 const minSize  =  parseInt(process.env.NODEGROUP_MIN ?? "1");
 const maxSize  =  parseInt(process.env.NODEGROUP_MAX ?? "3");
 const desiredSize  =  parseInt(process.env.NODEGROUP_DESIRED ?? "1");
-const gitHubSecret = process.env.GITHUB_SECRET ?? "cdk_blueprints_gitops_github_secret";
+const gitHubSecret = process.env.GITHUB_SECRET ?? "cdk_blueprints_github_secret";
 
 const props : MultiClusterOptions = {
     account,
@@ -53,7 +53,7 @@ export default class MultiClusterPipelineConstruct {
 
         const gitProps = {
             owner :'aws-samples',
-            secretName : props.gitHubSecret ?? 'cdk_blueprints_gitops_github_secret',
+            secretName : props.gitHubSecret ?? 'cdk_blueprints_github_secret',
             repoName : 'cdk-eks-blueprints-patterns',
             revision : 'main' // use this to target a certain branch for deployment
         };
