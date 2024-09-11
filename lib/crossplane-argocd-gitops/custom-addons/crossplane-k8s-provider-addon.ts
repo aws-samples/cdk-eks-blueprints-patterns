@@ -71,13 +71,13 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
             manifest: [roleBinding, runtimeConfig]
         });
 
-        const awsK8sProvider1 = new eks.KubernetesManifest(clusterInfo.cluster.stack, "awsK8sProvider1", {
+        const awsK8sProvider = new eks.KubernetesManifest(clusterInfo.cluster.stack, "awsK8sProvider", {
             cluster: cluster,
             manifest: [providerK8sResource]
         });
 
-        awsK8sProvider1.node.addDependency(runtimeK8sConfig);
+        awsK8sProvider.node.addDependency(runtimeK8sConfig);
 
-        return Promise.resolve(runtimeK8sConfig);
+        return Promise.resolve(awsK8sProvider);
     }
 }

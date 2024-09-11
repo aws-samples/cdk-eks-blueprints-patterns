@@ -16,7 +16,7 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
 
-        // Create the CrossPlane AWS Provider IRSA.
+        // Create the CrossPlane EKS Provider IRSA.
         const serviceAccountName = "provider-aws-eks";
         const upboundNamespace = "upbound-system";
         const sa = cluster.addServiceAccount(serviceAccountName, {
@@ -39,7 +39,11 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                     }                
                 ]
             })}));
-            
+
+        clusterInfo.addAddOnContext(UpboundCrossplaneEKSProviderAddOn.name, {
+            arn: sa.role.roleArn
+        });
+
         const runtimeConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeConfig", {
             cluster: cluster,
             manifest: [
@@ -84,7 +88,8 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
             ],
         });
         
+        runtimeConfig.node.addDependency(sa);
         awsEksProvider.node.addDependency(runtimeConfig);
-        return Promise.resolve(runtimeConfig);
+        return Promise.resolve(awsEksProvider);
     }
 }

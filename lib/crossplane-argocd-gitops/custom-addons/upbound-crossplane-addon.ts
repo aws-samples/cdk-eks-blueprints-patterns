@@ -48,7 +48,6 @@ export class UpboundCrossplaneAddOn extends blueprints.HelmAddOn {
         const sa = cluster.addServiceAccount(serviceAccountName, {
             name: serviceAccountName,
             namespace: this.options.namespace!,
-
         });
         sa.node.addDependency(ns);
         sa.role.attachInlinePolicy(new Policy(cluster.stack, 'eks-connect-policy',  {

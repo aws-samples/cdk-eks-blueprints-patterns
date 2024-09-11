@@ -62,7 +62,6 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
             metadata: { name: "helm-provider" },
             spec: {
                 package: 'xpkg.upbound.io/crossplane-contrib/provider-helm:'+this.helmProviderVersion,
-                
                 runtimeConfigRef: {
                     name: "helm-runtime-config"
                 }
@@ -80,6 +79,6 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
         });
 
         awsHelmProvider.node.addDependency(runtimeHelmConfig);
-        return Promise.resolve(runtimeHelmConfig);
+        return Promise.resolve(awsHelmProvider);
     }
 }
