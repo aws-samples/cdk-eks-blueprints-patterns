@@ -79,6 +79,6 @@ export class CrossplaneHelmProviderAddon implements blueprints.ClusterAddOn {
         });
 
         awsHelmProvider.node.addDependency(runtimeHelmConfig);
-        return Promise.resolve(awsHelmProvider);
+        return Promise.resolve(runtimeHelmConfig);
     }
 }

@@ -78,6 +78,6 @@ export class CrossplaneK8sProviderAddon implements blueprints.ClusterAddOn {
 
         awsK8sProvider.node.addDependency(runtimeK8sConfig);
 
-        return Promise.resolve(awsK8sProvider);
+        return Promise.resolve(runtimeK8sConfig);
     }
 }

@@ -90,6 +90,6 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
         
         runtimeConfig.node.addDependency(sa);
         awsEksProvider.node.addDependency(runtimeConfig);
-        return Promise.resolve(awsEksProvider);
+        return Promise.resolve(runtimeConfig);
     }
 }
