@@ -40,9 +40,9 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
                 ]
             })}));
 
-        clusterInfo.addAddOnContext(UpboundCrossplaneEKSProviderAddOn.name, {
-            arn: sa.role.roleArn
-        });
+        // clusterInfo.addAddOnContext(UpboundCrossplaneEKSProviderAddOn.name, {
+        //     arn: sa.role.roleArn
+        // });
 
         const runtimeConfig = new eks.KubernetesManifest(clusterInfo.cluster.stack, "runtimeConfig", {
             cluster: cluster,
@@ -88,7 +88,7 @@ export class UpboundCrossplaneEKSProviderAddOn implements blueprints.ClusterAddO
             ],
         });
         
-        runtimeConfig.node.addDependency(sa);
+        // runtimeConfig.node.addDependency(sa);
         awsEksProvider.node.addDependency(runtimeConfig);
         return Promise.resolve(runtimeConfig);
     }
