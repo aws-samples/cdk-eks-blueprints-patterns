@@ -99,7 +99,7 @@ export default class MultiClusterPipelineConstruct {
 
             
         const mgmtCluster = new ManagementClusterBuilder(account, region)
-            .create(scope, 'mgmt-cluster', mngProps)
+            .create(scope, 'eks-mgmt-cluster', mngProps)
             .account(account)
             .region(region)
             .resourceProvider(blueprints.GlobalResources.Vpc, vpcProvider);
