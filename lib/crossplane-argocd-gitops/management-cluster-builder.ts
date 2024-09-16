@@ -50,11 +50,11 @@ export default class ManagementClusterBuilder {
                     common: {
                         providerConfigAWSName: 'common-provider-config-aws',
                         eksConnectorRoleName: 'eks-workload-connector-role',
-                        accountId: process.env.CDK_DEFAULT_ACCOUNT,
-                        region: process.env.CDK_DEFAULT_REGION,
+                        accountId: `${process.env.CDK_DEFAULT_ACCOUNT}`, 
+                        region: `${process.env.CDK_DEFAULT_REGION}`,
                         crossplaneNamespace: 'upbound-system'                     
                     }                
-                },                
+                },
             }),
         ];
 
