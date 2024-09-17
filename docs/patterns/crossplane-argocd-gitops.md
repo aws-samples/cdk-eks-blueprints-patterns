@@ -332,7 +332,7 @@ common-provider-config-aws   23h
 2. Run the below command to get the list of `Addon` Objects deployed in the Management cluster. 
 
 ```shell
-kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get add-ons.eks.aws.upbound.io
+kubectl  --context $MANAGEMENT_CLUSTER_CONTEXT get addons.eks.aws.upbound.io
 ```
 
 The output will look like below.
@@ -453,3 +453,14 @@ To clean up your EKS Blueprints, run the following commands:
 ```sh
 make pattern crossplane-argocd-gitops destroy 
 ```
+The above command deletes the AWS CodePipeline `crossplane-argocd-gitops`. However to complete the Cleanup, delete the following CloudFormation Stacks manually using AWS Console or AWS CLI using below commands.
+
+```sh
+aws cloudformation delete-stack --stack-name workload-amd-1-29-workload-amd-1-29-blueprint
+aws cloudformation delete-stack --stack-name workload-arm-1-29-workload-arm-1-29-blueprint
+aws cloudformation delete-stack --stack-name mgmt-cluster-stage-mgmt-cluster-stage-blueprint
+```
+
+
+
+
