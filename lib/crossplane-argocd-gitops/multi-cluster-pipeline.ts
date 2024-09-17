@@ -52,7 +52,7 @@ export default class MultiClusterPipelineConstruct {
         const account : string = props.account;
 
         const gitProps = {
-            owner :'ajpaws',
+            owner :'aws-samples',
             secretName : props.gitHubSecret ?? 'cdk_blueprints_github_secret',
             repoName : 'cdk-eks-blueprints-patterns',
             revision : 'main' // use this to target a certain branch for deployment
