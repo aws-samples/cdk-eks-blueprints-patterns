@@ -26,3 +26,5 @@ site
 
 # Python virtual env directory
 *.venv*
+
+*otel-collector-config-new.yml
