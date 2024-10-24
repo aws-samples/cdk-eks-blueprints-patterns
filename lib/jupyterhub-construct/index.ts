@@ -5,19 +5,19 @@ import * as cdk from 'aws-cdk-lib';
 
 export default class JupyterHubConstruct {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
-        const stackId = `${id}-blueprint`;  
+        const stackId = `${id}-blueprint`;
 
         blueprints.EksBlueprint.builder()
             .account(props.env!.account!)
             .region(props.env!.region!)
             .version('auto')
             .addOns(
-                new blueprints.EfsCsiDriverAddOn({replicaCount: 1}),
+                new blueprints.EfsCsiDriverAddOn({ replicaCount: 1 }),
                 new blueprints.VpcCniAddOn(),
                 new blueprints.KubeProxyAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.JupyterHubAddOn({
-                    efsConfig:{
+                    efsConfig: {
                         removalPolicy: cdk.RemovalPolicy.DESTROY,
                         pvcName: "efs-persist",
                         capacity: "120Gi",
@@ -29,18 +29,17 @@ export default class JupyterHubConstruct {
                         userDataUrl: blueprints.utils.valueFromContext(scope, "userDataUrl", "https://yourid.oidcprovider.com/userinfo"),
                         clientId: blueprints.utils.valueFromContext(scope, "clientId", "yourClientIdString"),
                         clientSecret: blueprints.utils.valueFromContext(scope, "clientSecret", "yourClientSecretString"),
-                        scope: blueprints.utils.valueFromContext(scope, "scope",["openid","name","profile","email"]),
+                        scope: blueprints.utils.valueFromContext(scope, "scope", ["openid", "name", "profile", "email"]),
                         usernameKey: blueprints.utils.valueFromContext(scope, "usernameKey", "name"),
                     },
                     serviceType: blueprints.JupyterHubServiceType.CLUSTERIP,
-                    values: { 
-                        prePuller: { 
+                    values: {
+                        prePuller: {
                             hook: { enabled: false },
                         }
                     }
                 })
             )
-            .build(scope, stackId); 
+            .build(scope, stackId);
     }
 }
-  

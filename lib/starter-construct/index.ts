@@ -7,18 +7,18 @@ import * as AWS from 'aws-sdk';
 const s3 = new AWS.S3();
 
 async function readSettingsFromS3(bucketName: string, key: string): Promise<string> {
-  const params = {
-    Bucket: bucketName,
-    Key: key
-  };
+    const params = {
+        Bucket: bucketName,
+        Key: key
+    };
 
-  try {
-    const data = await s3.getObject(params).promise();
-    return data.Body?.toString() || '';
-  } catch (err) {
-    console.error('Error reading settings file from S3:', err);
-    throw err;
-  }
+    try {
+        const data = await s3.getObject(params).promise();
+        return data.Body?.toString() || '';
+    } catch (err) {
+        console.error('Error reading settings file from S3:', err);
+        throw err;
+    }
 }
 
 /**
@@ -26,12 +26,12 @@ async function readSettingsFromS3(bucketName: string, key: string): Promise<stri
  */
 export default class StarterConstruct {
     build(scope: Construct, id: string) {
-        
+
         const stackID = `${id}-blueprint`;
         blueprints.EksBlueprint.builder()
             .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn,
-                new blueprints.VpcCniAddOn(), 
+                new blueprints.VpcCniAddOn(),
                 new blueprints.MetricsServerAddOn,
                 new blueprints.ClusterAutoScalerAddOn,
             )

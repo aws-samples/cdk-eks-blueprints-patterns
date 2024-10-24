@@ -34,7 +34,7 @@ export default class DataAtRestEncryptionConstruct {
 
         await EksBlueprint.builder()
             .resourceProvider(GlobalResources.Vpc, new blueprints.VpcProvider())
-        // create KMS keys
+            // create KMS keys
             .resourceProvider(
                 GlobalResources.KmsKey,
                 new blueprints.CreateKmsKeyProvider()
@@ -47,7 +47,7 @@ export default class DataAtRestEncryptionConstruct {
                 efsKmsKeyName,
                 new blueprints.CreateKmsKeyProvider(efsKmsKeyName)
             )
-        // create EFS file system
+            // create EFS file system
             .resourceProvider(
                 efsFileSystemName,
                 new blueprints.CreateEfsFileSystemProvider({

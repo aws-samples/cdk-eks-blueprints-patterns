@@ -17,7 +17,7 @@ export class ImportClusterConstruct {
          *Modify these constants for your use case.
         */
         const clusterName = "quickstart-cluster";
-        const kubectlRoleName = "awsqs-kubernetes-helm"; 
+        const kubectlRoleName = "awsqs-kubernetes-helm";
         const region = process.env.CDK_DEFAULT_REGION!;
 
         const sdkCluster = await blueprints.describeCluster(clusterName, region);
@@ -27,7 +27,7 @@ export class ImportClusterConstruct {
          */
         const importClusterProvider = blueprints.ImportClusterProvider.fromClusterAttributes(sdkCluster, blueprints.getResource(context =>
             new blueprints.LookupRoleProvider(kubectlRoleName).provide(context)));
-        
+
         const vpcId = sdkCluster.resourcesVpcConfig?.vpcId;
 
         blueprints.EksBlueprint.builder()

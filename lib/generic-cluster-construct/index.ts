@@ -16,9 +16,9 @@ export default class GenericClusterConstruct {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);
- 
+
         const stackID = `${id}-blueprint`;
-        
+
         const clusterProvider = new blueprints.GenericClusterProvider({
             version: eks.KubernetesVersion.V1_25,
             managedNodeGroups: [
@@ -36,11 +36,11 @@ export default class GenericClusterConstruct {
             fargateProfiles: {
                 "fp1": {
                     fargateProfileName: "fp1",
-                    selectors:  [{ namespace: "serverless1" }] 
+                    selectors: [{ namespace: "serverless1" }]
                 },
                 "fp2": {
                     fargateProfileName: "fp2",
-                    selectors:  [{ namespace: "serverless2" }] 
+                    selectors: [{ namespace: "serverless2" }]
                 }
             }
         });

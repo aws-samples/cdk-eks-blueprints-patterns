@@ -26,8 +26,8 @@ export class BackstageConstruct extends Construct {
             databaseSecretTargetName: blueprints.utils.valueFromContext(scope, "backstage.database.secret.target.name", "backstage-database-secret"),
         };
 
-        const subdomain = props.backstageLabel+"."+props.parentDomain;
-    
+        const subdomain = props.backstageLabel + "." + props.parentDomain;
+
         const databaseInstanceCredentialsProviderProps = {
             username: props.username
         } as DatabaseInstanceCredentialsProviderProps;
@@ -82,6 +82,6 @@ export class BackstageConstruct extends Construct {
             .addOns(...addOns)
             .version('auto')
             .teams()
-            .build(scope, props.backstageLabel+"-blueprint");
+            .build(scope, props.backstageLabel + "-blueprint");
     }
 }

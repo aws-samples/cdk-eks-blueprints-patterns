@@ -7,18 +7,20 @@ export class WindowsVpcCni implements blueprints.ClusterAddOn {
 
     deploy(clusterInfo: blueprints.ClusterInfo): void | Promise<Construct> {
         const cluster = clusterInfo.cluster;
-        const configmap = new KubernetesManifest(cluster, 'amazon-vpc-cni', { cluster: cluster,
-            manifest : [{
+        const configmap = new KubernetesManifest(cluster, 'amazon-vpc-cni', {
+            cluster: cluster,
+            manifest: [{
                 apiVersion: "v1",
                 kind: "ConfigMap",
                 metadata: {
                     name: "amazon-vpc-cni",
                     namespace: "kube-system",
                 },
-                data:{
+                data: {
                     "enable-windows-ipam": "true"
                 },
-            }], overwrite: true });
+            }], overwrite: true
+        });
 
         return Promise.resolve(configmap);
     }

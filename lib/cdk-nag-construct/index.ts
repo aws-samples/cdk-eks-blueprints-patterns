@@ -1,6 +1,6 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { ArnPrincipal } from 'aws-cdk-lib/aws-iam'; 
+import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 import { NagSuppressionsConfig } from './nag-rules';
 import { KubernetesVersion } from 'aws-cdk-lib/aws-eks';
 

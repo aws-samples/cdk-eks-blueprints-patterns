@@ -11,20 +11,20 @@ import * as team from '../teams/multi-account-monitoring';
  * Demonstrates how to leverage more than one node group along with Fargate profiles.
  */
 export default class AmpMonitoringConstruct {
-    build(scope: Construct, id: string, account?: string, region?: string ) {
+    build(scope: Construct, id: string, account?: string, region?: string) {
         // Setup platform team
-        const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
-        const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
- 
+        const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT!;
+        const awsRegion = region ?? process.env.CDK_DEFAULT_REGION!;
+
         const stackID = `${id}-blueprint`;
         this.create(scope, accountID, awsRegion)
             .build(scope, stackID);
     }
 
-    create(scope: Construct, account?: string, region?: string ) {
+    create(scope: Construct, account?: string, region?: string) {
         // Setup platform team
-        const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
-        const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
+        const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT!;
+        const awsRegion = region ?? process.env.CDK_DEFAULT_REGION!;
         const ampWorkspaceName = "multi-account-monitoring";
         const ampPrometheusEndpoint = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace).attrPrometheusEndpoint;
 

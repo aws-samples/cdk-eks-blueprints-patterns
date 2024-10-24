@@ -51,10 +51,10 @@ export default class WindowsConstruct {
             new WindowsVpcCni(),
         ];
 
-        const karpenterProps :KarpenterAddOnProps = {
+        const karpenterProps: KarpenterAddOnProps = {
             nodePoolSpec: {
                 requirements: [
-                    { key: 'kubernetes.io/os', operator: 'In', values: ['windows']},
+                    { key: 'kubernetes.io/os', operator: 'In', values: ['windows'] },
                 ],
                 taints: [
                     {
@@ -70,12 +70,12 @@ export default class WindowsConstruct {
                 },
                 weight: 20
             },
-            ec2NodeClassSpec : {
+            ec2NodeClassSpec: {
                 subnetSelectorTerms: [
-                    { tags:  { "Name": `${stackID}/${stackID}-vpc/Private*` }}
+                    { tags: { "Name": `${stackID}/${stackID}-vpc/Private*` } }
                 ],
                 securityGroupSelectorTerms: [
-                    {tags: { [`kubernetes.io/cluster/${stackID}`]: "owned",}}
+                    { tags: { [`kubernetes.io/cluster/${stackID}`]: "owned", } }
                 ],
                 amiFamily: "Windows2022"
             },

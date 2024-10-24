@@ -25,7 +25,7 @@ class CognitoIdpStack extends cdk.Stack {
     public readonly userPoolOut: cognito.UserPool;
     public readonly userPoolClientOut: cognito.UserPoolClient;
     public readonly userPoolDomainOut: cognito.UserPoolDomain;
-    
+
     constructor(scope: Construct, id: string, subDomain: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -34,8 +34,8 @@ class CognitoIdpStack extends cdk.Stack {
         });
 
         lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"));
-        lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));     
-        
+        lambdaExecutionRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSSMReadOnlyAccess"));
+
         const authChallengeFn = new lambda.Function(this, 'authChallengeFn', {
             runtime: lambda.Runtime.PYTHON_3_12,
             code: lambda.Code.fromAsset('./lib/secure-ingress-auth-cognito/lambda'),
@@ -69,19 +69,19 @@ class CognitoIdpStack extends cdk.Stack {
             lambdaTriggers: {
                 preSignUp: authChallengeFn,
                 preAuthentication: authChallengeFn,
-            },            
+            },
         });
-        
-        
+
+
         // Output the User Pool ID
 
         this.userPoolOut = userPool;
-        
+
         new cdk.CfnOutput(this, 'CognitoIDPUserPoolOut', {
             value: userPool.userPoolId,
             exportName: 'CognitoIDPUserPoolId'
         });
-        
+
         new cdk.CfnOutput(this, 'CognitoIDPUserPoolArnOut', {
             value: userPool.userPoolArn,
             exportName: 'CognitoIDPUserPoolArn'
@@ -90,7 +90,7 @@ class CognitoIdpStack extends cdk.Stack {
 
         // We will ask the IDP to redirect back to our domain's index page
         const redirectUri = `https://${subDomain}/oauth2/idpresponse`;
-      
+
         // Configure the user pool client application 
         const userPoolClient = new cognito.UserPoolClient(this, 'CognitoAppClient', {
             userPool,
@@ -131,12 +131,12 @@ class CognitoIdpStack extends cdk.Stack {
         // Output the User Pool App Client ID
 
         this.userPoolDomainOut = userPoolDomain;
-    
+
         new cdk.CfnOutput(this, 'CognitoIDPUserPoolDomainOut', {
             value: userPoolDomain.domainName,
             exportName: 'CognitoIDPUserPoolDomain'
         });
-        
+
     }
 }
 
@@ -144,7 +144,7 @@ class CognitoIdpStack extends cdk.Stack {
 /**
  * See docs/patterns/secure-ingress-cognito.md for mode details on the setup.
  */
-export class SecureIngressCognito extends cdk.Stack{
+export class SecureIngressCognito extends cdk.Stack {
 
     async buildAsync(scope: Construct, id: string) {
 
@@ -154,7 +154,7 @@ export class SecureIngressCognito extends cdk.Stack{
         const parentDomain = utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
         const certificate: ICertificate = blueprints.getNamedResource(GlobalResources.Certificate);
 
-        const cognitoIdpStackOut = new CognitoIdpStack (scope,'cognito-idp-stack', subdomain,
+        const cognitoIdpStackOut = new CognitoIdpStack(scope, 'cognito-idp-stack', subdomain,
             {
                 env: {
                     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -204,7 +204,7 @@ export class SecureIngressCognito extends cdk.Stack{
             )
             .buildAsync(scope, `${id}-blueprint`);
 
-        blueprints.HelmAddOn.validateHelmVersions = false; 
+        blueprints.HelmAddOn.validateHelmVersions = false;
     }
 }
 
