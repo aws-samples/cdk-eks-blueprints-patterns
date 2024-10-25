@@ -15,7 +15,7 @@ export class EksConfigRulesSetup extends Stack {
         // Checks if an Amazon Elastic Kubernetes Service (EKS) cluster is running a supported Kubernetes version.
         new config.ManagedRule(this, "EksOldestSupportedVersion", {
             identifier:
-        config.ManagedRuleIdentifiers.EKS_CLUSTER_OLDEST_SUPPORTED_VERSION,
+                config.ManagedRuleIdentifiers.EKS_CLUSTER_OLDEST_SUPPORTED_VERSION,
             inputParameters: {
                 oldestVersionSupported: defaultKubeVerison, // Set to the default cluster version used by CDK EKS Blueprints.
             },

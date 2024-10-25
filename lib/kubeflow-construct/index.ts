@@ -16,14 +16,14 @@ export default class KubeflowConstruct {
             instanceTypes: [new ec2.InstanceType("m5.2xlarge")],
             amiType: eks.NodegroupAmiType.AL2_X86_64,
             desiredSize: 2,
-            maxSize: 3, 
+            maxSize: 3,
         };
 
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
-            .addOns( 
+            .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.ClusterAutoScalerAddOn(),
                 new blueprints.VpcCniAddOn(),

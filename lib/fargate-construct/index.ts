@@ -13,7 +13,7 @@ export default class FargateConstruct {
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);
-       
+
         const fargateProfiles: Map<string, eks.FargateProfileOptions> = new Map([
             ["team1", { selectors: [{ namespace: "team1" }] }]
         ]);

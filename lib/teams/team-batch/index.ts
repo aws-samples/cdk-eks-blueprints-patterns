@@ -4,7 +4,7 @@ export const batchTeam = new BatchEksTeam({
     name: "batch-team-a",
     namespace: "aws-batch",
     envName: "batch-team-a-comp-env",
-    computeResources:{
+    computeResources: {
         envType: BatchEnvType.EC2,
         allocationStrategy: BatchAllocationStrategy.BEST,
         priority: 10,

@@ -1,7 +1,7 @@
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as gmaestroAddOn from '@granulate/gmaestro-eks-blueprints-addon';
 import * as cdk from 'aws-cdk-lib';
-import {prevalidateSecrets} from "../common/construct-utils";
+import { prevalidateSecrets } from "../common/construct-utils";
 
 
 export default class GmaestroConstruct {

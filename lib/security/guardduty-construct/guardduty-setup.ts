@@ -17,22 +17,22 @@ export class GuardDutySetupStack extends Stack {
         const environmentName = "main";
         const email = "your-email@example.com";
         const features: aws_guardduty.CfnDetector.CFNFeatureConfigurationProperty[] =
-      [
-          { name: "S3_DATA_EVENTS", status: "ENABLED" },
-          { name: "EKS_AUDIT_LOGS", status: "ENABLED" },
-          { name: "EBS_MALWARE_PROTECTION", status: "ENABLED" },
-          { name: "RDS_LOGIN_EVENTS", status: "ENABLED" },
-          { name: "LAMBDA_NETWORK_LOGS", status: "ENABLED" },
-          { 
-              name: "RUNTIME_MONITORING",
-              status: "ENABLED",
-              additionalConfiguration: [
-                  { name: "EKS_ADDON_MANAGEMENT", status: "ENABLED" },
-                  { name: "ECS_FARGATE_AGENT_MANAGEMENT", status: "ENABLED" },
-                  { name: "EC2_AGENT_MANAGEMENT", status: "ENABLED" },
-              ],
-          },
-      ];
+            [
+                { name: "S3_DATA_EVENTS", status: "ENABLED" },
+                { name: "EKS_AUDIT_LOGS", status: "ENABLED" },
+                { name: "EBS_MALWARE_PROTECTION", status: "ENABLED" },
+                { name: "RDS_LOGIN_EVENTS", status: "ENABLED" },
+                { name: "LAMBDA_NETWORK_LOGS", status: "ENABLED" },
+                {
+                    name: "RUNTIME_MONITORING",
+                    status: "ENABLED",
+                    additionalConfiguration: [
+                        { name: "EKS_ADDON_MANAGEMENT", status: "ENABLED" },
+                        { name: "ECS_FARGATE_AGENT_MANAGEMENT", status: "ENABLED" },
+                        { name: "EC2_AGENT_MANAGEMENT", status: "ENABLED" },
+                    ],
+                },
+            ];
 
         // check if GuardDuty is already enabled in the region
         const guardDuty = new AWS.GuardDuty();

@@ -1,4 +1,4 @@
-import { ApplicationTeam }  from '@aws-quickstart/eks-blueprints';
+import { ApplicationTeam } from '@aws-quickstart/eks-blueprints';
 import { Construct } from 'constructs';
 import { ArnPrincipal } from 'aws-cdk-lib/aws-iam';
 
@@ -17,7 +17,7 @@ export class TeamRikerSetup extends ApplicationTeam {
             users: getUserArns(scope, "team-riker.users"),
             teamManifestDir: teamManifestDir,
             namespaceHardLimits: {
-                'requests.cpu': '0.5', 
+                'requests.cpu': '0.5',
                 'requests.memory': '1Gi',
                 'limits.cpu': '1',
                 'limits.memory': '2Gi'

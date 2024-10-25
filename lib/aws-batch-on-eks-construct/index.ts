@@ -5,7 +5,7 @@ import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 
 export default class BatchOnEKSConstruct {
     build(scope: Construct, id: string, teams: BatchEksTeam[]) {
-        
+
         const batchIamPolicy = new PolicyStatement({
             effect: Effect.ALLOW,
             actions: [
@@ -25,9 +25,9 @@ export default class BatchOnEKSConstruct {
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION!)
             .addOns(
-                new blueprints.AwsBatchAddOn(), 
+                new blueprints.AwsBatchAddOn(),
                 new blueprints.AwsForFluentBitAddOn({
-                    iamPolicies:[batchIamPolicy],
+                    iamPolicies: [batchIamPolicy],
                     values: {
                         cloudWatch: {
                             enabled: true,

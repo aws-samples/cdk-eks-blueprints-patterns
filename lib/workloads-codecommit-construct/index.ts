@@ -19,7 +19,7 @@ export default class WorkloadsCodeCommitConstruct extends Construct {
 
         const stackId = `${id}-blueprint`;
 
-        const bootstrapRepo : blueprints.ApplicationRepository = {
+        const bootstrapRepo: blueprints.ApplicationRepository = {
             repoUrl,
             targetRevision: 'main',
             credentialsSecretName: repoName + '-codecommit-secret',

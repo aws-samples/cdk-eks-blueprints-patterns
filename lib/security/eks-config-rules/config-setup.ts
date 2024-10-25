@@ -8,10 +8,10 @@ import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { Construct } from "constructs";
 import { Stack, StackProps } from "aws-cdk-lib";
-import { 
-    ConfigServiceClient, 
-    DescribeConfigurationRecordersCommand, 
-    DescribeDeliveryChannelsCommand 
+import {
+    ConfigServiceClient,
+    DescribeConfigurationRecordersCommand,
+    DescribeDeliveryChannelsCommand
 } from "@aws-sdk/client-config-service";
 
 
@@ -58,7 +58,7 @@ export class EksConfigSetup extends Stack {
                     } else {
                         logger.info(`AWS Config delivery channel is not enabled in ${currentRegion} region.`);
                         logger.info("Configuring AWS Config delivery channel...");
-                        
+
                         // Create an AWS Config delivery channel
                         // Setup an s3 bucket for the config recorder delivery channel
                         const awsConfigBucket = new s3.Bucket(this, "BucketAwsConfig", {

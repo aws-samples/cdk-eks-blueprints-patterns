@@ -8,18 +8,18 @@ import * as team from '../teams';
  * and leverage container-optimized Bottlerocket OS: https://aws.amazon.com/bottlerocket/
  */
 export default class BottlerocketConstruct {
-    
+
     build(scope: Construct, id: string) {
- 
+
         const stackID = `${id}-blueprint`;
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);
- 
+
         const clusterProvider = new blueprints.MngClusterProvider({
             version: eks.KubernetesVersion.V1_25,
             amiType: eks.NodegroupAmiType.BOTTLEROCKET_X86_64
         });
-        
+
         blueprints.EksBlueprint.builder()
             .account(accountID)
             .region('us-east-1')

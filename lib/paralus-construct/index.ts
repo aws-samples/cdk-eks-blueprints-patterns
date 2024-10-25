@@ -9,7 +9,7 @@ export default class ParalusConstruct {
         blueprints.EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
-            .addOns( 
+            .addOns(
                 new blueprints.AwsLoadBalancerControllerAddOn(),
                 new blueprints.VpcCniAddOn(),
                 new blueprints.KubeProxyAddOn(),
