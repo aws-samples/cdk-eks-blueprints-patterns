@@ -241,10 +241,10 @@ export class NagSuppressionsConfig {
         NagSuppressions.addResourceSuppressionsByPath(
             stack,
             `/${stack.stackName}/team-twoAccessRole/DefaultPolicy/Resource`, [
-            {
-                id: 'AwsSolutions-IAM5',
-                reason: 'This wildcard is just for eks:ListClusters so that is ok',
-            },
-        ]);
+                {
+                    id: 'AwsSolutions-IAM5',
+                    reason: 'This wildcard is just for eks:ListClusters so that is ok',
+                },
+            ]);
     };
 };

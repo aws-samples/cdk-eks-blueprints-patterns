@@ -36,9 +36,9 @@ export default class CustomNetworkingIPv4Construct {
                 awsVpcK8sCniCustomNetworkCfg: true,
                 eniConfigLabelDef: 'topology.kubernetes.io/zone'
             }),
-                new blueprints.AwsLoadBalancerControllerAddOn(),
-                new blueprints.CoreDnsAddOn(),
-                new blueprints.KubeProxyAddOn(),
+            new blueprints.AwsLoadBalancerControllerAddOn(),
+            new blueprints.CoreDnsAddOn(),
+            new blueprints.KubeProxyAddOn(),
             )
             .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider(undefined, {
                 primaryCidr: "10.2.0.0/16",
