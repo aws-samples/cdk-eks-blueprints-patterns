@@ -20,7 +20,7 @@ export default class MultiClusterBuilderConstruct {
         // Setup platform team
         const accountID = account ?? process.env.CDK_DEFAULT_ACCOUNT! ;
         const awsRegion =  region ?? process.env.CDK_DEFAULT_REGION! ;
-        const parentDomain = blueprints.utils.valueFromContext(scope, "parent.hostedzone.name", "mycompany.a2z.com");
+        const parentDomain = blueprints.utils.valueFromContext(scope, "parent.hostedzone.name", "shbhavye.people.aws.dev");
         
         return blueprints.EksBlueprint.builder()
                     .account(accountID)
