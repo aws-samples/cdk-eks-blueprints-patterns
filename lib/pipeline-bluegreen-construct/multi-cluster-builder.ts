@@ -30,6 +30,7 @@ export default class MultiClusterBuilderConstruct {
                         new blueprints.AwsLoadBalancerControllerAddOn(),
                         new blueprints.KubeStateMetricsAddOn(),
                         new blueprints.PrometheusNodeExporterAddOn(),
+                        new blueprints.CertManagerAddOn(),
                         new blueprints.AdotCollectorAddOn(),
                         new blueprints.XrayAdotAddOn(),
                         new blueprints.ClusterAutoScalerAddOn(),

@@ -16,61 +16,57 @@ export class PipelineBlueGreenCluster {
         const region = process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
         const clusterANameSuffix = "blue";
         const clusterBNameSuffix = "green";
-        const domainName = ssm.StringParameter.valueForStringParameter(
-            scope,
-            "/eks-cdk-pipelines/zoneName"
-          );
+        // const domainName = ssm.StringParameter.valueForStringParameter(
+        //     scope,
+        //     "/eks-cdk-pipelines/zoneName"
+        //   );
 
-        const stages : blueprints.StackStage[] = [];
+        const stagesEks : blueprints.StackStage[] = [];
 
         const blueprintBuilder = new MultiClusterBuilderConstruct().create(scope, accountID, region); 
         const blueprintBlue = blueprintBuilder
             .version(eks.KubernetesVersion.V1_28)
             .clusterProvider(new blueprints.MngClusterProvider());
 
-            stages.push({
+            stagesEks.push({
                 id: clusterANameSuffix+"-cluster",
                 stackBuilder : blueprintBlue.clone(region),
-                stageProps: {
-                    post: [
-                        new ShellStep("Validate App", {
-                            commands: [
-                              `for i in {1..12}; do curl -Ssf http://echoserver.${clusterANameSuffix}.${domainName} && echo && break; echo -n "Try #$i. Waiting 10s...\n"; sleep 10; done`,
-                            ],
-                        }),
-                    ]
-                }
+                // stageProps: {
+                //     post: [
+                //         new ShellStep("Validate App", {
+                //             commands: [
+                //               `for i in {1..12}; do curl -Ssf http://echoserver.${clusterANameSuffix}.${domainName} && echo && break; echo -n "Try #$i. Waiting 10s...\n"; sleep 10; done`,
+                //             ],
+                //         }),
+                //     ]
+                // }
             })
 
         const blueprintGreen = blueprintBuilder
             .version(eks.KubernetesVersion.V1_29)
             .clusterProvider(new blueprints.MngClusterProvider());
         
-        stages.push({
+        stagesEks.push({
             id: clusterBNameSuffix+"-cluster",
             stackBuilder : blueprintGreen.clone(region),
-            stageProps: {
-                post: [
-                    new ShellStep("Validate App", {
-                        commands: [
-                          `for i in {1..12}; do curl -Ssf http://echoserver.${clusterBNameSuffix}.${domainName} && echo && break; echo -n "Try #$i. Waiting 10s...\n"; sleep 10; done`,
-                        ],
-                    }),
-                ]
-            }
+            // stageProps: {
+            //     post: [
+            //         new ShellStep("Validate App", {
+            //             commands: [
+            //               `for i in {1..12}; do curl -Ssf http://echoserver.${clusterBNameSuffix}.${domainName} && echo && break; echo -n "Try #$i. Waiting 10s...\n"; sleep 10; done`,
+            //             ],
+            //         }),
+            //     ]
+            // }
         })
+        const stagesDns : blueprints.StackStage[] = [];
 
         const prodEnv = clusterBNameSuffix;
 
         const dnsStackBuilder =  new DnsStackBuilderConstruct(prodEnv)
-        stages.push({
+        stagesDns.push({
             id: `dns-${prodEnv}`,
             stackBuilder: dnsStackBuilder,
-            stageProps:{
-                pre:[
-                 new ManualApprovalStep(`Promote-${prodEnv}-Environment`)
-                ]
-            }
         });
 
         const gitOwner = 'Howlla';
@@ -88,10 +84,19 @@ export class PipelineBlueGreenCluster {
                 trigger: blueprints.GitHubTrigger.POLL
             })
             .wave({
-                id: "prod-test",
-                stages
+                id: "eks-stage",
+                stages: stagesEks
             })
-            .build(scope, "multi-cluster-central-pipeline", {
+            .wave({
+                id: "dns-stage",
+                stages: stagesDns,
+                props:{
+                    pre:[
+                        new ManualApprovalStep(`Promote-${prodEnv}-Environment`)
+                       ]
+                }
+            })
+            .build(scope, "blue-green-pipeline", {
                 env: {
                     account: process.env.CDK_DEFAULT_ACCOUNT,
                     region: region,

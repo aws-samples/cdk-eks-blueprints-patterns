@@ -6,11 +6,11 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 
 
-export interface DnsStackProps extends cdk.StackProps {
+interface DnsStackProps extends cdk.StackProps {
   envName: string;
 }
 
-export class DnsStack extends cdk.Stack {
+class DnsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DnsStackProps) {
     super(scope, id, props);
 
