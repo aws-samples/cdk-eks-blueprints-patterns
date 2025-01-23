@@ -7,9 +7,9 @@ import { configureApp } from "../lib/common/construct-utils";
 const app = configureApp();
 
 const spotInterruptHandlerAddOn = new blueprints.addons.AwsNodeTerminationHandlerAddOn({
-        version: "0.25.1",
-        repository: 'oci://public.ecr.aws/aws-ec2/helm/aws-node-termination-handler'
-    });
+    version: "0.25.1",
+    repository: 'oci://public.ecr.aws/aws-ec2/helm/aws-node-termination-handler'
+});
 
 const clusterProvider = new blueprints.AsgClusterProvider({
     version: cdk.aws_eks.KubernetesVersion.V1_30,
