@@ -56,7 +56,7 @@ bootstrap:
 
 check-lib:
 ifeq ($(shell brew ls --versions $(LIB)),)
-	@echo Installing $(LIB) via Hombrew
+	@echo Installing $(LIB) via Homebrew
 	@brew install $(LIB)
 else
 	@echo $(LIB) is already installed, skipping.
