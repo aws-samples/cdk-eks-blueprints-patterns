@@ -52,7 +52,7 @@ Build the corresponding [Docker image](https://backstage.io/docs/deployment/dock
 
 ```sh
 cd ./backstage
-yarn install --frozen-lockfile
+yarn install --immutable // and/or --immutable-cache
 yarn tsc
 yarn build:backend --config app-config.yaml
 ```
