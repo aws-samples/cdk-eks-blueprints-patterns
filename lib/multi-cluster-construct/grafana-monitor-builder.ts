@@ -1,6 +1,7 @@
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as eks from 'aws-cdk-lib/aws-eks';
+import * as amp from 'aws-cdk-lib/aws-aps';
 import { GrafanaOperatorSecretAddon } from './grafana-operator-secret-addon';
 import * as fs from 'fs';
 
@@ -10,8 +11,8 @@ export class GrafanaMonitoringConstruct {
 
         const stackId = `${id}-grafana-monitor`;
 
-        const account = contextAccount! || process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
-        const region = contextRegion! || process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
+        const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
+        const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         this.create(scope, account, region)
             .build(scope, stackId);
@@ -19,14 +20,15 @@ export class GrafanaMonitoringConstruct {
 
     create(scope: Construct, contextAccount?: string, contextRegion?: string ) {
 
-        const account = contextAccount! || process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
-        const region = contextRegion! || process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
+        const account = contextAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
+        const region = contextRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
         
-        // TODO: CFN import https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.Fn.html#static-importwbrvaluesharedvaluetoimport
+
         const ampWorkspaceName = "conformitronWorkspace";
-        const ampEndpoint = blueprints.utils.valueFromContext(scope, "conformitron.amp.endpoint", "https://aps-workspaces.<region>.amazonaws.com/workspaces/<workspace-id>/");
-        const ampWorkspaceArn = blueprints.utils.valueFromContext(scope, "conformitron.amp.arn", "arn:aws:aps:<region>:<accountid>:workspace/<workspace-id>");
-        
+        // const ampPrometheusWorkspace = (blueprints.getNamedResource(ampWorkspaceName) as unknown as amp.CfnWorkspace);
+        const ampEndpoint = `https://aps-workspaces.us-west-2.amazonaws.com/workspaces/ws-b08fda60-7e79-450c-972d-262ebac98c3e/`;
+        const ampWorkspaceArn = `arn:aws:aps:us-west-2:867286930927:workspace/ws-b08fda60-7e79-450c-972d-262ebac98c3e`;
+
         const ampAddOnProps: blueprints.AmpAddOnProps = {
             ampPrometheusEndpoint: ampEndpoint,
             ampRules: {
@@ -94,20 +96,41 @@ export class GrafanaMonitoringConstruct {
         ampAddOnProps.openTelemetryCollector = {
             manifestPath: __dirname + '/resources/otel-collector-config-new.yml',
             manifestParameterMap: {
-                logGroupName: `/aws/eks/conformitron/workspace`,
+                logGroupName: `/aws/eks/conformitron/myWorkspace`,
                 logStreamName: `$NODE_NAME`,
                 logRetentionDays: 30,
                 awsRegion: region 
             }
         };
 
-        const fluxRepository: blueprints.FluxGitRepo = blueprints.utils.valueFromContext(scope, "fluxRepository", undefined);
-        fluxRepository.values!.AMG_AWS_REGION = region;
-        fluxRepository.values!.AMG_ENDPOINT_URL = blueprints.utils.valueFromContext(scope, "conformitron.amg.endpoint","https://<grafana-id>.grafana-workspace.<region>.amazonaws.com"); 
-
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
         const addOns: Array<blueprints.ClusterAddOn> = [
-            new blueprints.addons.FluxCDAddOn({"repositories": [fluxRepository]}),
+            new blueprints.addons.FluxCDAddOn({
+                repositories:[{
+                    name: "grafana-dashboards",
+                    namespace: "grafana-operator",
+                    repository: {
+                        name: "grafana-dashboards",
+                        repoUrl: 'https://github.com/aws-observability/aws-observability-accelerator',
+                        targetRevision: "main",
+                        path: "./artifacts/grafana-operator-manifests/eks/infrastructure"
+                    },
+                    values: {
+                        AMG_AWS_REGION: region,
+                        AMG_ENDPOINT_URL: 'https://g-76edcf29d5.grafana-workspace.us-west-2.amazonaws.com',
+                        GRAFANA_CLUSTER_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
+                        GRAFANA_KUBELET_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
+                        GRAFANA_NSWRKLDS_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
+                        GRAFANA_NODEEXP_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
+                        GRAFANA_NODES_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
+                        GRAFANA_WORKLOADS_DASH_URL : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
+
+                    },
+                    kustomizations: [
+                        {kustomizationPath: "./artifacts/grafana-operator-manifests/eks/infrastructure"}
+                    ],
+                }],
+            }),
             new GrafanaOperatorSecretAddon(),
             new blueprints.addons.SSMAgentAddOn()
         ];
@@ -115,7 +138,7 @@ export class GrafanaMonitoringConstruct {
         return blueprints.ObservabilityBuilder.builder()
             .account(account)
             .region(region)
-            .version(eks.KubernetesVersion.V1_27)
+            .version(eks.KubernetesVersion.V1_31)
             .resourceProvider(ampWorkspaceName, new blueprints.CreateAmpProvider(ampWorkspaceName, ampWorkspaceName))
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()

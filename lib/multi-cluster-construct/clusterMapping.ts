@@ -22,11 +22,11 @@ export enum ClusterName {
 
 export const clusterMappings : {[key in ClusterName]?: InstanceMapping } = {
     [ClusterName.ARM]: {
-        amiType: eks.NodegroupAmiType.AL2_ARM_64,
+        amiType: eks.NodegroupAmiType.AL2023_ARM_64_STANDARD,
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.M7G, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.X86]: {
-        amiType: eks.NodegroupAmiType.AL2_X86_64,
+        amiType: eks.NodegroupAmiType.AL2023_X86_64_STANDARD,
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.BR_ARM]: {
@@ -38,7 +38,7 @@ export const clusterMappings : {[key in ClusterName]?: InstanceMapping } = {
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.XLARGE2)
     },
     [ClusterName.MONITORING]: {
-        amiType: eks.NodegroupAmiType.AL2_X86_64,
+        amiType: eks.NodegroupAmiType.AL2023_X86_64_STANDARD,
         instanceType:  ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE)
     }
 };

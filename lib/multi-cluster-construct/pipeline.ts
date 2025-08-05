@@ -15,7 +15,7 @@ export class PipelineMultiCluster {
         const accountID = process.env.ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT! ;
         const region = process.env.AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
-        const versions = blueprints.utils.valueFromContext(scope, "conformitron.versions", ["1.28","1.29","1.30"]);
+        const versions = blueprints.utils.valueFromContext(scope, "conformitron.versions", ["1.30","1.31","1.32"]);
 
         const CLUSTER_VERSIONS = versions.map((v: string) => eks.KubernetesVersion.of(v));
 
@@ -110,7 +110,7 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketArm.clone(region)
         });
 
-        const gitOwner = 'Howlla';
+        const gitOwner = 'mikemcd3912';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
@@ -121,7 +121,7 @@ export class PipelineMultiCluster {
             .repository({
                 repoUrl: gitRepositoryName,
                 credentialsSecretName: 'github-token',
-                targetRevision: 'conformitronPipeline',
+                targetRevision: 'conformitron-pipeline',
                 trigger: blueprints.GitHubTrigger.POLL
             })
             .wave({

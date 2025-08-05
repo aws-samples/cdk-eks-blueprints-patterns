@@ -1,32 +1,28 @@
 {
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-        "conformitron.amp.endpoint": "https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-77b8828d-0985-49e0-9268-2e0e8f3ba758/",
-        "conformitron.amp.arn":"arn:aws:aps:us-east-1:975050283200:workspace/ws-77b8828d-0985-49e0-9268-2e0e8f3ba758",
-        "conformitron.amg.endpoint": "https://g-75bcfc519c.grafana-workspace.us-east-1.amazonaws.com",
-        "conformitron.version": ["1.28","1.29","1.30"],
-        "fluxRepository": {
+  "app": "npx ts-node dist/lib/common/default-main.js",
+  "context":{
+    "fluxRepository": {
+      "name": "grafana-dashboards",
+      "namespace": "grafana-operator",
+      "repository": {
+        "repoUrl": "https://github.com/aws-observability/aws-observability-accelerator",
         "name": "grafana-dashboards",
-        "namespace": "grafana-operator",
-        "repository": {
-          "repoUrl": "https://github.com/aws-observability/aws-observability-accelerator",
-          "name": "grafana-dashboards",
-          "targetRevision": "main",
-          "path": "./artifacts/grafana-operator-manifests/eks/infrastructure"
-        },
-        "values": {
-          "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
-          "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
-          "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
-          "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
-          "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
-          "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
-        },
-        "kustomizations": [
-          {
-            "kustomizationPath": "./artifacts/grafana-operator-manifests/eks/infrastructure"
-          }
-        ]
+        "targetRevision": "main",
+        "path": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+      },
+      "values": {
+        "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/cluster.json",
+        "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/kubelet.json",
+        "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/namespace-workloads.json",
+        "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodeexporter-nodes.json",
+        "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/nodes.json",
+        "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/eks/infrastructure/workloads.json"
+      },
+      "kustomizations": [
+        {
+          "kustomizationPath": "./artifacts/grafana-operator-manifests/eks/infrastructure"
+        }
+      ]
     }
   }
 }
