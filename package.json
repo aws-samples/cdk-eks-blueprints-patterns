@@ -47,9 +47,6 @@
     "source-map-support": "^0.5.21"
   },
   "overrides": {
-    "@aws-quickstart/eks-blueprints": "1.16.3",
-    "aws-cdk": "2.173.4",
-    "aws-cdk-lib": "2.173.4",
     "xml2js": "0.5.0",
     "@aws-cdk/core": "../_EXCLUDED_",
     "axios": "^1.6.2"

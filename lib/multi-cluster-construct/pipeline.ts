@@ -110,7 +110,7 @@ export class PipelineMultiCluster {
             stackBuilder : blueprintBottleRocketArm.clone(region)
         });
 
-        const gitOwner = 'mikemcd3912';
+        const gitOwner = 'aws-samples';
         const gitRepositoryName = 'cdk-eks-blueprints-patterns';
 
         blueprints.CodePipelineStack.builder()
