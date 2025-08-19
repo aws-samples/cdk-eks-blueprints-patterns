@@ -13,7 +13,7 @@ export class GrafanaOperatorSecretAddon implements blueprints.ClusterAddOn {
             cluster: cluster,
             manifest: [
                 {
-                    apiVersion: "external-secrets.io/v1beta1",
+                    apiVersion: "external-secrets.io/v1",
                     kind: "ClusterSecretStore",
                     metadata: {
                         name: "ssm-parameter-store",
@@ -43,7 +43,7 @@ export class GrafanaOperatorSecretAddon implements blueprints.ClusterAddOn {
             cluster: cluster,
             manifest: [
                 {
-                    apiVersion: "external-secrets.io/v1beta1",
+                    apiVersion: "external-secrets.io/v1",
                     kind: "ExternalSecret",
                     metadata: {
                         name: "external-grafana-admin-credentials",

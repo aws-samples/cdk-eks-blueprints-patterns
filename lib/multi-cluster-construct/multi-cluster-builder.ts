@@ -45,6 +45,7 @@ export default class MultiClusterBuilderConstruct {
             .region(awsRegion)
             .withAmpProps(ampAddOnProps)
             .enableOpenSourcePatternAddOns()
+            .withExternalSecretsProps({version: "0.18.2", hostedZoneResources: []})
             .addOns(
                 new blueprints.addons.FluxCDAddOn({
                     repositories:[{

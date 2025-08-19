@@ -13,7 +13,7 @@ export class ClusterSecretStoreAddon implements blueprints.ClusterAddOn {
             cluster: cluster,
             manifest: [
                 {
-                    apiVersion: "external-secrets.io/v1beta1",
+                    apiVersion: "external-secrets.io/v1",
                     kind: "ClusterSecretStore",
                     metadata: {name: "eksa-secret-store"},
                     spec: {
@@ -40,7 +40,7 @@ export class ClusterSecretStoreAddon implements blueprints.ClusterAddOn {
             cluster: cluster,
             manifest: [
                 {
-                    apiVersion: "external-secrets.io/v1beta1",
+                    apiVersion: "external-secrets.io/v1",
                     kind: "ClusterSecretStore",
                     metadata: {name: "eksa-configmap-store"},
                     spec: {
