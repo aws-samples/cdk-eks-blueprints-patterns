@@ -1,22 +1,25 @@
 import * as cdk from 'aws-cdk-lib'
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as union from '@unionai/union-eks-blueprints-addon'
-import { prevalidateSecrets } from '../common/construct-utils';
+import { prevalidateSecrets, getJsonSecret } from '../common/construct-utils';
 
 const BUCKET_PROVIDER_NAME = "union-s3-bucket"
 
 export default class UnionDataplaneConstruct {
   async buildAsync(scope: cdk.App, id: string) {
-    let unionConfig: union.UnionDataplaneAddOnProps = {
-      orgName: blueprints.utils.valueFromContext(scope, "union.orgName", "your-org"),
-      clientIdSecretName: blueprints.utils.valueFromContext(scope, "union.secrets.clientId", "union-client-id"),
-      clientSecretSecretName: blueprints.utils.valueFromContext(scope, "union.secrets.clientSecret", "union-client-secret"),
-      clusterName: blueprints.utils.valueFromContext(scope, "union.clusterName", "your-cluster-name"),
+
+    await prevalidateSecrets(UnionDataplaneConstruct.name, undefined, "union-client-id", "union-client-secret", "union-secret");
+    const unionSecretString = await blueprints.utils.getSecretValue("union-secret", process.env.CDK_DEFAULT_REGION!);
+
+    const unionConfig: union.UnionDataplaneAddOnProps = {
+      orgName: getJsonSecret(unionSecretString, "orgName"),
+      clientIdSecretName: "union-client-id",
+      clientSecretSecretName:"union-client-secret",
+      clusterName: getJsonSecret(unionSecretString, "clusterName"),
       s3BucketProviderName: BUCKET_PROVIDER_NAME,
-      host: blueprints.utils.valueFromContext(scope, "union.host", "your.union.host")
+      host: getJsonSecret(unionSecretString, "host"),
     };
 
-    await prevalidateSecrets(UnionDataplaneConstruct.name, undefined, unionConfig.clientIdSecretName, unionConfig.clientSecretSecretName);
     const stackId = `${id}-blueprint`;
 
     const nodeClassSpec: blueprints.Ec2NodeClassV1Spec = {

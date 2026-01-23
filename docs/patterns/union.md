@@ -59,6 +59,10 @@ This command will output the ID, name, and secret used by Union services to comm
 ### Create Union Secrets in AWS Secrets Manager
 
 ```bash
+export UNION_SECRET_NAME=union-secret
+aws secretsmanager create-secret --name $UNION_SECRET_NAME \
+  --secret-string "{\"host\":\"$UNION_CONTROL_PLANE_URL\",\"clusterName\":\"$UNION_CLUSTER_NAME\",\"orgName\":\"$UNION_ORG_NAME\"}"
+
 export UNION_CLIENT_ID_SECRET_NAME=union-client-id
 export UNION_CLIENT_ID_SECRET_VALUE=<CLUSTERAUTHCLIENTID_FROM_SELFSERVE_COMMAND>
 
@@ -75,23 +79,6 @@ aws secretsmanager create-secret --name $UNION_SECRET_SECRET_NAME --secret-strin
 ```sh
 git clone https://github.com/aws-samples/cdk-eks-blueprints-patterns.git
 cd cdk-eks-blueprints-patterns
-```
-
-Set the pattern's parameters in the CDK context by overriding the _cdk.json_ file:
-
-```sh
-cat << EOF > cdk.json
-{
-    "app": "npx ts-node dist/lib/common/default-main.js",
-    "context": {
-      "union.orgName": "${UNION_ORG_NAME}",
-      "union.secrets.clientId": "${UNION_CLIENT_ID_SECRET_NAME}",
-      "union.secrets.clientSecret": "${UNION_SECRET_SECRET_NAME}",
-      "union.clusterName": "${UNION_CLUSTER_NAME}",
-      "union.host": "${UNION_CONTROL_PLANE_URL}"
-    }
-}
-EOF
 ```
 
 ### Run the following commands:
