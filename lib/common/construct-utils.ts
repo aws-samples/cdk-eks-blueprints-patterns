@@ -37,8 +37,8 @@ export async function prevalidateSecrets(pattern: string, region?: string, ...se
 }
 
 export function getJsonSecret(secretString: string, key?: string): string {
-  const parsed = JSON.parse(secretString);
-  return key ? parsed[key] : parsed;
+    const parsed = JSON.parse(secretString);
+    return key ? parsed[key] : parsed;
 }
 
 export class EmptyStack extends cdk.Stack {
