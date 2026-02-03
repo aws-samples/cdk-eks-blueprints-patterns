@@ -63,15 +63,12 @@ export UNION_SECRET_NAME=union-secret
 aws secretsmanager create-secret --name $UNION_SECRET_NAME \
   --secret-string "{\"host\":\"$UNION_CONTROL_PLANE_URL\",\"clusterName\":\"$UNION_CLUSTER_NAME\",\"orgName\":\"$UNION_ORG_NAME\"}"
 
-export UNION_CLIENT_ID_SECRET_NAME=union-client-id
+export UNION_CLIENT_SECRET_NAME=union-client-secret
 export UNION_CLIENT_ID_SECRET_VALUE=<CLUSTERAUTHCLIENTID_FROM_SELFSERVE_COMMAND>
-
-aws secretsmanager create-secret --name $UNION_CLIENT_ID_SECRET_NAME --secret-string $UNION_CLIENT_ID_SECRET_VALUE
-
-export UNION_SECRET_SECRET_NAME=union-client-secret
 export UNION_SECRET_SECRET_VALUE=<CLUSTERAUTHCLIENTSECRET_FROM_SELFSERVE_COMMAND>
 
-aws secretsmanager create-secret --name $UNION_SECRET_SECRET_NAME --secret-string $UNION_SECRET_SECRET_VALUE
+aws secretsmanager create-secret --name $UNION_CLIENT_SECRET_NAME \
+  --secret-string "{\"clientId\":\"$UNION_CLIENT_ID_SECRET_VALUE\",\"clientSecret\":\"$UNION_SECRET_SECRET_VALUE\"}"
 ```
 
 ### Clone the repository:

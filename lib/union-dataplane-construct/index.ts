@@ -8,13 +8,12 @@ const BUCKET_PROVIDER_NAME = "union-s3-bucket";
 export default class UnionDataplaneConstruct {
     async buildAsync(scope: cdk.App, id: string) {
 
-        await prevalidateSecrets(UnionDataplaneConstruct.name, undefined, "union-client-id", "union-client-secret", "union-secret");
+        await prevalidateSecrets(UnionDataplaneConstruct.name, undefined,  "union-client-secret", "union-secret");
         const unionSecretString = await blueprints.utils.getSecretValue("union-secret", process.env.CDK_DEFAULT_REGION!);
 
         const unionConfig: union.UnionDataplaneAddOnProps = {
             orgName: getJsonSecret(unionSecretString, "orgName"),
-            clientIdSecretName: "union-client-id",
-            clientSecretSecretName:"union-client-secret",
+            unionSecretName: "union-client-secret",
             clusterName: getJsonSecret(unionSecretString, "clusterName"),
             s3BucketProviderName: BUCKET_PROVIDER_NAME,
             host: getJsonSecret(unionSecretString, "host"),
