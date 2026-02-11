@@ -1,9 +1,8 @@
 # Union.ai on EKS Pattern
 
-Union.ai empowers AI development teams to rapidly ship high-quality code to production by offering optimized performance, unparalleled resource efficiency, and a delightful workflow authoring experience. With Union.ai your team can:
+Union.ai empowers AI development teams to rapidly ship high-quality code to production by offering optimized performance, resource efficiency, and workflow authoring experience. With Union.ai your team can:
 
 - Run complex AI workloads with performance, scale, and efficiency.
-- Achieve millisecond-level execution times with reusable containers.
 - Scale out to multiple regions, clusters, and clouds as needed for resource availability, scale, or compliance.
 
 Union.ai’s modular architecture allows for great flexibility and control. The customer can decide how many clusters to have, their shape, and who has access to what. All communication is encrypted.
