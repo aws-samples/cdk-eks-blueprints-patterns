@@ -11,7 +11,7 @@ export default class KubesharkConstruct {
         EksBlueprint.builder()
             .account(process.env.CDK_DEFAULT_ACCOUNT!)
             .region(process.env.CDK_DEFAULT_REGION)
-            .addOns(new KubesharkAddOn())
+            .addOns(new KubesharkAddOn({repository: "https://helm.kubeshark.com"}))
             .version('auto')
             .build(scope, stackId);
     }

@@ -51,6 +51,7 @@ nav:
     - Graviton Pattern: 'patterns/graviton.md'
     - Windows Pattern: 'patterns/windows.md'
     - gMaestro Pattern: 'patterns/gmaestro.md'
+    - Union.ai Pattern : 'patterns/union.md'
 markdown_extensions:
   - def_list
   - pymdownx.highlight
