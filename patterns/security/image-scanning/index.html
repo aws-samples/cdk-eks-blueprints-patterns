@@ -1,0 +1,2401 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../guardduty/">
+      
+      
+        <link rel="next" href="../securityhub/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Image Scanning - Amazon EKS Blueprints Patterns</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#amazon-ecr-image-scanning" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Amazon EKS Blueprints Patterns" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Patterns" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Amazon EKS Blueprints Patterns
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Image Scanning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/cdk-eks-blueprints-patterns" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/cdk-eks-blueprints-patterns
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Amazon EKS Blueprints Patterns" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Patterns" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Amazon EKS Blueprints Patterns
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/cdk-eks-blueprints-patterns" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/cdk-eks-blueprints-patterns
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generative AI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Generative AI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../generative-ai/showcase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt Showcase Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observability Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observability Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_1" id="__nav_2_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    New Cluster
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    New Cluster
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-native/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Native Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-graviton-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Graviton Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-opensource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-awsnative-fargate-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fargate Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-mixed-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mixed Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/multi-acc-new-eks-mixed-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi-Cluster Multi-Region Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-apiserver-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Apiserver Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-gpu-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS GPU Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-java-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Java Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/single-new-eks-nginx-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Nginx Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2_2" id="__nav_2_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Existing Cluster
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Existing Cluster
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/existing-eks-awsnative-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Native Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/existing-eks-mixed-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mixed Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/existing-eks-opensource-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/existing-eks-apiserver-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Apiserver Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/existing-eks-nginx-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OSS Nginx Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/multi-account-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi Account Observability Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security Patterns
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Security Patterns
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../eks-config-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EKS Config Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encryption-at-rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Encryption At Rest
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guardduty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GuardDuty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Image Scanning
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Image Scanning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gitops-confguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitOps confguration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploying-the-imagescanningsetupstack-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying the ImageScanningSetupStack stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-the-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying the blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verify">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifying-that-the-image-scanning-is-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying that the image scanning is enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-that-the-image-is-pushed-to-amazon-ecr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying that the image is pushed to Amazon ECR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-the-image-scanning-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking the image scanning findings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../securityhub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SecurityHub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../batch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Batch Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backstage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backstage Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../custom-networking-with-ipv4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customer Network with IPV4 Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../instana/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instana Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../jupyterhub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jupyterhub Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../knoveyor.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Konveyor Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubeflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubeflow Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubeshark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubeshark Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pipeline-multi-env-gitops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi environment Pipeline GitOps pattern Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../multi-cluster-conformitron/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multi cluster conformitron pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nginx Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../secureingresscognito/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secure Ingress and Authentication Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../graviton/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Graviton Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../windows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gmaestro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gMaestro Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../union/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Union.ai Pattern
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gitops-confguration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitOps confguration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploying-the-imagescanningsetupstack-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying the ImageScanningSetupStack stack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploying-the-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploying the blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verify">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifying-that-the-image-scanning-is-enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying that the image scanning is enabled
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifying-that-the-image-is-pushed-to-amazon-ecr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying that the image is pushed to Amazon ECR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-the-image-scanning-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking the image scanning findings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="amazon-ecr-image-scanning">Amazon ECR Image Scanning<a class="headerlink" href="#amazon-ecr-image-scanning" title="Permanent link">¤</a></h1>
+<h2 id="objective">Objective<a class="headerlink" href="#objective" title="Permanent link">¤</a></h2>
+<p>The objective of this pattern is to demonstrate how to enable and configure Amazon ECR image scanning.</p>
+<p>The following scanning types are offered:</p>
+<ul>
+<li><strong>Enhanced scanning</strong> — Amazon ECR integrates with Amazon Inspector to provide automated, continuous scanning of your repositories. Your container images are scanned for both operating systems and programing language package vulnerabilities. As new vulnerabilities appear, the scan results are updated and Amazon Inspector emits an event to EventBridge to notify you.</li>
+<li><strong>Basic scanning</strong> — Amazon ECR uses the Common Vulnerabilities and Exposures (CVEs) database from the open-source Clair project. With basic scanning, you configure your repositories to scan on push or you can perform manual scans and Amazon ECR provides a list of scan findings.</li>
+</ul>
+<p>The pattern consists of two components:</p>
+<ul>
+<li><code>ImageScanningSetupStack</code> - configures the Amazon ECR image scanning and the ECR automated re-scan duration in Inspector.</li>
+<li>A blueprint that deploys a sample GitOps workload that pushes images to Amazon ECR and triggers the image scanning.</li>
+</ul>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">¤</a></h2>
+<p>You can configure the following parameters in the <a href="../../../lib/security/image-vulnerability-scanning/image-scanning-setup.ts">ImageScanningSetupStack</a> stack:</p>
+<ul>
+<li><code>scanType</code> - The type of scan to perform. Valid values are <code>BASIC</code> and <code>ENHANCED</code>.</li>
+<li>Enhanced scanning only:</li>
+<li><code>enhancedContinuousScanDuration</code> - the Amazon ECR automated re-scan duration setting determines how long Amazon Inspector continuously monitors images pushed into repositories. When the number of days from when an image is first pushed exceeds the automated re-scan duration configuration, Amazon Inspector stops monitoring the image. When Amazon Inspector stops monitoring an image, the scan status of the image is changed to inactive with a reason code of expired, and all associated findings for the image are scheduled to be closed. Valid values are <code>LIFETIME</code>, <code>DAYS_30</code>, and <code>DAYS_180</code>.</li>
+<li><code>enhancedScanRules</code> - the scanning rules.</li>
+<li>Basic scanning only:</li>
+<li><code>basicScanRules</code> - the scanning rules.</li>
+</ul>
+<p>Please refer to the <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html">Amazon ECR Image Scanning</a> documentation for more information and how to use filters.</p>
+<h2 id="gitops-confguration">GitOps confguration<a class="headerlink" href="#gitops-confguration" title="Permanent link">¤</a></h2>
+<p>For GitOps, the blueprint bootstraps the ArgoCD addon and points to the <a href="https://github.com/aws-samples/eks-blueprints-workloads">EKS Blueprints Workload</a> sample repository.</p>
+<p>The sample repository contains the following workloads:</p>
+<ul>
+<li><code>team-scan</code> pushes a Docker image to Amazon ECR and triggers the image scanning.</li>
+</ul>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¤</a></h2>
+<ol>
+<li>Follow the usage <a href="https://github.com/aws-samples/cdk-eks-blueprints-patterns/blob/main/README.md#usage">instructions</a> to install the dependencies and perform the repository setup.</li>
+<li><code>argo-admin-password</code> secret must be defined in Secrets Manager in the same region as the EKS cluster.</li>
+</ol>
+<h2 id="deploy">Deploy<a class="headerlink" href="#deploy" title="Permanent link">¤</a></h2>
+<p>To bootstrap the CDK toolkit and list all stacks in the app, run the following commands:</p>
+<div class="highlight"><pre><span></span><code>cdk<span class="w"> </span>bootstrap
+make<span class="w"> </span>list
+</code></pre></div>
+<h3 id="deploying-the-imagescanningsetupstack-stack">Deploying the <code>ImageScanningSetupStack</code> stack<a class="headerlink" href="#deploying-the-imagescanningsetupstack-stack" title="Permanent link">¤</a></h3>
+<p>The <code>ImageScanningSetupStack</code> configures the Amazon ECR image scanning and the ECR automated re-scan duration in Inspector.</p>
+<p>To deploy the stack, run the following command:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>pattern<span class="w"> </span>ecr-image-scanning<span class="w"> </span>deploy<span class="w"> </span>image-scanning-setup
+</code></pre></div>
+<h3 id="deploying-the-blueprint">Deploying the blueprint<a class="headerlink" href="#deploying-the-blueprint" title="Permanent link">¤</a></h3>
+<p>The blueprint deploys a sample GitOps workload that pushes images to Amazon ECR and triggers the image scanning.</p>
+<p>To deploy the blueprint, run the following command:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>pattern<span class="w"> </span>ecr-image-scanning<span class="w"> </span>deploy<span class="w"> </span>image-scanning-workload-blueprint
+</code></pre></div>
+<h2 id="verify">Verify<a class="headerlink" href="#verify" title="Permanent link">¤</a></h2>
+<h3 id="verifying-that-the-image-scanning-is-enabled">Verifying that the image scanning is enabled<a class="headerlink" href="#verifying-that-the-image-scanning-is-enabled" title="Permanent link">¤</a></h3>
+<p>To verify that the image scanning is enabled at the registry level, run the following command:</p>
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>ecr<span class="w"> </span>get-registry-scanning-configuration
+</code></pre></div>
+<p>The output should look similar to the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"registryId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"scanningConfiguration"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"scanType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ENHANCED"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"scanFrequency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONTINUOUS_SCAN"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"repositoryFilters"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"prod"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"filterType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WILDCARD"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">]</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"scanFrequency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SCAN_ON_PUSH"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"repositoryFilters"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"filterType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WILDCARD"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">]</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="verifying-that-the-image-is-pushed-to-amazon-ecr">Verifying that the image is pushed to Amazon ECR<a class="headerlink" href="#verifying-that-the-image-is-pushed-to-amazon-ecr" title="Permanent link">¤</a></h3>
+<p>To verify that the image is pushed to Amazon ECR, run the following command (please replace <code>&lt;REPOSITORY-NAME&gt;</code> with the repository name):</p>
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>ecr<span class="w"> </span>describe-images<span class="w"> </span>--repository-name<span class="w"> </span>&lt;REPOSITORY-NAME&gt;
+</code></pre></div>
+<p>The output should look similar to the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"imageDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"registryId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"repositoryName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-scanning-workload-blueprint-imagescanningrepository754c6116-arh0wk3afnkw"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"imageDigest"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1801b843b1bfaf77c501e7a6d3f709401a1e0c83863037fa3aab063a7fdb9dc"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"imageTags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">"latest"</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">"imageSizeInBytes"</span><span class="p">:</span><span class="w"> </span><span class="mi">83520228</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"imagePushedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:22:33-05:00"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"imageManifestMediaType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/vnd.docker.distribution.manifest.v2+json"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"artifactMediaType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"application/vnd.docker.container.image.v1+json"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"lastRecordedPullTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:22:33.966000-05:00"</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="checking-the-image-scanning-findings">Checking the image scanning findings<a class="headerlink" href="#checking-the-image-scanning-findings" title="Permanent link">¤</a></h3>
+<p>To check the image scanning findings, run the following command (please replace <code>&lt;REPOSITORY-NAME&gt;</code> with the repository name):</p>
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>ecr<span class="w"> </span>describe-image-scan-findings<span class="w"> </span>--repository-name<span class="w"> </span>&lt;REPOSITORY-NAME&gt;<span class="w"> </span>--image-id<span class="w"> </span><span class="nv">imageTag</span><span class="o">=</span>latest
+</code></pre></div>
+<p>The output should look similar to the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"imageScanFindings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"enhancedFindings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"awsAccountId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"basic/unit-name.c in systemd prior to 246.15, 247.8, 248.5, and 249.1 has a Memory Allocation with an Excessive Size Value (involving strdupa and alloca for a pathname controlled by a local attacker) that results in an operating system crash."</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"findingArn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:inspector2:us-east-1:123456789012:finding/0407d7719da0fc8a8f44991f0bf524d6"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"firstObservedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:40:39.940000-05:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"lastObservedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:40:39.940000-05:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"packageVulnerabilityDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"cvss"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"baseScore"</span><span class="p">:</span><span class="w"> </span><span class="mf">4.9</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AV:L/AC:L/Au:N/C:N/I:N/A:C"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"baseScore"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.5</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.1"</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">"referenceUrls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="s2">"https://www.debian.org/security/2021/dsa-4942"</span><span class="p">,</span>
+<span class="w">                        </span><span class="s2">"https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/42TMJVNYRY65B4QCJICBYOEIVZV3KUYI/"</span><span class="p">,</span>
+<span class="w">                        </span><span class="s2">"https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/2LSDMHAKI4LGFOCSPXNVVSEWQFAVFWR7/"</span><span class="p">,</span>
+<span class="w">                        </span><span class="s2">"https://security.gentoo.org/glsa/202107-48"</span><span class="p">,</span>
+<span class="w">                        </span><span class="s2">"https://cert-portal.siemens.com/productcert/pdf/ssa-222547.pdf"</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">"relatedVulnerabilities"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">                    </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"sourceUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://nvd.nist.gov/vuln/detail/CVE-2021-33910"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"vendorCreatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-07-20T14:15:00-05:00"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"vendorSeverity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"vendorUpdatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-06-14T06:15:00-05:00"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"vulnerabilityId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVE-2021-33910"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"vulnerablePackages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"X86_64"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"systemd-pam"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45.el8"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1d0c75327776413fa0db9ed3adcdbadedc95a662eb1d360dad82bb913f8a1d1"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"239"</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"X86_64"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"systemd"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45.el8"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1d0c75327776413fa0db9ed3adcdbadedc95a662eb1d360dad82bb913f8a1d1"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"239"</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"X86_64"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"systemd-libs"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45.el8"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1d0c75327776413fa0db9ed3adcdbadedc95a662eb1d360dad82bb913f8a1d1"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"239"</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"X86_64"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"systemd-udev"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"45.el8"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1d0c75327776413fa0db9ed3adcdbadedc95a662eb1d360dad82bb913f8a1d1"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"239"</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">]</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"remediation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"recommendation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None Provided"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"awsEcrContainerImage"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                                </span><span class="nt">"architecture"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amd64"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"imageHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:a1801b843b1bfaf77c501e7a6d3f709401a1e0c83863037fa3aab063a7fdb9dc"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"imageTags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                    </span><span class="s2">"latest"</span>
+<span class="w">                                </span><span class="p">],</span>
+<span class="w">                                </span><span class="nt">"platform"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CENTOS_8"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"pushedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:22:33-05:00"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"registry"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">                                </span><span class="nt">"repositoryName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"image-scanning-workload-blueprint-imagescanningrepository754c6116-arh0wk3afnkw"</span>
+<span class="w">                            </span><span class="p">}</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                        </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:ecr:us-east-1:123456789012:repository/image-scanning-workload-blueprint-imagescanningrepository754c6116-arh0wk3afnkw/sha256:a1801b843b1bfaf77c501e7a6d3f709401a1e0c83863037fa3aab063a7fdb9dc"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS_ECR_CONTAINER_IMAGE"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">                </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.5</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"scoreDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"cvss"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"adjustments"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">                        </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.5</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"scoreSource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.1"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ACTIVE"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVE-2021-33910 - systemd-pam, systemd and 2 more"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PACKAGE_VULNERABILITY"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T17:40:39.940000-05:00"</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="err">...</span><span class="w">            </span>
+</code></pre></div>
+<p>You can also check the findings in Inspector2.</p>
+<div class="highlight"><pre><span></span><code>aws<span class="w"> </span>inspector2<span class="w"> </span>list-findings
+</code></pre></div>
+<p>The output should look similar to the following:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"findings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"awsAccountId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"When curl is instructed to get content using the metalink feature, and a user name and password are used to download the metalink XML file, those same credentials are then subsequently passed on to each of the servers from which curl will download or try to download the contents from. Often contrary to the user's expectations and intentions and without telling the user it happened."</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"exploitAvailable"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NO"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"findingArn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:inspector2:us-east-1:123456789012:finding/006e8eac196bf27417099413ce74eb1a"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"firstObservedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-14T21:03:02.932000-05:00"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"fixAvailable"</span><span class="p">:</span><span class="w"> </span><span class="s2">"YES"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"inspectorScore"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.3</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"inspectorScoreDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"adjustedCvss"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"adjustments"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">                    </span><span class="nt">"cvssSource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"scoreSource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.1"</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"lastObservedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T13:34:41.687000-05:00"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"packageVulnerabilityDetails"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"cvss"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"baseScore"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.6</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AV:N/AC:H/Au:N/C:P/I:N/A:N"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"baseScore"</span><span class="p">:</span><span class="w"> </span><span class="mf">5.3</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"scoringVector"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.1"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">                </span><span class="nt">"referenceUrls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="s2">"https://hackerone.com/reports/1213181"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"https://security.gentoo.org/glsa/202212-01"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"https://cert-portal.siemens.com/productcert/pdf/ssa-389290.pdf"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/FRUCW2UVNYUDZF72DQLFQR4PJEC6CF7V/"</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">"https://www.oracle.com/security-alerts/cpuoct2021.html"</span>
+<span class="w">                </span><span class="p">],</span>
+<span class="w">                </span><span class="nt">"relatedVulnerabilities"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">                </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NVD"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"sourceUrl"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://nvd.nist.gov/vuln/detail/CVE-2021-22923"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"vendorCreatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-08-05T16:15:00-05:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"vendorSeverity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"vendorUpdatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-01-05T12:17:00-06:00"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"vulnerabilityId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVE-2021-22923"</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">"vulnerablePackages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AARCH64"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"fixedInVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:7.61.1-18.el8_4.1"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"curl"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"18.el8"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"remediation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dnf update curl"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:52f9ef134af7dd14738733e567402af86136287d9468978d044780a6435a1193"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7.61.1"</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"arch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AARCH64"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"epoch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"fixedInVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0:7.61.1-18.el8_4.1"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"libcurl-minimal"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"packageManager"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OS"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"18.el8"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"remediation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dnf update libcurl-minimal"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"sourceLayerHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:52f9ef134af7dd14738733e567402af86136287d9468978d044780a6435a1193"</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"7.61.1"</span>
+<span class="w">                    </span><span class="p">}</span>
+<span class="w">                </span><span class="p">]</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"remediation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"recommendation"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None Provided"</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">"awsEcrContainerImage"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">"architecture"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arm64"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"imageHash"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sha256:65a4aad1156d8a0679537cb78519a17eb7142e05a968b26a5361153006224fdc"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"imageTags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="s2">"latest"</span>
+<span class="w">                            </span><span class="p">],</span>
+<span class="w">                            </span><span class="nt">"platform"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CENTOS_8"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"pushedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T13:34:34-05:00"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"registry"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">"repositoryName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cdk-hnb659fds-container-assets-123456789012-us-east-1"</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:ecr:us-east-1:123456789012:repository/cdk-hnb659fds-container-assets-123456789012-us-east-1/sha256:65a4aad1156d8a0679537cb78519a17eb7142e05a968b26a5361153006224fdc"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"partition"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aws"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"region"</span><span class="p">:</span><span class="w"> </span><span class="s2">"us-east-1"</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">                    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AWS_ECR_CONTAINER_IMAGE"</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MEDIUM"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CLOSED"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CVE-2021-22923 - curl, libcurl-minimal"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PACKAGE_VULNERABILITY"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2023-04-17T13:36:44.258000-05:00"</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="err">...</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["tabs"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
