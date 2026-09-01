@@ -6,11 +6,11 @@ import * as blueprints from '@aws-quickstart/eks-blueprints';
 import * as team from '../teams';
 const burnhamManifestDir = './lib/teams/team-burnham/';
 const rikerManifestDir = './lib/teams/team-riker/';
-const teamManifestDirList = [burnhamManifestDir,rikerManifestDir];
+const teamManifestDirList = [burnhamManifestDir, rikerManifestDir];
 
 export default class MultiTeamConstruct {
     constructor(scope: Construct, id: string) {
-        
+
         // Setup platform team
         const accountID = process.env.CDK_DEFAULT_ACCOUNT!;
         const platformTeam = new team.TeamPlatform(accountID);

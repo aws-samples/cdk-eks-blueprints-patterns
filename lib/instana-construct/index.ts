@@ -13,7 +13,7 @@ export default class InstanaConstruct {
 
             const secretParamName: string = utils.valueFromContext(scope, "secretParamName", undefined);
             //console.log(`secretParamName is ${secretParamName}`);
-            if(secretParamName != undefined) {
+            if (secretParamName != undefined) {
                 instanaProps.secretParamName = secretParamName;
             }
             const yamlObject = loadYaml(JSON.stringify(instanaProps));

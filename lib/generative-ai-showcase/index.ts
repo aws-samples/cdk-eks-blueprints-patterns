@@ -17,7 +17,7 @@ export default class GenAIShowcase {
             createNamespace: true,
             serviceAccountName: 'bedrock-service-account',
             extensionFunction: extensionFunction
-        }; 
+        };
 
         BedrockBuilder.builder()
             .account(account)

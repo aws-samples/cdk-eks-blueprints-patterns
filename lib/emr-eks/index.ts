@@ -1,15 +1,15 @@
-import { 
-    EksBlueprint, 
-    AwsLoadBalancerControllerAddOn, 
-    CertManagerAddOn, 
-    ClusterAutoScalerAddOn, 
-    CoreDnsAddOn, 
-    EbsCsiDriverAddOn, 
-    EmrEksAddOn, 
-    EmrEksTeam, 
-    KubeProxyAddOn, 
-    MetricsServerAddOn, 
-    VpcCniAddOn 
+import {
+    EksBlueprint,
+    AwsLoadBalancerControllerAddOn,
+    CertManagerAddOn,
+    ClusterAutoScalerAddOn,
+    CoreDnsAddOn,
+    EbsCsiDriverAddOn,
+    EmrEksAddOn,
+    EmrEksTeam,
+    KubeProxyAddOn,
+    MetricsServerAddOn,
+    VpcCniAddOn
 } from '@aws-quickstart/eks-blueprints';
 
 import * as cdk from 'aws-cdk-lib';
@@ -17,7 +17,7 @@ import * as cdk from 'aws-cdk-lib';
 export default class EmrEksConstruct {
 
     build(scope: cdk.App, id: string, teams: EmrEksTeam[]) {
-        
+
         const stackId = `${id}-blueprint`;
 
         EksBlueprint.builder().addOns(

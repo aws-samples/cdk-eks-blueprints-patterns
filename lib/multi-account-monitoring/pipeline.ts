@@ -78,10 +78,10 @@ export class PipelineMultiEnvMonitoring {
             .application("npx ts-node bin/pipeline-multienv-monitoring.ts")
             .name("multi-account-central-pipeline")
             .owner(gitOwner)
-            .codeBuildPolicies([ 
+            .codeBuildPolicies([
                 new iam.PolicyStatement({
                     resources: ["*"],
-                    actions: [    
+                    actions: [
                         "sts:AssumeRole",
                         "secretsmanager:GetSecretValue",
                         "secretsmanager:DescribeSecret",

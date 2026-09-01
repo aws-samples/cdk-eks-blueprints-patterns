@@ -1,4 +1,4 @@
-import { Secret,ISecret } from 'aws-cdk-lib/aws-secretsmanager';
+import { Secret, ISecret } from 'aws-cdk-lib/aws-secretsmanager';
 import { ResourceContext, ResourceProvider } from '@aws-quickstart/eks-blueprints';
 
 export interface DatabaseInstanceCredentialsProviderProps {

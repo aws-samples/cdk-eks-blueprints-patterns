@@ -40,10 +40,10 @@ export class DatabaseInstanceProvider implements ResourceProvider<rds.IDatabaseI
             throw new Error("VPC not found in context");
         }
 
-        const dbSecurityGroup = new SecurityGroup(context.scope, id+"-security-group", {
+        const dbSecurityGroup = new SecurityGroup(context.scope, id + "-security-group", {
             vpc: vpc
         });
-        
+
         dbSecurityGroup.addIngressRule(Peer.ipv4(vpc.vpcCidrBlock), Port.tcp(this.props.databaseInstancePort), "Connect from within VPC");
 
         const rdsConfig: rds.DatabaseInstanceProps = {
@@ -55,7 +55,7 @@ export class DatabaseInstanceProvider implements ResourceProvider<rds.IDatabaseI
             securityGroups: [dbSecurityGroup],
             credentials: rds.Credentials.fromSecret(databaseCredentialsSecret),
         };
-      
-        return new rds.DatabaseInstance(context.scope, id+"-database-instance", rdsConfig);
+
+        return new rds.DatabaseInstance(context.scope, id + "-database-instance", rdsConfig);
     }
 }

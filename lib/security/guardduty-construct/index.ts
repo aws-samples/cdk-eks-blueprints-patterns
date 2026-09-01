@@ -9,9 +9,9 @@ const targetRevision = "main";
 export default class GuardDutyWorkloadConstruct {
     async buildAsync(scope: Construct, id: string) {
         await prevalidateSecrets(
-            GuardDutyWorkloadConstruct.name, 
-      process.env.CDK_DEFAULT_REGION!,
-      SECRET_ARGO_ADMIN_PWD
+            GuardDutyWorkloadConstruct.name,
+            process.env.CDK_DEFAULT_REGION!,
+            SECRET_ARGO_ADMIN_PWD
         );
 
         const stackID = `${id}-blueprint`;

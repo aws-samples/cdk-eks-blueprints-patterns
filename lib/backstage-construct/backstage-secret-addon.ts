@@ -91,14 +91,14 @@ export class BackstageSecretAddOn implements blueprints.ClusterAddOn {
                                 secretKey: "POSTGRES_PASSWORD",
                                 remoteRef: {
                                     key: databaseInstanceCredentialsSecretName,
-                                    property:  "password"
+                                    property: "password"
                                 }
                             },
                             {
                                 secretKey: "POSTGRES_USER",
                                 remoteRef: {
                                     key: databaseInstanceCredentialsSecretName,
-                                    property:  "username"
+                                    property: "username"
                                 }
                             },
                         ],
